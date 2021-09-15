@@ -15,7 +15,7 @@ type WithSearchkitManagerProps = {
 }
 
 const withSearchkitManager = (WrappedComponent: ReactClass<*>) => {
-  class WithSearchkitManager extends React.Component {
+  class WithSearchkitManager extends React.Component<*, WithSearchkitManagerProps> {
     searchkit: SearchkitManager
     searchkitCanSearch: () => void
 

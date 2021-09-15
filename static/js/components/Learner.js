@@ -19,20 +19,22 @@ import type { UIState } from "../reducers/ui"
 import type { DashboardState } from "../flow/dashboardTypes"
 import CourseListCard from "./dashboard/CourseListCard"
 
-export default class Learner extends React.Component {
-  props: {
-    profile: Profile,
-    profilePatchStatus: ?string,
-    ui: UIState,
-    dashboard: DashboardState,
-    saveProfile: SaveProfileFunc,
-    clearProfileEdit: () => void,
-    setLearnerPageDialogVisibility: () => void,
-    startProfileEdit: () => void,
-    setLearnerPageAboutMeDialogVisibility: () => void,
-    openLearnerEmailComposer: () => void,
-    setShowGradeDetailDialog: (b: boolean, t: string) => void
-  }
+type Props = {
+  profile: Profile,
+  profilePatchStatus: ?string,
+  ui: UIState,
+  dashboard: DashboardState,
+  saveProfile: SaveProfileFunc,
+  clearProfileEdit: () => void,
+  setLearnerPageDialogVisibility: () => void,
+  startProfileEdit: () => void,
+  setLearnerPageAboutMeDialogVisibility: () => void,
+  openLearnerEmailComposer: () => void,
+  setShowGradeDetailDialog: (b: boolean, t: string) => void
+}
+
+export default class Learner extends React.Component<*, Props> {
+  props: Props
 
   toggleShowPersonalDialog = (): void => {
     const {

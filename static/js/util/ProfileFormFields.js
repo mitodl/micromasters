@@ -9,7 +9,7 @@ import {
   boundTelephoneInput
 } from "./profile_edit"
 
-export default class ProfileFormFields extends React.Component {
+export default class ProfileFormFields extends React.Component<*, *> {
   constructor(props: Object) {
     super(props)
 

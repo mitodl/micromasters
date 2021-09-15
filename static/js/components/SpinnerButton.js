@@ -11,7 +11,7 @@ type SpinnerButtonProps = {
   ignoreRecentlyClicked: ?boolean
 }
 
-export default class SpinnerButton extends React.Component {
+export default class SpinnerButton extends React.Component<*, SpinnerButtonProps> {
   props: SpinnerButtonProps
 
   constructor(props) {

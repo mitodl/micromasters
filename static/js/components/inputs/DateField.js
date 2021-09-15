@@ -16,18 +16,20 @@ import {
   validateNearFutureYear
 } from "../../lib/validation/date"
 
-export default class DateField extends React.Component {
-  props: {
-    allowFutureYear: boolean,
-    data: Object,
-    errors: Object,
-    keySet: Array<string>,
-    label: string,
-    omitDay: boolean,
-    onBlur: () => void,
-    updateHandler: Function,
-    validator: Function
-  }
+type Props = {
+  allowFutureYear: boolean,
+  data: Object,
+  errors: Object,
+  keySet: Array<string>,
+  label: string,
+  omitDay: boolean,
+  onBlur: () => void,
+  updateHandler: Function,
+  validator: Function
+}
+
+export default class DateField extends React.Component<*, Props> {
+  props: Props
 
   render() {
     const {

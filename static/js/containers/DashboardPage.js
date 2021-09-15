@@ -132,29 +132,31 @@ export type GradeType = "EDX_GRADE" | "EXAM_GRADE"
 export const EDX_GRADE: GradeType = "EDX_GRADE"
 export const EXAM_GRADE: GradeType = "EXAM_GRADE"
 
-class DashboardPage extends React.Component {
+type Props = {
+  coupons: CouponsState,
+  profile: ProfileGetResult,
+  currentProgramEnrollment: AvailableProgram,
+  programs: AvailableProgramsState,
+  dashboard: DashboardState,
+  prices: RestState<CoursePrices>,
+  programLearners: RestState<ProgramLearners>,
+  dispatch: Dispatch,
+  ui: UIState,
+  email: AllEmailsState,
+  documents: DocumentsState,
+  orderReceipt: OrderReceiptState,
+  financialAid: FinancialAidState,
+  location: Object,
+  openEmailComposer: (emailType: string, emailOpenParams: any) => void,
+  discussionsFrontpage: RestState<Array<Post>>
+}
+
+class DashboardPage extends React.Component<*, Props> {
   static contextTypes = {
     router: PropTypes.object.isRequired
   }
 
-  props: {
-    coupons: CouponsState,
-    profile: ProfileGetResult,
-    currentProgramEnrollment: AvailableProgram,
-    programs: AvailableProgramsState,
-    dashboard: DashboardState,
-    prices: RestState<CoursePrices>,
-    programLearners: RestState<ProgramLearners>,
-    dispatch: Dispatch,
-    ui: UIState,
-    email: AllEmailsState,
-    documents: DocumentsState,
-    orderReceipt: OrderReceiptState,
-    financialAid: FinancialAidState,
-    location: Object,
-    openEmailComposer: (emailType: string, emailOpenParams: any) => void,
-    discussionsFrontpage: RestState<Array<Post>>
-  }
+  props: Props
 
   componentDidMount() {
     this.updateRequirements()

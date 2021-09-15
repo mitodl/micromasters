@@ -2,12 +2,14 @@ import React from "react"
 
 import { wait } from "../util/util"
 
-export default class Toast extends React.Component {
-  props: {
-    children: any,
-    timeout: number,
-    onTimeout: () => void
-  }
+type Props = {
+  children: any,
+  timeout: number,
+  onTimeout: () => void
+}
+
+export default class Toast extends React.Component<*, Props> {
+  props: Props
 
   static defaultProps = {
     timeout: 5000

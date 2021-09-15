@@ -42,19 +42,21 @@ import type { UIState } from "../reducers/ui"
 const PROFILE_REGEX = /^\/profile\/?[a-z]?/
 const LEARNER_REGEX = /^\/learner\/?[a-z]?/
 
-class App extends React.Component {
-  props: {
-    children: React$Element<*>[],
-    userProfile: ProfileGetResult,
-    location: Object,
-    currentProgramEnrollment: AvailableProgram,
-    dispatch: Dispatch,
-    programs: AvailableProgramsState,
-    history: Object,
-    ui: UIState,
-    signupDialog: Object,
-    shareDialog: Object
-  }
+type Props = {
+  children: React$Element<*>[],
+  userProfile: ProfileGetResult,
+  location: Object,
+  currentProgramEnrollment: AvailableProgram,
+  dispatch: Dispatch,
+  programs: AvailableProgramsState,
+  history: Object,
+  ui: UIState,
+  signupDialog: Object,
+  shareDialog: Object
+}
+
+class App extends React.Component<*, Props> {
+  props: Props
 
   static contextTypes = {
     router: PropTypes.object.isRequired

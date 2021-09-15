@@ -549,7 +549,7 @@ export const wrapWithProps = (
   addedProps: Object,
   ComponentToWrap: ReactClass<*>
 ): ReactClass<*> => {
-  class WithAdditionalProps extends React.Component {
+  class WithAdditionalProps extends React.Component<*, *> {
     render() {
       return <ComponentToWrap {...this.props} {...addedProps} />
     }

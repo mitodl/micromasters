@@ -6,14 +6,16 @@ import { SEARCH_FACET_FIELD_LABEL_MAP } from "../../constants"
 import { makeTranslations } from "../LearnerSearch"
 import { isLocation } from "../email/lib"
 
-export default class ModifiedSelectedFilter extends React.Component {
-  props: {
-    labelKey: string,
-    labelValue: string,
-    removeFilters: Function,
-    bemBlocks?: any,
-    filterId: string
-  }
+type Props = {
+  labelKey: string,
+  labelValue: string,
+  removeFilters: Function,
+  bemBlocks?: any,
+  filterId: string
+}
+
+export default class ModifiedSelectedFilter extends React.Component<*, Props> {
+  props: PRops
 
   translations: Object = makeTranslations()
 

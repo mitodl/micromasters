@@ -37,21 +37,23 @@ export const processCheckout = (result: CheckoutResponse) => {
   }
 }
 
-class OrderSummaryPage extends React.Component {
+type Props = {
+  profiles: Profiles,
+  currentProgramEnrollment: AvailableProgram,
+  checkout: CheckoutState,
+  dashboard: DashboardState,
+  dispatch: Dispatch,
+  prices: RestState<CoursePrices>,
+  coupons: CouponsState,
+  location: Object
+}
+
+class OrderSummaryPage extends React.Component<*, Props> {
   static contextTypes = {
     router: PropTypes.object.isRequired
   }
 
-  props: {
-    profiles: Profiles,
-    currentProgramEnrollment: AvailableProgram,
-    checkout: CheckoutState,
-    dashboard: DashboardState,
-    dispatch: Dispatch,
-    prices: RestState<CoursePrices>,
-    coupons: CouponsState,
-    location: Object
-  }
+  props: Props
 
   componentDidMount() {
     this.updateRequirements()

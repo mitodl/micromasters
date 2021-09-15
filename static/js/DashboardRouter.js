@@ -6,14 +6,16 @@ import { Provider } from "react-redux"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import type { Store } from "redux"
 
+type Props = {
+  browserHistory: Object,
+  onRouteUpdate: () => void,
+  store: Store,
+  routes: Object
+}
+
 // eslint-disable-next-line require-jsdoc
-export default class DashboardRouter extends React.Component {
-  props: {
-    browserHistory: Object,
-    onRouteUpdate: () => void,
-    store: Store,
-    routes: Object
-  }
+export default class DashboardRouter extends React.Component<*, Props> {
+  props: Props
 
   // eslint-disable-next-line require-jsdoc
   render() {

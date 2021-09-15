@@ -38,12 +38,14 @@ type AutomaticEmailsType = RestState<Array<AutomaticEmail>> & {
   emailsInFlight: Set<number>
 }
 
-class AutomaticEmailPage extends React.Component {
-  props: {
-    automaticEmails: AutomaticEmailsType,
-    dispatch: Dispatch,
-    openEmailComposer: (e: string) => (e: AutomaticEmail) => void
-  }
+type Props =  {
+  automaticEmails: AutomaticEmailsType,
+  dispatch: Dispatch,
+  openEmailComposer: (e: string) => (e: AutomaticEmail) => void
+}
+
+class AutomaticEmailPage extends React.Component<*, Props> {
+  props: Props
 
   static contextTypes = {
     router: PropTypes.object.isRequired

@@ -25,15 +25,17 @@ import type { AllEmailsState } from "../flow/emailTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
 import { SEARCH_FILTER_DEFAULT_VISIBILITY } from "../constants"
 
-class LearnerSearchPage extends React.Component {
-  props: {
-    currentProgramEnrollment: AvailableProgram,
-    dispatch: Dispatch,
-    email: AllEmailsState,
-    ui: UIState,
-    openEmailComposer: (emailType: string, emailOpenParams: any) => void,
-    openChannelCreateDialog: (searchkit: Object) => void
-  }
+type Props = {
+  currentProgramEnrollment: AvailableProgram,
+  dispatch: Dispatch,
+  email: AllEmailsState,
+  ui: UIState,
+  openEmailComposer: (emailType: string, emailOpenParams: any) => void,
+  openChannelCreateDialog: (searchkit: Object) => void
+}
+
+class LearnerSearchPage extends React.Component<*, Props> {
+  props: Props
 
   checkFilterVisibility = (filterName: string): boolean => {
     const {

@@ -32,7 +32,7 @@ type SelectFieldProps = {
   validator: Validator | UIValidator
 }
 
-class SelectField extends React.Component {
+class SelectField extends React.Component<*, SelectFieldProps> {
   constructor(props: SelectFieldProps) {
     super(props)
     this.state = {

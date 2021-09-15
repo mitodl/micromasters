@@ -32,22 +32,24 @@ const makeCountryOptions = R.compose(
 
 const countryOptions = makeCountryOptions(iso3166.data)
 
-export default class CountrySelectField extends React.Component {
-  props: {
-    className: string,
-    countryKeySet: Array<string>,
-    errors: ValidationErrors,
-    keySet: Array<string>,
-    label: string,
-    maxSearchResults: number,
-    options: Array<Option>,
-    profile: Profile,
-    stateKeySet: Array<string>,
-    topMenu: boolean,
-    updateProfile: UpdateProfileFunc,
-    updateValidationVisibility: (xs: Array<string>) => void,
-    validator: Validator | UIValidator
-  }
+type Props = {
+  className: string,
+  countryKeySet: Array<string>,
+  errors: ValidationErrors,
+  keySet: Array<string>,
+  label: string,
+  maxSearchResults: number,
+  options: Array<Option>,
+  profile: Profile,
+  stateKeySet: Array<string>,
+  topMenu: boolean,
+  updateProfile: UpdateProfileFunc,
+  updateValidationVisibility: (xs: Array<string>) => void,
+  validator: Validator | UIValidator
+}
+
+export default class CountrySelectField extends React.Component<*, Props> {
+  props: Props
 
   onChange = (selection: Option): void => {
     const {

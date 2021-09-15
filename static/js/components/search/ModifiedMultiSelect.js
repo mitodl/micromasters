@@ -6,7 +6,7 @@ import Select from 'react-select';
 import _ from 'lodash';
 
 
-export default class ModifiedMultiSelect extends React.Component {
+export default class ModifiedMultiSelect extends React.Component<*> {
 
   constructor(props){
     super(props);

@@ -11,15 +11,17 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 
-class CopyLinkDialog extends React.Component {
-  props: {
-    open: boolean,
-    setShareDialogVisibility: (b: boolean) => void,
-    setCopySuccess: (b: boolean) => void,
-    setRecordShareLink: (b: string) => void,
-    recordShareLink: string,
-    copy: boolean
-  }
+type Props = {
+  open: boolean,
+  setShareDialogVisibility: (b: boolean) => void,
+  setCopySuccess: (b: boolean) => void,
+  setRecordShareLink: (b: string) => void,
+  recordShareLink: string,
+  copy: boolean
+}
+
+class CopyLinkDialog extends React.Component<*, Props> {
+  props: Props
 
   copyToClipboard = e => {
     const { setCopySuccess } = this.props
