@@ -22,7 +22,8 @@ import {
   STATUS_MISSED_DEADLINE,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_PASSED,
-  STATUS_NOT_PASSED
+  STATUS_NOT_PASSED,
+  COURSEWARE_BACKEND_NAMES
 } from "../../../constants"
 import { courseRunUrl } from "../../../util/courseware"
 import { courseStartDateMessage } from "./util"
@@ -63,17 +64,20 @@ describe("Course ProgressMessage", () => {
     assert.equal(wrapper.find(".details").text(), "Course in progress")
   })
 
-  it("displays a contact link, if appropriate, and a view on edX link", () => {
-    makeRunEnrolled(course.runs[0])
-    makeRunCurrent(course.runs[0])
-    course.has_contact_email = true
-    const wrapper = renderCourseDescription()
-    const [edxLink, contactLink] = wrapper.find("a")
-    assert.equal(edxLink.props.href, courseRunUrl(course.runs[0]))
-    assert.equal(edxLink.props.target, "_blank")
-    assert.equal(edxLink.props.children, "View on edX")
-    assert.equal(contactLink.props.onClick, openCourseContactDialogStub)
-    assert.equal(contactLink.props.children, "Contact Course Team")
+  Object.entries(COURSEWARE_BACKEND_NAMES).forEach(([name, label]) => {
+    it("displays a contact link, if appropriate, and a view on edX link", () => {
+      makeRunEnrolled(course.runs[0])
+      makeRunCurrent(course.runs[0])
+      course.runs[0].courseware_backend = name
+      course.has_contact_email = true
+      const wrapper = renderCourseDescription()
+      const [edxLink, contactLink] = wrapper.find("a")
+      assert.equal(edxLink.props.href, courseRunUrl(course.runs[0]))
+      assert.equal(edxLink.props.target, "_blank")
+      assert.deepEqual(edxLink.props.children, ["View on ", label])
+      assert.equal(contactLink.props.onClick, openCourseContactDialogStub)
+      assert.equal(contactLink.props.children, "Contact Course Team")
+    })
   })
 
   it("does not display contact course team or view on edX if staff user", () => {

@@ -10,6 +10,7 @@ import { TOAST_FAILURE } from "../constants"
 import ErrorMessage from "../components/ErrorMessage"
 import Navbar from "../components/Navbar"
 import Toast from "../components/Toast"
+import SocialAuthDialog from "../components/SocialAuthDialog"
 import { FETCH_SUCCESS, FETCH_FAILURE } from "../actions"
 import {
   fetchUserProfile,
@@ -274,6 +275,7 @@ class App extends React.Component {
         />
         {this.renderToast()}
         <div className="page-content">{children}</div>
+        <SocialAuthDialog currentProgramEnrollment={currentProgramEnrollment} />
       </div>
     )
   }

@@ -18,12 +18,14 @@ class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.SerializerMethodField()
     last_name = serializers.SerializerMethodField()
     preferred_name = serializers.SerializerMethodField()
+    social_auth_providers = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
             "username", "email",
             "first_name", "last_name", "preferred_name",
+            "social_auth_providers",
         )
 
     def get_username(self, obj):
@@ -58,6 +60,12 @@ class UserSerializer(serializers.ModelSerializer):
             return obj.profile.preferred_name
         except ObjectDoesNotExist:
             return None
+
+    def get_social_auth_providers(self, obj):
+        """
+        Get the list of social auth providers
+        """
+        return list(obj.social_auth.values_list("provider", flat=True).distinct())
 
 
 def serialize_maybe_user(user):

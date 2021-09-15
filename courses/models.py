@@ -30,10 +30,23 @@ class Topic(models.Model):
         return self.name
 
 
+class ProgramQuerySet(models.QuerySet):
+    """
+    Custom QuerySet for Programs
+    """
+    def prefetch_course_runs(self):
+        """Returns a new query that prefetches the course runs"""
+        return self.prefetch_related(
+            models.Prefetch("course_set__courserun_set", to_attr="course_runs")
+        )
+
+
 class Program(TimestampedModel):
     """
     A degree someone can pursue, e.g. "Supply Chain Management"
     """
+    objects = ProgramQuerySet.as_manager()
+
     title = models.CharField(max_length=255)
     live = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
@@ -54,11 +67,22 @@ class Program(TimestampedModel):
         """
         return all([course.has_frozen_runs() for course in self.course_set.all()])
 
+    @property
+    def course_runs(self):
+        """ Return the set of course runs """
+        return CourseRun.objects.filter(course__program=self)
+
+    @property
+    def courseware_backends(self):
+        """ Return the set of courseware backends """
+        return list({run.courseware_backend for run in self.course_runs})
+
+    @property
     def has_mitxonline_courses(self):
         """
         Return true if as least one course has at least one run that is on mitxonline
         """
-        return CourseRun.objects.filter(course__program=self, courseware_backend=BACKEND_MITX_ONLINE).exists()
+        return BACKEND_MITX_ONLINE in self.courseware_backends
 
 
 class Course(models.Model):

@@ -13,7 +13,8 @@ import {
   STATUS_MISSED_DEADLINE,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PAID_BUT_NOT_ENROLLED,
-  DASHBOARD_FORMAT
+  DASHBOARD_FORMAT,
+  COURSEWARE_BACKEND_NAMES
 } from "../../../constants"
 import { renderSeparatedComponents } from "../../../util/util"
 import { courseRunUrl } from "../../../util/courseware"
@@ -145,7 +146,7 @@ export default class ProgressMessage extends React.Component {
         target="_blank"
         rel="noopener noreferrer"
       >
-        View on edX
+        View on {COURSEWARE_BACKEND_NAMES[courseRun.courseware_backend]}
       </a>
     ) : null
   }
