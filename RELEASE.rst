@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.205.0
+Version 0.205.0 (Released September 15, 2021)
 ---------------
 
 - Fix enrollment API backend (#5041)
