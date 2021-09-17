@@ -408,7 +408,7 @@ class EducationForm extends ProfileFormFields {
             true
           )}
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4} sm={6} xs={12}>
           <CountrySelectField
             stateKeySet={keySet("school_state_or_territory")}
             countryKeySet={keySet("school_country")}
@@ -418,7 +418,7 @@ class EducationForm extends ProfileFormFields {
             {...this.defaultInputComponentProps()}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4} sm={6} xs={12}>
           <StateSelectField
             stateKeySet={keySet("school_state_or_territory")}
             countryKeySet={keySet("school_country")}
@@ -428,7 +428,7 @@ class EducationForm extends ProfileFormFields {
             {...this.defaultInputComponentProps()}
           />
         </Grid>
-        <Grid item xs={4} key="school_city">
+        <Grid item md={4} sm={6} xs={12} key="school_city">
           {/* eslint-disable-next-line no-invalid-this */}
           {this.boundTextField(keySet("school_city"), "City")}
         </Grid>

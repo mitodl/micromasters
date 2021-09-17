@@ -135,7 +135,7 @@ class EmploymentForm extends ProfileFormFields {
         <Grid item xs={12}>
           {this.boundTextField(keySet("company_name"), "Name of Employer")}
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4} sm={6} xs={12}>
           <CountrySelectField
             stateKeySet={keySet("state_or_territory")}
             countryKeySet={keySet("country")}
@@ -143,7 +143,7 @@ class EmploymentForm extends ProfileFormFields {
             {...this.defaultInputComponentProps()}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4} sm={6} xs={12}>
           <StateSelectField
             stateKeySet={keySet("state_or_territory")}
             countryKeySet={keySet("country")}
@@ -151,7 +151,7 @@ class EmploymentForm extends ProfileFormFields {
             {...this.defaultInputComponentProps()}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item md={4} sm={6} xs={12}>
           {this.boundTextField(keySet("city"), "City")}
         </Grid>
         <Grid item xs={12}>
