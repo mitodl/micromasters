@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.205.1
+---------------
+
+- V2 of login prompts for mitx online/edx
+- fix degree and employment form fields (#5034)
+
 Version 0.205.0 (Released September 15, 2021)
 ---------------
 
