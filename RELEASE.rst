@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.205.1
+---------------
+
+- fix degree and employment form fields (#5034)
+
 Version 0.205.0 (Released September 15, 2021)
 ---------------
 
