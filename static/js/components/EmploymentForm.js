@@ -154,7 +154,7 @@ class EmploymentForm extends ProfileFormFields {
         <Grid item md={4} sm={6} xs={12}>
           {this.boundTextField(keySet("city"), "City")}
         </Grid>
-        <Grid item xs={12}>
+        <Grid item md={12} sm={6} xs={12}>
           <SelectField
             keySet={keySet("industry")}
             label="Industry"
