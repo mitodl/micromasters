@@ -82,12 +82,12 @@ const COURSE: Course = {
 }
 
 const PROGRAM: AvailableProgram = {
-  id:                  1,
-  title:               "Awesomesauce",
-  enrolled:            true,
-  programpage_url:     null,
-  total_courses:       0,
-  courseware_backends: ["edxorg"]
+  id:                             1,
+  title:                          "Awesomesauce",
+  enrolled:                       true,
+  programpage_url:                null,
+  total_courses:                  0,
+  enrollable_courseware_backends: ["edxorg"]
 }
 
 describe("CouponNotificationDialog", () => {

@@ -100,7 +100,7 @@ class ProgramSerializerTests(MockedESTestCase):
             'enrolled': False,
             'total_courses': 1,
             'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
-            "courseware_backends": ["edxorg"],
+            "enrollable_courseware_backends": ["edxorg"],
         }
 
     def test_program_with_programpage(self):
@@ -118,7 +118,7 @@ class ProgramSerializerTests(MockedESTestCase):
             'enrolled': False,
             'total_courses': 1,
             'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
-            "courseware_backends": ["edxorg"],
+            "enrollable_courseware_backends": ["edxorg"],
         }
         assert len(programpage.url) > 0
 
@@ -135,7 +135,7 @@ class ProgramSerializerTests(MockedESTestCase):
             'enrolled': True,
             'total_courses': 1,
             'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
-            "courseware_backends": ["edxorg"],
+            "enrollable_courseware_backends": ["edxorg"],
         }
 
     def test_program_courses(self):
@@ -151,7 +151,7 @@ class ProgramSerializerTests(MockedESTestCase):
             'enrolled': False,
             'total_courses': 6,
             'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
-            "courseware_backends": ["edxorg"],
+            "enrollable_courseware_backends": ["edxorg"],
         }
 
 
