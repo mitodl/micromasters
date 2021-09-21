@@ -65,6 +65,14 @@ class ProgramTests(MockedESTestCase):
 
         assert course_1.program.has_frozen_grades_for_all_courses() is result
 
+    def test_enrollable_course_runs(self):
+        """ Test that enrollable_course_runs only returns currently enrollable runs """
+        program = ProgramFactory.create()
+        enrollable_run = CourseRunFactory.create(course__program=program)  # enrollable
+        CourseRunFactory.create(course__program=program, future_run=True) # not enrollable
+
+        assert list(program.enrollable_course_runs) == [enrollable_run]
+
 
 def from_weeks(weeks, now=None):
     """Helper function to get a date adjusted by a number of weeks"""
@@ -563,3 +571,10 @@ class CourseRunTests(CourseModelTests):
             date_last_eligible=(now_in_utc() - timedelta(days=1)).date(),
         )
         assert course_run.has_future_exam is False
+
+    def test_enrollable(self):
+        """ Test CourseRun.objects.enrollable() """
+        enrollable_run = CourseRunFactory.create()  # enrollable
+        CourseRunFactory.create(future_run=True) # not enrollable
+
+        assert list(CourseRun.objects.enrollable()) == [enrollable_run]

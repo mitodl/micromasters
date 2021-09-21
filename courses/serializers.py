@@ -60,7 +60,7 @@ class ProgramSerializer(serializers.ModelSerializer):
             'enrolled',
             'total_courses',
             'topics',
-            'courseware_backends',
+            'enrollable_courseware_backends',
         )
 
 

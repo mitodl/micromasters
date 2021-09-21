@@ -7,7 +7,7 @@ export type AvailableProgram = {
   programpage_url: ?string,
   enrolled: boolean,
   total_courses: ?number,
-  courseware_backends: Array<string>,
+  enrollable_courseware_backends: Array<string>,
 }
 
 export type AvailablePrograms = Array<AvailableProgram>

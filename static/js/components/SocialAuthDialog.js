@@ -21,7 +21,7 @@ const SocialAuthDialog = (props: Props) => {
   const [open, setOpen] = useState(false)
   const missingBackend = R.head(
     R.difference(
-      R.propOr([], "courseware_backends", currentProgramEnrollment),
+      R.propOr([], "enrollable_courseware_backends", currentProgramEnrollment),
       R.propOr([], "social_auth_providers", SETTINGS.user)
     )
   )

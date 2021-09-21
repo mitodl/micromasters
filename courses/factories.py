@@ -112,3 +112,13 @@ class CourseRunFactory(DjangoModelFactory):
 
     class Meta:
         model = CourseRun
+
+    class Params:
+        future_run = factory.Trait(
+            enrollment_start = factory.Faker(
+                'date_time_between',
+                start_date="+1d",
+                end_date="+30d",
+                tzinfo=pytz.utc
+            )
+        )

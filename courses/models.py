@@ -7,6 +7,7 @@ import urllib.parse
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
+from django.utils.functional import cached_property
 
 from grades.constants import FinalGradeStatus
 from micromasters.models import TimestampedModel
@@ -29,24 +30,10 @@ class Topic(models.Model):
     def __str__(self):
         return self.name
 
-
-class ProgramQuerySet(models.QuerySet):
-    """
-    Custom QuerySet for Programs
-    """
-    def prefetch_course_runs(self):
-        """Returns a new query that prefetches the course runs"""
-        return self.prefetch_related(
-            models.Prefetch("course_set__courserun_set", to_attr="course_runs")
-        )
-
-
 class Program(TimestampedModel):
     """
     A degree someone can pursue, e.g. "Supply Chain Management"
     """
-    objects = ProgramQuerySet.as_manager()
-
     title = models.CharField(max_length=255)
     live = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
@@ -67,22 +54,22 @@ class Program(TimestampedModel):
         """
         return all([course.has_frozen_runs() for course in self.course_set.all()])
 
-    @property
-    def course_runs(self):
+    @cached_property
+    def enrollable_course_runs(self):
         """ Return the set of course runs """
-        return CourseRun.objects.filter(course__program=self)
+        return CourseRun.objects.filter(course__program=self).enrollable()
 
-    @property
-    def courseware_backends(self):
+    @cached_property
+    def enrollable_courseware_backends(self):
         """ Return the set of courseware backends """
-        return list({run.courseware_backend for run in self.course_runs})
+        return list({run.courseware_backend for run in self.enrollable_course_runs})
 
-    @property
+    @cached_property
     def has_mitxonline_courses(self):
         """
         Return true if as least one course has at least one run that is on mitxonline
         """
-        return BACKEND_MITX_ONLINE in self.courseware_backends
+        return BACKEND_MITX_ONLINE in self.enrollable_courseware_backends
 
 
 class Course(models.Model):
@@ -202,12 +189,25 @@ class Course(models.Model):
         )
 
 
+
+class CourseRunQuerySet(models.QuerySet):
+    """
+    Custom QuerySet for CourseRuns
+    """
+    def enrollable(self):
+        """Returns a new query that returns currently enrollable runs"""
+        now = now_in_utc()
+        return self.filter(enrollment_start__lte=now, enrollment_end__gt=now)
+
+
 class CourseRun(models.Model):
     """
     An individual run of a course within a Program, e.g. "Supply Chain 101
     - Summer 2017". This is different than the logical notion of a course, but
       rather a specific instance of that course being taught.
     """
+    objects = CourseRunQuerySet.as_manager()
+
     title = models.CharField(max_length=255)
     edx_course_key = models.CharField(max_length=255, blank=True, null=True, unique=True)
     enrollment_start = models.DateTimeField(blank=True, null=True, db_index=True)
