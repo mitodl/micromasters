@@ -44,7 +44,7 @@ class CourseRunAdmin(admin.ModelAdmin):
     """ModelAdmin for Courses"""
     list_display = ('title', 'course_number', 'edx_course_key', 'enrollment_start', 'start_date', 'enrollment_end',
                     'end_date', 'upgrade_deadline', 'freeze_grade_date', )
-    list_filter = ('course__program__live', 'course__program', 'course', 'course__course_number', )
+    list_filter = ('course__program__live', 'course__program', 'course', 'course__course_number', 'courseware_backend',)
     list_editable = ('enrollment_start', 'start_date', 'enrollment_end', 'end_date', 'upgrade_deadline',
                      'freeze_grade_date', )
     search_fields = ('edx_course_key',)
