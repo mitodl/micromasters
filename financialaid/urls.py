@@ -13,9 +13,10 @@ from financialaid.views import (
     FinancialAidSkipView,
     ReviewFinancialAidView,
 )
+from profiles.constants import USERNAME_RE_PARTIAL
 
 urlpatterns = [
-    url(r'^api/v0/course_prices/(?P<username>[-\w.]+)/$', CoursePriceListView.as_view(), name='course_price_list'),
+    url(fr'^api/v0/course_prices/(?P<username>{USERNAME_RE_PARTIAL})/$', CoursePriceListView.as_view(), name='course_price_list'),
     url(
         r'^financial_aid/review/(?P<program_id>[\d]+)/?$',
         ReviewFinancialAidView.as_view(),

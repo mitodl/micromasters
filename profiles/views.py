@@ -9,6 +9,7 @@ from roles.roles import (
     Instructor,
     Staff,
 )
+from profiles.constants import USERNAME_RE_PARTIAL
 from profiles.models import Profile
 from profiles.serializers import (
     ProfileSerializer,
@@ -28,7 +29,7 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     permission_classes = (CanEditIfOwner, CanSeeIfNotPrivate, )
     lookup_field = 'user__username'
     lookup_url_kwarg = 'user'
-    lookup_value_regex = r'[-\w.]+'
+    lookup_value_regex = USERNAME_RE_PARTIAL
     queryset = Profile.objects.all()
 
     # possible serializers
