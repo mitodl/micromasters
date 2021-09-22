@@ -4,6 +4,14 @@ URLs for ui
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 
+from certificates.views import (
+    CourseCertificateView,
+    GradeRecordView,
+    ProgramCertificateView,
+    ProgramLetterView,
+    SharedGradeRecordView,
+)
+from profiles.constants import USERNAME_RE_PARTIAL
 from ui.url_utils import (
     DASHBOARD_URLS,
     TERMS_OF_SERVICE_URL,
@@ -19,14 +27,6 @@ from ui.views import (
     need_verified_email,
     oauth_maintenance)
 
-from certificates.views import (
-    CourseCertificateView,
-    GradeRecordView,
-    ProgramCertificateView,
-    ProgramLetterView,
-    SharedGradeRecordView,
-)
-
 dashboard_urlpatterns = [
     url(r'^{}$'.format(dashboard_url.lstrip("/")), DashboardView.as_view(), name='ui-dashboard')
     for dashboard_url in DASHBOARD_URLS
@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^500/$', page_500, name='ui-500'),
     url(r'^verify-email/$', need_verified_email, name='verify-email'),
     url(r'^oauth_maintenance/(?P<backend>[^/]+)/$', oauth_maintenance, name='oauth_maintenance'),
-    url(r'^learner/(?P<user>[-\w.]+)?/?', UsersView.as_view(), name='ui-users'),
+    url(fr'^learner/(?P<user>{USERNAME_RE_PARTIAL})?/?', UsersView.as_view(), name='ui-users'),
     url(r'^certificate/course/(?P<certificate_hash>[-\w.]+)?/?', CourseCertificateView.as_view(), name='certificate'),
     url(r'^certificate/program/(?P<certificate_hash>[-\w.]+)?/?', ProgramCertificateView.as_view(),
         name='program-certificate'),
