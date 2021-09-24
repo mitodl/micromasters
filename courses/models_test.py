@@ -68,10 +68,18 @@ class ProgramTests(MockedESTestCase):
     def test_enrollable_course_runs(self):
         """ Test that enrollable_course_runs only returns currently enrollable runs """
         program = ProgramFactory.create()
-        enrollable_run = CourseRunFactory.create(course__program=program)  # enrollable
-        CourseRunFactory.create(course__program=program, future_run=True) # not enrollable
+        enrollable_runs = [
+            # a current run with enrollment_start and enrollment_end
+            CourseRunFactory.create(course__program=program),
+            # a current run with enrollment_start and a NULL enrollment_end
+            CourseRunFactory.create(course__program=program, enrollment_end=None),
+        ]
+        # future runs aren't enrollable
+        CourseRunFactory.create(course__program=program, future_run=True)
+        # runs with both enrollment datetimes set as NULL aren't enrollable
+        CourseRunFactory.create(course__program=program, enrollment_start=None, enrollment_end=None)
 
-        assert list(program.enrollable_course_runs) == [enrollable_run]
+        assert list(program.enrollable_course_runs.order_by("id")) == enrollable_runs
 
 
 def from_weeks(weeks, now=None):

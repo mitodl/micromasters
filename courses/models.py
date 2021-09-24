@@ -197,7 +197,14 @@ class CourseRunQuerySet(models.QuerySet):
     def enrollable(self):
         """Returns a new query that returns currently enrollable runs"""
         now = now_in_utc()
-        return self.filter(enrollment_start__lte=now, enrollment_end__gt=now)
+        return self.filter(
+            # null start dates are excluded by default
+            models.Q(enrollment_start__lte=now) & (
+                # null end dates are considered +Infinity
+                models.Q(enrollment_end__isnull=True) |
+                models.Q(enrollment_end__gt=now)
+            )
+        )
 
 
 class CourseRun(models.Model):
