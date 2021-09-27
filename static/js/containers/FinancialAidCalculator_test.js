@@ -54,7 +54,7 @@ import { DASHBOARD_SUCCESS_ACTIONS } from "./test_util"
 import { actions } from "../lib/redux_rest"
 
 describe("FinancialAidCalculator", function() {
-  this.timeout(10000)
+  this.timeout(15000)
 
   let listenForActions, renderComponent, helper
   const financialAidDashboard = _.cloneDeep(DASHBOARD_RESPONSE)
