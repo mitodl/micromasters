@@ -91,7 +91,7 @@ class DashboardTest(MockedESTestCase, APITestCase):
         }
 
     @ddt.data(Instructor, Staff)
-    @patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+    @patch('dashboard.api.update_cache_for_backend')
     def test_edx_is_not_refreshed_if_not_own_dashboard(self, role, update_mock):
         """
         If the dashboard being queried is not the user's own dashboard
@@ -104,8 +104,17 @@ class DashboardTest(MockedESTestCase, APITestCase):
             program=self.program_1,
             role=role.ROLE_ID,
         )
-        self.client.get(self.url)
-        assert update_mock.call_count == 0
+        result = self.client.get(self.url)
+        assert result.status_code == 200
+        assert 'programs' in result.data
+        assert 'is_edx_data_fresh' in result.data
+        assert result.data['is_edx_data_fresh'] is True
+        assert len(result.data['programs']) == 2
+        assert {self.program_1.id, self.program_2.id} == {
+            res_item['id'] for res_item in result.data['programs']
+        }
+
+        update_mock.assert_not_called()
 
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
     @patch('backends.utils.refresh_user_token', autospec=True)

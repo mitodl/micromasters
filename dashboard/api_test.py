@@ -1530,6 +1530,7 @@ class InfoCourseTest(CourseTests):
         self.mmtrack.get_course_proctorate_exam_results.assert_called_once_with(self.course_noruns)
 
 
+@ddt.ddt
 class UserProgramInfoIntegrationTest(MockedESTestCase):
     """Integration tests for get_user_program_info"""
     @classmethod
@@ -1550,13 +1551,14 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         self.expected_programs = [self.program_non_fin_aid, self.program_fin_aid]
         self.edx_client = MagicMock()
 
+    @ddt.data([[True], [False]])
     @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
-    def test_format(self, mock_cache_refresh, mock_refresh_token):
+    def test_format(self, update_cache, mock_cache_refresh, mock_refresh_token):
         """Test that get_user_program_info fetches edx data and returns a list of Program data"""
         result = api.get_user_program_info(self.user)
-        assert mock_refresh_token.call_count == 1
-        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.EDX_SUPPORTED_CACHES)
+        assert mock_refresh_token.call_count == (1 if update_cache else 0)
+        assert mock_cache_refresh.call_count == (len(CachedEdxDataApi.EDX_SUPPORTED_CACHES) if update_cache else 0)
 
         assert isinstance(result, dict)
         assert 'is_edx_data_fresh' in result

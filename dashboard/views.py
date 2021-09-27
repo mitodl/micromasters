@@ -51,9 +51,12 @@ class UserDashboard(APIView):
             username=username,
         )
 
+        # if the requesting user is the same as the user whose dashboard we're loading, update the cache
+        update_cache = user == request.user
+
         # get the credentials for the current user for edX
         try:
-            program_dashboard = get_user_program_info(user)
+            program_dashboard = get_user_program_info(user, update_cache=update_cache)
         except utils.InvalidCredentialStored as exc:
             log.exception('Access token for user %s is fresh but invalid; forcing login.', user.username)
             return Response(

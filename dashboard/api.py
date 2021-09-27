@@ -133,18 +133,20 @@ class CourseRunUserStatus:
         )
 
 
-def get_user_program_info(user):
+def get_user_program_info(user, *, update_cache=True):
     """
     Provides a detailed serialization all of a User's enrolled Programs with enrollment/grade info
 
     Args:
         user (User): A User
+        update_cache (bool): if True, update the cache for the backends
 
     Returns:
         list: Enrolled Program information
     """
-    update_cache_for_backend(user, BACKEND_EDX_ORG)
-    update_cache_for_backend(user, BACKEND_MITX_ONLINE)
+    if update_cache:
+        update_cache_for_backend(user, BACKEND_EDX_ORG)
+        update_cache_for_backend(user, BACKEND_MITX_ONLINE)
     response_data = {
         "programs": [],
         "is_edx_data_fresh": CachedEdxDataApi.are_all_caches_fresh(user)
