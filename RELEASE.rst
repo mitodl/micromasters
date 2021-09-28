@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.206.0
+Version 0.206.0 (Released September 28, 2021)
 ---------------
 
 - Only prompt for login for enrollable runs (#5051)
