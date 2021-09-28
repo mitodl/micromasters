@@ -1,6 +1,18 @@
 Release Notes
 =============
 
+Version 0.206.0 (Released September 28, 2021)
+---------------
+
+- Only prompt for login for enrollable runs (#5051)
+- fix: all DEDP courseware will be on mitxonline (#5055)
+- Bump pillow from 8.2.0 to 8.3.2 (#5036)
+- Add Course backend filter in course run admin list (#5052)
+- update employment form design city field fix (#5053)
+- Bump wagtail from 2.12.4 to 2.12.5 (#4980)
+- V2 of login prompts for mitx online/edx
+- fix degree and employment form fields (#5034)
+
 Version 0.205.0 (Released September 15, 2021)
 ---------------
 
