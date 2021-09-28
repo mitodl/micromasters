@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.207.0
+---------------
+
+- CourseRun.objects.enrollable() support null dates (#5059)
+- Update username regex in API urls (#5056)
+
 Version 0.206.0 (Released September 28, 2021)
 ---------------
 
