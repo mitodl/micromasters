@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.207.0
+Version 0.207.0 (Released September 28, 2021)
 ---------------
 
 - CourseRun.objects.enrollable() support null dates (#5059)
