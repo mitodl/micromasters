@@ -189,7 +189,6 @@ class Course(models.Model):
         )
 
 
-
 class CourseRunQuerySet(models.QuerySet):
     """
     Custom QuerySet for CourseRuns
@@ -207,13 +206,21 @@ class CourseRunQuerySet(models.QuerySet):
         )
 
 
+class CourseRunManager(models.Manager):
+    """Custom course run manager"""
+    def get_queryset(self):
+        """By default, filter out discontinued course runs"""
+        return super().get_queryset().filter(is_discontinued=False)
+
+
 class CourseRun(models.Model):
     """
     An individual run of a course within a Program, e.g. "Supply Chain 101
     - Summer 2017". This is different than the logical notion of a course, but
       rather a specific instance of that course being taught.
     """
-    objects = CourseRunQuerySet.as_manager()
+    objects = CourseRunManager.from_queryset(CourseRunQuerySet)()
+    all_objects = CourseRunQuerySet.as_manager()
 
     title = models.CharField(max_length=255)
     edx_course_key = models.CharField(max_length=255, blank=True, null=True, unique=True)
@@ -240,9 +247,20 @@ class CourseRun(models.Model):
         choices=[(backend, backend) for backend in COURSEWARE_BACKENDS],
         default=BACKEND_EDX_ORG
     )
+    is_discontinued = models.BooleanField(
+        default=False,
+        help_text=(
+            "Setting this to true will discontinue the course run, "
+            "which will cause it to no longer be actionable."
+        )
+    )
 
     class Meta:
         ordering = ('start_date', )
+        indexes = (
+            models.Index(fields=("id", "is_discontinued")),
+            models.Index(fields=("course", "is_discontinued")),
+        )
 
     def __str__(self):
         return self.title

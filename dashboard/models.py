@@ -12,6 +12,7 @@ from django.db.models import (
     Model,
     OneToOneField,
     CharField,
+    Manager,
 )
 from edx_api.certificates import (
     Certificate,
@@ -28,10 +29,18 @@ from mail.models import PartnerSchool
 from micromasters.models import TimestampedModel
 
 
+class CachedEdxInfoModelManager(Manager):
+    """Custom model manager"""
+    def get_queryset(self):
+        """Filter out records associated with discontinued runs"""
+        return super().get_queryset().exclude(course_run__is_discontinued=True)
+
 class CachedEdxInfoModel(Model):
     """
     Base class to define other cached models
     """
+    objects = CachedEdxInfoModelManager()
+
     user = ForeignKey(User, on_delete=CASCADE)
     course_run = ForeignKey(CourseRun, on_delete=CASCADE)
     data = JSONField()
