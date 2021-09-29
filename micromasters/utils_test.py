@@ -170,6 +170,7 @@ class SerializerTests(MockedESTestCase):
             'title': course_run.title,
             'upgrade_deadline': format_as_iso8601(course_run.upgrade_deadline),
             'courseware_backend': 'edxorg',
+            'is_discontinued': course_run.is_discontinued,
         }
 
 
