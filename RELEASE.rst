@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.208.0
+Version 0.208.0 (Released September 30, 2021)
 ---------------
 
 - Add support for discontinued runs (#5064)
