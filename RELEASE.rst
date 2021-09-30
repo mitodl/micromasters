@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.208.0
+---------------
+
+- Add support for discontinued runs (#5064)
+- Don't refresh learner dashboards for staff (#5061)
+
 Version 0.207.0 (Released September 28, 2021)
 ---------------
 
