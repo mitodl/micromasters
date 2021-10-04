@@ -1,5 +1,6 @@
 """Views for courses"""
 from django.db import transaction
+from django.db.models import Prefetch
 from rest_framework import (
     viewsets,
     mixins,
@@ -125,12 +126,16 @@ class ProgramEnrollmentListView(CreateAPIView):
 class CourseRunViewSet(viewsets.ReadOnlyModelViewSet):
     """API for the CourseRun model"""
     serializer_class = CourseRunSerializer
-    queryset = CourseRun.objects.all()
+    queryset = CourseRun.objects.not_discontinued()
 
 
 class CatalogViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """API for program/course catalog list"""
     serializer_class = CatalogProgramSerializer
     queryset = Program.objects.filter(live=True).prefetch_related(
-        "course_set__courserun_set", "programpage__thumbnail_image"
+        Prefetch(
+            "course_set__courserun_set",
+            queryset=CourseRun.objects.not_discontinued(),
+        ),
+        "programpage__thumbnail_image"
     )

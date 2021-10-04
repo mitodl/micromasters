@@ -70,7 +70,7 @@ class MMTrack:
         with transaction.atomic():
             # Maps a CourseRun's edx_course_key to its parent Course id
             self.edx_key_course_map = dict(
-                CourseRun.objects.filter(course__program=program).exclude(
+                CourseRun.objects.not_discontinued().filter(course__program=program).exclude(
                     Q(edx_course_key__isnull=True) | Q(edx_course_key__exact='')
                 ).values_list("edx_course_key", "course__id")
             )
@@ -78,7 +78,7 @@ class MMTrack:
 
             if self.financial_aid_available:
                 # edx course keys for courses with no exam
-                self.edx_course_keys_no_exam = set(CourseRun.objects.filter(
+                self.edx_course_keys_no_exam = set(CourseRun.objects.not_discontinued().filter(
                     course__program=program, course__exam_runs__isnull=True
                 ).values_list("edx_course_key", flat=True))
 
@@ -397,7 +397,7 @@ class MMTrack:
             if course_id in final_grades or self.enrollments.is_enrolled_in(course_id):
                 enrolled_course_ids.append(course_id)
 
-        return list(CourseRun.objects.filter(edx_course_key__in=enrolled_course_ids).select_related('course'))
+        return list(CourseRun.objects.not_discontinued().filter(edx_course_key__in=enrolled_course_ids).select_related('course'))
 
     def calculate_final_grade_average(self):
         """

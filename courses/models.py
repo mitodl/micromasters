@@ -105,7 +105,7 @@ class Course(models.Model):
         Get a run that does not have start_date,
         only fuzzy_start_date
         """
-        return self.courserun_set.filter(
+        return self.courserun_set.not_discontinued().filter(
             models.Q(start_date=None) & models.Q(fuzzy_start_date__isnull=False)
         ).first()
 
@@ -175,7 +175,7 @@ class Course(models.Model):
         """
         Return true if has any frozen runs
         """
-        return any([run.has_frozen_grades for run in self.courserun_set.all()])
+        return any([run.has_frozen_grades for run in self.courserun_set.not_discontinued()])
 
     def first_unexpired_run(self):
         """
@@ -184,7 +184,7 @@ class Course(models.Model):
         Returns: CourseRun or None: An unexpired course run
         """
         return first_matching_item(
-            self.courserun_set.all(),
+            self.courserun_set.not_discontinued(),
             lambda course_run: course_run.is_unexpired
         )
 
@@ -203,14 +203,11 @@ class CourseRunQuerySet(models.QuerySet):
                 models.Q(enrollment_end__isnull=True) |
                 models.Q(enrollment_end__gt=now)
             )
-        )
+        ).not_discontinued()
 
-
-class CourseRunManager(models.Manager):
-    """Custom course run manager"""
-    def get_queryset(self):
-        """By default, filter out discontinued course runs"""
-        return super().get_queryset().filter(is_discontinued=False)
+    def not_discontinued(self):
+        """Returns a new query that returns runs that aren't discontinued"""
+        return self.filter(is_discontinued=False)
 
 
 class CourseRun(models.Model):
@@ -219,8 +216,7 @@ class CourseRun(models.Model):
     - Summer 2017". This is different than the logical notion of a course, but
       rather a specific instance of that course being taught.
     """
-    objects = CourseRunManager.from_queryset(CourseRunQuerySet)()
-    all_objects = CourseRunQuerySet.as_manager()
+    objects = CourseRunQuerySet.as_manager()
 
     title = models.CharField(max_length=255)
     edx_course_key = models.CharField(max_length=255, blank=True, null=True, unique=True)

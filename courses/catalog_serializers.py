@@ -97,7 +97,7 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         if not course:
             return None
         first_unexpired = first_matching_item(
-            course.courserun_set.all().order_by("start_date"), lambda run: run.is_unexpired
+            course.courserun_set.not_discontinued().order_by("start_date"), lambda run: run.is_unexpired
         )
         return first_unexpired.start_date if first_unexpired else None
 
@@ -107,7 +107,7 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         if not course:
             return None
         last_unexpired = first_matching_item(
-            course.courserun_set.all().order_by("-start_date"), lambda run: run.is_unexpired
+            course.courserun_set.not_discontinued().order_by("-start_date"), lambda run: run.is_unexpired
         )
         return last_unexpired.end_date if last_unexpired else None
 
@@ -117,7 +117,7 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         if not course:
             return None
         first_unexpired = first_matching_item(
-            course.courserun_set.all().order_by("start_date"), lambda run: run.is_unexpired
+            course.courserun_set.not_discontinued().order_by("start_date"), lambda run: run.is_unexpired
         )
         return first_unexpired.enrollment_start if first_unexpired else None
 

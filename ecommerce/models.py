@@ -244,9 +244,9 @@ class Coupon(TimestampedModel, AuditableModel):
         """Get the course keys which the coupon can be redeemed with"""
         obj = self.content_object
         if isinstance(obj, Program):
-            return CourseRun.objects.filter(course__program=obj).values_list('edx_course_key', flat=True)
+            return CourseRun.objects.not_discontinued().filter(course__program=obj).values_list('edx_course_key', flat=True)
         elif isinstance(obj, Course):
-            return CourseRun.objects.filter(course=obj).values_list('edx_course_key', flat=True)
+            return CourseRun.objects.not_discontinued().filter(course=obj).values_list('edx_course_key', flat=True)
         else:
             # Should probably not get here, clean() should take care of validating this
             raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
