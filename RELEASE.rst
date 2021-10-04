@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.209.0
+Version 0.209.0 (Released October 04, 2021)
 ---------------
 
 - Home page - text tweak to refer to MITx Online (#5072)
