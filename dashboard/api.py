@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import transaction
+from django.db.models import Prefetch
 from django.urls import reverse
 from django_redis import get_redis_connection
 from edx_api.client import EdxApi
@@ -152,7 +153,12 @@ def get_user_program_info(user, *, update_cache=True):
         "is_edx_data_fresh": CachedEdxDataApi.are_all_caches_fresh(user)
     }
     all_programs = (
-        Program.objects.filter(live=True, programenrollment__user=user).prefetch_related('course_set__courserun_set')
+        Program.objects.filter(live=True, programenrollment__user=user).prefetch_related(
+            Prefetch(
+                'course_set__courserun_set',
+                queryset=CourseRun.objects.not_discontinued()
+            )
+        )
     )
     for program in all_programs:
         mmtrack_info = get_mmtrack(user, program)
@@ -256,11 +262,12 @@ def get_info_for_course(course, mmtrack):
             course_data['runs'].append(formatted_run)
 
     with transaction.atomic():
-        if not course.courserun_set.count():
+        runs_qs = course.courserun_set.not_discontinued()
+        if not runs_qs.count():
             return course_data
         # get all the run statuses
         run_statuses = [get_status_for_courserun(course_run, mmtrack)
-                        for course_run in course.courserun_set.all()]
+                        for course_run in runs_qs]
     # sort them by end date
     run_statuses.sort(key=lambda x: x.course_run.end_date or
                       datetime.datetime(datetime.MAXYEAR, 1, 1, tzinfo=pytz.utc), reverse=True)
@@ -580,8 +587,11 @@ def get_exam_date_next_semester(course):
     Returns:
         str: a string representation exam start date, example: Apr 5, 2021
     """
-    current_course_run = (CourseRun.objects.filter(start_date__lte=now_in_utc(), course=course)
-                          .order_by('-start_date').first())
+    current_course_run = (
+        CourseRun.objects.not_discontinued()
+        .filter(start_date__lte=now_in_utc(), course=course)
+        .order_by('-start_date').first()
+    )
     three_months = datetime.timedelta(weeks=12)
     if current_course_run is None or current_course_run.upgrade_deadline is None:
         next_date = now_in_utc() + three_months

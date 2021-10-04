@@ -20,20 +20,6 @@ class CourseRunInline(admin.StackedInline):
     extra = 1
     show_change_link = True
 
-    def get_queryset(self, request):
-        """
-        Return a QuerySet of all model instances that can be edited by the
-        admin site. This is used by changelist_view.
-        """
-        # NOTE: this is a copy/paste of the django source code with the following change:
-        #       self.model._default_manager -> self.model.all_objects
-        #       this is to support showing all records regardless of the is_discontinued value
-        qs = self.model.all_objects.get_queryset()
-        ordering = self.get_ordering(request)
-        if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
-
 
 class ProgramAdmin(admin.ModelAdmin):
     """ModelAdmin for Programs"""
@@ -63,20 +49,6 @@ class CourseRunAdmin(admin.ModelAdmin):
                      'freeze_grade_date', )
     search_fields = ('edx_course_key',)
     ordering = ('course__title', 'course__program__title', 'course__position_in_program', )
-
-    def get_queryset(self, request):
-        """
-        Return a QuerySet of all model instances that can be edited by the
-        admin site. This is used by changelist_view.
-        """
-        # NOTE: this is a copy/paste of the django source code with the following change:
-        #       self.model._default_manager -> self.model.all_objects
-        #       this is to support showing all records regardless of the is_discontinued value
-        qs = self.model.all_objects.get_queryset()
-        ordering = self.get_ordering(request)
-        if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
 
     def program(self, run):
         """method to show program for list display."""
