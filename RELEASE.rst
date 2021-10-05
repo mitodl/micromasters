@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.209.1
+---------------
+
+- Remove implicit filtering of course runs (#5074)
+- removed contidional and changed text to learn more
+
 Version 0.209.0 (Released October 04, 2021)
 ---------------
 
