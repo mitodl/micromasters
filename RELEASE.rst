@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.209.1
+---------------
+
+- removed contidional and changed text to learn more
+
 Version 0.209.0 (Released October 04, 2021)
 ---------------
 
