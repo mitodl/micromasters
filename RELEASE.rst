@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.209.2
+---------------
+
+- Fix broken link on login page (#5083)
+
 Version 0.209.1 (Released October 05, 2021)
 ---------------
 
