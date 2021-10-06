@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.209.3
+---------------
+
+- Remove implicit filter on cached models
+
 Version 0.209.2 (Released October 05, 2021)
 ---------------
 
