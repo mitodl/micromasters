@@ -15,3 +15,11 @@ export const formatMonthDate = (date: ?string): string => {
     return ""
   }
 }
+
+export const emptyOrNil = R.either(R.isEmpty, R.isNil)
+
+export const parseDateString = (dateString: ?string): ?Moment =>
+  emptyOrNil(dateString) ? undefined : moment(dateString)
+
+export const formatPrettyDateTimeAmPm = (momentDate: Moment) =>
+  momentDate.format("LLL")

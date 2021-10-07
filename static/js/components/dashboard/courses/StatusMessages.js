@@ -44,6 +44,7 @@ import {
   hasFailingExamGrade,
   hasPassedCourseRun
 } from "../../../lib/grades"
+import { formatPrettyDateTimeAmPm, parseDateString } from "../../../util/date"
 
 type Message = {
   message: string | React$Element<*>,
@@ -79,7 +80,7 @@ type CalculateMessagesProps = {
 
 const courseStartMessage = (run: CourseRun) => {
   const startDate = notNilorEmpty(run.course_start_date)
-    ? formatDate(run.course_start_date)
+    ? formatPrettyDateTimeAmPm(parseDateString(run.course_start_date))
     : run.fuzzy_start_date
   if (startDate) {
     if (moment(run.course_start_date).isBefore(moment(), "day")) {
