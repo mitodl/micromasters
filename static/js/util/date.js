@@ -22,5 +22,6 @@ export const emptyOrNil = R.either(R.isEmpty, R.isNil)
 export const parseDateString = (dateString: ?string): ?Moment =>
   emptyOrNil(dateString) ? undefined : moment(dateString)
 
-export const formatPrettyDateTimeAmPm = (momentDate: Moment) =>
+export const formatPrettyDateTimeAmPm = (momentDate: ?Moment) =>
+  // $FlowFixMe
   momentDate.format("LLL")
