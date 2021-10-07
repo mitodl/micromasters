@@ -82,11 +82,15 @@ const courseStartMessage = (run: CourseRun) => {
   const startDate = notNilorEmpty(run.course_start_date)
     ? formatPrettyDateTimeAmPm(parseDateString(run.course_start_date))
     : run.fuzzy_start_date
+
+  const endDate = notNilorEmpty(run.course_end_date)
+    ? formatPrettyDateTimeAmPm(parseDateString(run.course_end_date))
+    : ""
   if (startDate) {
     if (moment(run.course_start_date).isBefore(moment(), "day")) {
-      return `Course started on ${startDate}.`
+      return `Course started on ${startDate} - ${endDate}.`
     }
-    return `Next course starts ${startDate}.`
+    return `Next course starts ${startDate} - ${endDate}.`
   }
   return ""
 }

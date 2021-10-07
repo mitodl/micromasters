@@ -1,6 +1,7 @@
 // @flow
 import R from "ramda"
 import moment from "moment"
+import type Moment from "moment"
 
 import { DASHBOARD_MONTH_FORMAT } from "../constants"
 
