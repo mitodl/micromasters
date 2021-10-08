@@ -18,7 +18,7 @@ import {
   DASHBOARD_FORMAT
 } from "../../../constants"
 import type { GradeType } from "../../../containers/DashboardPage"
-import { EDX_GRADE } from "../../../containers/DashboardPage"
+import { COURSE_GRADE } from "../../../containers/DashboardPage"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
 
@@ -145,7 +145,7 @@ const renderExamRows = R.compose(
 
 const dialogTitle = (course: Course, gradeType: GradeType): string =>
   `${course.title} - ${
-    gradeType === EDX_GRADE ? "Completed edX Course Runs" : "Completed Exams"
+    gradeType === COURSE_GRADE ? "Completed Course Runs" : "Completed Exams"
   }`
 
 type GradeDetailPopupProps = {
@@ -173,7 +173,7 @@ const GradeDetailPopup = (props: GradeDetailPopupProps) => {
         {dialogTitle(course, gradeType)}
       </DialogTitle>
       <DialogContent>
-        {gradeType === EDX_GRADE
+        {gradeType === COURSE_GRADE
           ? renderRunRows(course.runs)
           : renderExamRows(course.proctorate_exams_grades)}
         <div className="explanation">

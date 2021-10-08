@@ -11,7 +11,7 @@ import {
   makeProctoredExamResult
 } from "../../../factories/dashboard"
 import { STATUS_PASSED, STATUS_OFFERED } from "../../../constants"
-import { EXAM_GRADE, EDX_GRADE } from "../../../containers/DashboardPage"
+import { EXAM_GRADE, COURSE_GRADE } from "../../../containers/DashboardPage"
 
 describe("Course Grades", () => {
   let course, setShowGradeDetailDialogStub
@@ -38,11 +38,11 @@ describe("Course Grades", () => {
     })
   })
 
-  it("should display the highest edX grade", () => {
+  it("should display the highest course grade", () => {
     course.runs[0].final_grade = 23
     course.runs[1].final_grade = 82
     const grades = renderGrades()
-    assert.equal(grades.find(".ed-x-grade .number").text(), "82%")
+    assert.equal(grades.find(".course-grade .number").text(), "82%")
   })
 
   it("should display the highest exam grade", () => {
@@ -68,7 +68,7 @@ describe("Course Grades", () => {
     )
   })
 
-  it("should only display the edX grade if has_exam == false", () => {
+  it("should only display the course grade if has_exam == false", () => {
     [[true, 3], [false, 1]].forEach(([hasExam, expectedGradeCount]) => {
       course.has_exam = hasExam
       const grades = renderGrades()
@@ -126,7 +126,7 @@ describe("Course Grades", () => {
       .first()
       .simulate("click")
     assert.ok(
-      setShowGradeDetailDialogStub.calledWith(true, EDX_GRADE, course.title)
+      setShowGradeDetailDialogStub.calledWith(true, COURSE_GRADE, course.title)
     )
     grades
       .find(".open-popup")

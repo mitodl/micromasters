@@ -69,7 +69,7 @@ import {
 import Grades, {
   gradeDetailPopupKey
 } from "../components/dashboard/courses/Grades"
-import { EDX_GRADE } from "./DashboardPage"
+import { COURSE_GRADE } from "./DashboardPage"
 
 describe("LearnerPage", function() {
   this.timeout(10000)
@@ -1253,7 +1253,7 @@ describe("LearnerPage", function() {
             .simulate("click")
           const state = helper.store.getState().ui
           const key = gradeDetailPopupKey(
-            EDX_GRADE,
+            COURSE_GRADE,
             DASHBOARD_RESPONSE.programs[0].courses[0].title
           )
           assert.isTrue(state.dialogVisibility[key])
@@ -1265,7 +1265,7 @@ describe("LearnerPage", function() {
       const username = SETTINGS.user.username
       SETTINGS.roles.push({ role: "staff", permissions: [] })
       const key = gradeDetailPopupKey(
-        EDX_GRADE,
+        COURSE_GRADE,
         DASHBOARD_RESPONSE.programs[0].courses[0].title
       )
       helper.store.dispatch(showDialog(key))

@@ -17,7 +17,7 @@ import {
   makeRunFailed,
   makeRunEnrolled
 } from "./test_util"
-import { EXAM_GRADE, EDX_GRADE } from "../../../containers/DashboardPage"
+import { EXAM_GRADE, COURSE_GRADE } from "../../../containers/DashboardPage"
 import { formatGrade } from "../util"
 
 describe("GradeDetailPopup", () => {
@@ -38,7 +38,7 @@ describe("GradeDetailPopup", () => {
     shallow(
       <GradeDetailPopup
         course={course}
-        gradeType={EDX_GRADE}
+        gradeType={COURSE_GRADE}
         setShowGradeDetailDialog={setShowGradeDetailDialogStub}
         dialogVisibility={false}
         {...props}
@@ -124,7 +124,7 @@ describe("GradeDetailPopup", () => {
     )
   })
 
-  it("highlights the best edx grade", () => {
+  it("highlights the best course grade", () => {
     course.runs[0].final_grade = 22
     course.runs[1].final_grade = 82
     const wrapper = renderDetailPopup()
@@ -152,12 +152,9 @@ describe("GradeDetailPopup", () => {
     )
   })
 
-  it("should show an appropriate title for the edx grades", () => {
-    const wrapper = renderDetailPopup({ gradeType: EDX_GRADE })
-    assert.include(
-      wrapper.find(DialogTitle).text(),
-      "Completed edX Course Runs"
-    )
+  it("should show an appropriate title for the course grades", () => {
+    const wrapper = renderDetailPopup({ gradeType: COURSE_GRADE })
+    assert.include(wrapper.find(DialogTitle).text(), "Completed Course Runs")
   })
 
   it("should show an appropriate title for the exam grades", () => {
