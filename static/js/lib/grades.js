@@ -29,8 +29,8 @@ export const getLargestExamGrade = R.compose(
   getm("proctorate_exams_grades")
 )
 
-// getLargestEdXGrade :: Course -> Maybe Number
-export const getLargestEdXGrade = R.compose(
+// getLargestCourseGrade :: Course -> Maybe Number
+export const getLargestCourseGrade = R.compose(
   S.map(findLargestGrade("final_grade")),
   filterEmpty,
   S.map(S.filter(R.has("final_grade"))),

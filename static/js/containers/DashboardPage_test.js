@@ -106,7 +106,7 @@ import { makeRunEnrolled } from "../components/dashboard/courses/test_util"
 import Grades, {
   gradeDetailPopupKey
 } from "../components/dashboard/courses/Grades"
-import { EDX_GRADE } from "./DashboardPage"
+import { COURSE_GRADE } from "./DashboardPage"
 import DiscussionCard from "../components/DiscussionCard"
 import { makeFrontPageList } from "../factories/posts"
 import * as api from "../lib/api"
@@ -312,7 +312,7 @@ describe("DashboardPage", function() {
           .simulate("click")
         const state = helper.store.getState().ui
         const key = gradeDetailPopupKey(
-          EDX_GRADE,
+          COURSE_GRADE,
           DASHBOARD_RESPONSE.programs[0].courses[0].title
         )
         assert.isTrue(state.dialogVisibility[key])
@@ -322,7 +322,7 @@ describe("DashboardPage", function() {
 
   it("should close the <Grades /> dialog if you click outside", () => {
     const key = gradeDetailPopupKey(
-      EDX_GRADE,
+      COURSE_GRADE,
       DASHBOARD_RESPONSE.programs[0].courses[0].title
     )
 

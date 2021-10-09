@@ -4,7 +4,7 @@ import { assert } from "chai"
 import { makeCourse, makeProctoredExamResult } from "../factories/dashboard"
 import {
   getLargestExamGrade,
-  getLargestEdXGrade,
+  getLargestCourseGrade,
   hasPassingExamGrade,
   hasFailingExamGrade,
   hasPassedCourseRun,
@@ -44,15 +44,15 @@ describe("Grades library", () => {
     })
   })
 
-  describe("getLargestEdXGrade", () => {
-    it("returns Nothing if no edx grade", () => {
-      assertIsNothing(getLargestEdXGrade(course))
+  describe("getLargestCourseGrade", () => {
+    it("returns Nothing if no course grade", () => {
+      assertIsNothing(getLargestCourseGrade(course))
     })
 
-    it("returns Just the largest edx grade, if present", () => {
+    it("returns Just the largest course grade, if present", () => {
       course.runs[0].final_grade = 39
       course.runs[1].final_grade = 92
-      assertIsJust(getLargestEdXGrade(course), 92)
+      assertIsJust(getLargestCourseGrade(course), 92)
     })
   })
 

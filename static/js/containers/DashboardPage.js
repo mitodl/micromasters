@@ -128,8 +128,8 @@ import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])
 
-export type GradeType = "EDX_GRADE" | "EXAM_GRADE"
-export const EDX_GRADE: GradeType = "EDX_GRADE"
+export type GradeType = "COURSE_GRADE" | "EXAM_GRADE"
+export const COURSE_GRADE: GradeType = "COURSE_GRADE"
 export const EXAM_GRADE: GradeType = "EXAM_GRADE"
 
 class DashboardPage extends React.Component {

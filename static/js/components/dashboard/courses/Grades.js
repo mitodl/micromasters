@@ -9,7 +9,7 @@ import { S, reduceM, getm } from "../../../lib/sanctuary"
 import { classify } from "../../../util/util"
 import {
   getLargestExamGrade,
-  getLargestEdXGrade,
+  getLargestCourseGrade,
   passedCourse
 } from "../../../lib/grades"
 import { hasPearsonExam } from "./util"
@@ -17,7 +17,7 @@ import GradeDetailPopup from "./GradeDetailPopup"
 import type { DialogVisibilityState } from "../../../reducers/ui"
 import { GRADE_DETAIL_DIALOG } from "../../../constants"
 import type { GradeType } from "../../../containers/DashboardPage"
-import { EXAM_GRADE, EDX_GRADE } from "../../../containers/DashboardPage"
+import { EXAM_GRADE, COURSE_GRADE } from "../../../containers/DashboardPage"
 
 export const gradeDetailPopupKey = (
   gradeType: GradeType,
@@ -45,10 +45,10 @@ const renderExamGrade = R.ifElse(
   R.always(null)
 )
 
-const renderEdXGrade = R.compose(
-  reduceM("--", renderGrade("edX Grade")),
+const renderCourseGrade = R.compose(
+  reduceM("--", renderGrade("Course Grade")),
   S.map(formatGrade),
-  getLargestEdXGrade
+  getLargestCourseGrade
 )
 
 const renderFinalGrade = R.ifElse(
@@ -92,10 +92,10 @@ const Grades = (props: CourseGradeProps) => {
         course={course}
         setShowGradeDetailDialog={setShowGradeDetailDialog}
         dialogVisibility={
-          dialogVisibility[gradeDetailPopupKey(EDX_GRADE, course.title)] ===
+          dialogVisibility[gradeDetailPopupKey(COURSE_GRADE, course.title)] ===
           true
         }
-        gradeType={EDX_GRADE}
+        gradeType={COURSE_GRADE}
       />
       <GradeDetailPopup
         course={course}
@@ -110,10 +110,10 @@ const Grades = (props: CourseGradeProps) => {
         <div
           className="open-popup"
           onClick={() =>
-            setShowGradeDetailDialog(true, EDX_GRADE, course.title)
+            setShowGradeDetailDialog(true, COURSE_GRADE, course.title)
           }
         >
-          {renderEdXGrade(course)}
+          {renderCourseGrade(course)}
         </div>
         <div
           className="open-popup"
