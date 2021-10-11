@@ -849,7 +849,7 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "You did not pass the edX course, but you can re-enroll." +
+            "You did not pass the course, but you can re-enroll." +
             ` Next course starts ${date}. Enrollment started ${enrollmentDate}.`,
           action: "course action was called"
         }
@@ -883,7 +883,7 @@ describe("Course Status Messages", () => {
         )
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: `You did not pass the edX course, but you can re-enroll. Next course starts ${date}.${
+            message: `You did not pass the course, but you can re-enroll. Next course starts ${date}.${
               nextEnrollmentStart[1]
             }`,
             action: "course action was called"
@@ -904,7 +904,7 @@ describe("Course Status Messages", () => {
       makeRunFailed(course.runs[0])
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: "You did not pass the edX course."
+          message: "You did not pass the course."
         }
       ])
     })
