@@ -24,4 +24,4 @@ export const parseDateString = (dateString: ?string): ?Moment =>
 
 export const formatPrettyDateTimeAmPm = (momentDate: ?Moment) =>
   // $FlowFixMe
-  momentDate.format("LLL")
+  momentDate.tz("UTC").format("MMMM D, Y  [at] hA z")
