@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.210.0
+---------------
+
+- Update grade from edX Grade to Course Grade (#5092)
+
 Version 0.209.3 (Released October 06, 2021)
 ---------------
 
