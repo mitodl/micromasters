@@ -421,10 +421,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   if (hasFailedCourseRun(course) && !hasPassedCourseRun(course)) {
     return S.Just(
       S.maybe(
-        messages.concat({ message: "You did not pass the edX course." }),
+        messages.concat({ message: "You did not pass the course." }),
         run =>
           messages.concat({
-            message: `You did not pass the edX course, but you can re-enroll. ${courseStartMessage(
+            message: `You did not pass the course, but you can re-enroll. ${courseStartMessage(
               run
             )}${enrollmentDateMessage(run)}`,
             action: courseAction(run, COURSE_ACTION_REENROLL)
