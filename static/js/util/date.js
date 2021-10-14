@@ -22,6 +22,6 @@ export const emptyOrNil = R.either(R.isEmpty, R.isNil)
 export const parseDateString = (dateString: ?string): ?Moment =>
   emptyOrNil(dateString) ? undefined : moment(dateString)
 
-export const formatPrettyDateTimeAmPm = (momentDate: ?Moment) =>
+export const formatPrettyDateTimeAmPmTz = (monthDate: Moment) =>
   // $FlowFixMe
-  momentDate.tz("UTC").format("MMMM D, Y  [at] hA z")
+  monthDate.tz(moment.tz.guess()).format("LLL z")
