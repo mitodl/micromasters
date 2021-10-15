@@ -43,7 +43,6 @@ const renderApp = Component => {
   )
 }
 
-
 if (rootEl) {
   renderApp(DashboardRouter)
 }
