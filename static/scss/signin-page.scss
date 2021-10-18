@@ -2,6 +2,10 @@
   max-width: 500px !important;
   margin: 0 auto;
 
+  .messages {
+    margin-top: 2em;
+  }
+
   @include breakpoint(phone) {
     margin: 10px 16px;
   }
