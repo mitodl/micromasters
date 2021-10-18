@@ -4,9 +4,12 @@ Tests for the pipeline APIs
 from unittest import mock
 from urllib.parse import urljoin
 import ddt
+import pytest
+from social_core.exceptions import AuthFailed
 
 from backends import pipeline_api, edxorg
 from courses.factories import ProgramFactory
+from micromasters.factories import SocialUserFactory
 from profiles.api import get_social_username
 from profiles.models import Profile
 from profiles.factories import UserFactory
@@ -309,3 +312,44 @@ class EdxPipelineApiTest(MockedESTestCase):
         backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
         pipeline_api.update_profile_from_edx(backend, student, {}, False, **{'edx_profile': self.mocked_edx_profile})
         mock_strategy.session_set.assert_called_with('next', next_url)
+
+
+def test_limit_one_auth_per_backend_no_user():
+    """limit_one_auth_per_backend should not error if the user doesn't exist"""
+    assert pipeline_api.limit_one_auth_per_backend(backend=None, user=None, strategy=None, uid=None) == {}
+
+
+@pytest.mark.django_db
+def test_limit_one_auth_per_backend_conflicting_auth():
+    """limit_one_auth_per_backend should error if the user already has an auth for that backend"""
+    user = SocialUserFactory.create()
+    mock_strategy = mock.Mock()
+    mock_get_social_auth_for_user = mock_strategy.storage.user.get_social_auth_for_user
+    mock_get_social_auth_for_user.side_effect = lambda user, provider: user.social_auth.filter(provider=provider)
+    backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
+    assert user.social_auth.filter(provider=backend.name).count() == 1
+
+    with pytest.raises(AuthFailed):
+        pipeline_api.limit_one_auth_per_backend(backend=backend, user=user, strategy=mock_strategy, uid="non-matching")
+
+    mock_get_social_auth_for_user.assert_called_once_with(user, backend.name)
+
+@pytest.mark.django_db
+def test_limit_one_auth_per_backend_same_auth():
+    """limit_one_auth_per_backend shouldn't error if the user is authenticating with the same auth"""
+    user = SocialUserFactory.create()
+    mock_strategy = mock.Mock()
+    mock_get_social_auth_for_user = mock_strategy.storage.user.get_social_auth_for_user
+    mock_get_social_auth_for_user.side_effect = lambda user, provider: user.social_auth.filter(provider=provider)
+    backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
+    auths = user.social_auth.filter(provider=backend.name)
+    assert auths.count() == 1
+
+    assert pipeline_api.limit_one_auth_per_backend(
+        backend=backend,
+        user=user,
+        strategy=mock_strategy,
+        uid=auths.first().uid
+    ) == {}
+
+    mock_get_social_auth_for_user.assert_called_once_with(user, backend.name)

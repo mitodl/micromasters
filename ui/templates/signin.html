@@ -10,6 +10,17 @@
 {% include "header.html" %}
 
 <div class="main-content-wrapper">
+  {% if messages %}
+  <div class="messages alert alert-warning">
+      {% for message in messages %}
+      <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+          {{ message }}
+      </span>
+      {% endfor %}
+      <p>If you think there is a problem, please send an email to
+    	<a href="mailto:{{ support_email }}">{{ support_email }}</a></p>
+  </div>
+  {% endif %}
   <div class="auth-card">
   {% if program %}
     {% if program.has_mitxonline_courses %}

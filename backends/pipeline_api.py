@@ -6,7 +6,7 @@ import logging
 from django.shortcuts import redirect
 from django_redis import get_redis_connection
 from rolepermissions.checkers import has_role
-from social_core.exceptions import AuthException
+from social_core.exceptions import AuthException, AuthFailed
 
 from backends.base import BaseEdxOAuth2
 from backends.utils import update_email
@@ -147,3 +147,21 @@ def flush_redis_cache(*, user, **kwargs):  # pylint: disable=unused-argument
     user_key = FIELD_USER_ID_BASE_STR.format(user.id)
     con.hdel(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key)
     con.srem(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user.id)
+
+
+def limit_one_auth_per_backend(
+    *, backend, user, strategy, uid, **kwargs  # pylint: disable=unused-argument
+):
+    """Limit the user to one social auth account per backend"""
+    if not user:
+        return {}
+
+    user_storage = strategy.storage.user
+    social_auths = user_storage.get_social_auth_for_user(user, backend.name)
+
+    # if there's at least one social auth and any of them don't match the incoming uid
+    # we have or are trying to add mutltiple accounts
+    if social_auths and any(auth.uid != uid for auth in social_auths):
+        raise AuthFailed(backend.name, "Another edX account is already linked to your MicroMasters account.")
+
+    return {}
