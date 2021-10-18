@@ -1,6 +1,7 @@
 // @flow
 import R from "ramda"
 import moment from "moment"
+import type Moment from "moment"
 
 import { DASHBOARD_MONTH_FORMAT } from "../constants"
 
@@ -15,3 +16,12 @@ export const formatMonthDate = (date: ?string): string => {
     return ""
   }
 }
+
+export const emptyOrNil = R.either(R.isEmpty, R.isNil)
+
+export const parseDateString = (dateString: ?string): ?Moment =>
+  emptyOrNil(dateString) ? undefined : moment(dateString)
+
+export const formatPrettyDateTimeAmPmTz = (monthDate: ?Moment) =>
+  // $FlowFixMe
+  monthDate.tz(moment.tz.guess()).format("LLL z")

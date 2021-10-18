@@ -8,6 +8,7 @@ import { shallow } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
 import moment from "moment-timezone"
+import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
 
 import {
   formatAction,
@@ -840,8 +841,8 @@ describe("Course Status Messages", () => {
       course.runs[1].enrollment_start_date = moment()
         .subtract(10, "days")
         .toISOString()
-      const date = moment(course.runs[1].course_start_date).format(
-        DASHBOARD_FORMAT
+      const date = formatPrettyDateTimeAmPmTz(
+        parseDateString(course.runs[1].course_start_date)
       )
       const enrollmentDate = moment(
         course.runs[1].enrollment_start_date
@@ -878,8 +879,8 @@ describe("Course Status Messages", () => {
         makeRunFailed(course.runs[0])
         makeRunFuture(course.runs[1])
         course.runs[1].enrollment_start_date = nextEnrollmentStart[0]
-        const date = moment(course.runs[1].course_start_date).format(
-          DASHBOARD_FORMAT
+        const date = formatPrettyDateTimeAmPmTz(
+          parseDateString(course.runs[1].course_start_date)
         )
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
