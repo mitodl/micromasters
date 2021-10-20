@@ -86,6 +86,7 @@ class ReactView(View):
             "google_maps_api": False,
             "js_settings_json": json.dumps(js_settings),
             "ga_tracking_id": "",
+            "support_email": settings.EMAIL_SUPPORT,
         }
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument

@@ -299,6 +299,7 @@ class DashboardTests(ViewsTests):
             }
             assert resp.context['is_public'] is False
             assert resp.context['has_zendesk_widget'] is True
+            assert resp.context['support_email'] == email_support
             self.assertNotContains(resp, 'Share this page')
 
     def test_roles_setting(self):
