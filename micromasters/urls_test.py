@@ -13,7 +13,6 @@ class URLTests(TestCase):
         assert reverse('ui-404') == "/404/"
         assert reverse('ui-users', kwargs={'user': 'x'}) == "/learner/x"
         assert reverse('ui-users', kwargs={'user': 'x+y'}) == "/learner/x+y"
-        assert reverse('terms_of_service') == '/terms_of_service/'
         assert reverse('program-list') == '/api/v0/programs/'
         assert reverse('profile-detail', kwargs={'user': 'xyz'}) == '/api/v0/profiles/xyz/'
         assert reverse('profile-detail', kwargs={'user': 'abc+xyz'}) == '/api/v0/profiles/abc+xyz/'
