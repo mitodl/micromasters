@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.210.0
+Version 0.210.0 (Released October 21, 2021)
 ---------------
 
 - Fix support link not rendering on error message
