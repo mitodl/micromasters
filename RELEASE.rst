@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+Version 0.210.0
+---------------
+
+- Fix support link not rendering on error message
+- refactor: remove the usages of old terms of service and use CMS based page (#5103)
+- Allow at most 1 social auth per provider (#5094)
+- update course run date displays (#5090)
+- Dashboard: Update you did not pass message (#5095)
+- Update grade from edX Grade to Course Grade (#5092)
+
 Version 0.209.3 (Released October 06, 2021)
 ---------------
 
