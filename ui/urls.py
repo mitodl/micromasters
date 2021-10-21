@@ -14,13 +14,11 @@ from certificates.views import (
 from profiles.constants import USERNAME_RE_PARTIAL
 from ui.url_utils import (
     DASHBOARD_URLS,
-    TERMS_OF_SERVICE_URL,
 )
 from ui.views import (
     DashboardView,
     UsersView,
     SignInView,
-    terms_of_service,
     page_404,
     page_500,
     BackgroundImagesCSSView,
@@ -49,6 +47,5 @@ urlpatterns = [
         name='shared_grade_records'),
     url(r'^records/programs/(?P<enrollment_id>[\d]+)', GradeRecordView.as_view(),
         name='grade_records'),
-    url(r'^{}$'.format(TERMS_OF_SERVICE_URL.lstrip("/")), terms_of_service, name='terms_of_service'),
     url(r'^background-images\.css$', BackgroundImagesCSSView.as_view(), name='background-images-css'),
 ] + dashboard_urlpatterns

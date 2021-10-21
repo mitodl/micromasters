@@ -32,7 +32,7 @@ from micromasters.factories import UserSocialAuthFactory
 from profiles.factories import ProfileFactory, SocialProfileFactory
 from roles.models import Role
 from search.base import MockedESTestCase
-from ui.url_utils import DASHBOARD_URL, TERMS_OF_SERVICE_URL
+from ui.url_utils import DASHBOARD_URL
 
 
 class ViewsTests(MockedESTestCase):
@@ -860,32 +860,6 @@ class TestUsersPage(ViewsTests):
         resp = self.client.get(reverse('ui-users'))
         assert resp.status_code == 404
 
-
-class TestTermsOfService(ViewsTests):
-    """
-    tests for the ToS page
-    """
-
-    def test_tos_settings(self):
-        """
-        test the settings we pass to the ToS page
-        """
-        with patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
-            response = self.client.get(TERMS_OF_SERVICE_URL)
-        js_settings = json.loads(response.context['js_settings_json'])
-        assert response.context['is_public'] is True
-        assert response.context['has_zendesk_widget'] is True
-        self.assertContains(response, 'Share this page')
-        assert {'environment', 'release_version', 'sentry_dsn'}.issubset(set(js_settings.keys()))
-
-        bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
-        assert set(bundles) == {
-            'public',
-            'sentry_client',
-            'style',
-            'style_public',
-            'zendesk_widget',
-        }
 
 class TestSignIn(ViewsTests):
     """ Tests for the sign in page """

@@ -229,27 +229,6 @@ def standard_error_page(request, status_code, template_filename):
     return response
 
 
-def terms_of_service(request):
-    """
-    Handles the terms of service page
-    """
-    return render(
-        request,
-        "terms_of_service.html",
-        context={
-            "has_zendesk_widget": True,
-            "is_public": True,
-            "js_settings_json": json.dumps({
-                "release_version": settings.VERSION,
-                "environment": settings.ENVIRONMENT,
-                "sentry_dsn": settings.SENTRY_DSN,
-                "user": serialize_maybe_user(request.user),
-            }),
-            "ga_tracking_id": "",
-        }
-    )
-
-
 def page_404(request, *args, **kwargs):  # pylint: disable=unused-argument
     """
     Overridden handler for the 404 error pages.
