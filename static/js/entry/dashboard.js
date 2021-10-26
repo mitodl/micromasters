@@ -43,7 +43,9 @@ const renderApp = Component => {
   )
 }
 
-renderApp(DashboardRouter)
+if (rootEl) {
+  renderApp(DashboardRouter)
+}
 
 if (module.hot) {
   module.hot.accept("../DashboardRouter", () => {
