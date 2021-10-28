@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.210.1
+Version 0.210.1 (Released October 28, 2021)
 ---------------
 
 - Added possible fix for target container is not a DOM element (#5098)
