@@ -78,13 +78,14 @@ export default class CourseAction extends React.Component {
   handleEnrollButtonClick(run: CourseRun): void {
     const {
       coupon,
+      courseRun,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility
     } = this.props
 
     setEnrollSelectedCourseRun(run)
 
-    if (coupon && isFreeCoupon(coupon)) {
+    if (coupon && isFreeCoupon(coupon) && !courseRun.has_paid) {
       this.redirectToOrderSummary(run)
     } else {
       setEnrollCourseDialogVisibility(true)
