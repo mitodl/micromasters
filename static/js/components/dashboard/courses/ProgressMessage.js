@@ -163,13 +163,26 @@ export default class ProgressMessage extends React.Component {
       </a>
     ) : null
   }
+  renderCourseCertificateLink = (): React$Element<*> | null => {
+    const { course } = this.props
+    return hasAnyStaffRole(SETTINGS.roles) ? (
+      <a
+        onClick={() => {
+          window.open(course.certificate_url)
+        }}
+      >
+        View Certificate
+      </a>
+    ) : null
+  }
 
   renderCourseLinks = (): React$Element<*> | null => {
     const { courseRun } = this.props
 
     const courseLinks = R.reject(R.isNil, [
       this.renderViewCourseEdxLink(courseRun),
-      this.renderCourseContactLink()
+      this.renderCourseContactLink(),
+      this.renderCourseCertificateLink()
     ])
 
     return courseLinks.length > 0 ? (
