@@ -18,7 +18,9 @@ import {
   COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_ENROLL,
   COURSE_ACTION_REENROLL,
-  FA_STATUS_PENDING_DOCS, FA_STATUS_APPROVED, COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
+  FA_STATUS_PENDING_DOCS,
+  FA_STATUS_APPROVED,
+  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
 } from "../../constants"
 import {
   findCourse,
@@ -260,7 +262,7 @@ describe("CourseAction", () => {
 
     it("enroll button redirects to order summary if full coupon and order fulfilled", () => {
       const firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
+        enrollment_start_date: now.toISOString()
       })
       const wrapper = renderCourseAction({
         coupon: {
@@ -273,7 +275,7 @@ describe("CourseAction", () => {
           has_user_applied:   true,
           application_status: FA_STATUS_APPROVED
         },
-        actionType:      COURSE_ACTION_ENROLL
+        actionType: COURSE_ACTION_ENROLL
       })
       const enrollButton = wrapper.find(".enroll-button")
       assert.equal(wrapper.find(SpinnerButton).props().children, "Enroll")
