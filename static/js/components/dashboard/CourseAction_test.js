@@ -1,6 +1,7 @@
 /* global SETTINGS: false */
 /* eslint-disable no-unused-vars */
 import React from "react"
+import Decimal from "decimal.js-light"
 import { shallow } from "enzyme"
 import moment from "moment-timezone"
 import { assert } from "chai"
@@ -17,7 +18,9 @@ import {
   COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_ENROLL,
   COURSE_ACTION_REENROLL,
-  FA_STATUS_PENDING_DOCS
+  FA_STATUS_PENDING_DOCS,
+  FA_STATUS_APPROVED,
+  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
 } from "../../constants"
 import {
   findCourse,
@@ -255,6 +258,30 @@ describe("CourseAction", () => {
       const payButton = wrapper.find(".pay-button")
       payButton.simulate("click")
       assert.equal(checkoutStub.calledWith(firstRun.course_id), true)
+    })
+
+    it("enroll button redirects to order summary if full coupon and order fulfilled", () => {
+      const firstRun = alterFirstRun(course, {
+        enrollment_start_date: now.toISOString()
+      })
+      const wrapper = renderCourseAction({
+        coupon: {
+          amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+          amount:      new Decimal("1")
+        },
+        courseRun:       firstRun,
+        hasFinancialAid: true,
+        financialAid:    {
+          has_user_applied:   true,
+          application_status: FA_STATUS_APPROVED
+        },
+        actionType: COURSE_ACTION_ENROLL
+      })
+      const enrollButton = wrapper.find(".enroll-button")
+      assert.equal(wrapper.find(SpinnerButton).props().children, "Enroll")
+      enrollButton.simulate("click")
+      assert.equal(checkoutStub.calledWith(firstRun.course_id), false)
+      assert.equal(routerPushStub.called, true)
     })
   })
 })
