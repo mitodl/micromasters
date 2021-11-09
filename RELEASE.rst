@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.210.2
+---------------
+
+- Check if user paid for course having free coupon (#5109)
+
 Version 0.210.1 (Released October 28, 2021)
 ---------------
 
