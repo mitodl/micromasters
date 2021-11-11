@@ -5,6 +5,7 @@ from ecommerce.views import (
     CouponsView,
     OrderFulfillmentView,
     UserCouponsView,
+    PaymentCallBackView
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
         name='coupon-user-create',
     ),
     url(r'^api/v0/order_fulfillment/$', OrderFulfillmentView.as_view(), name='order-fulfillment'),
+    url(r'^payment-callback/$', PaymentCallBackView.as_view(), name='payment-callback'),
 ]
