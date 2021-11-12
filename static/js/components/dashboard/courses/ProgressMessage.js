@@ -167,6 +167,7 @@ export default class ProgressMessage extends React.Component {
     const { course } = this.props
     return course.certificate_url && hasAnyStaffRole(SETTINGS.roles) ? (
       <a
+        key={"certificate-link"}
         onClick={() => {
           window.open(course.certificate_url)
         }}
