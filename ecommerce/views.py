@@ -281,8 +281,7 @@ class UserCouponsView(APIView):
 
 class PaymentCallBackView(RedirectView):
     """
-    payment callback view that will redirect to dashboard
+    payment callback view that will redirect to dashboard url
     """
     url = DASHBOARD_URL
     query_string = True
-    permanent = True
