@@ -131,7 +131,7 @@ class CheckoutViewTests(MockedESTestCase):
         assert create_mock.call_count == 1
         assert create_mock.call_args[0] == (course_run.edx_course_key, user)
         assert generate_mock.call_count == 1
-        assert generate_mock.call_args[0] == (order, 'http://testserver/dashboard/', fake_ip)
+        assert generate_mock.call_args[0] == (order, 'http://testserver/payment-callback/', fake_ip)
 
     @override_settings(EDXORG_BASE_URL='http://edx_base')
     def test_provides_edx_link(self):
@@ -180,7 +180,7 @@ class CheckoutViewTests(MockedESTestCase):
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == {
             'payload': {},
-            'url': 'http://testserver/dashboard/?status=receipt&course_key={}'.format(
+            'url': 'http://testserver/payment-callback/?status=receipt&course_key={}'.format(
                 quote_plus(course_run.edx_course_key)
             ),
             'method': 'GET',
@@ -223,7 +223,7 @@ class CheckoutViewTests(MockedESTestCase):
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == {
             'payload': {},
-            'url': 'http://testserver/dashboard/?status=receipt&course_key={}'.format(
+            'url': 'http://testserver/payment-callback/?status=receipt&course_key={}'.format(
                 quote_plus(course_run.edx_course_key)
             ),
             'method': 'GET',

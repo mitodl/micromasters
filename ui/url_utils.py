@@ -11,6 +11,7 @@ SETTINGS_URL = "/settings/"
 SEARCH_URL = "/learners/"
 ORDER_SUMMARY = "/order_summary/"
 EMAIL_URL = "/automaticemails/"
+PAYMENT_CALL_BACK_URL = "/payment-callback/"
 
 DASHBOARD_URLS = [
     DASHBOARD_URL,

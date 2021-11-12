@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db import transaction
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
+from django.views.generic.base import RedirectView
 from ipware import get_client_ip
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.exceptions import ValidationError
@@ -44,6 +45,7 @@ from ecommerce.permissions import (
 )
 from ecommerce.serializers import CouponSerializer
 from mail.api import MailgunClient
+from ui.url_utils import DASHBOARD_URL, PAYMENT_CALL_BACK_URL
 
 log = logging.getLogger(__name__)
 
@@ -80,7 +82,7 @@ class CheckoutView(APIView):
         )
         if course_run.course.program.financial_aid_availability:
             order = create_unfulfilled_order(course_id, request.user)
-            dashboard_url = request.build_absolute_uri('/dashboard/')
+            payment_callback_url = request.build_absolute_uri(PAYMENT_CALL_BACK_URL)
             if order.total_price_paid == 0:
                 # If price is $0, don't bother going to CyberSource, just mark as fulfilled
                 order.status = Order.FULFILLED
@@ -112,11 +114,11 @@ class CheckoutView(APIView):
 
                 # This redirects the user to our order success page
                 payload = {}
-                url = make_dashboard_receipt_url(dashboard_url, course_id, 'receipt')
+                url = make_dashboard_receipt_url(payment_callback_url, course_id, 'receipt')
                 method = 'GET'
             else:
                 # This generates a signed payload which is submitted as an HTML form to CyberSource
-                payload = generate_cybersource_sa_payload(order, dashboard_url, user_ip)
+                payload = generate_cybersource_sa_payload(order, payment_callback_url, user_ip)
                 url = settings.CYBERSOURCE_SECURE_ACCEPTANCE_URL
                 method = 'POST'
         else:
@@ -275,3 +277,11 @@ class UserCouponsView(APIView):
                     'coupon': CouponSerializer(coupon).data,
                 }
             )
+
+
+class PaymentCallBackView(RedirectView):
+    """
+    payment callback view that will redirect to dashboard url
+    """
+    url = DASHBOARD_URL
+    query_string = True
