@@ -116,6 +116,17 @@ describe("Course ProgressMessage", () => {
     assert.notInclude(wrapper.text(), "Paid")
   })
 
+  it("should show course certificate link to staff", () => {
+    makeRunCurrent(course.runs[0])
+    makeRunEnrolled(course.runs[0])
+    SETTINGS.roles.push({ role: "staff", permissions: [] })
+    let wrapper = renderCourseDescription()
+    assert.lengthOf(wrapper.find("a"), 0)
+    course.certificate_url = "certificate/url"
+    wrapper = renderCourseDescription()
+    assert.include(wrapper.find("a").text(), "View Certificate")
+  })
+
   describe("staffCourseInfo", () => {
     it("should return nothing if the user is not enrolled", () => {
       makeRunCurrent(course.runs[0])
