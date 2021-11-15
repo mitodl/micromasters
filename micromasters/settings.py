@@ -5,10 +5,11 @@ import logging
 import os
 import platform
 from urllib.parse import urljoin
+from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 
 import dj_database_url
 from celery.schedules import crontab
-from django.core.exceptions import ImproperlyConfigured
 from micromasters.envs import (
     get_any,
     get_bool,
@@ -19,7 +20,10 @@ from micromasters.envs import (
 
 from micromasters.sentry import init_sentry
 
-VERSION = "0.211.0"
+version_file = Path(os.getcwd()) / "VERSION"
+if version_file.is_file:
+    with open(version_file, mode="r", encoding="UTF-8") as file:
+        VERSION = file.readline().strip()
 
 # initialize Sentry before doing anything else so we capture any config errors
 ENVIRONMENT = get_string('MICROMASTERS_ENVIRONMENT', 'dev')
