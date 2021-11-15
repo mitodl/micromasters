@@ -227,6 +227,15 @@ export function addCourseEnrollment(courseId: string) {
   })
 }
 
+export function addExamEnrollment(examCourseId: string) {
+  return fetchJSONWithCSRF("/api/v0/exam_enrollment/", {
+    method: "POST",
+    body:   JSON.stringify({
+      exam_course_id: examCourseId
+    })
+  })
+}
+
 export function getCoupons(): Promise<Coupons> {
   return fetchJSONWithCSRF("/api/v0/coupons/").then(coupons => {
     // turn `amount` from string into decimal

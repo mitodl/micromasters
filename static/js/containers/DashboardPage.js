@@ -66,7 +66,7 @@ import {
 } from "../actions/ui"
 import { showEnrollPayLaterSuccessMessage } from "../actions/course_enrollments"
 import { clearCalculatorEdit } from "../actions/financial_aid"
-import { findCourseRun } from "../util/util"
+import { createForm, findCourseRun } from "../util/util"
 import CourseListCard from "../components/dashboard/CourseListCard"
 import DashboardUserCard from "../components/dashboard/DashboardUserCard"
 import FinancialAidCard from "../components/dashboard/FinancialAidCard"
@@ -125,6 +125,8 @@ import type { RestState } from "../flow/restTypes"
 import type { Post } from "../flow/discussionTypes"
 import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
+import type { CheckoutResponse } from "../flow/checkoutTypes"
+import { ExamEnrollmentResponse } from "../flow/enrollmentTypes"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])
 
@@ -543,6 +545,26 @@ class DashboardPage extends React.Component {
         dispatch(
           setToastMessage({
             message: "Failed to add course enrollment.",
+            icon:    TOAST_FAILURE
+          })
+        )
+      }
+    )
+  }
+
+  addExamEnrollment = (examCourseId: string): Promise<*> => {
+    const { dispatch } = this.props
+    return dispatch(actions.examEnrollment.post(examCourseId)).then(
+      (result: ExamEnrollmentResponse) => {
+        if (!result) {
+          return
+        }
+        window.location = result.url
+      },
+      () => {
+        dispatch(
+          setToastMessage({
+            message: "Failed to add exam enrollment.",
             icon:    TOAST_FAILURE
           })
         )

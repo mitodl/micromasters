@@ -2,7 +2,9 @@
 Views for dashboard REST APIs
 """
 import logging
+from urllib.parse import urljoin
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from requests.exceptions import HTTPError
@@ -25,6 +27,7 @@ from dashboard.serializers import UnEnrollProgramsSerializer
 from dashboard.models import ProgramEnrollment
 from dashboard.api import get_user_program_info
 from dashboard.api_edx_cache import CachedEdxDataApi
+from exams.models import ExamRun, ExamAuthorization
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from profiles.api import get_social_auth
 
@@ -141,6 +144,85 @@ class UserCourseEnrollment(APIView):
         return Response(
             data=enrollment.json
         )
+
+
+class UserExamEnrollment(APIView):
+    """
+    Create an exam enrollment for the user in a given exam run identified by course_id.
+    """
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        """
+        enrolls the user in a exam run in edx
+        """
+        edx_exam_course_id = request.data.get('exam_course_id')
+
+        if edx_exam_course_id is None:
+            raise ValidationError('exam course id missing in the request')
+        url = urljoin(settings.EDXORG_BASE_URL, '/courses/{}/'.format(edx_exam_course_id))
+        exam_run = ExamRun.objects.get(edx_exam_course_key=edx_exam_course_id)
+        if not ExamAuthorization.objects.filter(user=request.user, status=ExamAuthorization.STATUS_SUCCESS).exists():
+            raise ValidationError('user is not authorized for exam run')
+        provider = exam_run.course.first_unexpired_run().courseware_backend
+        # get the credentials for the current user for edX
+        user_social = get_social_auth(request.user, provider)
+        try:
+            utils.refresh_user_token(user_social)
+        except utils.InvalidCredentialStored as exc:
+            log.error(
+                "Error while refreshing credentials for user %s",
+                request.user.username,
+            )
+            return Response(
+                status=exc.http_status_code,
+                data={'error': str(exc)}
+            )
+
+        # create an instance of the client to query edX
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
+        enrollments = edx_client.enrollments
+        all_enrolled_course_ids = enrollments.get_enrolled_course_ids()
+        # if user already enrolled in this exam course
+        if ExamRun.objects.filter(edx_exam_course_key__in=all_enrolled_course_ids).exists():
+            return Response({'url': url})
+        try:
+            enrollments.create_audit_student_enrollment(edx_exam_course_id)
+        except HTTPError as exc:
+            if exc.response.status_code == status.HTTP_400_BAD_REQUEST:
+                raise PossiblyImproperlyConfigured(
+                    'Got a 400 status code from edX server while trying to create '
+                    'audit enrollment. This might happen if the course is improperly '
+                    'configured on MicroMasters. Course key '
+                    '{exam_course_key}, user "{username}"'.format(
+                        username=request.user.username,
+                        exam_course_key=edx_exam_course_id,
+                    )
+                )
+            log.error(
+                "Http error from edX while creating enrollment for exam course key %s for edX user %s",
+                edx_exam_course_id,
+                request.user,
+            )
+            return Response(
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                data={'error': str(exc)}
+            )
+        except Exception as exc:  # pylint: disable=broad-except
+            log.exception(
+                "Error creating enrollment for exam course key %s for user %s",
+                edx_exam_course_id,
+                request.user.username,
+            )
+            return Response(
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                data={'error': str(exc)}
+            )
+        return Response({'url': url})
 
 
 class UnEnrollPrograms(APIView):

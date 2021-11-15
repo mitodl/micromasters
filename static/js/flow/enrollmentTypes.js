@@ -29,3 +29,7 @@ export type UnEnrollPrograms = {
   program_id: number,
   title: string,
 }
+
+export type ExamEnrollmentResponse = {
+  url: string
+}

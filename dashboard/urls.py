@@ -6,6 +6,7 @@ from dashboard.views import (
     UserDashboard,
     UnEnrollPrograms,
     ToggelProgramEnrollmentShareHash,
+    UserExamEnrollment,
 )
 from profiles.constants import USERNAME_RE_PARTIAL
 
@@ -14,4 +15,5 @@ urlpatterns = [
     url(r'^api/v0/course_enrollments/$', UserCourseEnrollment.as_view(), name='user_course_enrollments'),
     url(r'^api/v0/unenroll_programs/$', UnEnrollPrograms.as_view(), name='unenroll_programs'),
     url(r'^api/v0/enrollment_share_hash/$', ToggelProgramEnrollmentShareHash.as_view(), name='toggle_share_hash'),
+    url(r'^api/v0/exam_enrollment/$', UserExamEnrollment.as_view(), name='exam_course_enrollment'),
 ]
