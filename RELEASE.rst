@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.211.0
+---------------
+
+- Bump axios from 0.21.1 to 0.21.4 (#5038)
+- Add course certificate link for staff view (#5110)
+- fix Cybersource cancellation or success redirect failures (#5116)
+
 Version 0.210.2 (Released November 16, 2021)
 ---------------
 
