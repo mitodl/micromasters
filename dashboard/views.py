@@ -4,7 +4,6 @@ Views for dashboard REST APIs
 import logging
 from urllib.parse import urljoin
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from requests.exceptions import HTTPError
