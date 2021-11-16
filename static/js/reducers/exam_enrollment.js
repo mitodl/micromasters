@@ -1,3 +1,4 @@
+// @flow
 import { POST } from "../constants"
 import { fetchJSONWithCSRF } from "redux-hammock/django_csrf_fetch"
 

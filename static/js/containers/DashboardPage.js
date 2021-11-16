@@ -66,7 +66,7 @@ import {
 } from "../actions/ui"
 import { showEnrollPayLaterSuccessMessage } from "../actions/course_enrollments"
 import { clearCalculatorEdit } from "../actions/financial_aid"
-import { createForm, findCourseRun } from "../util/util"
+import { findCourseRun } from "../util/util"
 import CourseListCard from "../components/dashboard/CourseListCard"
 import DashboardUserCard from "../components/dashboard/DashboardUserCard"
 import FinancialAidCard from "../components/dashboard/FinancialAidCard"
@@ -125,7 +125,6 @@ import type { RestState } from "../flow/restTypes"
 import type { Post } from "../flow/discussionTypes"
 import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
-import type { CheckoutResponse } from "../flow/checkoutTypes"
 import { ExamEnrollmentResponse } from "../flow/enrollmentTypes"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])

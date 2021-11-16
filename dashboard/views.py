@@ -164,11 +164,12 @@ class UserExamEnrollment(APIView):
 
         if edx_exam_course_id is None:
             raise ValidationError('exam course id missing in the request')
-        url = urljoin(settings.EDXORG_BASE_URL, '/courses/{}/'.format(edx_exam_course_id))
+
         exam_run = ExamRun.objects.get(edx_exam_course_key=edx_exam_course_id)
         if not ExamAuthorization.objects.filter(user=request.user, status=ExamAuthorization.STATUS_SUCCESS).exists():
             raise ValidationError('user is not authorized for exam run')
         provider = exam_run.course.first_unexpired_run().courseware_backend
+        url = urljoin(COURSEWARE_BACKEND_URL[provider], '/courses/{}/'.format(edx_exam_course_id))
         # get the credentials for the current user for edX
         user_social = get_social_auth(request.user, provider)
         try:
@@ -185,13 +186,13 @@ class UserExamEnrollment(APIView):
 
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
-        enrollments = edx_client.enrollments
+        enrollments = edx_client.enrollments.get_student_enrollments()
         all_enrolled_course_ids = enrollments.get_enrolled_course_ids()
         # if user already enrolled in this exam course
         if ExamRun.objects.filter(edx_exam_course_key__in=all_enrolled_course_ids).exists():
             return Response({'url': url})
         try:
-            enrollments.create_audit_student_enrollment(edx_exam_course_id)
+            edx_client.enrollments.create_audit_student_enrollment(edx_exam_course_id)
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_400_BAD_REQUEST:
                 raise PossiblyImproperlyConfigured(
