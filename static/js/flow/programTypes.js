@@ -61,7 +61,7 @@ export type Course = {
   position_in_program:          number,
   can_schedule_exam:            boolean,
   exam_register_end_date:       string,
-  exam_url:                     string,
+  exam_course_key:              string,
   exams_schedulable_in_future:  Array<string>,
   exam_date_next_semester:      string,
   current_exam_dates:           string,

@@ -372,7 +372,7 @@ describe("Course Status Messages", () => {
         course.can_schedule_exam = true
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = true
-        course.exam_url = "http://example.com"
+        course.exam_course_key = "http://example.com"
         course.exam_register_end_date = "Jan 17"
         course.current_exam_dates = "Jan 30 - Feb 5"
         const messages = calculateMessages(calculateMessagesProps).value
@@ -456,7 +456,7 @@ describe("Course Status Messages", () => {
           messages[0]["message"],
           "There are currently no exams available. Please check back later."
         )
-        course.exam_url = "http://example-url.com"
+        course.exam_course_key = "http://example-url.com"
         messages = calculateMessages(calculateMessagesProps).value
         const mounted = shallow(messages[0]["message"])
         assert.equal(
@@ -497,7 +497,7 @@ describe("Course Status Messages", () => {
         assert.equal(messages[0]["message"], "You passed this course.")
         assert.equal(messages[1]["message"], "You passed the exam.")
 
-        course.exam_url = "http://example.com"
+        course.exam_course_key = "http://example.com"
         messages = calculateMessages(calculateMessagesProps).value
         const mounted = shallow(messages[1]["message"])
         assert.equal(
@@ -531,7 +531,7 @@ describe("Course Status Messages", () => {
         let messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You did not pass the exam.")
 
-        course.exam_url = "http://example.com"
+        course.exam_course_key = "http://example.com"
         messages = calculateMessages(calculateMessagesProps).value
         const mounted = shallow(messages[0]["message"])
         assert.equal(

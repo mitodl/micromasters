@@ -230,7 +230,7 @@ def get_info_for_course(course, mmtrack):
         "has_contact_email": bool(course.contact_email),
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
         "exam_register_end_date": get_exam_register_end_date(course),
-        "exam_url": get_edx_exam_coupon_url(mmtrack.user, course),
+        "exam_course_key": get_edx_exam_course_key(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
         "exam_date_next_semester": get_exam_date_next_semester(course),
         "current_exam_dates": get_current_exam_run_dates(course),
@@ -522,18 +522,17 @@ def get_exam_register_end_date(course):
     return ""
 
 
-def get_edx_exam_coupon_url(user, course):
+def get_edx_exam_course_key(user, course):
     """
-    Find a successful exam authorization and return the coupon url for the exam
+    Find a successful exam authorization and return the edx course key for the exam
 
     Args:
         user (User): a user
         course (courses.models.Course): A course
 
     Returns:
-        str: a url to the exam or empty string
+        str: a course key to the exam or empty string
     """
-    now = now_in_utc()
     schedulable_exam_runs = ExamRun.get_currently_schedulable(course)
     exam_auth = ExamAuthorization.objects.filter(
         user=user,
@@ -543,20 +542,8 @@ def get_edx_exam_coupon_url(user, course):
     ).first()
     if exam_auth is None:
         return ""
-    if exam_auth.exam_coupon is not None:
-        return exam_auth.exam_coupon.coupon_url
 
-    exam_coupon = ExamRunCoupon.objects.filter(
-        expiration_date__gte=now.date(),
-        is_taken=False,
-        course=course
-    ).first()
-    if exam_coupon is None:
-        return ""
-
-    exam_auth.exam_coupon = exam_coupon
-    exam_auth.save()
-    return exam_coupon.use_coupon()
+    return exam_auth.exam_run.edx_exam_course_key
 
 
 def get_future_exam_runs(course):

@@ -9,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import type { Course } from "../../flow/programTypes"
+import {addExamEnrollment} from "../../lib/api";
 
 export default class ExamEnrollmentDialog extends React.Component {
   static contextTypes = {
@@ -18,7 +19,8 @@ export default class ExamEnrollmentDialog extends React.Component {
   props: {
     open: boolean,
     course: ?Course,
-    setVisibility: (v: boolean) => void
+    setVisibility: (v: boolean) => void,
+    addExamEnrollment: (s: string) => void
   }
 
   render() {
@@ -31,8 +33,8 @@ export default class ExamEnrollmentDialog extends React.Component {
       <Button
         key="register-button"
         onClick={() => {
-          course.exam_url
-            ? (window.location = course.exam_url)
+          course.exam_course_key
+            ? addExamEnrollment(course.exam_course_key)
             : setVisibility(false)
         }}
         className="primary-button"

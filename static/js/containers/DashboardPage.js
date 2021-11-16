@@ -740,6 +740,7 @@ class DashboardPage extends React.Component {
       <ExamEnrollmentDialog
         open={ui.examEnrollmentDialogVisibility}
         setVisibility={this.setExamEnrollmentDialogVisibility}
+        addExamEnrollment={this.addExamEnrollment}
         course={course}
       />
     )
