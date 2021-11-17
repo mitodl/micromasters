@@ -543,7 +543,7 @@ def get_edx_exam_course_key(user, course):
     if exam_auth is None:
         return ""
 
-    return exam_auth.exam_run.edx_exam_course_key
+    return exam_auth.exam_run.edx_exam_course_key or ''
 
 
 def get_future_exam_runs(course):
