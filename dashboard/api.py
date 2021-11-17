@@ -26,7 +26,7 @@ from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
 from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
-from exams.models import ExamAuthorization, ExamRun, ExamRunCoupon
+from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc
 
 # key that stores user_key and number of failures in a hash

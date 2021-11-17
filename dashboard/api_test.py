@@ -835,7 +835,7 @@ class CourseRunTest(CourseTests):
 
 
 @ddt.ddt
-@patch('dashboard.api.get_edx_exam_coupon_url', return_value="")
+@patch('dashboard.api.get_edx_exam_course_key', return_value="")
 @patch('dashboard.api.get_certificate_url', return_value="")
 @patch('dashboard.api.get_future_exam_runs', return_value=[])
 @patch('dashboard.api.has_to_pay_for_exam', return_value=False)
@@ -2045,9 +2045,9 @@ class ExamCouponURLTests(MockedESTestCase):
         (ExamAuthorization.STATUS_SUCCESS, False, False),
     )
     @ddt.unpack
-    def test_get_edx_exam_coupon_url(self, auth_status, has_coupon, returned_coupon):
+    def test_get_edx_exam_course_key(self, auth_status, has_coupon, returned_coupon):
         """
-        Test that get_edx_exam_coupon_url returns a url only if student is authorized for an current exam run
+        Test that get_edx_exam_course_key returns a url only if student is authorized for an current exam run
         and their is an available coupon
         """
         coupon_url = "http://example.com"
@@ -2064,11 +2064,11 @@ class ExamCouponURLTests(MockedESTestCase):
         if has_coupon:
             ExamRunCouponFactory.create(course=exam_run.course, coupon_url=coupon_url, is_taken=False)
         expected = coupon_url if returned_coupon else ""
-        assert api.get_edx_exam_coupon_url(exam_auth.user, exam_auth.course) == expected
+        assert api.get_edx_exam_course_key(exam_auth.user, exam_auth.course) == expected
 
-    def test_get_edx_exam_coupon_url_returns_taken_coupon(self):
+    def test_get_edx_exam_course_key_returns_taken_coupon(self):
         """
-        Test that get_edx_exam_coupon_url returns a url only if student is authorized for an current exam run
+        Test that get_edx_exam_course_key returns a url only if student is authorized for an current exam run
         and their is an available coupon
         """
         coupon_url = "http://example.com"
@@ -2084,9 +2084,9 @@ class ExamCouponURLTests(MockedESTestCase):
             course=exam_run.course,
             status=ExamAuthorization.STATUS_SUCCESS,
         )
-        assert api.get_edx_exam_coupon_url(exam_auth.user, exam_auth.course) == coupon_url
+        assert api.get_edx_exam_course_key(exam_auth.user, exam_auth.course) == coupon_url
         # call it second time should return same coupon
-        assert api.get_edx_exam_coupon_url(exam_auth.user, exam_auth.course) == coupon_url
+        assert api.get_edx_exam_course_key(exam_auth.user, exam_auth.course) == coupon_url
 
 
 @ddt.ddt

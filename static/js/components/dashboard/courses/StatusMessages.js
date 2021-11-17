@@ -24,7 +24,7 @@ import {
   COURSE_DEADLINE_FORMAT,
   STATUS_CURRENTLY_ENROLLED,
   COURSE_ACTION_ENROLL,
-  EDX_LINK_BASE, COURSEWARE_BACKEND_NAMES
+  COURSEWARE_BACKEND_NAMES
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
