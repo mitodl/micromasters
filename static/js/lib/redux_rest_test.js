@@ -7,7 +7,7 @@ import { INITIAL_STATE } from "./redux_rest_constants"
 import { automaticEmailsEndpoint } from "../reducers/automatic_emails"
 import { courseEnrollmentsEndpoint } from "../reducers/course_enrollments"
 import rootReducer from "../reducers"
-import {examEnrollmentEndpoint} from "../reducers/exam_enrollment"
+import { examEnrollmentEndpoint } from "../reducers/exam_enrollment"
 
 describe("redux REST", () => {
   let sandbox, store
@@ -22,7 +22,11 @@ describe("redux REST", () => {
       sandbox.restore()
     })
 
-    const endpoints = [automaticEmailsEndpoint, courseEnrollmentsEndpoint, examEnrollmentEndpoint]
+    const endpoints = [
+      automaticEmailsEndpoint,
+      courseEnrollmentsEndpoint,
+      examEnrollmentEndpoint
+    ]
 
     it("should include all reducers that we expect it to", () => {
       const state = store.getState()

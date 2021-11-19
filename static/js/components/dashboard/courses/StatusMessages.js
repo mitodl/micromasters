@@ -313,7 +313,11 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           <br />
           <br />
           If you have already registered for the exam, you can access the exam
-          through your <a href={COURSEWARE_BACKEND_NAMES[firstRun.courseware_backend]}>edX dashboard</a>.
+          through your{" "}
+          <a href={COURSEWARE_BACKEND_NAMES[firstRun.courseware_backend]}>
+            edX dashboard
+          </a>
+          .
         </span>
       )
     } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
