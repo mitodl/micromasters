@@ -16,6 +16,8 @@ from django.conf import settings
 from django.urls import reverse
 from django_redis import get_redis_connection
 import pytest
+from edx_api.client import EdxApi
+from edx_api.enrollments import Enrollments
 
 from backends.constants import BACKEND_EDX_ORG, COURSEWARE_BACKENDS, COURSEWARE_BACKEND_URL, BACKEND_MITX_ONLINE
 from cms.factories import CourseCertificateSignatoriesFactory
@@ -2037,8 +2039,8 @@ class ExamSchedulableTests(MockedESTestCase):
 
 
 @ddt.ddt
-class ExamCouponURLTests(MockedESTestCase):
-    """Tests edx exam coupons"""
+class ExamTests(MockedESTestCase):
+    """Tests exams"""
     @ddt.data(
         (ExamAuthorization.STATUS_SUCCESS, True, True),
         (ExamAuthorization.STATUS_FAILED, True, False),
@@ -2047,8 +2049,8 @@ class ExamCouponURLTests(MockedESTestCase):
     @ddt.unpack
     def test_get_edx_exam_course_key(self, auth_status, has_exam_key, returned_key):
         """
-        Test that get_edx_exam_course_key returns a url only if student is authorized for an current exam run
-        and their is an available coupon
+        Test that get_edx_exam_course_key returns edx_course_key only if student is authorized
+        for an current exam run
         """
         exam_course_key = "edx-course-key"
         exam_run = ExamRunFactory.create(
@@ -2066,6 +2068,40 @@ class ExamCouponURLTests(MockedESTestCase):
             exam_run.save()
         expected = exam_course_key if returned_key else ""
         assert api.get_edx_exam_course_key(exam_auth.user, exam_auth.course) == expected
+
+    @ddt.data(True, False)
+    @patch('edx_api.enrollments.Enrollments.get_enrolled_course_ids', autospec=True)
+    def test_is_user_enrolled_in_exam_course(self, is_enrolled,  mock_enrolled_ids):
+        """
+        Test returns True if user has an enrollment for this exam
+        """
+        exam_course_key = "edx-course-key"
+        user = _make_fake_real_user()
+        user_social = user.social_auth.first()
+        exam_run = ExamRunFactory.create(
+            scheduling_past=False,
+            scheduling_future=False,
+            eligibility_past=False,
+            edx_exam_course_key=exam_course_key
+        )
+        ExamAuthorizationFactory.create(
+            exam_run=exam_run,
+            course=exam_run.course,
+            status=ExamAuthorization.STATUS_SUCCESS,
+        )
+        if is_enrolled:
+            mock_enrolled_ids.return_value = [exam_course_key]
+        else:
+            mock_enrolled_ids.return_value = []
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE])
+        with patch(
+            'edx_api.enrollments.CourseEnrollments.get_student_enrollments',
+            autospec=True,
+            return_value=Enrollments([])
+        ):
+            assert api.is_user_enrolled_in_exam_course(edx_client, exam_run) == is_enrolled
+
+
 
 
 @ddt.ddt

@@ -782,3 +782,22 @@ def update_cache_for_backend(user, provider):
             raise
         except:  # pylint: disable=bare-except
             log.exception('Impossible to refresh edX cache')
+
+
+def is_user_enrolled_in_exam_course(edx_client, exam_run):
+    """
+    Query edX to check if user is already enrolled in exam course
+
+    Args:
+        edx_client: edx api client
+        exam_run: exam run instance to check enrollment for
+
+    Returns:
+        bool: if user is enrolled
+    """
+    enrollments = edx_client.enrollments.get_student_enrollments()
+    all_enrolled_course_ids = enrollments.get_enrolled_course_ids()
+    # if user already enrolled in this exam course
+    if exam_run.edx_exam_course_key in all_enrolled_course_ids:
+        return True
+    return False

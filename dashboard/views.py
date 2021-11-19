@@ -24,7 +24,7 @@ from courses.models import CourseRun
 from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.serializers import UnEnrollProgramsSerializer
 from dashboard.models import ProgramEnrollment
-from dashboard.api import get_user_program_info
+from dashboard.api import get_user_program_info, is_user_enrolled_in_exam_course
 from dashboard.api_edx_cache import CachedEdxDataApi
 from exams.models import ExamRun, ExamAuthorization
 from micromasters.exceptions import PossiblyImproperlyConfigured
@@ -165,13 +165,14 @@ class UserExamEnrollment(APIView):
             raise ValidationError('exam course id missing in the request')
 
         exam_run = get_object_or_404(ExamRun, edx_exam_course_key=edx_exam_course_id)
+        provider = exam_run.course.first_unexpired_run().courseware_backend
         if not ExamAuthorization.objects.filter(
             user=request.user,
             exam_run=exam_run,
             status=ExamAuthorization.STATUS_SUCCESS
         ).exists():
             raise ValidationError('user is not authorized for exam run')
-        provider = exam_run.course.first_unexpired_run().courseware_backend
+
         url = urljoin(COURSEWARE_BACKEND_URL[provider], '/courses/{}/'.format(edx_exam_course_id))
         # get the credentials for the current user for edX
         user_social = get_social_auth(request.user, provider)
@@ -189,10 +190,7 @@ class UserExamEnrollment(APIView):
 
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
-        enrollments = edx_client.enrollments.get_student_enrollments()
-        all_enrolled_course_ids = enrollments.get_enrolled_course_ids()
-        # if user already enrolled in this exam course
-        if edx_exam_course_id in all_enrolled_course_ids:
+        if is_user_enrolled_in_exam_course(edx_client, exam_run):
             return Response({'url': url})
         try:
             edx_client.enrollments.create_audit_student_enrollment(edx_exam_course_id)
