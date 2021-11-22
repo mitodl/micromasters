@@ -123,9 +123,9 @@ import type { Course, CourseRun, Program } from "../flow/programTypes"
 import type { Coupon } from "../flow/couponTypes"
 import type { RestState } from "../flow/restTypes"
 import type { Post } from "../flow/discussionTypes"
+import type { ExamEnrollmentResponse } from "../flow/enrollmentTypes"
 import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
-import { ExamEnrollmentResponse } from "../flow/enrollmentTypes"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])
 

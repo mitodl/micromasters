@@ -20,7 +20,7 @@ export default class ExamEnrollmentDialog extends React.Component {
     open: boolean,
     course: ?Course,
     setVisibility: (v: boolean) => void,
-    addExamEnrollment: (s: string) => void
+    addExamEnrollment: (examCourseId: string) => Promise<*>
   }
 
   render() {
