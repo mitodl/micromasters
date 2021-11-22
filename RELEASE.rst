@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.211.0
+Version 0.211.0 (Released November 22, 2021)
 ---------------
 
 - Bump axios from 0.21.1 to 0.21.4 (#5038)
