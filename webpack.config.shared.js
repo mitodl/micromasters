@@ -4,9 +4,9 @@ const webpack = require("webpack");
 module.exports = {
   config: {
     entry: {
-      'dashboard': ['babel-polyfill', './static/js/entry/dashboard'],
+      'dashboard': './static/js/entry/dashboard',
       'financial_aid': './static/js/financial_aid/functions',
-      'public': ['babel-polyfill', './static/js/entry/public'],
+      'public': './static/js/entry/public',
       'public_jquery': './static/js/entry/public_jquery',
       'sentry_client': './static/js/entry/sentry_client.js',
       'style': './static/js/entry/style',
@@ -42,9 +42,8 @@ module.exports = {
     loader: 'babel-loader',
     query: {
       "presets": [
-        ["env", { "modules": false }],
-        "latest",
-        "react",
+        "@babel/preset-env",
+        "@babel/preset-react"
       ],
       "plugins": [
         "transform-flow-strip-types",
