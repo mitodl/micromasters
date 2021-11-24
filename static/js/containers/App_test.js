@@ -75,7 +75,7 @@ describe("App", function() {
   describe("profile completeness", () => {
     const checkStep = () => helper.store.getState().ui.profileStep
 
-    it("redirects to /profile/personal if profile is not complete", () => {
+    it("redirects to /profile/personal if profile is not complete", async () => {
       const response = {
         ...USER_PROFILE_RESPONSE,
         first_name: undefined
@@ -84,10 +84,9 @@ describe("App", function() {
         .withArgs(SETTINGS.user.username)
         .returns(Promise.resolve(response))
 
-      return renderComponent("/", REDIRECT_ACTIONS).then(() => {
-        assert.equal(window.location.pathname, "/profile/personal")
-        assert.equal(checkStep(), PERSONAL_STEP)
-      })
+      await renderComponent("/", REDIRECT_ACTIONS)
+      assert.equal(window.location.pathname, "/profile/personal")
+      assert.equal(checkStep(), PERSONAL_STEP)
     })
 
     it("redirects to /profile/professional if profile is not filled out", () => {
