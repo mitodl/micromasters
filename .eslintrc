@@ -1,3 +1,4 @@
 {
-  "extends": "eslint-config-mitodl"
+  "extends": "eslint-config-mitodl",
+  "parser": "@babel/eslint-parser"
 }
