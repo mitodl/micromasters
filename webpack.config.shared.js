@@ -49,7 +49,6 @@ module.exports = {
       "plugins": [
         "transform-flow-strip-types",
         "react-hot-loader/babel",
-        "transform-object-rest-spread",
         "transform-class-properties",
         "syntax-dynamic-import",
       ]
