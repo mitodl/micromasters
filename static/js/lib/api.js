@@ -145,17 +145,6 @@ export function getProgramLearners(
   return fetchJSONWithCSRF(`/api/v0/programlearners/${programId}/`)
 }
 
-export function addProgramEnrollment(
-  programId: number
-): Promise<AvailableProgram> {
-  return fetchJSONWithCSRF("/api/v0/enrolledprograms/", {
-    method: "POST",
-    body:   JSON.stringify({
-      program_id: programId
-    })
-  })
-}
-
 export function updateProfileImage(
   username: string,
   image: Blob,

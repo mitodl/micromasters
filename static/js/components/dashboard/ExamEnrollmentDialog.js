@@ -9,7 +9,6 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import type { Course } from "../../flow/programTypes"
-import { addExamEnrollment } from "../../lib/api"
 
 export default class ExamEnrollmentDialog extends React.Component {
   static contextTypes = {
@@ -24,7 +23,7 @@ export default class ExamEnrollmentDialog extends React.Component {
   }
 
   render() {
-    const { setVisibility, open, course } = this.props
+    const { setVisibility, open, course, addExamEnrollment } = this.props
     if (!course) {
       return null
     }

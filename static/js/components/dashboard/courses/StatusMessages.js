@@ -24,7 +24,7 @@ import {
   COURSE_DEADLINE_FORMAT,
   STATUS_CURRENTLY_ENROLLED,
   COURSE_ACTION_ENROLL,
-  COURSEWARE_BACKEND_NAMES
+  COURSEWARE_BACKEND_NAMES, COURSEWARE_BACKEND_BASE_URLS
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -314,10 +314,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           <br />
           If you have already registered for the exam, you can access the exam
           through your{" "}
-          <a href={COURSEWARE_BACKEND_NAMES[firstRun.courseware_backend]}>
-            edX dashboard
+          <a href={COURSEWARE_BACKEND_BASE_URLS[firstRun.courseware_backend]}>
+            {COURSEWARE_BACKEND_NAMES[firstRun.courseware_backend]} dashboard.
           </a>
-          .
         </span>
       )
     } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
