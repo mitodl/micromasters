@@ -17,10 +17,7 @@ import type {
   CoursePrices,
   ProgramLearners
 } from "../flow/dashboardTypes"
-import type {
-  AvailableProgram,
-  AvailablePrograms
-} from "../flow/enrollmentTypes"
+import type { AvailablePrograms } from "../flow/enrollmentTypes"
 import type { EmailSendResponse } from "../flow/emailTypes"
 import type { PearsonSSOParameters } from "../flow/pearsonTypes"
 import {
