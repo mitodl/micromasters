@@ -17,7 +17,10 @@ import type {
   CoursePrices,
   ProgramLearners
 } from "../flow/dashboardTypes"
-import type { AvailablePrograms } from "../flow/enrollmentTypes"
+import type {
+  AvailableProgram,
+  AvailablePrograms
+} from "../flow/enrollmentTypes"
 import type { EmailSendResponse } from "../flow/emailTypes"
 import type { PearsonSSOParameters } from "../flow/pearsonTypes"
 import {
@@ -142,6 +145,17 @@ export function getProgramLearners(
   return fetchJSONWithCSRF(`/api/v0/programlearners/${programId}/`)
 }
 
+export function addProgramEnrollment(
+  programId: number
+): Promise<AvailableProgram> {
+  return fetchJSONWithCSRF("/api/v0/enrolledprograms/", {
+    method: "POST",
+    body:   JSON.stringify({
+      program_id: programId
+    })
+  })
+}
+
 export function updateProfileImage(
   username: string,
   image: Blob,
@@ -209,15 +223,6 @@ export function addCourseEnrollment(courseId: string) {
     method: "POST",
     body:   JSON.stringify({
       course_id: courseId
-    })
-  })
-}
-
-export function addExamEnrollment(examCourseId: string) {
-  return fetchJSONWithCSRF("/api/v0/exam_enrollment/", {
-    method: "POST",
-    body:   JSON.stringify({
-      exam_course_id: examCourseId
     })
   })
 }

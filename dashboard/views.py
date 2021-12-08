@@ -4,6 +4,7 @@ Views for dashboard REST APIs
 import logging
 from urllib.parse import urljoin
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from requests.exceptions import HTTPError
@@ -187,13 +188,16 @@ class UserExamEnrollment(APIView):
                 status=exc.http_status_code,
                 data={'error': str(exc)}
             )
-
+        data = {
+            "access_token": settings.MITXONLINE_STAFF_ACCESS_TOKEN
+        }
+        edx_client_staff = EdxApi(data, COURSEWARE_BACKEND_URL['mitxonline'])
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
         if is_user_enrolled_in_exam_course(edx_client, exam_run):
             return Response({'url': url})
         try:
-            edx_client.enrollments.create_audit_student_enrollment(edx_exam_course_id)
+            edx_client_staff.enrollments.create_audit_student_enrollment(edx_exam_course_id, user_social.uid)
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_400_BAD_REQUEST:
                 raise PossiblyImproperlyConfigured(
