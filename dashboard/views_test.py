@@ -5,6 +5,7 @@ from datetime import timedelta
 from unittest.mock import (
     MagicMock,
     patch,
+    call
 )
 from urllib.parse import urljoin
 
@@ -626,5 +627,6 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         resp = self.get_with_mocked_enrollments()
         assert resp.status_code == status.HTTP_200_OK
         assert resp.data == {'url': urljoin(COURSEWARE_BACKEND_URL[backend], '/courses/{}/'.format(self.exam_course_id))}
-        mock_edx_api.assert_called_once_with(user_social.extra_data, COURSEWARE_BACKEND_URL[backend])
+        mock_edx_api.assert_has_calls(
+            [call(user_social.extra_data, COURSEWARE_BACKEND_URL[backend]), call({}, COURSEWARE_BACKEND_URL[backend])])
         mock_edx_enr.assert_called_once_with(self.exam_course_id)

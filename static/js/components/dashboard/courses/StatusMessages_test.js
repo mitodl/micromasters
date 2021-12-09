@@ -381,7 +381,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mountedOne.text().trim(),
           "You passed the exam. You are authorized to take the virtual proctored exam for this course. " +
-            "Please register now and complete the exam onboarding. " +
+            "Please register now. " +
             `You must register by Jan 17 to be eligible to take the exam between ${
               course.current_exam_dates
             }.If ` +
@@ -462,7 +462,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           " You are authorized to take the virtual proctored exam for this " +
-            "course. Please register now and complete the exam onboarding. " +
+            "course. Please register now. " +
             `You must register by Jan 17 to be eligible to take the exam between ${
               course.current_exam_dates
             }.If ` +
@@ -503,7 +503,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           "You passed the exam. You are authorized to take the virtual proctored " +
-            "exam for this course. Please register now and complete the exam onboarding. " +
+            "exam for this course. Please register now. " +
             `You must register by Jan 17 to be eligible to take the exam between ${
               course.current_exam_dates
             }.If ` +
@@ -537,7 +537,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           "You did not pass the exam. You are authorized to take the virtual proctored " +
-            "exam for this course. Please register now and complete the exam onboarding. " +
+            "exam for this course. Please register now. " +
             "You must register by Jan 17 to be eligible to take the exam between Jun 30 and July 5.If " +
             "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
