@@ -6,7 +6,7 @@ COPY ./webpack_if_prod.sh yarn.lock package.json /src/
 
 USER root
 
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 
 COPY . /src
 

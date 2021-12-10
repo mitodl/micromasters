@@ -134,8 +134,7 @@
     "webpack-hot-middleware": "^2.17.1"
   },
   "engines": {
-    "node": "14.18.2",
-    "yarn": "1.22.15"
+    "node": "14.18.2"
   },
   "scripts": {
     "postinstall": "./webpack_if_prod.sh",
@@ -155,8 +154,7 @@
     "enzyme-adapter-react-16": "^1.15.2"
   },
   "resolutions": {
-    "node-sass/**/trim-newlines": "^3.0.1",
-    "webpack/watchpack/watchpack-chokidar2/**/chokidar": "^3.4.3",
     "merge": "^2.1.1"
-  }
+  },
+  "packageManager": "yarn@3.1.1"
 }
