@@ -552,7 +552,7 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         The user must be authorized for this exam run
         """
         resp = self.client.post(self.url, {'exam_course_id': self.exam_course_id}, format='json')
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        assert resp.status_code == status.HTTP_401_UNAUTHORIZED
 
     @patch('backends.utils.refresh_user_token', autospec=True)
     def test_refresh_token_fails(self, mock_refresh):
@@ -630,7 +630,7 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         assert resp.status_code == status.HTTP_200_OK
         assert resp.data == {'url': urljoin(COURSEWARE_BACKEND_URL[backend], '/courses/{}/'.format(self.exam_course_id))}
         mock_edx_api.assert_has_calls([
-            call({'access_token': 'staff-access-token'}, COURSEWARE_BACKEND_URL[backend]),
+            call({'access_token': 'staff-access-token'}, COURSEWARE_BACKEND_URL['mitxonline']),
             call(user_social.extra_data, COURSEWARE_BACKEND_URL[backend])
         ])
         mock_edx_enr.assert_called_once_with(self.exam_course_id, user_social.uid)
