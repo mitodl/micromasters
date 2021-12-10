@@ -18,11 +18,12 @@ export default class ExamEnrollmentDialog extends React.Component {
   props: {
     open: boolean,
     course: ?Course,
-    setVisibility: (v: boolean) => void
+    setVisibility: (v: boolean) => void,
+    addExamEnrollment: (examCourseId: string) => Promise<*>
   }
 
   render() {
-    const { setVisibility, open, course } = this.props
+    const { setVisibility, open, course, addExamEnrollment } = this.props
     if (!course) {
       return null
     }
@@ -31,8 +32,8 @@ export default class ExamEnrollmentDialog extends React.Component {
       <Button
         key="register-button"
         onClick={() => {
-          course.exam_url
-            ? (window.location = course.exam_url)
+          course.exam_course_key
+            ? addExamEnrollment(course.exam_course_key)
             : setVisibility(false)
         }}
         className="primary-button"

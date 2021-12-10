@@ -123,6 +123,7 @@ import type { Course, CourseRun, Program } from "../flow/programTypes"
 import type { Coupon } from "../flow/couponTypes"
 import type { RestState } from "../flow/restTypes"
 import type { Post } from "../flow/discussionTypes"
+import type { ExamEnrollmentResponse } from "../flow/enrollmentTypes"
 import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
 
@@ -550,6 +551,26 @@ class DashboardPage extends React.Component {
     )
   }
 
+  addExamEnrollment = (examCourseId: string): Promise<*> => {
+    const { dispatch } = this.props
+    return dispatch(actions.examEnrollment.post(examCourseId)).then(
+      (result: ExamEnrollmentResponse) => {
+        if (!result) {
+          return
+        }
+        window.location = result.url
+      },
+      () => {
+        dispatch(
+          setToastMessage({
+            message: "Failed to add exam enrollment.",
+            icon:    TOAST_FAILURE
+          })
+        )
+      }
+    )
+  }
+
   setDocsInstructionsVisibility = bool => {
     const { dispatch } = this.props
     dispatch(setDocsInstructionsVisibility(bool))
@@ -719,6 +740,7 @@ class DashboardPage extends React.Component {
       <ExamEnrollmentDialog
         open={ui.examEnrollmentDialogVisibility}
         setVisibility={this.setExamEnrollmentDialogVisibility}
+        addExamEnrollment={this.addExamEnrollment}
         course={course}
       />
     )

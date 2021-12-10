@@ -24,7 +24,8 @@ import {
   COURSE_DEADLINE_FORMAT,
   STATUS_CURRENTLY_ENROLLED,
   COURSE_ACTION_ENROLL,
-  EDX_LINK_BASE
+  COURSEWARE_BACKEND_NAMES,
+  COURSEWARE_BACKEND_BASE_URLS
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -293,7 +294,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       }
       message = passedMsg
     }
-    if (course.can_schedule_exam && course.exam_url) {
+    if (course.can_schedule_exam && course.exam_course_key) {
       message = (
         <span>
           {`${passedMsg} You are authorized to take the virtual proctored exam for this course. Please `}
@@ -303,7 +304,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
               setExamEnrollmentDialogVisibility(true)
             }}
           >
-            register now and complete the exam onboarding.
+            register now.
           </a>
           {` You must register by ${
             course.exam_register_end_date
@@ -313,7 +314,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           <br />
           <br />
           If you have already registered for the exam, you can access the exam
-          through your <a href={EDX_LINK_BASE}>edX dashboard</a>.
+          through your{" "}
+          <a href={COURSEWARE_BACKEND_BASE_URLS[firstRun.courseware_backend]}>
+            {COURSEWARE_BACKEND_NAMES[firstRun.courseware_backend]} dashboard.
+          </a>
         </span>
       )
     } else if (!R.isEmpty(course.exams_schedulable_in_future)) {

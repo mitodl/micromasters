@@ -2,7 +2,9 @@
 Views for dashboard REST APIs
 """
 import logging
+from urllib.parse import urljoin
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from requests.exceptions import HTTPError
@@ -18,13 +20,14 @@ from rest_framework.generics import get_object_or_404
 from edx_api.client import EdxApi
 
 from backends import utils
-from backends.constants import COURSEWARE_BACKEND_URL
+from backends.constants import COURSEWARE_BACKEND_URL, BACKEND_MITX_ONLINE
 from courses.models import CourseRun
 from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.serializers import UnEnrollProgramsSerializer
 from dashboard.models import ProgramEnrollment
-from dashboard.api import get_user_program_info
+from dashboard.api import get_user_program_info, is_user_enrolled_in_exam_course
 from dashboard.api_edx_cache import CachedEdxDataApi
+from exams.models import ExamRun, ExamAuthorization
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from profiles.api import get_social_auth
 
@@ -141,6 +144,91 @@ class UserCourseEnrollment(APIView):
         return Response(
             data=enrollment.json
         )
+
+
+class UserExamEnrollment(APIView):
+    """
+    Create an exam enrollment for the user in a given exam run identified by course_id.
+    """
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        """
+        enrolls the user in a exam run in edx
+        """
+        edx_exam_course_id = request.data.get('exam_course_id')
+
+        if edx_exam_course_id is None:
+            raise ValidationError('exam course id missing in the request')
+
+        exam_run = get_object_or_404(ExamRun, edx_exam_course_key=edx_exam_course_id)
+        provider = exam_run.course.first_unexpired_run().courseware_backend
+        if not ExamAuthorization.objects.filter(
+            user=request.user,
+            exam_run=exam_run,
+            status=ExamAuthorization.STATUS_SUCCESS
+        ).exists():
+            raise ValidationError('user is not authorized for exam run')
+
+        url = urljoin(COURSEWARE_BACKEND_URL[provider], '/courses/{}/'.format(edx_exam_course_id))
+        # get the credentials for the current user for edX
+        user_social = get_social_auth(request.user, provider)
+        try:
+            utils.refresh_user_token(user_social)
+        except utils.InvalidCredentialStored as exc:
+            log.error(
+                "Error while refreshing credentials for user %s",
+                request.user.username,
+            )
+            return Response(
+                status=exc.http_status_code,
+                data={'error': str(exc)}
+            )
+        data = {
+            "access_token": settings.MITXONLINE_STAFF_ACCESS_TOKEN
+        }
+        edx_client_staff = EdxApi(data, COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE])
+        # create an instance of the client to query edX
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
+        if is_user_enrolled_in_exam_course(edx_client, exam_run):
+            return Response({'url': url})
+        try:
+            edx_client_staff.enrollments.create_audit_student_enrollment(edx_exam_course_id, user_social.uid)
+        except HTTPError as exc:
+            if exc.response.status_code == status.HTTP_400_BAD_REQUEST:
+                raise PossiblyImproperlyConfigured(
+                    'Got a 400 status code from edX server while trying to create '
+                    'audit enrollment. This might happen if the course is improperly '
+                    'configured on MicroMasters. Course key '
+                    '{exam_course_key}, user "{username}"'.format(
+                        username=request.user.username,
+                        exam_course_key=edx_exam_course_id,
+                    )
+                )
+            log.error(
+                "Http error from edX while creating enrollment for exam course key %s for edX user %s",
+                edx_exam_course_id,
+                request.user,
+            )
+            return Response(
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                data={'error': str(exc)}
+            )
+        except Exception as exc:  # pylint: disable=broad-except
+            log.exception(
+                "Error creating enrollment for exam course key %s for user %s",
+                edx_exam_course_id,
+                request.user.username,
+            )
+            return Response(
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                data={'error': str(exc)}
+            )
+        return Response({'url': url})
 
 
 class UnEnrollPrograms(APIView):

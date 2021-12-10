@@ -5,9 +5,13 @@ from datetime import timedelta
 from unittest.mock import (
     MagicMock,
     patch,
+    call
 )
+from urllib.parse import urljoin
+
 import ddt
 from django.urls import reverse
+from django.test import override_settings
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -20,6 +24,8 @@ from courses.models import CourseRun
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.factories import UserCacheRefreshTimeFactory, ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment, CachedEnrollment
+from exams.factories import ExamRunFactory, ExamAuthorizationFactory
+from exams.models import ExamAuthorization
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from micromasters.factories import UserFactory, SocialUserFactory, UserSocialAuthFactory
 from micromasters.utils import now_in_utc
@@ -477,3 +483,154 @@ class UnEnrollProgramsTest(MockedESTestCase, APITestCase):
         assert ProgramEnrollment.objects.filter(
             user=self.invalid_user
         ).count() == 0
+
+@ddt.ddt
+class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
+    """
+    Tests for the UserExamEnrollment REST API
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        # create a user
+        cls.user = SocialUserFactory.create()
+
+        # create the exam run and authorization
+        cls.exam_course_id = "edx+fake+key"
+        cls.course_run = CourseRunFactory.create()
+        cls.exam_run = ExamRunFactory.create(edx_exam_course_key=cls.exam_course_id, course=cls.course_run.course)
+        cls.auth = ExamAuthorizationFactory.create(
+            user=cls.user,
+            exam_run=cls.exam_run,
+            status=ExamAuthorization.STATUS_SUCCESS
+        )
+        cls.enrollments = Enrollments([])
+
+        # url for the dashboard
+        cls.url = reverse('exam_course_enrollment')
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+
+    def get_with_mocked_enrollments(self):
+        """Helper function to make requests with mocked enrollment endpoint"""
+        with patch(
+            'edx_api.enrollments.CourseEnrollments.get_student_enrollments',
+            autospec=True,
+            return_value=self.enrollments
+        ):
+            return self.client.post(self.url, {'exam_course_id': self.exam_course_id}, format='json')
+
+    def test_methods_not_allowed(self):
+        """
+        Test that only POST is allowed
+        """
+        for method in ['put', 'patch', 'get', 'delete']:
+            client = getattr(self.client, method)
+            resp = client(self.url)
+            assert resp.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+    def test_login_required(self):
+        """
+        Only logged in users can make requests
+        """
+        self.client.logout()
+        resp = self.client.post(self.url, {}, format='json')
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_exam_course_id_mandatory(self):
+        """
+        The request data must contain exam_course_id
+        """
+        resp = self.client.post(self.url, {}, format='json')
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_user_is_not_authorized(self):
+        """
+        The user must be authorized for this exam run
+        """
+        resp = self.client.post(self.url, {'exam_course_id': self.exam_course_id}, format='json')
+        assert resp.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('backends.utils.refresh_user_token', autospec=True)
+    def test_refresh_token_fails(self, mock_refresh):
+        """
+        Test for when the server is unable to refresh the OAUTH token
+        """
+        mock_refresh.side_effect = InvalidCredentialStored('foo', status.HTTP_417_EXPECTATION_FAILED)
+        resp = self.client.post(self.url, {'exam_course_id': self.exam_course_id}, format='json')
+        assert resp.status_code == status.HTTP_417_EXPECTATION_FAILED
+        assert mock_refresh.call_count == 1
+
+    @patch('edx_api.enrollments.CourseEnrollments.create_audit_student_enrollment', autospec=True)
+    @patch('edx_api.enrollments.Enrollments.get_enrolled_course_ids', autospec=True)
+    @patch('backends.utils.refresh_user_token', autospec=True)
+    def test_enrollment_fails(self, mock_refresh, mock_enrolled_ids, mock_edx_enr):  # pylint: disable=unused-argument
+        """
+        Test error when backend raises an exception
+        """
+        error = HTTPError()
+        error.response = MagicMock()
+        error.response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        mock_edx_enr.side_effect = error
+
+        resp = self.get_with_mocked_enrollments()
+        assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        # the response has a structure like {"error": "<message>"}
+        assert isinstance(resp.data, dict)
+        assert 'error' in resp.data
+        assert mock_edx_enr.call_count == 1
+        # assert just the second argument, since the first is `self`
+        assert mock_edx_enr.call_args[0][1] == self.exam_course_id
+
+        # if instead edX returns a 400 error, an exception is raised by
+        # the view and the user gets a different error message
+        error.response.status_code = status.HTTP_400_BAD_REQUEST
+        mock_edx_enr.side_effect = error
+        resp = self.get_with_mocked_enrollments()
+        assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert isinstance(resp.data, list)
+        assert len(resp.data) == 1
+        assert PossiblyImproperlyConfigured.__name__ in resp.data[0]
+
+        # if the error from the call to edX is not HTTPError, the user gets a normal json error
+        mock_edx_enr.side_effect = ValueError()
+        resp = self.get_with_mocked_enrollments()
+        assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        # the response has a structure like {"error": "<message>"}
+        assert isinstance(resp.data, dict)
+        assert 'error' in resp.data
+
+    @ddt.data(BACKEND_EDX_ORG, BACKEND_MITX_ONLINE)
+    @patch('dashboard.views.EdxApi', autospec=True)
+    @patch('backends.utils.refresh_user_token', autospec=True)
+    @patch('edx_api.enrollments.Enrollments.get_enrolled_course_ids', autospec=True)
+    @override_settings(MITXONLINE_STAFF_ACCESS_TOKEN='staff-access-token')
+    def test_enrollment(
+        self, backend, mock_enrolled_ids, mock_refresh, mock_edx_api
+    ):  # pylint: disable=unused-argument
+        """
+        Test for happy path
+        """
+        self.course_run.courseware_backend = backend
+        self.course_run.save()
+        cache_enr = CachedEnrollment.objects.filter(
+            user=self.user, course_run__edx_course_key=self.exam_course_id).first()
+        assert cache_enr is None
+        user_social = UserSocialAuthFactory.create(user=self.user, provider=backend)
+        CourseRun.objects.filter(edx_course_key=self.exam_course_id).update(courseware_backend=backend)
+
+        enr_json = {'course_details': {'exam_course_id': self.exam_course_id}}
+        enrollment = Enrollment(enr_json)
+        mock_edx_enr = mock_edx_api.return_value.enrollments.create_audit_student_enrollment
+        mock_edx_enr.return_value = enrollment
+        resp = self.get_with_mocked_enrollments()
+        assert resp.status_code == status.HTTP_200_OK
+        assert resp.data == {'url': urljoin(COURSEWARE_BACKEND_URL[backend], '/courses/{}/'.format(self.exam_course_id))}
+        mock_edx_api.assert_has_calls([
+            call({'access_token': 'staff-access-token'}, COURSEWARE_BACKEND_URL['mitxonline']),
+            call(user_social.extra_data, COURSEWARE_BACKEND_URL[backend])
+        ])
+        mock_edx_enr.assert_called_once_with(self.exam_course_id, user_social.uid)

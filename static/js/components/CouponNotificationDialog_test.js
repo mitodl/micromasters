@@ -69,7 +69,7 @@ const COURSE: Course = {
   runs:                        [],
   can_schedule_exam:           false,
   exam_register_end_date:      "",
-  exam_url:                    "",
+  exam_course_key:             "",
   exams_schedulable_in_future: [],
   exam_date_next_semester:     "",
   current_exam_dates:          "",

@@ -14,6 +14,7 @@ class ExamRun(TimestampedModel):
     """Represents an individual run of an exam"""
     course = models.ForeignKey('courses.Course', related_name='exam_runs', on_delete=models.CASCADE)
     exam_series_code = models.CharField(max_length=20)
+    edx_exam_course_key = models.CharField(max_length=255, blank=True, null=True, unique=True)
     description = models.TextField(null=True, blank=True)
     semester = models.CharField(max_length=50, null=True, blank=True)
 
