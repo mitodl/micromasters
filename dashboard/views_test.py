@@ -547,12 +547,12 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         resp = self.client.post(self.url, {}, format='json')
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
-    # def test_user_is_not_authorized(self):
-    #     """
-    #     The user must be authorized for this exam run
-    #     """
-    #     resp = self.client.post(self.url, {'exam_course_id': self.exam_course_id}, format='json')
-    #     assert resp.status_code == status.HTTP_400_BAD_REQUEST
+    def test_user_is_not_authorized(self):
+        """
+        The user must be authorized for this exam run
+        """
+        resp = self.client.post(self.url, {'exam_course_id': self.exam_course_id}, format='json')
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('backends.utils.refresh_user_token', autospec=True)
     def test_refresh_token_fails(self, mock_refresh):
@@ -633,4 +633,4 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
             call({'access_token': 'staff-access-token'}, COURSEWARE_BACKEND_URL[backend]),
             call(user_social.extra_data, COURSEWARE_BACKEND_URL[backend])
         ])
-        mock_edx_enr.assert_called_once_with(self.exam_course_id)
+        mock_edx_enr.assert_called_once_with(self.exam_course_id, user_social.uid)
