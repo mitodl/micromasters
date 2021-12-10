@@ -17,7 +17,7 @@ import {
 import Grid from "@material-ui/core/Grid"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
-import iso3166 from "iso-3166-2"
+import iso3166 from "@mitodl/iso-3166-2"
 import R from "ramda"
 import _ from "lodash"
 

@@ -8,7 +8,7 @@ import R from "ramda"
 import ga from "react-ga"
 
 import { USER_PROFILE_RESPONSE } from "../../test_constants"
-import iso3166 from "iso-3166-2"
+import iso3166 from "@mitodl/iso-3166-2"
 import { modifyWrapperSelectField } from "../../util/test_utils"
 import SelectField from "./SelectField"
 import CountrySelectField from "./CountrySelectField"

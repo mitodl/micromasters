@@ -1,7 +1,7 @@
 // @flow
 import React from "react"
 import _ from "lodash"
-import iso3166 from "iso-3166-2"
+import iso3166 from "@mitodl/iso-3166-2"
 import R from "ramda"
 
 import SelectField from "./SelectField"
