@@ -11,6 +11,7 @@ from urllib.parse import urljoin
 
 import ddt
 from django.urls import reverse
+from django.test import override_settings
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -606,6 +607,7 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
     @patch('dashboard.views.EdxApi', autospec=True)
     @patch('backends.utils.refresh_user_token', autospec=True)
     @patch('edx_api.enrollments.Enrollments.get_enrolled_course_ids', autospec=True)
+    @override_settings(MITXONLINE_STAFF_ACCESS_TOKEN='staff-access-token')
     def test_enrollment(
         self, backend, mock_enrolled_ids, mock_refresh, mock_edx_api
     ):  # pylint: disable=unused-argument
@@ -627,6 +629,8 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         resp = self.get_with_mocked_enrollments()
         assert resp.status_code == status.HTTP_200_OK
         assert resp.data == {'url': urljoin(COURSEWARE_BACKEND_URL[backend], '/courses/{}/'.format(self.exam_course_id))}
-        mock_edx_api.assert_has_calls(
-            [call(user_social.extra_data, COURSEWARE_BACKEND_URL[backend]), call({}, COURSEWARE_BACKEND_URL[backend])])
+        mock_edx_api.assert_has_calls([
+            call(user_social.extra_data, COURSEWARE_BACKEND_URL[backend]),
+            call({'access_token': 'staff-access-token'}, COURSEWARE_BACKEND_URL[backend])
+        ])
         mock_edx_enr.assert_called_once_with(self.exam_course_id)
