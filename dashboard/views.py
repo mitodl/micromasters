@@ -20,7 +20,7 @@ from rest_framework.generics import get_object_or_404
 from edx_api.client import EdxApi
 
 from backends import utils
-from backends.constants import COURSEWARE_BACKEND_URL
+from backends.constants import COURSEWARE_BACKEND_URL, BACKEND_MITX_ONLINE
 from courses.models import CourseRun
 from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.serializers import UnEnrollProgramsSerializer
@@ -191,7 +191,7 @@ class UserExamEnrollment(APIView):
         data = {
             "access_token": settings.MITXONLINE_STAFF_ACCESS_TOKEN
         }
-        edx_client_staff = EdxApi(data, COURSEWARE_BACKEND_URL['mitxonline'])
+        edx_client_staff = EdxApi(data, COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE])
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
         if is_user_enrolled_in_exam_course(edx_client, exam_run):
