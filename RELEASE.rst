@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.211.1
+---------------
+
+- Enroll user in an exam_run on edx and redirect to edX (#5119)
+- depend on our own forked iso-3166-2 package instead of installing from github
+
 Version 0.211.0 (Released November 22, 2021)
 ---------------
 
