@@ -106,7 +106,7 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v2-beta
         with:
-          node-version: "10.15.1"
+          node-version: "14.18.2"
 
       - name: Set up environment
         run: sudo apt-get install libelf1

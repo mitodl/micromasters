@@ -50,7 +50,9 @@ const FakeTransition = ({ children }) => children()
 const FakeCSSTransition = props =>
   props.in ? <FakeTransition>{props.children}</FakeTransition> : null
 // adapted from https://testing-library.com/docs/example-react-transition-group
+// eslint-disable-next-line no-import-assign
 ReactTransitionGroup.Transition = FakeTransition
+// eslint-disable-next-line no-import-assign
 ReactTransitionGroup.CSSTransition = FakeCSSTransition
 
 // eslint-disable-next-line mocha/no-top-level-hooks
