@@ -78,7 +78,7 @@
               </span>
               <span>
               {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}&sort_by={{ current_sort_field }}"
+                <a href="?page={{ page_obj.previous_page_number }}&sort_by={{ current_sort_field }}{% if search_query %}&search_query={{search_query}}{% endif %}"
                    class="btn btn-default" style="padding: 8px 10px 8px 12px;">
                   <span class="glyphicon glyphicon-chevron-left" style="color: #000000;"></span>
                 </a>
@@ -88,7 +88,7 @@
                 </button>
               {% endif %}
               {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}&sort_by={{ current_sort_field }}"
+                <a href="?page={{ page_obj.next_page_number }}&sort_by={{ current_sort_field }}{% if search_query %}&search_query={{search_query}}{% endif %}"
                    class="btn btn-default" style="padding: 8px 12px 8px 10px;">
                   <span class="glyphicon glyphicon-chevron-right" style="color: #000000;"></span>
                 </a>
