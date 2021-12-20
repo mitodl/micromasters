@@ -1,6 +1,24 @@
 Release Notes
 =============
 
+Version 0.211.0
+---------------
+
+- Release date for 0.211.1
+- another change related to iso-3166-2
+- added sentry webpack plugin
+- Release 0.211.1
+- Enroll user in an exam_run on edx and redirect to edX (#5119)
+- depend on our own forked iso-3166-2 package instead of installing from github
+- Release date for 0.211.0
+- Release 0.211.0
+- Release date for 0.210.2
+- Bump axios from 0.21.1 to 0.21.4 (#5038)
+- Add course certificate link for staff view (#5110)
+- fix Cybersource cancellation or success redirect failures (#5116)
+- Release 0.210.2
+- Check if user paid for course having free coupon (#5109)
+
 Version 0.211.1 (Released December 20, 2021)
 ---------------
 
