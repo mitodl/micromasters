@@ -481,7 +481,7 @@ CELERY_TASK_EAGER_PROPAGATES = (get_bool("CELERY_TASK_EAGER_PROPAGATES", True) o
 CELERY_BEAT_SCHEDULE = {
     'batch-update-user-data-every-6-hrs': {
         'task': 'dashboard.tasks.batch_update_user_data',
-        'schedule': crontab(minute=0, hour='*/6')
+        'schedule': crontab(minute=0, hour='*/6', day_of_week=0)
     },
     'update-currency-exchange-rates-every-24-hrs': {
         'task': 'financialaid.tasks.sync_currency_exchange_rates',
