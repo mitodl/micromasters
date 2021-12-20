@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.211.1
+Version 0.211.1 (Released December 20, 2021)
 ---------------
 
 - Enroll user in an exam_run on edx and redirect to edX (#5119)
