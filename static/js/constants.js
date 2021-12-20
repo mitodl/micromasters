@@ -128,6 +128,11 @@ export const MITXONLINE_LINK_BASE = urljoin(
   "courses/"
 )
 
+export const MITXONLINE_DASHBOARD_LINK = urljoin(
+  SETTINGS.mitxonline_url,
+  "dashboard/"
+)
+
 export const COURSEWARE_BACKEND_EDXORG = "edxorg"
 export const COURSEWARE_BACKEND_MITXONLINE = "mitxonline"
 export const COURSEWARE_BACKEND_NAMES = {
@@ -136,7 +141,7 @@ export const COURSEWARE_BACKEND_NAMES = {
 }
 export const COURSEWARE_BACKEND_BASE_URLS = {
   [COURSEWARE_BACKEND_EDXORG]:     EDX_LINK_BASE,
-  [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_LINK_BASE
+  [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_DASHBOARD_LINK
 }
 
 export const COUPON_CONTENT_TYPE_COURSE = "course"

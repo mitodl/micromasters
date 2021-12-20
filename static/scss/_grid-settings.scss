@@ -5,7 +5,7 @@ $grid-columns: 12;
 $max-width: 1350px;
 $min-width: 1350px;
 $visual-grid: false;
-$visual-grid-index: front !global;
+$visual-grid-index: front;
 
 // Define your breakpoints
 $tablet: new-breakpoint(max-width 768px 8);

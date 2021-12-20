@@ -17,6 +17,7 @@ const _createSettings = () => ({
   },
   edx_base_url:        "/edx/",
   mitxonline_base_url: "/mitxonline/",
+  mitxonline_url:      "/mitxonline/",
   search_url:          "/",
   roles:               [],
   support_email:       "a_real_email@example.com",
