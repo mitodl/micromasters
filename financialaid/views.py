@@ -267,7 +267,9 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             lambda q, term: (
                 q |
                 Q(user__profile__first_name__icontains=term) |
-                Q(user__profile__last_name__icontains=term)
+                Q(user__profile__last_name__icontains=term) |
+                Q(user__username__icontains=term) |
+                Q(user__email__icontains=term)
             ),
             self.search_query.split(),
             Q()
