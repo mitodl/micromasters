@@ -13,6 +13,7 @@ declare var SETTINGS: {
   host: string,
   edx_base_url: string,
   mitxonline_base_url: string,
+  mitxonline_url: string,
   EXAMS_SSO_CLIENT_CODE: string,
   EXAMS_SSO_URL: string,
   FEATURES: {
