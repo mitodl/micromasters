@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.212.0
+Version 0.212.0 (Released December 22, 2021)
 ---------------
 
 - fix broken link to MITx Online Dashboard (#5136)
