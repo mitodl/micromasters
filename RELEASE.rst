@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.212.0
+---------------
+
+- updated version file to match current release (#5140)
+- Run batch user update only on Sunday (#5138)
+- another change related to iso-3166-2
+- added sentry webpack plugin
+
 Version 0.211.1 (Released December 20, 2021)
 ---------------
 
