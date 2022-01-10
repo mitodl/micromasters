@@ -195,9 +195,10 @@ after grades had been frozen.
 ```
 from django.contrib.auth.models import User
 user = User.objects.get(username=username)
-from courses.models import *
-course= Course.objects.filter(title='Data Analysis for Social Scientists').first()
+
 # If you don't know which course_run you need to sinc you can find it here
+from courses.models import *
+course= Course.objects.filter(title=title).first()
 from dashboard.utils import get_mmtrack
 mmtrack = get_mmtrack(user, course.program)
 from dashboard.api import *
