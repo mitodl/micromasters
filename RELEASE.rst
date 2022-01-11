@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.214.0
+---------------
+
+- update index users tasks to acks late so that last unfinished didn't get ignored (#5146)
+- uprade nodejs to v14
+
 Version 0.213.0 (Released January 11, 2022)
 ---------------
 
