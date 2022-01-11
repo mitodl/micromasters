@@ -87,7 +87,7 @@ def index_program_enrolled_users(program_enrollment_ids):
     post_indexing_handler(program_enrollments)
 
 
-@app.task
+@app.task(acks_late=True)
 def index_users(user_ids, check_if_changed=False):
     """
     Index users' ProgramEnrollment documents
