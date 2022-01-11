@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.213.0 (Released January 11, 2022)
+---------------
+
+- add search by email, username in financial aid review search (#5135)
+- added search_query to pagination URLS
+
 Version 0.212.0 (Released December 22, 2021)
 ---------------
 
