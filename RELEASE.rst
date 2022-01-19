@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.214.0
+Version 0.214.0 (Released January 19, 2022)
 ---------------
 
 - upgrade yarn to v3
