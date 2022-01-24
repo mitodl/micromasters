@@ -1,7 +1,7 @@
 Django==2.2.24
 Pillow==8.3.2
 boto3==1.16.63
-celery==4.3.0
+celery==5.2.2
 certifi==2018.1.18
 dj-database-url==0.3.0
 dj-static==0.0.6
