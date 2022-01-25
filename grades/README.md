@@ -185,3 +185,39 @@ the proctored exam being released. So you will need to run the management comman
 When a learner's fifth and final course certificate is created, it triggers the creation of a program certificate. 
 Course certificates are generated every hour (on the hour). If this is too long to wait, use the 
 `generate_program_certificates` management command. Each learner can only earn one Program certificate. 
+
+
+##Sync edx current cached grade and FinalGrade
+Occasionally, a learner's grade may need to be updated manually. One way this
+could happen is if a learner's MITx Online account was linked to their Micromasters
+account after some grades were frozen. This would result in grades being out of sync,
+since `FinalGrade` doesn't get updated after grades had been frozen.
+```
+from django.contrib.auth.models import User
+user = User.objects.get(username=username)
+
+# If you don't know which course_run you need to sync you can find it here
+from courses.models import *
+course= Course.objects.filter(title=title).first()
+from dashboard.utils import get_mmtrack
+mmtrack = get_mmtrack(user, course.program)
+from dashboard.api import *
+get_info_for_course(course, mmtrack)
+
+# When you know the edx_course_key
+edx_course_key='edx-course-key'
+course_run = CourseRun.objects.get(edx_course_key=edx_course_key)
+
+# Update the final grade
+from grades.api import get_final_grade
+edx_grade = get_final_grade(user, course_run)
+
+from grades.constants import *
+final_grade, _ = FinalGrade.objects.update_or_create(user=user,course_run=course_run,
+    defaults={
+        'grade': edx_grade.grade,
+        'passed': edx_grade.passed,
+        'status': FinalGradeStatus.COMPLETE
+})
+final_grade.save()
+```
