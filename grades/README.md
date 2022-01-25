@@ -188,10 +188,10 @@ Course certificates are generated every hour (on the hour). If this is too long 
 
 
 ##Sync edx current cached grade and FinalGrade
-It happens that after the grades were frozen, account relinking can occur 
-which results in grades being out of sync, since `FinalGrade` doesn't get updated
-after grades had been frozen.
-
+Occasionally, a learner's grade may need to be updated manually. One way this
+could happen is if a learner's MITx Online account was linked to their Micromasters
+account after some grades were frozen. This would result in grades being out of sync,
+since `FinalGrade` doesn't get updated after grades had been frozen.
 ```
 from django.contrib.auth.models import User
 user = User.objects.get(username=username)
