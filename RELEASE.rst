@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.214.1
+---------------
+
+- Readme: how to update final grade for user (#5147)
+
 Version 0.214.0 (Released January 19, 2022)
 ---------------
 
