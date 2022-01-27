@@ -8458,7 +8458,6 @@ __metadata:
     slick-carousel: ^1.6.0
     striptags: 3.2.0
     style-loader: ^0.18.1
-    urijs: ^1.19.6
     url-join: ^2.0.2
     url-loader: ^0.5.8
     warning: ^3.0.0
@@ -13149,13 +13148,6 @@ __metadata:
   dependencies:
     punycode: ^2.1.0
   checksum: 5a91c55d8ae6d9a1ff9dc1b0774888a99aae7cc6e9056c57b709275c0f6753b05cd1a9f2728a1479244b93a9f57ab37c60d277a48d9f2d032d6ae65837bf9bc7
-  languageName: node
-  linkType: hard
-
-"urijs@npm:^1.19.6":
-  version: 1.19.6
-  resolution: "urijs@npm:1.19.6"
-  checksum: 78b841e6f6a4abfad8c75e9e497fa5ea51527ea484cb24d3ac9f26338a57dcd41c10d14e11a94fe4699706350d2f03502a02ad712b3940fc6efe2178d9082f00
   languageName: node
   linkType: hard
 
