@@ -131,7 +131,7 @@ html5lib==0.999999999
     #   wagtail
 idna==2.7
     # via requests
-ipython==7.20.0
+ipython==7.31.1
     # via -r requirements.in
 ipython-genutils==0.2.0
     # via traitlets
@@ -153,6 +153,8 @@ kombu==4.6.7
     #   django-server-status
 l18n==2018.5
     # via wagtail
+matplotlib-inline==0.1.3
+    # via ipython
 newrelic==6.0.1.155
     # via -r requirements.in
 oauthlib==2.1.0
@@ -283,7 +285,9 @@ text-unidecode==1.2
 tornado==5.1.1
     # via robohash
 traitlets==4.3.2
-    # via ipython
+    # via
+    #   ipython
+    #   matplotlib-inline
 urllib3==1.26.5
     # via
     #   -r requirements.in
