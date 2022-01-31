@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.215.0
+---------------
+
+- disallow letter link to prevent letters from search engines indexing (#5161)
+- chore: remove unused urijs (#5158)
+- print program letter in portrait mode (#5157)
+
 Version 0.214.2 (Released January 31, 2022)
 ---------------
 
