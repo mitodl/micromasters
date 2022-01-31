@@ -74,6 +74,10 @@
 }
 
 @media print {
+  @page {
+    size: portrait;
+  }
+
   #footer {
     display: none !important;
   }
