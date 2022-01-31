@@ -11,3 +11,4 @@ Disallow: /pearson/
 Disallow: /api/
 Disallow: /certificate/
 Disallow: /records/
+Disallow: /letter/
