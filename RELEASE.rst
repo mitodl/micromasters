@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.215.0
+Version 0.215.0 (Released February 01, 2022)
 ---------------
 
 - disallow letter link to prevent letters from search engines indexing (#5161)
