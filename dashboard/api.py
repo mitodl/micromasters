@@ -21,6 +21,8 @@ from backends import utils
 from courses.models import Program, ElectiveCourse, CourseRun
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
+from dashboard.constants import DEDP_PROGRAM_TITLE
+from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack, ATTEMPTS_PER_PAID_RUN, ATTEMPTS_PER_PAID_RUN_OLD
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
@@ -684,10 +686,22 @@ def calculate_users_to_refresh_in_bulk():
         usercacherefreshtime__current_grade__gte=refresh_time_limit
     )
 
+    only_dedp_users = []
+    if not settings.UPDATE_EDX_DATA_FOR_DEDP_PROGRAM_USERS:
+        dedp_users = ProgramEnrollment.objects.filter(
+            program__title=DEDP_PROGRAM_TITLE
+        ).values_list('user__id', flat=True)
+        non_dedp_users = ProgramEnrollment.objects.exclude(
+            program__title=DEDP_PROGRAM_TITLE
+        ).filter(
+            user__id__in=dedp_users
+        ).values_list('user__id', flat=True).distinct()
+        only_dedp_users = list(set(dedp_users) - set(non_dedp_users))
     return list(
         all_users
         .exclude(id__in=users_not_expired.values_list("id", flat=True))
         .exclude(id__in=user_ids_invalid_credentials)
+        .exclude(id__in=only_dedp_users)
         .values_list("id", flat=True)
     )
 
