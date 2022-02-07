@@ -4,7 +4,7 @@ Tests for search API functionality
 from itertools import product
 from unittest.mock import Mock, patch
 import ddt
-from elasticsearch_dsl import Search, Q
+from opensearch_dsl import Search, Q
 from factory.django import mute_signals
 from django.test import (
     override_settings,
@@ -119,7 +119,7 @@ class SearchAPITests(ESTestCase):
             expected_filters.insert(0, expected_privacy_query.to_dict())
         assert search_query_dict['query']['bool']['filter'] == expected_filters
 
-    @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=5)
+    @override_settings(OPENSEARCH_DEFAULT_PAGE_SIZE=5)
     def test_size_param_in_query(self):
         """
         Assert value of size attribute of search object is set to default settings.
@@ -256,7 +256,7 @@ class SearchAPITests(ESTestCase):
 
     def test_document_needs_update_missing(self):
         """
-        If a document doesn't exist on Elasticsearch, document_needs_update should return true
+        If a document doesn't exist on Opensearch, document_needs_update should return true
         """
         with mute_signals(post_save):
             enrollment = ProgramEnrollmentFactory.create()

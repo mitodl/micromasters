@@ -8,7 +8,7 @@ x-environment:
   DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
   MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
   MICROMASTERS_DB_DISABLE_SSL: 'True'
-  ELASTICSEARCH_URL: elastic:9200
+  OPENSEARCH_URL: opensearch-node1:9200
   CELERY_ALWAYS_EAGER: 'False'
   BROKER_URL: redis://redis:6379/4
   CELERY_RESULT_BACKEND: redis://redis:6379/4
@@ -31,12 +31,29 @@ services:
     ports:
       - "6379"
 
-  elastic:
-    image: elasticsearch:6.7.1
-    command: elasticsearch -E network.host=0.0.0.0 -E http.cors.enabled=true -E http.cors.allow-origin=* -E rest.action.multi.allow_explicit_index=false
-    user: elasticsearch
+  opensearch-node1:
+    image: opensearchproject/opensearch:1.2.4
+    container_name: opensearch-node1
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      - "DISABLE_INSTALL_DEMO_CONFIG=true" # disables execution of install_demo_configuration.sh bundled with security plugin, which installs demo certificates and security configurations to OpenSearch
+      - "DISABLE_SECURITY_PLUGIN=true" # disables security plugin entirely in OpenSearch by setting plugins.security.disabled: true in opensearch.yml
+      - "discovery.type=single-node" # disables bootstrap checks that are enabled when network.host is set to a non-loopback address
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data
     ports:
-      - "9100:9200"
+      - 9100:9200
+      - 9600:9600 # required for Performance Analyzer
 
   nginx:
     image: nginx:1.9.5
@@ -65,7 +82,7 @@ services:
       - "8077:8077"
     links:
       - db
-      - elastic
+      - opensearch-node1
       - redis
       - sftp
     extra_hosts:
@@ -98,7 +115,7 @@ services:
       celery -A micromasters.celery:app worker -Q search,exams,dashboard,default -B -l ${MICROMASTERS_LOG_LEVEL:-INFO}'
     links:
       - db
-      - elastic
+      - opensearch-node1
       - redis
       - sftp
 
@@ -107,3 +124,6 @@ services:
     ports:
         - "2022:22"
     command: odl:123:1001:1001:results,results/topvue
+
+volumes:
+  opensearch-data1:

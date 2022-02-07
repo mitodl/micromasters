@@ -1,5 +1,5 @@
 """
-Management command to recreate the Elasticsearch index
+Management command to recreate the Opensearch index
 """
 
 from django.core.management.base import BaseCommand, CommandError
@@ -11,7 +11,7 @@ class Command(BaseCommand):
     """
     Command for recreate_index
     """
-    help = "Starts a new celery task that clears existing Elasticsearch indices and creates a new index and mapping."
+    help = "Starts a new celery task that clears existing Opensearch indices and creates a new index and mapping."
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
         """

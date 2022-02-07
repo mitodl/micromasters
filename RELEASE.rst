@@ -1765,7 +1765,7 @@ Version 0.79.0 (Released October 31, 2017)
 - Doc about how to freeze final grades (#3658)
 - Use yarn install --frozen-lockfile to error if upgrade needed (#3653)
 - Refactor docker-compose.yml files (#3644)
-- Use HEROKU_APP_NAME as ELASTICSEARCH_INDEX value for PR builds (#3640)
+- Use HEROKU_APP_NAME as OPENSEARCH_INDEX value for PR builds (#3640)
 
 Version 0.78.1 (Released October 20, 2017)
 --------------

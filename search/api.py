@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import Q as Query
-from elasticsearch.exceptions import NotFoundError
-from elasticsearch_dsl import Search, Q
+from opensearchpy.exceptions import NotFoundError
+from opensearch_dsl import Search, Q
 from jsonpatch import make_patch
 
 from courses.models import Program
@@ -20,7 +20,6 @@ from roles.api import get_advance_searchable_program_ids
 from search.connection import (
     get_default_alias,
     get_conn,
-    GLOBAL_DOC_TYPE,
     PRIVATE_ENROLLMENT_INDEX_TYPE,
     PUBLIC_ENROLLMENT_INDEX_TYPE,
     PERCOLATE_INDEX_TYPE,
@@ -46,10 +45,10 @@ def execute_search(search_obj):
     Executes a search against ES after checking the connection
 
     Args:
-        search_obj (Search): elasticsearch_dsl Search object
+        search_obj (Search): opensearch_dsl Search object
 
     Returns:
-        elasticsearch_dsl.result.Response: ES response
+        opensearch_dsl.result.Response: ES response
     """
     # make sure there is a live connection
     if search_obj._index is None:  # pylint: disable=protected-access
@@ -67,7 +66,7 @@ def scan_search(search_obj):
     generator that will iterate over all the documents matching the query.
 
     Args:
-        search_obj (Search): elasticsearch_dsl Search object
+        search_obj (Search): opensearch_dsl Search object
 
     Returns:
         generator of dict:
@@ -113,7 +112,7 @@ def create_program_limit_query(user, staff_program_ids, filter_on_email_optin=Fa
         filter_on_email_optin (bool): If true, filter out profiles where email_optin != true
 
     Returns:
-        elasticsearch_dsl.query.Q: An elasticsearch query
+        opensearch_dsl.query.Q: An opensearch query
     """
     users_allowed_programs = get_searchable_programs(user, staff_program_ids)
     # if the user cannot search any program, raise an exception.
@@ -154,7 +153,7 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
         filter_on_email_optin (bool): If true, filter out profiles where email_optin != True
 
     Returns:
-        Search: elasticsearch_dsl Search object
+        Search: opensearch_dsl Search object
     """
     staff_program_ids = get_advance_searchable_program_ids(user)
     is_advance_search_capable = bool(staff_program_ids)
@@ -182,7 +181,7 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
         Q('term', **{'profile.filled_out': True})
     )
     # Force size to be the one we set on the server
-    update_dict = {'size': settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE}
+    update_dict = {'size': settings.OPENSEARCH_DEFAULT_PAGE_SIZE}
     if search_param_dict is not None and search_param_dict.get('from') is not None:
         update_dict['from'] = search_param_dict['from']
     search_obj.update_from_dict(update_dict)
@@ -202,7 +201,7 @@ def prepare_and_execute_search(user, search_param_dict=None, search_func=execute
         filter_on_email_optin (bool): If true, filter out profiles where email_optin != True
 
     Returns:
-        elasticsearch_dsl.result.Response: ES response
+        opensearch_dsl.result.Response: ES response
     """
     search_obj = create_search_obj(
         user,
@@ -227,7 +226,7 @@ def search_for_field(search_obj, field_name):
     # Maintaining a consistent sort on '_doc' will help prevent bugs where the
     # index is altered during the loop.
     # This also limits the query to only return the field value.
-    search_obj = search_obj.sort('_doc').source(include=[field_name])
+    search_obj = search_obj.sort('_doc').source(includes=[field_name])
     search_results = scan_search(search_obj)
     # add the field value for every search result hit to the set
     for hit in search_results:
@@ -293,7 +292,7 @@ def _search_percolate_queries(program_enrollment):
         }
     }
 
-    result = conn.search(percolate_index, GLOBAL_DOC_TYPE, body=body)
+    result = conn.search(index=percolate_index, body=body)
     failures = result.get('_shards', {}).get('failures', [])
     if len(failures) > 0:
         raise PercolateException("Failed to percolate: {}".format(failures))
@@ -344,7 +343,7 @@ def document_needs_updating(enrollment):
 
     conn = get_conn()
     try:
-        document = conn.get(index=index, doc_type=GLOBAL_DOC_TYPE, id=enrollment.id)
+        document = conn.get(index=index, id=enrollment.id)
     except NotFoundError:
         return True
     serialized_enrollment = serialize_program_enrolled_user(enrollment)

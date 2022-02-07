@@ -28,7 +28,7 @@ import {
   COURSEWARE_BACKEND_EDXORG
 } from "./constants"
 
-export const ELASTICSEARCH_RESPONSE = deepFreeze({
+export const OPENSEARCH_RESPONSE = deepFreeze({
   took:      48,
   timed_out: false,
   _shards:   {

@@ -1,8 +1,8 @@
-"""Manages the Elasticsearch connection"""
+"""Manages the Opensearch connection"""
 import uuid
 
 from django.conf import settings
-from elasticsearch_dsl.connections import connections
+from opensearch_dsl.connections import connections
 
 from search.exceptions import ReindexException
 
@@ -33,7 +33,7 @@ def get_conn(*, verify=True, verify_indices=None):
         verify_indices (list of str): If set, check the presence of these indices. Else use the defaults.
 
     Returns:
-        elasticsearch.client.Elasticsearch: An Elasticsearch client
+        opensearch.client.Opensearch: An Opensearch client
     """
     # pylint: disable=global-statement
     global _CONN
@@ -41,10 +41,10 @@ def get_conn(*, verify=True, verify_indices=None):
 
     do_verify = False
     if _CONN is None:
-        http_auth = settings.ELASTICSEARCH_HTTP_AUTH
-        use_ssl = http_auth is not None
+        http_auth = settings.OPENSEARCH_HTTP_AUTH
+        use_ssl = bool(http_auth)
         _CONN = connections.create_connection(
-            hosts=[settings.ELASTICSEARCH_URL],
+            hosts=[settings.OPENSEARCH_URL],
             http_auth=http_auth,
             use_ssl=use_ssl,
             # make sure we verify SSL certificates (off by default)
@@ -89,14 +89,14 @@ def make_backing_index_name():
         str: A new name for a backing index
     """
     return "{prefix}_{hash}".format(
-        prefix=settings.ELASTICSEARCH_INDEX,
+        prefix=settings.OPENSEARCH_INDEX,
         hash=uuid.uuid4().hex,
     )
 
 
 def make_alias_name(index_type, *, is_reindexing):
     """
-    Make the name used for the Elasticsearch alias
+    Make the name used for the Opensearch alias
 
     Args:
         index_type (str): The type of index
@@ -106,7 +106,7 @@ def make_alias_name(index_type, *, is_reindexing):
         str: The name of the alias
     """
     return "{prefix}_{index_type}_{suffix}".format(
-        prefix=settings.ELASTICSEARCH_INDEX,
+        prefix=settings.OPENSEARCH_INDEX,
         index_type=index_type,
         suffix='reindexing' if is_reindexing else 'default'
     )

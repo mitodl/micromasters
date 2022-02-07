@@ -404,7 +404,7 @@ LOGGING = {
         'urllib3': {
             'level': ES_LOG_LEVEL,
         },
-        'elasticsearch': {
+        'opensearch': {
             'level': ES_LOG_LEVEL,
         },
         'nplusone': {
@@ -427,7 +427,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 # server-status
 STATUS_TOKEN = get_string("STATUS_TOKEN", "")
-HEALTH_CHECK = ['CELERY', 'REDIS', 'POSTGRES', 'ELASTIC_SEARCH']
+HEALTH_CHECK = ['CELERY', 'REDIS', 'POSTGRES', 'OPEN_SEARCH']
 
 ADWORDS_CONVERSION_ID = get_string("ADWORDS_CONVERSION_ID", "")
 GA_TRACKING_ID = get_string("GA_TRACKING_ID", "")
@@ -543,18 +543,19 @@ CACHES = {
 }
 
 
-# Elasticsearch
-ELASTICSEARCH_DEFAULT_PAGE_SIZE = get_int('ELASTICSEARCH_DEFAULT_PAGE_SIZE', 50)
-ELASTICSEARCH_URL = get_string("ELASTICSEARCH_URL", None)
+# Opensearch
+
+OPENSEARCH_DEFAULT_PAGE_SIZE = get_int('OPENSEARCH_DEFAULT_PAGE_SIZE', 50)
+OPENSEARCH_URL = get_string("OPENSEARCH_URL", None)
 if get_string("HEROKU_PARENT_APP_NAME", None) is not None:
-    ELASTICSEARCH_INDEX = get_string('HEROKU_APP_NAME', None)
+    OPENSEARCH_INDEX = get_string('HEROKU_APP_NAME', None)
 else:
-    ELASTICSEARCH_INDEX = get_string('ELASTICSEARCH_INDEX', None)
-if not ELASTICSEARCH_INDEX:
-    raise ImproperlyConfigured("Missing ELASTICSEARCH_INDEX")
-ELASTICSEARCH_HTTP_AUTH = get_string("ELASTICSEARCH_HTTP_AUTH", None)
-ELASTICSEARCH_INDEXING_CHUNK_SIZE = get_int("ELASTICSEARCH_INDEXING_CHUNK_SIZE", 100)
-ELASTICSEARCH_SHARD_COUNT = get_int('ELASTICSEARCH_SHARD_COUNT', 5)
+    OPENSEARCH_INDEX = get_string('OPENSEARCH_INDEX', None)
+if not OPENSEARCH_INDEX:
+    raise ImproperlyConfigured("Missing OPENSEARCH_INDEX")
+OPENSEARCH_HTTP_AUTH = get_string("OPENSEARCH_HTTP_AUTH", None)
+OPENSEARCH_INDEXING_CHUNK_SIZE = get_int("OPENSEARCH_INDEXING_CHUNK_SIZE", 100)
+OPENSEARCH_SHARD_COUNT = get_int('OPENSEARCH_SHARD_COUNT', 5)
 
 # django-role-permissions
 ROLEPERMISSIONS_MODULE = 'roles.roles'

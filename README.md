@@ -8,7 +8,7 @@ Portal for learners and course teams to access MITx MicroMasters programs.
 MicroMasters mostly follows the same [initial setup steps outlined in the common ODL web app guide](https://github.com/mitodl/handbook/blob/master/common-web-app-guide.md).
 Run through those steps in order with the following changes:
 
-1. After [creating the database models](https://github.com/mitodl/handbook/blob/master/common-web-app-guide.md#3-create-database-tables-from-the-django-models), you should create the Elasticsearch indices via management command:
+1. After [creating the database models](https://github.com/mitodl/handbook/blob/master/common-web-app-guide.md#3-create-database-tables-from-the-django-models), you should create the Opensearch indices via management command:
 
    ```
    docker-compose run web ./manage.py recreate_index
@@ -213,20 +213,20 @@ To validate prices and financial aid discounts for all programs run:
 
 # Connecting to external services
 
-#### Elasticsearch
+#### Opensearch
 
 If you want to connect to an ES cluster aside from the one created by Docker, you'll need to do the following:
 
 1. Add these variables to your `.env` file (without parentheses):
 
-        ELASTICSEARCH_INDEX=(your_index_name)
-        ELASTICSEARCH_URL=https://(your_elastic_search_url)
-        ELASTICSEARCH_HTTP_AUTH=(your_cluster_name):(key)
+        OPENSEARCH_INDEX=(your_index_name)
+        OPENSEARCH_URL=https://(your_open_search_url)
+        OPENSEARCH_HTTP_AUTH=(your_cluster_name):(key)
 
 2. If any of the above variables are set in the `web` configuration in `docker-compose.yml`, those
  will override the values you have in `.env`. Delete them.
-3. Restart the `db` and `elastic` docker-compose services if they're running:
- `docker-compose restart db elastic`
+3. Restart the `db` and `opensearch-node1` docker-compose services if they're running:
+ `docker-compose restart db opensearch-node1`
 
 You should now be able to connect to the external ES cluster. You
 can run `docker-compose run web ./manage.py recreate_index` to test

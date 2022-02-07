@@ -1,9 +1,9 @@
 """URLs for search app"""
 from django.conf.urls import url
 
-from search.views import ElasticProxyView
+from search.views import OpenSearchProxyView
 
 
 urlpatterns = [
-    url(r'^api/v0/search/(?P<elastic_url>.*)', ElasticProxyView.as_view(), name='search_api'),
+    url(r'^api/v0/search/(?P<opensearch_url>.*)', OpenSearchProxyView.as_view(), name='search_api'),
 ]

@@ -72,21 +72,25 @@
       "description": "The OAuth client secret configured in the edX instance.",
       "required": true
     },
-    "ELASTICSEARCH_HTTP_AUTH": {
-      "description": "Basic auth settings for connecting to Elasticsearch"
-    },
-    "ELASTICSEARCH_SHARD_COUNT": {
-      "description": "Configurable shard cound for Elasticsearch"
-    },
-    "ELASTICSEARCH_INDEXING_CHUNK_SIZE": {
-      "description": "Chunk size to use for Elasticsearch indexing tasks",
+    "OPENSEARCH_HTTP_AUTH": {
+      "description": "Basic auth settings for connecting to Opensearch",
       "required": false
     },
-    "ELASTICSEARCH_INDEX": {
-      "description": "Index to use on Elasticsearch"
+    "OPENSEARCH_SHARD_COUNT": {
+      "description": "Configurable shard cound for Opensearch",
+      "required": false
     },
-    "ELASTICSEARCH_URL": {
-      "description": "URL for connecting to Elasticsearch cluster"
+    "OPENSEARCH_INDEXING_CHUNK_SIZE": {
+      "description": "Chunk size to use for Opensearch indexing tasks",
+      "required": false
+    },
+    "OPENSEARCH_INDEX": {
+      "description": "Index to use on Opensearch",
+      "required": false
+    },
+    "OPENSEARCH_URL": {
+      "description": "URL for connecting to Opensearch cluster",
+      "required": false
     },
     "FEATURE_OPEN_DISCUSSIONS_USER_SYNC": {
       "description": "Enables creation and syncing of open-discussions user data",

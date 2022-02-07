@@ -12,7 +12,7 @@ import { browserHistory } from "react-router"
 
 import { wait } from "../util/util"
 import IntegrationTestHelper from "../util/integration_test_helper"
-import { PROGRAMS, ELASTICSEARCH_RESPONSE } from "../test_constants"
+import { PROGRAMS, OPENSEARCH_RESPONSE } from "../test_constants"
 import {
   INITIATE_SEND_EMAIL,
   START_EMAIL_EDIT,
@@ -45,7 +45,7 @@ describe("LearnerSearchPage", function() {
     helper = new IntegrationTestHelper()
     replySpy = helper.sandbox
       .stub()
-      .returns(Promise.resolve([200, _.cloneDeep(ELASTICSEARCH_RESPONSE)]))
+      .returns(Promise.resolve([200, _.cloneDeep(OPENSEARCH_RESPONSE)]))
     mockAxios.onPost("/_search").reply(replySpy)
     renderComponent = helper.renderComponent.bind(helper)
     listenForActions = helper.listenForActions.bind(helper)
@@ -86,7 +86,7 @@ describe("LearnerSearchPage", function() {
     return [wrapper]
   }
 
-  it("calls the elasticsearch API", () => {
+  it("calls the opensearch API", () => {
     assert.equal(replySpy.callCount, 0)
     return renderSearch().then(() => {
       assert.equal(replySpy.callCount, 1)

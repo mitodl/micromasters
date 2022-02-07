@@ -15,7 +15,7 @@ from roles.factories import RoleFactory
 from roles.models import Staff
 
 pytestmark = [
-    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_opensearch'),
     pytest.mark.usefixtures('mocked_on_commit'),
     pytest.mark.django_db,
 ]

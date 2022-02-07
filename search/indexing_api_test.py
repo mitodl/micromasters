@@ -11,7 +11,9 @@ from ddt import (
 )
 from django.conf import settings
 from django.db.models.signals import post_save
-from elasticsearch.exceptions import NotFoundError
+from django.test import override_settings
+# from elasticsearch.exceptions import NotFoundError
+from opensearchpy.exceptions import NotFoundError
 from factory.django import mute_signals
 
 from dashboard.factories import (
@@ -114,7 +116,7 @@ def get_sources(results):
     Get sources from hits, sorted by source id
 
     Args:
-        results (dict): Elasticsearch results
+        results (dict): Opensearch results
 
     Returns:
         list of dict: The list of source dicts
@@ -128,10 +130,10 @@ def remove_es_keys(hit):
     Removes ES keys from a hit object in-place
 
     Args:
-        hit (dict): Elasticsearch hit object
+        hit (dict): Opensearch hit object
 
     Returns:
-        dict: modified Elasticsearch hit object
+        dict: modified Opensearch hit object
     """
     del hit['_id']
     if '_type' in hit:
@@ -143,7 +145,7 @@ def assert_search(results, program_enrollments, *, index_type):
     """
     Assert that search results match program-enrolled users
     """
-    assert results['total'] == len(program_enrollments) * DOC_TYPES_PER_ENROLLMENT
+    assert results['total']['value'] == len(program_enrollments) * DOC_TYPES_PER_ENROLLMENT
     sources_advanced = get_sources(results)
     sorted_program_enrollments = sorted(program_enrollments, key=lambda program_enrollment: program_enrollment.id)
 
@@ -178,7 +180,7 @@ class IndexTests(ESTestCase):
         """
         Test that a newly created ProgramEnrollment is indexed properly
         """
-        assert es.search(index_type)['total'] == 0
+        assert es.search(index_type)['total']['value'] == 0
         program_enrollment = ProgramEnrollmentFactory.create()
         assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
@@ -188,9 +190,9 @@ class IndexTests(ESTestCase):
         Test that ProgramEnrollment is removed from index after the user is removed
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         program_enrollment.user.delete()
-        assert es.search(index_type)['total'] == 0
+        assert es.search(index_type)['total']['value'] == 0
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_profile_update(self, index_type, mock_on_commit):
@@ -198,7 +200,7 @@ class IndexTests(ESTestCase):
         Test that ProgramEnrollment is reindexed after the User's Profile has been updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         profile = program_enrollment.user.profile
         profile.first_name = 'updated'
         profile.save()
@@ -210,7 +212,7 @@ class IndexTests(ESTestCase):
         Test that Education is indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         EducationFactory.create(profile=program_enrollment.user.profile)
         assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
@@ -220,7 +222,7 @@ class IndexTests(ESTestCase):
         Test that Education is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         education = EducationFactory.create(profile=program_enrollment.user.profile)
         education.school_city = 'city'
         education.save()
@@ -243,7 +245,7 @@ class IndexTests(ESTestCase):
         Test that Employment is indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
@@ -253,7 +255,7 @@ class IndexTests(ESTestCase):
         Test that Employment is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         employment = EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         employment.city = 'city'
         employment.save()
@@ -369,7 +371,7 @@ class IndexTests(ESTestCase):
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory, CachedCurrentGradeFactory]:
-            assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+            assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
             course = CourseFactory.create(program=program_enrollment.program)
             course_run = CourseRunFactory.create(course=course)
             edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
@@ -383,7 +385,7 @@ class IndexTests(ESTestCase):
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory, CachedCurrentGradeFactory]:
-            assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+            assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
             course = CourseFactory.create(program=program_enrollment.program)
             course_run = CourseRunFactory.create(course=course)
             edx_record = edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
@@ -437,7 +439,7 @@ class IndexTests(ESTestCase):
 
         for index_type in ALL_INDEX_TYPES:
             mapping = es.get_mappings(index_type)
-            properties = mapping[GLOBAL_DOC_TYPE]['properties']
+            properties = mapping['properties']
             if index_type == PUBLIC_ENROLLMENT_INDEX_TYPE:
                 # Make sure we aren't exposing people's email addresses
                 assert 'email' not in properties
@@ -460,7 +462,7 @@ class IndexTests(ESTestCase):
         Test that `is_learner` status is change when role is save
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         sources = get_sources(es.search(index_type))
         # user is learner
         assert sources[0]['program']['is_learner'] is True
@@ -470,7 +472,7 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         )
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         # user is not learner
         sources = get_sources(es.search(index_type))
         assert sources[0]['program']['is_learner'] is False
@@ -487,7 +489,7 @@ class IndexTests(ESTestCase):
         Test that `is_learner` status is restore once role is removed for a user.
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         sources = get_sources(es.search(index_type))
         # user is learner
         assert sources[0]['program']['is_learner'] is True
@@ -496,7 +498,7 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         )
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         # user is not learner
         sources = get_sources(es.search(index_type))
         assert sources[0]['program']['is_learner'] is False
@@ -507,7 +509,7 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         ).delete()
-        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
         sources = get_sources(es.search(index_type))
         # user is learner
         assert sources[0]['program']['is_learner'] is True
@@ -611,7 +613,7 @@ class GetConnTests(ESTestCase):
 
         conn = get_conn(verify=False)
         for index in conn.indices.get_alias().keys():
-            if index.startswith(settings.ELASTICSEARCH_INDEX):
+            if index.startswith(settings.OPENSEARCH_INDEX):
                 conn.indices.delete(index)
 
         # Clear globals
@@ -651,6 +653,7 @@ class GetConnTests(ESTestCase):
         [True, PERCOLATE_INDEX_TYPE,
          ('testindex_percolate_default', 'testindex_percolate_reindexing')],
     )
+    @override_settings(OPENSEARCH_INDEX='testindex')
     @unpack
     # pylint: disable=too-many-arguments
     def test_get_aliases(self, is_reindex, index_type, expected_indices):
@@ -693,7 +696,7 @@ class RecreateIndexTests(ESTestCase):
         """
         Test that recreate_index will create an index and let search successfully
         """
-        assert es.search(index_type)['total'] == 0
+        assert es.search(index_type)['total']['value'] == 0
 
     @data(*itertools.product(
         [True, False],
@@ -992,4 +995,4 @@ class PercolateQueryTests(ESTestCase):
         indices = create_backing_indices()
         conn = get_conn(verify=False)
         for index_name, _ in indices:
-            assert conn.indices.exists_alias(index_name) is True
+            assert conn.indices.get_alias(index_name) is not None

@@ -63,7 +63,7 @@ def fail_first():
 
 @ddt
 @override_settings(
-    ELASTICSEARCH_INDEX=FAKE_INDEX,
+    OPENSEARCH_INDEX=FAKE_INDEX,
     OPEN_DISCUSSIONS_JWT_SECRET='secret',
     OPEN_DISCUSSIONS_BASE_URL='http://fake',
     OPEN_DISCUSSIONS_API_USERNAME='mitodl',
@@ -219,9 +219,9 @@ class SearchTasksTests(MockedESTestCase):
 
 def test_start_recreate_index(mocker, mocked_celery):
     """
-    recreate_index should recreate the elasticsearch index and reindex all data with it
+    recreate_index should recreate the opensearch index and reindex all data with it
     """
-    settings.ELASTICSEARCH_INDEXING_CHUNK_SIZE = 2
+    settings.OPENSEARCH_INDEXING_CHUNK_SIZE = 2
     enrollments = sorted(ProgramEnrollmentFactory.create_batch(4), key=lambda enrollment: enrollment.id)
     percolates = sorted(PercolateQueryFactory.create_batch(4), key=lambda percolate: percolate.id)
     index_enrollments_mock = mocker.patch("search.tasks.bulk_index_program_enrollments", autospec=True)

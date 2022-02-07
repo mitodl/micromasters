@@ -317,8 +317,8 @@ class Command(BaseCommand):
         DASHBOARD_STATES_OPTIONS = options  # pylint: disable=global-variable-undefined
 
         with override_settings(
-            ELASTICSEARCH_INDEX='testindex',
-            ELASTICSEARCH_DEFAULT_PAGE_SIZE=15,
+            OPENSEARCH_INDEX='testindex',
+            OPENSEARCH_DEFAULT_PAGE_SIZE=15,
         ):
             pytest_args = ["{}::test_learners_states".format(__file__), "-s"]
             if options.get('create_db'):

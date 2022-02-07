@@ -4,8 +4,8 @@ Functions for ES indexing
 import logging
 
 from django.conf import settings
-from elasticsearch.helpers import bulk
-from elasticsearch.exceptions import NotFoundError
+from opensearchpy.helpers import bulk
+from opensearchpy.exceptions import NotFoundError
 
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
@@ -20,7 +20,6 @@ from search.connection import (
     get_default_alias,
     get_conn,
     make_alias_name,
-    GLOBAL_DOC_TYPE,
     PERCOLATE_INDEX_TYPE,
     PRIVATE_ENROLLMENT_INDEX_TYPE,
     PUBLIC_ENROLLMENT_INDEX_TYPE, make_backing_index_name,
@@ -50,7 +49,6 @@ LONG_TYPE = {'type': 'long'}
 
 
 PUBLIC_ENROLLMENT_MAPPING = {
-    GLOBAL_DOC_TYPE: {
         "properties": {
             "id": LONG_TYPE,
             "user_id": LONG_TYPE,
@@ -112,10 +110,8 @@ PUBLIC_ENROLLMENT_MAPPING = {
             }
         },
         'dynamic': 'strict',
-    }
 }
 PRIVATE_ENROLLMENT_MAPPING = {
-    GLOBAL_DOC_TYPE: {
         "properties": {
             "id": LONG_TYPE,
             "user_id": LONG_TYPE,
@@ -213,34 +209,31 @@ PRIVATE_ENROLLMENT_MAPPING = {
             }
         },
         'dynamic': 'strict'
-    }
 }
 PERCOLATE_MAPPING = {
-    GLOBAL_DOC_TYPE: {
         "properties": {
             # Other fields will be provided via dynamic mapping
-            **PRIVATE_ENROLLMENT_MAPPING[GLOBAL_DOC_TYPE]["properties"],
+            **PRIVATE_ENROLLMENT_MAPPING["properties"],
             "query": {
                 "type": "percolator"
             }
         }
-    }
 }
 
-INDEX_WILDCARD = '{index_name}_*'.format(index_name=settings.ELASTICSEARCH_INDEX)
+INDEX_WILDCARD = '{index_name}_*'.format(index_name=settings.OPENSEARCH_INDEX)
 
 
 def _index_chunk(chunk, *, index):
     """
-    Add/update a list of records in Elasticsearch
+    Add/update a list of records in Opensearch
 
     Args:
         chunk (list):
             List of serialized items to index
-        index (str): An Elasticsearch index
+        index (str): An Opensearch index
 
     Returns:
-        int: Number of items inserted into Elasticsearch
+        int: Number of items inserted into Opensearch
     """
 
     conn = get_conn(verify_indices=[index])
@@ -248,7 +241,6 @@ def _index_chunk(chunk, *, index):
         conn,
         chunk,
         index=index,
-        doc_type=GLOBAL_DOC_TYPE,
     )
     if len(errors) > 0:
         raise ReindexException("Error during bulk insert: {errors}".format(
@@ -261,12 +253,12 @@ def _index_chunk(chunk, *, index):
 
 def _index_chunks(items, *, index, chunk_size=100):
     """
-    Add/update records in Elasticsearch.
+    Add/update records in Opensearch.
 
     Args:
         items (iterable):
             Iterable of serialized items to index
-        index (str): An Elasticsearch index
+        index (str): An Opensearch index
         chunk_size (int):
             How many items to index at once.
 
@@ -291,11 +283,11 @@ def _delete_item(document_id, *, index):
 
     Args:
         document_id (int): A document id
-        index (str): An Elasticsearch index
+        index (str): An Opensearch index
     """
     conn = get_conn(verify_indices=[index])
     try:
-        conn.delete(index=index, doc_type=GLOBAL_DOC_TYPE, id=document_id)
+        conn.delete(index=index, id=document_id)
     except NotFoundError:
         # Item is already gone
         pass
@@ -439,7 +431,7 @@ def index_program_enrolled_users(
 
 def remove_program_enrolled_user(program_enrollment_id):
     """
-    Remove a program-enrolled user from Elasticsearch.
+    Remove a program-enrolled user from Opensearch.
 
     Args:
         program_enrollment_id (int): A program enrollment id which is the same as the document id to remove
@@ -455,12 +447,12 @@ def remove_program_enrolled_user(program_enrollment_id):
 
 def serialize_program_enrolled_user(program_enrollment):
     """
-    Serializes a program-enrolled user for use with Elasticsearch.
+    Serializes a program-enrolled user for use with Opensearch.
 
     Args:
         program_enrollment (ProgramEnrollment): A program_enrollment to serialize
     Returns:
-        dict: The data to be sent to Elasticsearch or None if it shouldn't be indexed
+        dict: The data to be sent to Opensearch or None if it shouldn't be indexed
     """
     user = program_enrollment.user
     serialized = {
@@ -495,7 +487,7 @@ def filter_current_work(profile):
 
 def refresh_index(index):
     """
-    Refresh the Elasticsearch index
+    Refresh the Opensearch index
     """
     get_conn(verify_indices=[index]).indices.refresh(index=index)
 
@@ -534,7 +526,7 @@ def clear_and_create_index(index_name, *, index_type, skip_mapping=False):
     conn.indices.create(index_name, body={
         'settings': {
             'index': {
-                'number_of_shards': settings.ELASTICSEARCH_SHARD_COUNT,
+                'number_of_shards': settings.OPENSEARCH_SHARD_COUNT,
             },
             'analysis': {
                 'analyzer': {
@@ -569,7 +561,7 @@ def delete_indices():
 
 def _serialize_percolate_query(query):
     """
-    Serialize PercolateQuery for Elasticsearch indexing
+    Serialize PercolateQuery for Opensearch indexing
 
     Args:
         query (PercolateQuery): A PercolateQuery instance
@@ -611,7 +603,7 @@ def index_percolate_queries(percolate_queries, chunk_size=100):
 
 def delete_percolate_query(percolate_query_id):
     """
-    Remove a percolate query from Elasticsearch
+    Remove a percolate query from Opensearch
 
     Args:
         percolate_query_id (int):

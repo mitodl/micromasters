@@ -8,7 +8,7 @@ import axios from "axios"
 import MockAdapter from "axios-mock-adapter"
 
 import CustomResetFiltersDisplay from "./CustomResetFiltersDisplay"
-import { ELASTICSEARCH_RESPONSE } from "../../test_constants"
+import { OPENSEARCH_RESPONSE } from "../../test_constants"
 
 describe("CustomResetFiltersDisplay", () => {
   let sandbox, searchKit, mockAxios
@@ -19,7 +19,7 @@ describe("CustomResetFiltersDisplay", () => {
 
     const replySpy = sandbox
       .stub()
-      .returns(Promise.resolve([200, ELASTICSEARCH_RESPONSE]))
+      .returns(Promise.resolve([200, OPENSEARCH_RESPONSE]))
     mockAxios.onPost("/_search").reply(replySpy)
 
     searchKit = new SearchkitManager()

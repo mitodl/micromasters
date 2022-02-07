@@ -229,6 +229,7 @@ class DashboardTests(ViewsTests):
     """
     Tests for dashboard views
     """
+    @override_settings(USE_WEBPACK_DEV_SERVER=False)
     def test_dashboard_settings(self):
         """
         Assert settings we pass to dashboard
@@ -254,7 +255,7 @@ class DashboardTests(ViewsTests):
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
-            ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
+            OPENSEARCH_DEFAULT_PAGE_SIZE=10,
             OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url,
         ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             resp = self.client.get(DASHBOARD_URL)
@@ -284,7 +285,7 @@ class DashboardTests(ViewsTests):
                 "mitxonline_base_url": mitxonline_base_url,
                 "mitxonline_url": mitxonline_url,
                 'roles': [],
-                'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
+                'search_url': reverse('search_api', kwargs={"opensearch_url": ""}),
                 'support_email': email_support,
                 'environment': 'dev',
                 'release_version': '0.0.1',
@@ -562,6 +563,7 @@ class TestProgramPage(ViewsTests):
             GA_TRACKING_ID=ga_tracking_id,
             ENVIRONMENT='environment',
             VERSION='version',
+            WEBPACK_DEV_SERVER_HOST='testserver',
         ):
             response = self.client.get(self.program_page.url)
             assert response.context['authenticated'] is True
@@ -616,7 +618,7 @@ class TestProgramPage(ViewsTests):
         program.live = False
         program.save()
         resp = self.client.get('/')
-        self.assertNotContains(resp, default_image)
+        self.assertNotIn(default_image, resp)
 
         # default image should show up if a program is live and no thumbnail image was set
         program.live = True
@@ -680,6 +682,7 @@ class TestProgramPage(ViewsTests):
 
 
 # pylint: disable=too-many-locals
+@override_settings(USE_WEBPACK_DEV_SERVER=False)
 class TestUsersPage(ViewsTests):
     """
     Tests for user page
@@ -711,7 +714,7 @@ class TestUsersPage(ViewsTests):
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
-            ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
+            OPENSEARCH_DEFAULT_PAGE_SIZE=10,
             OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
@@ -742,7 +745,7 @@ class TestUsersPage(ViewsTests):
                     "mitxonline_base_url": mitxonline_base_url,
                     "mitxonline_url": mitxonline_url,
                     'roles': [],
-                    'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
+                    'search_url': reverse('search_api', kwargs={"opensearch_url": ""}),
                     'support_email': email_support,
                     'environment': 'dev',
                     'release_version': '0.0.1',
@@ -795,7 +798,7 @@ class TestUsersPage(ViewsTests):
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
-            ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
+            OPENSEARCH_DEFAULT_PAGE_SIZE=10,
             OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
@@ -819,7 +822,7 @@ class TestUsersPage(ViewsTests):
                     "mitxonline_base_url": mitxonline_base_url,
                     "mitxonline_url": mitxonline_url,
                     'roles': [],
-                    'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
+                    'search_url': reverse('search_api', kwargs={"opensearch_url": ""}),
                     'support_email': email_support,
                     'environment': 'dev',
                     'release_version': '0.0.1',

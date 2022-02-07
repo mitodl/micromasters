@@ -2,7 +2,7 @@
 # pylint: disable=redefined-outer-name
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
-from elasticsearch_dsl import Search
+from opensearch_dsl import Search
 from factory.django import mute_signals
 from open_discussions_api.constants import ROLE_STAFF
 import pytest
@@ -43,7 +43,7 @@ from search.models import (
 )
 
 pytestmark = [
-    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_opensearch'),
     pytest.mark.usefixtures('mocked_on_commit'),
     pytest.mark.django_db,
 ]

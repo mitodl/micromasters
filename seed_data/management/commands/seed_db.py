@@ -281,7 +281,7 @@ class Command(BaseCommand):
             self.stdout.write("Seed data appears to already exist.")
         else:
             start_recreate_index.delay().get()
-            # Mute post_save to prevent updates to Elasticsearch on a per program or user basis.
+            # Mute post_save to prevent updates to Opensearch on a per program or user basis.
             # recreate_index() is run afterwards to do this indexing in bulk.
             with mute_signals(post_save):
                 fake_programs = deserialize_program_data_list(program_data_list)

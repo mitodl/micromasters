@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from django.test import (
     TestCase,
+    override_settings
 )
 
 from dashboard.models import ProgramEnrollment
@@ -13,6 +14,7 @@ from search.indexing_api import delete_indices, create_backing_indices
 from search.models import PercolateQuery
 
 
+@override_settings(DEBUG=True)
 class ESTestCase(TestCase):
     """
     Test class for test cases that need a live ES index
@@ -39,6 +41,7 @@ class ESTestCase(TestCase):
         super().tearDownClass()
 
 
+@override_settings(DEBUG=True)
 class MockedESTestCase(TestCase):
     """
     Test class that mocks the MicroMasters indexing API to avoid unnecessary ES index operations
@@ -79,7 +82,7 @@ class MockedESTestCase(TestCase):
 
 def reindex_test_es_data():
     """
-    Recreates the ElasticSearch indices for the live data used in tests
+    Recreates the OpenSearch indices for the live data used in tests
     """
     backing_indices = create_backing_indices()
     tasks.bulk_index_program_enrollments(ProgramEnrollment.objects.order_by("id").values_list("id", flat=True),

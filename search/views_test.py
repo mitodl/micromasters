@@ -61,13 +61,13 @@ class SearchTests(ESTestCase, APITestCase):
         )
 
         # search URL
-        cls.search_url = reverse('search_api', kwargs={'elastic_url': ''})
+        cls.search_url = reverse('search_api', kwargs={'opensearch_url': ''})
 
     def setUp(self):
         super().setUp()
         self.client.force_login(self.staff)
 
-    @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=1000)
+    @override_settings(OPENSEARCH_DEFAULT_PAGE_SIZE=1000)
     def assert_status_code(self, status_code=status.HTTP_200_OK, json=None):
         """
         Helper function to assert the status code for POST
@@ -78,19 +78,19 @@ class SearchTests(ESTestCase, APITestCase):
 
     def get_user_ids_in_hits(self, hits):
         """
-        Helper function to extract profile ids from elasticsearch hits
+        Helper function to extract profile ids from opensearch hits
         """
         return [hit['_source']['user_id'] for hit in hits]
 
     def get_program_ids_in_hits(self, hits):
         """
-        Helper function to extract the program ids in a list of elasticsearch hits.
+        Helper function to extract the program ids in a list of opensearch hits.
         """
         return list(set(hit['_source']['program']['id'] for hit in hits))
 
     def test_default_page_size(self):
         """Assert the default page size"""
-        assert settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE == 50
+        assert settings.OPENSEARCH_DEFAULT_PAGE_SIZE == 50
 
     def test_no_anonymous_access(self):
         """
@@ -276,7 +276,7 @@ class SearchTests(ESTestCase, APITestCase):
         user_ids_in_hits = self.get_user_ids_in_hits(resp.data['hits']['hits'])
         assert len(user_ids_in_hits) == 0
 
-    @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=1000)
+    @override_settings(OPENSEARCH_DEFAULT_PAGE_SIZE=1000)
     def test_filled_out(self):
         """
         Search results should only include profiles which are filled out

@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import override_settings
-from elasticsearch_dsl import Search
+from opensearch_dsl import Search
 from factory.django import mute_signals
 from requests import Response
 from requests.exceptions import HTTPError

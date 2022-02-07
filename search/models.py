@@ -7,7 +7,7 @@ from micromasters.models import TimestampedModel
 
 
 class PercolateQuery(TimestampedModel):
-    """An elasticsearch query used in percolate"""
+    """An opensearch query used in percolate"""
     AUTOMATIC_EMAIL_TYPE = 'automatic_email_type'
     DISCUSSION_CHANNEL_TYPE = 'discussion_channel_type'
 
