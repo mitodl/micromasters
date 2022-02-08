@@ -151,14 +151,14 @@ The course team will deliver edx exam grades to us via a csv file in dropbox (in
 
 ### Load grades
 
-Note that users will have usernames from the platform on which they took the exams (e.g. MITx Online). If necessary, use the social_auths to convert the usernames of the exam platform to Micromasters usernames. 
+Note that users will have usernames from the platform on which they took the exams (e.g. MITx Online). If necessary, use the social_auths to convert the usernames of the exam platform to Micromasters usernames. (See exams/README.md for additional details.)
 
 Steps:
 - Copy the spreadsheet to your computer
 - If necessary replace usernames with Micromasters usernames (see note above)
 - Copy the spreadsheet in your pasteboard: 
    - `cat <.csv file> | pbcopy`
-   - Connect to the Hiroku instance for MM
+   - Connect to the Heroku instance for MM
    - Create a .csv:
       - `cat > [grades.csv] ENTER`
       - [paste]
