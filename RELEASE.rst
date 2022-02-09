@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.216.0
+Version 0.216.0 (Released February 09, 2022)
 ---------------
 
 - Updated instructions for importing exam grades and fixed markup typo (#5167)
