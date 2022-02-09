@@ -127,67 +127,77 @@ and type (being ABSOLUTELY sure of what you are doing):
     FinalGrade.objects.filter(course_run__edx_course_key=edx_course_key).delete()
     CourseRunGradingStatus.objects.filter(course_run__edx_course_key=edx_course_key).delete()
 
-## How to adjust (curve) proctored exam grades
+## How to import proctored exam grades
 
-Overview: After Pearson has delivered to all the proctored exam grades, we share them with the course team. 
-It typically takes them a few weeks to adjust the grades and return them to us for upload. 
+Overview: After a proctored exam has ended, the course team will deliver a spreadsheet with the grades. They need to be imported into Micromasters.
 
 ### Checklist 
 
 This can be used for creating an issue task at the end of each exam session. Just copy and paste the source markdown:
 
-- [ ] Wait for course team to deliver adjusted grades
-- [ ] Test adjusted grades and confirm counts of new course certificates and program certificates 
-- [ ] Wait for course team to confirm counts with faculty
-- [ ] load adjusted grades
-- [ ] release exam grades to learners
-- [ ] update combined final grades
-- [ ] confirm creation of course certificates and program certificates
+- [ ] Receive final exam grades from the course team
+- [ ] Load grades
+- [ ] Tally exam grades and confirm with the course team
+- [ ] Release exam grades to learners
+- [ ] Update combined final grades
+- [ ] Update certificates
 
 Detailed explanations below:
 
-### Test edx exam grades
+### Receive final exam grades from the course team
 
-The course team will deliver edx exam grades to us via a csv file in dropbox (in order to ensure the file is 
-encrypted at rest with access control). Since adjusting grades is a complex process,
-they like us to validate their changes by calculating the number of learners who, after uploading the
-grades, will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. 
+The course team will deliver edx exam grades to us via a csv file in dropbox (in order to ensure the file is encrypted at rest with access control). 
 
-Once we and the course team have determined that there is a match the course team will validate the grade adjustment 
-with the faculty. After the course team has validated the grades they will email us to confirm that we can
-import the adjusted grades into the micromasters application and release them to learners. 
 
-Both steps (1. validating the number of learners who have earned different numbers of course certificates and 2. 
-receiving the email confirmation from the course team to release the grades) need to occur before importing the 
-grades into the micromasters application.
+### Load grades
 
-### Load adjusted grades
+Note that users will have usernames from the platform on which they took the exams (e.g. MITx Online). If necessary, use the social_auths to convert the usernames of the exam platform to Micromasters usernames. (See exams/README.md for additional details.)
 
-Once that we have verified the numbers of learners that passed each course with the new exam results
-with the course team, we can import them into the micromasters web application. This can be done
-with the management command: `import_edx_exam_grades.py`
+Steps:
+- Copy the spreadsheet to your computer
+- If necessary replace usernames with Micromasters usernames (see note above)
+- Copy the spreadsheet in your pasteboard: 
+   - `cat <.csv file> | pbcopy`
+   - Connect to the Heroku instance for MM
+   - Create a .csv:
+      - `cat > [grades.csv] ENTER`
+      - [paste]
+      - `ENTER`
+      - `control-d` to end the paste
+   - Confirm you have the same number of rows in the new .csv and the original: `wc -l <filename>`
+- Run the import command: `python manage.py import_edx_exam_grades [grades.csv]`
+   - This will report:
+      - Errors
+      - Total number of grades created
+      - Total number of grades modified
+      - There may be some issues you can sort out here
+
+
+### Tally exam grades and confirm with the course team
+
+After grades are imported, share the list of learners and the course exam they passed. Note that you should use the original usernames from the platform on which the exams were taken.
+
+The course team will confirm if the data matches theirs. Resolve any discrepanies.
+
 
 ### Release exam grades to learners 
 
-Now that grades are loaded, we can release them to learners by updating the date/time that grades are
-available in the exam run admin. 
+Now that grades are loaded, we can release them to learners by updating the date/time that grades are available in the exam run admin. 
+
 
 ### Update combined final grades
 
-While there is a signal that creates combined final grades whenever a proctored exam grade is updated, it depends on 
-the proctored exam being released. So you will need to run the management command to force an update:
-  
-    python manage.py populate_combined_final_grades
+While there is a signal that creates combined final grades whenever a proctored exam grade is updated, it depends on the proctored exam being released. So you will need to run the management command to force an update: `python manage.py populate_combined_final_grades`
+
+Note that this may take several minutes to run.
 
 
-### update certificates
+### Update certificates
 
-When a learner's fifth and final course certificate is created, it triggers the creation of a program certificate. 
-Course certificates are generated every hour (on the hour). If this is too long to wait, use the 
-`generate_program_certificates` management command. Each learner can only earn one Program certificate. 
+When a learner's fifth and final course certificate is created, it triggers the creation of a program certificate. Course certificates are generated every hour (on the hour), but if you'd like to, you can generate them manually using the `generate_program_certificates` management command. Note: each learner can only earn one Program certificate. 
 
 
-##Sync edx current cached grade and FinalGrade
+## Sync edx current cached grade and FinalGrade
 Occasionally, a learner's grade may need to be updated manually. One way this
 could happen is if a learner's MITx Online account was linked to their Micromasters
 account after some grades were frozen. This would result in grades being out of sync,
