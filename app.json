@@ -253,6 +253,10 @@
     "STATUS_TOKEN": {
       "description": "Token to access the status API.",
       "required": true
+    },
+    "UPDATE_EDX_DATA_FOR_DEDP_PROGRAM_USERS": {
+      "description": "Automatic edx data (enrollments, grades and certificates) for user enrolled in DEDP programs",
+      "required": false
     }
   },
   "keywords": [

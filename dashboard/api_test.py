@@ -35,6 +35,7 @@ from dashboard import (
 )
 from dashboard.api import save_cache_update_failure, FIELD_USER_ID_BASE_STR
 from dashboard.api_edx_cache import CachedEdxDataApi
+from dashboard.constants import DEDP_PROGRAM_TITLE
 from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory, \
     ProgramEnrollmentFactory
 from dashboard.models import CachedCertificate
@@ -2442,6 +2443,16 @@ def test_calculate_exclude_users(users_without_with_cache, patched_redis_keys):
     con.sadd(TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE, needs_update[0].id)
 
     assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted([user.id for user in expected])
+
+
+def test_calculate_excludes_dedp_users(users_without_with_cache):
+    """
+    Users enrolled in DEDP program should be excluded
+    """
+    needs_update, _ = users_without_with_cache
+    program = ProgramFactory.create(title=DEDP_PROGRAM_TITLE)
+    ProgramEnrollmentFactory.create(program=program, user=needs_update[0])
+    assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted([user.id for user in needs_update[1:]])
 
 
 def test_refresh_user_data(db, mocker):
