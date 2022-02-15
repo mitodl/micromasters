@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.217.0
+Version 0.217.0 (Released February 15, 2022)
 ---------------
 
 - Stop automated updates of edX data for users in certain programs (#5165)
