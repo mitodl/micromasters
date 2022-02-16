@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.217.1
+---------------
+
+- Bump celery from 4.3.0 to 5.2.2 & redis from 3.3.0 to 3.5.3 (#5145)
+
 Version 0.217.0 (Released February 15, 2022)
 ---------------
 
