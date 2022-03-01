@@ -5,7 +5,7 @@ import { coursewareBaseUrl, courseRunUrl } from "./courseware"
 import { makeRun } from "../factories/dashboard"
 import {
   EDX_LINK_BASE,
-  MITXONLINE_DASHBOARD_LINK,
+  MITXONLINE_LINK_BASE,
   COURSEWARE_BACKEND_EDXORG,
   COURSEWARE_BACKEND_MITXONLINE
 } from "../constants"
@@ -19,7 +19,7 @@ describe("courseware utility functions", () => {
     it("should return the edxurl for mitxonline coursewaree", () => {
       assert.equal(
         coursewareBaseUrl(COURSEWARE_BACKEND_MITXONLINE),
-        MITXONLINE_DASHBOARD_LINK
+        MITXONLINE_LINK_BASE
       )
     })
   })

@@ -445,29 +445,43 @@ describe("Course Status Messages", () => {
           }
         ])
       })
-      it("should prompt the user to take exam if exam coupon available", () => {
-        course.runs = [course.runs[0]]
-        course.can_schedule_exam = true
-        course.exam_register_end_date = "Jan 17"
-        course.current_exam_dates = "Jan 30 - Feb 5"
+      ;[["edxorg", "mitxonline"]].forEach(([courseBackend]) => {
+        it(`should prompt the user to take ${courseBackend} exam if exam coupon available`, () => {
+          course.runs = [course.runs[0]]
+          course.can_schedule_exam = true
+          course.exam_register_end_date = "Jan 17"
+          course.current_exam_dates = "Jan 30 - Feb 5"
 
-        let messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(
-          messages[0]["message"],
-          "There are currently no exams available. Please check back later."
-        )
-        course.exam_course_key = "http://example-url.com"
-        messages = calculateMessages(calculateMessagesProps).value
-        const mounted = shallow(messages[0]["message"])
-        assert.equal(
-          mounted.text(),
-          " You are authorized to take the virtual proctored exam for this " +
-            "course. Please register now. " +
-            `You must register by Jan 17 to be eligible to take the exam between ${
-              course.current_exam_dates
-            }.If ` +
-            "you have already registered for the exam, you can access the exam through your edX dashboard."
-        )
+          let messages = calculateMessages(calculateMessagesProps).value
+          assert.equal(
+            messages[0]["message"],
+            "There are currently no exams available. Please check back later."
+          )
+          course.runs[0].courseware_backend = courseBackend
+          course.exam_course_key = "http://example-url.com"
+          messages = calculateMessages(calculateMessagesProps).value
+          const mounted = shallow(messages[0]["message"])
+          const courseBackendText =
+            courseBackend === "edxorg" ? "edX" : "MITx Online"
+          assert.equal(
+            mounted.text(),
+            " You are authorized to take the virtual proctored exam for this " +
+              "course. Please register now. " +
+              `You must register by Jan 17 to be eligible to take the exam between ${
+                course.current_exam_dates
+              }.If ` +
+              `you have already registered for the exam, you can access the exam through your ${courseBackendText} dashboard.`
+          )
+          const [registerLink, courseBackendLink] = mounted.find("a")
+          assert.exists(registerLink)
+          assert.equal(registerLink.props.children, "register now.")
+          assert.exists(courseBackendLink)
+          const courseBackendLinkUrl =
+            courseBackend === "edxorg"
+              ? "/edx/courses/"
+              : "/mitxonline/dashboard/"
+          assert.equal(courseBackendLink.props.href, courseBackendLinkUrl)
+        })
       })
       it("should let the user know when can take exam in the future", () => {
         course.runs = [course.runs[0]]
