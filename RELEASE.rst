@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.217.2 (Released March 07, 2022)
+---------------
+
+- Revert "Run batch user update only on Sunday (#5138)" (#5148)
+
 Version 0.217.1 (Released February 22, 2022)
 ---------------
 
