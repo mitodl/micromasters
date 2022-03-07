@@ -7,6 +7,8 @@ from django.conf import settings
 from django.db import transaction
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 from ipware import get_client_ip
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -279,6 +281,7 @@ class UserCouponsView(APIView):
             )
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class PaymentCallBackView(RedirectView):
     """
     payment callback view that will redirect to dashboard url
