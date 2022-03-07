@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.218.0
+---------------
+
+- fix broken link on dashboard view on Mitx Online (#5171)
+
 Version 0.217.2 (Released March 07, 2022)
 ---------------
 
