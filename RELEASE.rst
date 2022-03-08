@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.218.0
+Version 0.218.0 (Released March 08, 2022)
 ---------------
 
 - Make the payment callback csrf exempt
