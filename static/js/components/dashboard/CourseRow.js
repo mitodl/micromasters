@@ -65,7 +65,11 @@ export default class CourseRow extends React.Component {
   }
 
   getCourseCoupon = (): ?Coupon => {
-    const { couponPrices, course } = this.props
+    const { couponPrices, course, showStaffView } = this.props
+
+    if(showStaffView) {
+      return undefined
+    }
 
     const couponPrice = couponPrices.pricesInclCouponByCourse.get(course.id)
     return couponPrice ? couponPrice.coupon : undefined
@@ -164,22 +168,20 @@ export default class CourseRow extends React.Component {
           ])}
           showStaffView={showStaffView}
         />
-        {showStaffView ? null : (
-          <StatusMessages
-            course={course}
-            financialAid={financialAid}
-            hasFinancialAid={hasFinancialAid}
-            firstRun={run}
-            courseAction={this.courseAction}
-            expandedStatuses={ui.expandedCourseStatuses}
-            setShowExpandedCourseStatus={setShowExpandedCourseStatus}
-            setExamEnrollmentDialogVisibility={
-              setExamEnrollmentDialogVisibility
-            }
-            setSelectedExamCouponCourse={setSelectedExamCouponCourse}
-            coupon={this.getCourseCoupon()}
-          />
-        )}
+        <StatusMessages
+          course={course}
+          financialAid={financialAid}
+          hasFinancialAid={hasFinancialAid}
+          firstRun={run}
+          courseAction={this.courseAction}
+          expandedStatuses={ui.expandedCourseStatuses}
+          setShowExpandedCourseStatus={setShowExpandedCourseStatus}
+          setExamEnrollmentDialogVisibility={
+            setExamEnrollmentDialogVisibility
+          }
+          setSelectedExamCouponCourse={setSelectedExamCouponCourse}
+          coupon={this.getCourseCoupon()}
+        />
       </div>
     )
   }
