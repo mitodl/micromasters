@@ -67,7 +67,7 @@ export default class CourseRow extends React.Component {
   getCourseCoupon = (): ?Coupon => {
     const { couponPrices, course, showStaffView } = this.props
 
-    if(showStaffView) {
+    if (showStaffView) {
       return undefined
     }
 
@@ -176,9 +176,7 @@ export default class CourseRow extends React.Component {
           courseAction={this.courseAction}
           expandedStatuses={ui.expandedCourseStatuses}
           setShowExpandedCourseStatus={setShowExpandedCourseStatus}
-          setExamEnrollmentDialogVisibility={
-            setExamEnrollmentDialogVisibility
-          }
+          setExamEnrollmentDialogVisibility={setExamEnrollmentDialogVisibility}
           setSelectedExamCouponCourse={setSelectedExamCouponCourse}
           coupon={this.getCourseCoupon()}
         />
