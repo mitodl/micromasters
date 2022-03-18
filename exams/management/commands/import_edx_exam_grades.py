@@ -12,6 +12,7 @@ from exams.models import ExamRun, ExamAuthorization
 from exams.constants import EXAM_GRADE_PASS
 from grades.models import ProctoredExamGrade
 from micromasters.utils import now_in_utc
+from social_django.models import UserSocialAuth
 
 
 class Command(BaseCommand):
@@ -29,13 +30,15 @@ class Command(BaseCommand):
         grade_count = 0
         existing_grades = 0
         for row in reader:
-            try:
-                user = User.objects.get(username=row['username'])
-            except User.DoesNotExist:
+            user_social_auth = UserSocialAuth.objects.filter(uid=row['username'], provider='mitxonline')
+            if user_social_auth.exists():
+                user = user_social_auth.user
+            else:
                 self.stdout.write(
                     self.style.ERROR('Could not find user for username {}'.format(row['username']))
                 )
                 continue
+
             course_id = row['course_id']
 
             try:
