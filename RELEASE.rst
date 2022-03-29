@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.219.0
+---------------
+
+- asadiqbal08/Use MitxOnline usernames (#5180)
+
 Version 0.218.0 (Released March 08, 2022)
 ---------------
 
