@@ -7,3 +7,4 @@ EXAM_GRADES = (
     EXAM_GRADE_PASS,
     EXAM_GRADE_FAIL,
 )
+BACKEND_MITX_ONLINE= 'mitxonline'
