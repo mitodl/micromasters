@@ -177,7 +177,7 @@ open-discussions-client==0.5.0
     # via -r requirements.in
 openpyxl==3.0.7
     # via tablib
-paramiko==2.7.2
+paramiko==2.10.1
     # via pysftp
 parso==0.8.1
     # via jedi
@@ -272,6 +272,7 @@ six==1.14.0
     #   faker
     #   html5lib
     #   l18n
+    #   paramiko
     #   prompt-toolkit
     #   pynacl
     #   python-dateutil
