@@ -240,7 +240,7 @@
       "value": "5"
     },
     "REDIS_MAX_CONNECTIONS": {
-      "description": "Max number of redis connections",
+      "description": "Max number of redis connections per worker",
       "required": false
     },
     "SECRET_KEY": {
