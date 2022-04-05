@@ -239,6 +239,10 @@
     "PGBOUNCER_MIN_POOL_SIZE": {
       "value": "5"
     },
+    "REDIS_MAX_CONNECTIONS": {
+      "description": "Max number of redis connections",
+      "required": false
+    },
     "SECRET_KEY": {
       "description": "Django secret key.",
       "generator": "secret"
