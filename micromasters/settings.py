@@ -516,7 +516,7 @@ CELERY_TIMEZONE = 'UTC'
 
 REDIS_MAX_CONNECTIONS = get_int(
     name="REDIS_MAX_CONNECTIONS",
-    default=48,
+    default=36,
 )
 DJANGO_REDIS_CLOSE_CONNECTION = True
 
