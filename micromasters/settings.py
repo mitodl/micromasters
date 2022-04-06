@@ -514,6 +514,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'UTC'
 
+REDIS_MAX_CONNECTIONS = get_int(
+    name="REDIS_MAX_CONNECTIONS",
+    default=36,
+)
+DJANGO_REDIS_CLOSE_CONNECTION = True
 
 # Celery parallel rate limit for batch_update_user_data
 # This is the number of tasks per minute, each task updates data for 20 users
@@ -532,6 +537,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+            "CONNECTION_POOL_KWARGS": {"max_connections": REDIS_MAX_CONNECTIONS},
         },
     },
 }

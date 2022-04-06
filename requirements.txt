@@ -68,6 +68,7 @@ django==2.2.24
     # via
     #   -r requirements.in
     #   django-filter
+    #   django-redis
     #   django-role-permissions
     #   django-storages
     #   django-taggit
@@ -96,7 +97,7 @@ django-ipware==3.0.0
     # via -r requirements.in
 django-modelcluster==5.1
     # via wagtail
-django-redis==4.7.0
+django-redis==5.2.0
     # via -r requirements.in
 django-role-permissions==2.2.0
     # via -r requirements.in
