@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.220.0
+---------------
+
+- Configurable max redis connections (#5186)
+
 Version 0.219.0 (Released April 04, 2022)
 ---------------
 
