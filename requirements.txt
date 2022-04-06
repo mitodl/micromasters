@@ -64,7 +64,7 @@ dj-database-url==0.3.0
     # via -r requirements.in
 dj-static==0.0.6
     # via -r requirements.in
-django==2.2.24
+django==2.2.27
     # via
     #   -r requirements.in
     #   django-filter
