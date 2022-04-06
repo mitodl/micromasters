@@ -136,7 +136,7 @@
     "node": "14.18.2"
   },
   "scripts": {
-    "postinstall": "./webpack_if_prod.sh",
+    "prepare": "./webpack_if_prod.sh",
     "lint": "node ./node_modules/eslint/bin/eslint.js ./static/js",
     "scss_lint": "node ./node_modules/sass-lint/bin/sass-lint.js --verbose --no-exit",
     "test": "./scripts/test/js_test.sh",
