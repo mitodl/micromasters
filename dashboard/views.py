@@ -187,7 +187,7 @@ class UserExamEnrollment(APIView):
                 status=exc.http_status_code,
                 data={'error': str(exc)}
             )
-        edx_client_staff = EdxApi(utils.get_staff_access_payload(), COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE])
+        edx_client_staff = EdxApi(utils.get_staff_edx_client_credentials(), COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE])
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
         if is_user_enrolled_in_exam_course(edx_client, exam_run):
