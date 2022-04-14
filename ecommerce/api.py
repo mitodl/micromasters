@@ -314,8 +314,6 @@ def enroll_user_on_success(order):
     courseware_backend = CourseRun.objects.get(edx_course_key=line_qset.first().course_key).courseware_backend
     user_social = get_social_auth(order.user, courseware_backend)
     enrollments_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[courseware_backend]).enrollments
-
-    edx_client_staff = EdxApi(get_staff_access_payload(), COURSEWARE_BACKEND_URL[courseware_backend])
     existing_enrollments = enrollments_client.get_student_enrollments()
     exceptions = []
     enrollments = []
@@ -323,7 +321,7 @@ def enroll_user_on_success(order):
         course_key = line.course_key
         try:
             if not existing_enrollments.is_enrolled_in(course_key):
-                enrollments.append(edx_client_staff.create_verified_student_enrollment(course_key, user_social.uid))
+                enrollments.append(enrollments_client.create_audit_student_enrollment(course_key))
         except Exception as ex:  # pylint: disable=broad-except
             log.exception(
                 "Error creating audit enrollment for course key %s for user %s",
