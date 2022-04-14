@@ -105,15 +105,15 @@ class UserCourseEnrollment(APIView):
             )
 
         # create an instance of the client to query edX
-        edx_client_staff = EdxApi(utils.get_staff_access_payload(), COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE])
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
 
         try:
-            enrollment = edx_client_staff.enrollments.create_verified_student_enrollment(course_id, user_social.uid)
+            enrollment = edx_client.enrollments.create_audit_student_enrollment(course_id)
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_400_BAD_REQUEST:
                 raise PossiblyImproperlyConfigured(
                     'Got a 400 status code from edX server while trying to create '
-                    'verified enrollment. This might happen if the course is improperly '
+                    'audit enrollment. This might happen if the course is improperly '
                     'configured on MicroMasters. Course key '
                     '{course_key}, user "{username}"'.format(
                         username=request.user.username,

@@ -81,7 +81,7 @@ def has_social_auth(user, provider):
     return True
 
 
-def get_staff_access_payload():
+def get_staff_edx_client_credentials():
     """
     Generates and returns common payload for staff token
 

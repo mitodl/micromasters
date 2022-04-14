@@ -15,9 +15,8 @@ django-role-permissions==2.2.0
 django-server-status==0.5.0
 django-storages==1.9.1
 django-webpack-loader==0.5.0
-#djangorestframework==3.11.2
-git+https://github.com/mitodl/edx-api-client.git@ed9de4cdbb092e9a0860e2f8e292318d324727b8#egg=edx-api-client
-edx-api-client==1.0.1
+djangorestframework==3.11.2
+edx-api-client==1.2.0
 edx-opaque-keys==0.4
 elasticsearch-dsl==6.3.1
 elasticsearch==6.3.1

@@ -112,10 +112,12 @@ django-treebeard==4.3
 django-webpack-loader==0.5.0
     # via -r requirements.in
 djangorestframework==3.11.2
-    # via wagtail
+    # via
+    #   -r requirements.in
+    #   wagtail
 draftjs-exporter==2.1.7
     # via wagtail
-edx-api-client @ git+https://github.com/mitodl/edx-api-client.git@ed9de4cdbb092e9a0860e2f8e292318d324727b8
+edx-api-client==1.2.0
     # via -r requirements.in
 edx-opaque-keys==0.4
     # via -r requirements.in
