@@ -18,7 +18,6 @@ from rest_framework.exceptions import ValidationError
 from edx_api.client import EdxApi
 
 from backends.constants import COURSEWARE_BACKEND_URL
-from backends.utils import get_staff_access_payload
 from courses.models import (
     CourseRun,
     Program,
