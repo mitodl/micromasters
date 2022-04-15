@@ -4,6 +4,7 @@ Utility functions for the backends
 from datetime import datetime, timedelta
 import logging
 import pytz
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from requests.exceptions import HTTPError
@@ -78,3 +79,18 @@ def has_social_auth(user, provider):
         log.info('No social auth for %s for user %s', provider, user.username)
         return False
     return True
+
+
+def get_staff_edx_client_credentials():
+    """
+    Generates and returns common payload for staff token
+
+    Args: None
+
+    Returns:
+        dict: Payload dict with staff access token
+
+    """
+    return {
+        "access_token": settings.MITXONLINE_STAFF_ACCESS_TOKEN
+    }

@@ -564,7 +564,7 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         assert resp.status_code == status.HTTP_417_EXPECTATION_FAILED
         assert mock_refresh.call_count == 1
 
-    @patch('edx_api.enrollments.CourseEnrollments.create_audit_student_enrollment', autospec=True)
+    @patch('edx_api.enrollments.CourseEnrollments.create_verified_student_enrollment', autospec=True)
     @patch('edx_api.enrollments.Enrollments.get_enrolled_course_ids', autospec=True)
     @patch('backends.utils.refresh_user_token', autospec=True)
     def test_enrollment_fails(self, mock_refresh, mock_enrolled_ids, mock_edx_enr):  # pylint: disable=unused-argument
@@ -624,7 +624,7 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
 
         enr_json = {'course_details': {'exam_course_id': self.exam_course_id}}
         enrollment = Enrollment(enr_json)
-        mock_edx_enr = mock_edx_api.return_value.enrollments.create_audit_student_enrollment
+        mock_edx_enr = mock_edx_api.return_value.enrollments.create_verified_student_enrollment
         mock_edx_enr.return_value = enrollment
         resp = self.get_with_mocked_enrollments()
         assert resp.status_code == status.HTTP_200_OK

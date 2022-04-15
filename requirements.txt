@@ -117,7 +117,7 @@ djangorestframework==3.11.2
     #   wagtail
 draftjs-exporter==2.1.7
     # via wagtail
-edx-api-client==1.0.1
+edx-api-client==1.2.0
     # via -r requirements.in
 edx-opaque-keys==0.4
     # via -r requirements.in
