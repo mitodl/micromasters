@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.221.0
+Version 0.221.0 (Released April 19, 2022)
 ---------------
 
 - Update enrollments to be Verified instead of Audit (#5194)
