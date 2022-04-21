@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.221.1
+Version 0.221.1 (Released April 21, 2022)
 ---------------
 
 - Removed Pearson integration pkgs
