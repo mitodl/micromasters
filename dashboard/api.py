@@ -23,7 +23,7 @@ from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.constants import DEDP_PROGRAM_TITLE
 from dashboard.models import ProgramEnrollment
-from dashboard.utils import get_mmtrack, ATTEMPTS_PER_PAID_RUN, ATTEMPTS_PER_PAID_RUN_OLD
+from dashboard.utils import get_mmtrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
 from grades.models import FinalGrade

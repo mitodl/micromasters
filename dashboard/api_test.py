@@ -2180,7 +2180,7 @@ class ExamAttemptsTests(CourseTests):
             user=self.user,
             status=Order.FULFILLED
         )
-        line_old = LineFactory.create(
+        LineFactory.create(
             order=order,
             course_key=run.edx_course_key
         )
