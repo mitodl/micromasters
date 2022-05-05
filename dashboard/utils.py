@@ -3,6 +3,7 @@ Utility functions and classes for the dashboard
 """
 import logging
 from decimal import Decimal
+from math import floor
 
 from django.db import transaction
 from django.db.models import Q, Count
@@ -241,25 +242,59 @@ class MMTrack:
             course_key__in=course.courserun_set.values('edx_course_key'),
         ).values('order_id').distinct().count()
 
-    def get_custom_number_of_attempts_for_course(self, course):
+    def get_number_of_attempts_left(self, course):
         """
-        Get a custom number of exam attempts for given course. If payment was made before
-        the first date, learner get 2 attempts. Otherwise, 1.
+        Checks for each payment from before first date, when payment used to give double attempts
+        and find if any unused attempts are carried over to the single attempt era. Calculte the number of aytempts
+        left based on the carry over number of attempts.
+
         Args:
             course (courses.models.Course): a course
         Returns:
-            int: a number of attempts
+            int: a number of attempts left
         """
-        lines = Line.objects.filter(
+        first_date = course.program.exam_attempts_first_date
+        payments_qset = Line.objects.filter(
             order__status__in=Order.FULFILLED_STATUSES,
             order__user=self.user,
-            course_key__in=course.courserun_set.values('edx_course_key'),
+            course_key__in=course.courserun_set.values('edx_course_key')
         ).order_by('created_at')
-        first_date = course.program.exam_attempts_first_date
-        num_attempts = sum([ATTEMPTS_PER_PAID_RUN_OLD
-                            if line.modified_at < first_date else ATTEMPTS_PER_PAID_RUN for line in lines])
+        used_attempts_qset = ExamAuthorization.objects.filter(user=self.user, course=course, exam_taken=True)
 
-        return num_attempts
+        # if for some reason the first date is not set, return the difference between payments and used attempts
+        if first_date is None:
+            return payments_qset.count() - used_attempts_qset.count()
+
+        # number of payments before the fist date
+        old_payments = payments_qset.filter(modified_at__lt=first_date).count()
+        # number of payments after the first date
+        new_lines = payments_qset.filter(modified_at__gte=first_date).count()
+
+        # number of used attempts before the second date
+        old_attempts = used_attempts_qset.filter(
+            exam_run__date_first_eligible__lt=self.program.exam_attempts_second_date
+        ).count()
+        # number of used attempts after the second date
+        new_attempts = used_attempts_qset.filter(
+            exam_run__date_first_eligible__gte=self.program.exam_attempts_second_date
+        ).count()
+
+        unused_double_attempts = old_payments * ATTEMPTS_PER_PAID_RUN_OLD - old_attempts
+        if unused_double_attempts > 0:
+            # the user has unused attempts from before the first date
+            # total payments after second date - total attempts after second date
+            attempts_carryover = floor(unused_double_attempts / 2)
+            return new_lines - new_attempts + attempts_carryover
+        elif unused_double_attempts == 0:
+            # there is no carry over
+            return new_lines - new_attempts
+
+        else:
+            # the user has more attempts than payments
+            # this means the user made at least one payment and attempt both after the first date
+            # find the number of attempts without the double attempts and subtract that from new payments
+            single_attempts = used_attempts_qset.count() - old_payments * ATTEMPTS_PER_PAID_RUN_OLD
+            return new_lines - single_attempts
 
     def has_paid_for_any_in_program(self):
         """
