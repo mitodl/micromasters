@@ -244,9 +244,11 @@ class MMTrack:
 
     def get_number_of_attempts_left(self, course):
         """
-        Checks for each payment from before first date, when payment used to give double attempts
-        and find if any unused attempts are carried over to the single attempt era. Calculte the number of aytempts
-        left based on the carry over number of attempts.
+        Checks for each payment from before first date (when a payment provided two attempts)
+        and find if any unused attempts are carried over to the single attempt era (when a payment
+        provides one attempt).
+        Calculate the number of attempts remaining based on the calculated carry over and the other
+        payments and attempts.
 
         Args:
             course (courses.models.Course): a course
@@ -278,19 +280,25 @@ class MMTrack:
             exam_run__date_first_eligible__gte=self.program.exam_attempts_second_date
         ).count()
 
+        # calculate any unused attempts from for the period when one payment provided two attempts
         unused_double_attempts = old_payments * ATTEMPTS_PER_PAID_RUN_OLD - old_attempts
         if unused_double_attempts > 0:
             # the user has unused attempts from before the first date
-            # total payments after second date - total attempts after second date
+            # divide unused attempts from before the first date by two since payments are
+            # only valid for one attempt after the second date. This is the carryover.
             attempts_carryover = floor(unused_double_attempts / 2)
+            # Calculate the number of remaining attempts
+            #   the number of payments after the first date
+            #   minus the number of attempts after the second date
+            #   plus the carryover attempts
             return new_lines - new_attempts + attempts_carryover
         elif unused_double_attempts == 0:
             # there is no carry over
             return new_lines - new_attempts
 
         else:
-            # the user has more attempts than payments
-            # this means the user made at least one payment and attempt both after the first date
+            # the user has more used attempts (before the second date) than payments (before the first date)
+            # this can happen if the user made at least one payment and attempt both after the first date
             # find the number of attempts without the double attempts and subtract that from new payments
             single_attempts = used_attempts_qset.count() - old_payments * ATTEMPTS_PER_PAID_RUN_OLD
             return new_lines - single_attempts
