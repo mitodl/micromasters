@@ -260,7 +260,6 @@ class MMTrack:
             course_key__in=course.courserun_set.values('edx_course_key')
         ).order_by('created_at')
         used_attempts_qset = ExamAuthorization.objects.filter(user=self.user, course=course, exam_taken=True)
-
         # if for some reason the first date is not set, return the difference between payments and used attempts
         if first_date is None:
             return payments_qset.count() - used_attempts_qset.count()

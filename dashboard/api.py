@@ -622,7 +622,6 @@ def has_to_pay_for_exam(mmtrack, course):
     Returns:
         bool: if the user has to pay for another exam attempt
     """
-
     return mmtrack.get_number_of_attempts_left(course) < 1
 
 

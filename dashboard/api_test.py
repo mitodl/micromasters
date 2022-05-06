@@ -2160,10 +2160,11 @@ class ExamAttemptsTests(CourseTests):
 
     @ddt.data(
         (0, False, False),
-        (1, False, False),
-        (1, True, True),
-        (2, False, False),
-
+        (0, True, False),
+        (1, False, True),
+        (1, True, False),
+        (2, False, True),
+        (2, True, False),
     )
     @ddt.unpack
     def test_has_to_pay_old_payment(self, num_of_taken_exams, new_purchase, result):
@@ -2198,7 +2199,7 @@ class ExamAttemptsTests(CourseTests):
 
             Line.objects.filter(order=order).update(modified_at=first_date+timedelta(weeks=1))
         # before second date
-        for _ in range(num_of_taken_exams+1):
+        for _ in range(num_of_taken_exams):
             exam_auth = ExamAuthorizationFactory.create(user=self.user, course=self.course, exam_taken=True)
             exam_auth.exam_run.date_first_eligible = first_date+timedelta(weeks=1)
             exam_auth.exam_run.save()
