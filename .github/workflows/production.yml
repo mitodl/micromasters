@@ -1,0 +1,34 @@
+name: Production Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [release]
+  workflow_dispatch: # manual trigger
+
+jobs:
+  # runs if CI workflow was successful OR if this was manually triggered
+  on-success:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: release
+      - uses: akhileshns/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "micromasters"
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          branch: release
+  # runs ONLY on a failure of the CI workflow
+  on-failure:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'failure'
+    steps:
+      - run: echo 'The triggering workflow failed'
