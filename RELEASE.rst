@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.221.2
+---------------
+
+- Added heroku deployment workflows
+
 Version 0.221.1 (Released April 21, 2022)
 ---------------
 
