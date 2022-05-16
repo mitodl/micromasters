@@ -266,10 +266,10 @@ class MMTrack:
         if first_date is None:
             return payments_qset.count() - used_attempts_qset.count()
 
-        # number of payments before the fist date
+        # number of payments before the first date
         old_payments = payments_qset.filter(modified_at__lt=first_date).count()
         # number of payments after the first date
-        new_lines = payments_qset.filter(modified_at__gte=first_date).count()
+        new_payments = payments_qset.filter(modified_at__gte=first_date).count()
 
         # number of used attempts before the second date
         old_attempts = used_attempts_qset.filter(
@@ -281,7 +281,7 @@ class MMTrack:
         ).count()
 
         # calculate any unused attempts from for the period when one payment provided two attempts
-        unused_double_attempts = old_payments * ATTEMPTS_PER_PAID_RUN_OLD - old_attempts
+        unused_double_attempts = (old_payments * ATTEMPTS_PER_PAID_RUN_OLD) - old_attempts
         if unused_double_attempts > 0:
             # the user has unused attempts from before the first date
             # divide unused attempts from before the first date by two since payments are
@@ -291,17 +291,17 @@ class MMTrack:
             #   the number of payments after the first date
             #   minus the number of attempts after the second date
             #   plus the carryover attempts
-            return new_lines - new_attempts + attempts_carryover
+            return new_payments - new_attempts + attempts_carryover
         elif unused_double_attempts == 0:
             # there is no carry over
-            return new_lines - new_attempts
+            return new_payments - new_attempts
 
         else:
             # the user has more used attempts (before the second date) than payments (before the first date)
             # this can happen if the user made at least one payment and attempt both after the first date
             # find the number of attempts without the double attempts and subtract that from new payments
             single_attempts = used_attempts_qset.count() - old_payments * ATTEMPTS_PER_PAID_RUN_OLD
-            return new_lines - single_attempts
+            return new_payments - single_attempts
 
     def has_paid_for_any_in_program(self):
         """
