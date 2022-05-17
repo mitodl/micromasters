@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.222.0
+---------------
+
+- Rewrite the algorithm for exam attempts (#5199)
+
 Version 0.221.2 (Released May 17, 2022)
 ---------------
 
