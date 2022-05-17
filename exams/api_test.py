@@ -16,7 +16,7 @@ from dashboard.factories import (
     ProgramEnrollmentFactory,
 )
 from dashboard.utils import get_mmtrack
-from dashboard.api import ATTEMPTS_PER_PAID_RUN_OLD
+from dashboard.utils import ATTEMPTS_PER_PAID_RUN_OLD
 from ecommerce.factories import LineFactory
 from ecommerce.models import Order
 from exams.api import (
