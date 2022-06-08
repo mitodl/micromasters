@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.223.0
+---------------
+
+- Fix a bug in import grades task (#5204)
+
 Version 0.222.0 (Released May 19, 2022)
 ---------------
 
