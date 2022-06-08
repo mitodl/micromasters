@@ -30,15 +30,14 @@ class Command(BaseCommand):
         grade_count = 0
         existing_grades = 0
         for row in reader:
-            user_social_auth = UserSocialAuth.objects.filter(uid=row['username'], provider=BACKEND_MITX_ONLINE)
-            if user_social_auth.exists():
-                user = user_social_auth.user
-            else:
+            try:
+                user_social_auth = UserSocialAuth.objects.get(uid=row['username'], provider=BACKEND_MITX_ONLINE)
+            except UserSocialAuth.DoesNotExist:
                 self.stdout.write(
                     self.style.ERROR('Could not find social auth for user for username {}'.format(row['username']))
                 )
                 continue
-
+            user = user_social_auth.user
             course_id = row['course_id']
 
             try:
