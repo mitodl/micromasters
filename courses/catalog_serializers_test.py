@@ -12,7 +12,7 @@ from courses.factories import (
 
 
 @pytest.mark.django_db
-@pytest.mark.usefixtures("mocked_elasticsearch")
+@pytest.mark.usefixtures("mocked_opensearch")
 @pytest.mark.parametrize("has_page", [True, False])
 @pytest.mark.parametrize("has_thumbnail", [True, False])
 def test_catalog_program_serializer(has_page, has_thumbnail):

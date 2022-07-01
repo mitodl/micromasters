@@ -57,14 +57,14 @@ def open_json_stream():
 
 def fix_nested_filter(query, parent_key):
     """
-    Fix the invalid 'filter' in the Elasticsearch queries
+    Fix the invalid 'filter' in the Opensearch queries
 
     Args:
-        query (dict): An Elasticsearch query
+        query (dict): An Opensearch query
         parent_key (any): The parent key
 
     Returns:
-        dict: An updated Elasticsearch query with filter replaced with query
+        dict: An updated Opensearch query with filter replaced with query
     """
     if isinstance(query, dict):
         if 'filter' in query and parent_key == 'nested':

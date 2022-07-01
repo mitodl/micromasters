@@ -93,9 +93,9 @@ def index_users(user_ids, check_if_changed=False):
     Index users' ProgramEnrollment documents
 
     Args:
-        user_ids (list of int): Ids of users to update in the Elasticsearch index
+        user_ids (list of int): Ids of users to update in the Opensearch index
         check_if_changed (bool):
-            If true, read the document from elasticsearch before indexing and
+            If true, read the document from opensearch before indexing and
             check if the serialized value would be different.
     """
     enrollments = list(ProgramEnrollment.objects.filter(user__in=user_ids))
@@ -127,7 +127,7 @@ def index_percolate_queries(percolate_query_ids):
 @app.task
 def delete_percolate_query(percolate_query_id):
     """
-    Delete a percolate query in Elasticsearch
+    Delete a percolate query in Opensearch
 
     Args:
         percolate_query_id (int): A PercolateQuery id
@@ -218,7 +218,7 @@ def start_recreate_index(self, backing_indices=None):
             bulk_index_program_enrollments.si(enrollment_ids, backing_index_tuples[0][0], backing_index_tuples[1][0])
             for enrollment_ids in chunks(
                 ProgramEnrollment.objects.order_by("id").values_list("id", flat=True),
-                chunk_size=settings.ELASTICSEARCH_INDEXING_CHUNK_SIZE,
+                chunk_size=settings.OPENSEARCH_INDEXING_CHUNK_SIZE,
             )
         ]
 
@@ -226,7 +226,7 @@ def start_recreate_index(self, backing_indices=None):
             bulk_index_percolate_queries.si(percolate_ids, backing_index_tuples[2][0])
             for percolate_ids in chunks(
                 PercolateQuery.objects.order_by("id").values_list("id", flat=True),
-                chunk_size=settings.ELASTICSEARCH_INDEXING_CHUNK_SIZE,
+                chunk_size=settings.OPENSEARCH_INDEXING_CHUNK_SIZE,
             )
         ]
 
@@ -249,7 +249,7 @@ def finish_recreate_index(results, backing_indices):
 
     Args:
         results (list or bool): Results saying whether the error exists
-        backing_indices (list of tuples): The backing elasticsearch indices tuple
+        backing_indices (list of tuples): The backing opensearch indices tuple
     """
     errors = merge_strings(results)
     if errors:

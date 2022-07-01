@@ -62,13 +62,13 @@ def handle_delete_employment(sender, instance, **kwargs):
 
 @receiver(post_save, sender=PercolateQuery, dispatch_uid="percolate_query_save")
 def handle_update_percolate(sender, instance, **kwargs):
-    """When a new query is created or a query is updated, update Elasticsearch too"""
+    """When a new query is created or a query is updated, update Opensearch too"""
     transaction.on_commit(lambda: index_percolate_queries.delay([instance.id]))
 
 
 @receiver(post_delete, sender=PercolateQuery, dispatch_uid="percolate_query_delete")
 def handle_delete_percolate(sender, instance, **kwargs):
-    """When a query is deleted, make sure we also delete it on Elasticsearch"""
+    """When a query is deleted, make sure we also delete it on Opensearch"""
     transaction.on_commit(lambda: delete_percolate_query.delay(instance.id))
 
 

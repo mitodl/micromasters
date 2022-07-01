@@ -11,15 +11,15 @@ services:
       DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
       MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
       MICROMASTERS_DB_DISABLE_SSL: 'True'
-      ELASTICSEARCH_URL: elastic:9200
+      OPENSEARCH_URL: opensearch-node1:9200
       CELERY_ALWAYS_EAGER: 'False'
       BROKER_URL: redis://redis:6379/4
       CELERY_RESULT_BACKEND: redis://redis:6379/4
       DOCKER_HOST: ${DOCKER_HOST:-missing}
       WEBPACK_DEV_SERVER_HOST: ${WEBPACK_DEV_SERVER_HOST:-localhost}
-      ELASTICSEARCH_INDEX: 'testindex'
+      OPENSEARCH_INDEX: 'testindex'
       DEBUG: 'False'
-      ELASTICSEARCH_DEFAULT_PAGE_SIZE: '5'
+      OPENSEARCH_DEFAULT_PAGE_SIZE: '5'
       MITXONLINE_BASE_URL: "https://fake-mitxonline.example.com/"
       MITXONLINE_URL: "https://fake-mitxonline.example.com/"
       # To silence ImproperlyConfigured when running tests
@@ -28,7 +28,7 @@ services:
       OPEN_DISCUSSIONS_SITE_KEY: fake_site_key
     links:
       - db
-      - elastic
+      - opensearch-node1
       - redis
       - hub
       - chrome

@@ -18,7 +18,7 @@ from search.base import MockedESTestCase
 REQUIRED_SETTINGS = {
     'MAILGUN_URL': 'http://fake.mailgun.url',
     'MAILGUN_KEY': 'fake_mailgun_key',
-    'ELASTICSEARCH_INDEX': 'some_index',
+    'OPENSEARCH_INDEX': 'some_index',
     'OPEN_DISCUSSIONS_SITE_KEY': 'mm_test',
 }
 
@@ -141,8 +141,8 @@ class TestSettings(MockedESTestCase):
         }, clear=True), self.assertRaises(ImproperlyConfigured):
             self.reload_settings()
 
-    def test_elasticsearch_index_pr_build(self):
-        """For PR builds we will use the heroku app name instead of the given ELASTICSEARCH_INDEX"""
+    def test_opensearch_index_pr_build(self):
+        """For PR builds we will use the heroku app name instead of the given OPENSEARCH_INDEX"""
         index_name = 'heroku_app_name_as_index'
         with mock.patch.dict('os.environ', {
             **REQUIRED_SETTINGS,
@@ -150,7 +150,7 @@ class TestSettings(MockedESTestCase):
             'HEROKU_PARENT_APP_NAME': 'some_name',
         }):
             settings_vars = self.reload_settings()
-            assert settings_vars['ELASTICSEARCH_INDEX'] == index_name
+            assert settings_vars['OPENSEARCH_INDEX'] == index_name
 
     @staticmethod
     def test_semantic_version():

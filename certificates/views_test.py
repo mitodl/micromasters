@@ -23,7 +23,7 @@ from cms.factories import (
 )
 
 pytestmark = [
-    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_opensearch'),
     pytest.mark.django_db,
 ]
 

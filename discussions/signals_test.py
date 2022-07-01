@@ -9,7 +9,7 @@ from micromasters.factories import UserFactory
 from roles.factories import RoleFactory
 
 pytestmark = [
-    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_opensearch'),
     pytest.mark.usefixtures('mocked_on_commit'),
     pytest.mark.django_db,
 ]

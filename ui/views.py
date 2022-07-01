@@ -66,10 +66,10 @@ class ReactView(View):
             "release_version": settings.VERSION,
             "environment": settings.ENVIRONMENT,
             "sentry_dsn": settings.SENTRY_DSN,
-            "search_url": reverse('search_api', kwargs={"elastic_url": ""}),
+            "search_url": reverse('search_api', kwargs={"opensearch_url": ""}),
             "support_email": settings.EMAIL_SUPPORT,
             "user": serialize_maybe_user(request.user),
-            "es_page_size": settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE,
+            "es_page_size": settings.OPENSEARCH_DEFAULT_PAGE_SIZE,
             "public_path": public_path(request),
             "FEATURES": {
                 "PROGRAM_LEARNERS": settings.FEATURES.get('PROGRAM_LEARNERS_ENABLED', False),

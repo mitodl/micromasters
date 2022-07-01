@@ -146,7 +146,7 @@ class TestLearnerSearchPage:
         """
         Page should contain the appropriate number of results on each page
         """
-        page_size = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
+        page_size = settings.OPENSEARCH_DEFAULT_PAGE_SIZE
         num_users_to_create = page_size + 2
         create_enrolled_user_batch(num_users_to_create, program=base_test_data.program, is_staff=False)
         expected_second_page_count = num_users_to_create - page_size
@@ -170,11 +170,11 @@ class TestLearnerSearchPage:
         """
         Switching programs should show a different set of users
         """
-        existing_program_user_count = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
+        existing_program_user_count = settings.OPENSEARCH_DEFAULT_PAGE_SIZE
         create_enrolled_user_batch(existing_program_user_count, program=base_test_data.program, is_staff=False)
 
         new_program = ProgramFactory.create(live=True)
-        new_program_user_count = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE - 1
+        new_program_user_count = settings.OPENSEARCH_DEFAULT_PAGE_SIZE - 1
         create_enrolled_user_batch(new_program_user_count, program=new_program, is_staff=False)
         ProgramEnrollment.objects.create(program=new_program, user=logged_in_staff)
         Role.objects.create(
@@ -225,7 +225,7 @@ class TestLearnerSearchPage:
             country_codes = [row['code'] for row in reader]
         create_enrolled_user_batch(len(country_codes), program=base_test_data.program, is_staff=False)
 
-        # Don't update elasticsearch for each profile, do that in bulk after
+        # Don't update Opensearch for each profile, do that in bulk after
         with mute_signals(post_save):
             for i, profile in enumerate(Profile.objects.all()):
                 code = country_codes[i % len(country_codes)]

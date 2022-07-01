@@ -13,7 +13,7 @@ from django.test import TestCase
 REQUIRED_SETTINGS = {
     "MAILGUN_URL": "mailgun.fake.url",
     "MAILGUN_KEY": "fake_mailgun_key",
-    "ELASTICSEARCH_INDEX": "fake_esindex",
+    "OPENSEARCH_INDEX": "fake_esindex",
     "OPEN_DISCUSSIONS_SITE_KEY": "fake.key",
 }
 

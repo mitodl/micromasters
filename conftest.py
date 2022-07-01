@@ -71,11 +71,12 @@ def settings_defaults(settings):
     settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
 
 
-@pytest.fixture(scope='module')
-def mocked_elasticsearch_module_patcher():
+@pytest.fixture(scope='function')
+def mocked_opensearch_module_patcher(settings):
     """
-    Fixture that patches all indexing API functions that communicate directly with ElasticSearch
+    Fixture that patches all indexing API functions that communicate directly with OpenSearch
     """
+    settings.DEBUG=True
     patchers = []
     patcher_mocks = []
     for name, val in tasks.__dict__.items():
@@ -96,13 +97,13 @@ def mocked_elasticsearch_module_patcher():
 
 
 @pytest.fixture()
-def mocked_elasticsearch(mocked_elasticsearch_module_patcher):
+def mocked_opensearch(mocked_opensearch_module_patcher):
     """
-    Fixture that resets all of the patched ElasticSearch API functions
+    Fixture that resets all of the patched OpenSearch API functions
     """
-    for mock in mocked_elasticsearch_module_patcher.patcher_mocks:
+    for mock in mocked_opensearch_module_patcher.patcher_mocks:
         mock.reset_mock()
-    return mocked_elasticsearch_module_patcher
+    return mocked_opensearch_module_patcher
 
 
 @pytest.fixture()

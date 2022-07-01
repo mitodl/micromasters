@@ -820,7 +820,7 @@ class Command(BaseCommand):
         DASHBOARD_STATES_OPTIONS = options
 
         with override_settings(
-            ELASTICSEARCH_INDEX='testindex',
+            OPENSEARCH_INDEX='testindex',
         ):
             pytest_args = ["{}::test_dashboard_states".format(__file__), "-s"]
             if options.get('create_db'):

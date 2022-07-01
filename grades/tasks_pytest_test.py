@@ -17,7 +17,7 @@ from grades.models import MicromastersCourseCertificate, CombinedFinalGrade, Cou
 from micromasters.utils import now_in_utc
 
 pytestmark = [
-    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_opensearch'),
     pytest.mark.django_db,
 ]
 

@@ -12,14 +12,14 @@ django-hijack-admin==2.1.10
 django-ipware==3.0.0
 django-redis==5.2.0
 django-role-permissions==2.2.0
-django-server-status==0.5.0
+django-server-status==0.7.3
 django-storages==1.9.1
 django-webpack-loader==0.5.0
 djangorestframework==3.11.2
 edx-api-client==1.2.0
 edx-opaque-keys==0.4
-elasticsearch-dsl==6.3.1
-elasticsearch==6.3.1
+opensearch-py==1.0.0
+opensearch-dsl==1.0.0
 factory_boy
 faker
 html5lib==0.999999999
@@ -43,3 +43,5 @@ urllib3>=1.24.2
 uwsgi
 wagtail==2.12.5
 flaky==3.7.0
+pyOpenSSL
+social-auth-core==3.4.0

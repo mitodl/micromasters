@@ -17,9 +17,9 @@ from search.exceptions import NoProgramAccessException
 log = logging.getLogger(__name__)
 
 
-class ElasticProxyView(APIView):
+class OpenSearchProxyView(APIView):
     """
-    Elasticsearch proxy needed to enforce authentication and permissions
+    Opensearch proxy needed to enforce authentication and permissions
     """
     authentication_classes = (
         SessionAuthentication,

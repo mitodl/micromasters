@@ -17,7 +17,7 @@ import { getPreferredName } from "../../util/util"
 import {
   USER_PROFILE_RESPONSE,
   USER_PROGRAM_RESPONSE,
-  ELASTICSEARCH_RESPONSE
+  OPENSEARCH_RESPONSE
 } from "../../test_constants"
 import { codeToCountryName } from "../../lib/location"
 
@@ -37,7 +37,7 @@ describe("LearnerResult", () => {
     helper.cleanup()
   })
 
-  const renderElasticSearchResult = (result, props = {}) => {
+  const renderOpenSearchResult = (result, props = {}) => {
     const manager = new SearchkitManager()
     manager.state = {
       q: "query"
@@ -60,7 +60,7 @@ describe("LearnerResult", () => {
   }
 
   const renderLearnerResult = (props = {}) =>
-    renderElasticSearchResult(resultData, props)
+    renderOpenSearchResult(resultData, props)
 
   it("should include the user's preferred name", () => {
     const result = renderLearnerResult()
@@ -98,7 +98,7 @@ describe("LearnerResult", () => {
   it("should include the user's location for non US residence", () => {
     const profile = R.clone(USER_PROFILE_RESPONSE)
     profile["country"] = "PK"
-    const searchResults = renderElasticSearchResult(
+    const searchResults = renderOpenSearchResult(
       {
         _source: {
           profile: profile,
@@ -142,7 +142,7 @@ describe("LearnerResult", () => {
         permissions: ["can_advance_search"]
       }
     ]
-    const emptyGradeElasticHit = {
+    const emptyGradeOpenSearchHit = {
       _source: {
         profile: USER_PROFILE_RESPONSE,
         program: {
@@ -151,12 +151,12 @@ describe("LearnerResult", () => {
         }
       }
     }
-    let result = renderLearnerResult({ result: emptyGradeElasticHit }).find(
+    let result = renderLearnerResult({ result: emptyGradeOpenSearchHit }).find(
       ".learner-grade .percent"
     )
     assert.equal(result.text(), "-")
-    delete emptyGradeElasticHit._source.program.grade_average
-    result = renderLearnerResult({ result: emptyGradeElasticHit }).find(
+    delete emptyGradeOpenSearchHit._source.program.grade_average
+    result = renderLearnerResult({ result: emptyGradeOpenSearchHit }).find(
       ".learner-grade .percent"
     )
     assert.equal(result.text(), "-")
@@ -172,12 +172,12 @@ describe("LearnerResult", () => {
     )
   })
 
-  for (const [index, profile] of ELASTICSEARCH_RESPONSE.hits.hits.entries()) {
+  for (const [index, profile] of OPENSEARCH_RESPONSE.hits.hits.entries()) {
     it(`should render without error with ES profile result at index ${index}`, () => {
       const esResult = _.cloneDeep(profile)
       esResult["program"] = USER_PROGRAM_RESPONSE
       assert.doesNotThrow(() => {
-        renderElasticSearchResult(esResult)
+        renderOpenSearchResult(esResult)
       })
     })
   }
@@ -188,7 +188,7 @@ describe("LearnerResult", () => {
     profile.last_name = "qÜeryson"
     profile.preferred_name = "Querypreferred"
     profile.username = "queryfake.username"
-    const result = renderElasticSearchResult({
+    const result = renderOpenSearchResult({
       _source: {
         profile: profile,
         program: USER_PROGRAM_RESPONSE
