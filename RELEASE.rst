@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.224.0
+---------------
+
+- asadiqbal08/Migrating from ElasticSearch to OpenSearch (#5166)
+
 Version 0.223.0 (Released June 08, 2022)
 ---------------
 
