@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.224.0
+---------------
+
+- Removed the unnecessary file (#5210)
+- Bump django from 2.2.27 to 2.2.28 (#5197)
+- asadiqbal08/Migrating from ElasticSearch to OpenSearch (#5166)
+
 Version 0.223.0 (Released June 08, 2022)
 ---------------
 
