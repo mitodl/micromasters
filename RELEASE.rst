@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.224.0
+Version 0.224.0 (Released July 26, 2022)
 ---------------
 
 - Removed the unnecessary file (#5210)
