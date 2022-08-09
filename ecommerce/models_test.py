@@ -15,6 +15,7 @@ from django.test import (
 )
 
 from courses.factories import CourseRunFactory
+from ecommerce.api import make_reference_id
 from ecommerce.factories import (
     CouponFactory,
     LineFactory,
@@ -27,6 +28,7 @@ from ecommerce.models import (
     Order,
     RedeemedCoupon,
 )
+from micromasters.factories import UserFactory
 from micromasters.utils import (
     now_in_utc,
     serialize_model_object,
@@ -34,12 +36,22 @@ from micromasters.utils import (
 from profiles.models import Profile
 from search.base import MockedESTestCase
 
-
+@ddt.ddt
 @override_settings(CYBERSOURCE_SECURITY_KEY='fake')
 class OrderTests(MockedESTestCase):
     """
     Tests for Order, Line, and Receipt
     """
+
+    @ddt.data([True, False])
+    def test_order_reference_number(self, force_insert):
+        """Test that Order creates a reference number and saves it to the db"""
+        user = UserFactory.create()
+        order = Order(user=user, total_price_paid=1)
+        order.save(force_insert=force_insert)
+        order.refresh_from_db()
+
+        assert order.reference_number == make_reference_id(order)
 
     def test_order_str(self):
         """Test Order.__str__"""
