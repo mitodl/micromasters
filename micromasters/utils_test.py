@@ -189,6 +189,7 @@ class FieldNamesTests(unittest.TestCase):
             'total_price_paid',
             'created_at',
             'modified_at',
+            'reference_number',
         }
 
 
