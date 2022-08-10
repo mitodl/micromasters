@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.225.0
+---------------
+
+- Added order reference numbers
+
 Version 0.224.0 (Released July 26, 2022)
 ---------------
 
