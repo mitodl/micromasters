@@ -29,6 +29,7 @@ from dashboard.api_edx_cache import (
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import MMTrack, get_mmtrack
 from dashboard.api import has_to_pay_for_exam
+from ecommerce.constants import REFERENCE_NUMBER_PREFIX
 from ecommerce.exceptions import (
     EcommerceEdxApiException,
     EcommerceException,
@@ -51,7 +52,6 @@ from profiles.api import get_social_auth
 
 ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 log = logging.getLogger(__name__)
-_REFERENCE_NUMBER_PREFIX = 'MM-'
 
 
 def get_purchasable_course_run(course_key, user):
@@ -260,7 +260,7 @@ def make_reference_id(order):
         str:
             A reference number for use with CyberSource to keep track of orders
     """
-    return "{}{}-{}".format(_REFERENCE_NUMBER_PREFIX, settings.CYBERSOURCE_REFERENCE_PREFIX, order.id)
+    return "{}{}-{}".format(REFERENCE_NUMBER_PREFIX, settings.CYBERSOURCE_REFERENCE_PREFIX, order.id)
 
 
 def get_new_order_by_reference_number(reference_number):
@@ -274,9 +274,9 @@ def get_new_order_by_reference_number(reference_number):
         Order:
             An order
     """
-    if not reference_number.startswith(_REFERENCE_NUMBER_PREFIX):
-        raise ParseException("Reference number must start with {}".format(_REFERENCE_NUMBER_PREFIX))
-    reference_number = reference_number[len(_REFERENCE_NUMBER_PREFIX):]
+    if not reference_number.startswith(REFERENCE_NUMBER_PREFIX):
+        raise ParseException("Reference number must start with {}".format(REFERENCE_NUMBER_PREFIX))
+    reference_number = reference_number[len(REFERENCE_NUMBER_PREFIX):]
 
     try:
         order_id_pos = reference_number.rindex('-')
