@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.225.1
+---------------
+
+- Added migration to set ref numbers on old orders
+- only update user dashboards on Friday (#5217)
+
 Version 0.225.0 (Released August 11, 2022)
 ---------------
 
