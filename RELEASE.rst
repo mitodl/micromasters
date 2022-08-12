@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.225.1
+Version 0.225.1 (Released August 12, 2022)
 ---------------
 
 - Added migration to set ref numbers on old orders
