@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.226.0
+---------------
+
+- Adds commands to list users who need upgrade (#5221)
+
 Version 0.225.1 (Released August 12, 2022)
 ---------------
 
