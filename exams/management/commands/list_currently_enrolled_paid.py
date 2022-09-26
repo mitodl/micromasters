@@ -26,7 +26,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
 
         future_runs = CourseRun.objects.filter(
-            models.Q(edx_course_key__contains='3T2022') | models.Q(edx_course_key__contains='1T2023')
+            models.Q(edx_course_key__icontains='3T2022') | models.Q(edx_course_key__icontains='1T2023')
         )
         if not future_runs:
             raise CommandError('There are no current or future course runs')

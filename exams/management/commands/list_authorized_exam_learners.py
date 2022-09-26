@@ -27,11 +27,11 @@ class Command(BaseCommand):
         exam_runs = list(ExamRun.objects.filter(
             date_first_schedulable__gte=now_in_utc()-two_months,
         ).values_list('id', flat=True))
-        if exam_runs is None:
+        if not exam_runs:
             raise CommandError('There are no exam runs that were schedulable within the last two months')
 
         course_runs = CourseRun.objects.filter(
-            models.Q(edx_course_key__contains='3T2022') | models.Q(edx_course_key__contains='1T2023')
+            models.Q(edx_course_key__icontains='3T2022') | models.Q(edx_course_key__icontains='1T2023')
         )
         final_list = []
         for course_run in course_runs:
