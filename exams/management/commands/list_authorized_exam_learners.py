@@ -7,10 +7,9 @@ from django.core.management import BaseCommand, CommandError
 from django.db import models
 
 
-from courses.models import CourseRun
+from courses.models import CourseRun, Course
 from dashboard.models import CachedEnrollment
 from exams.models import ExamRun, ExamAuthorization
-from micromasters.utils import now_in_utc
 
 
 class Command(BaseCommand):
@@ -22,27 +21,38 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
 
-        two_months = datetime.timedelta(weeks=8)
-        # get most recent exam runs
-        exam_runs = list(ExamRun.objects.filter(
-            date_first_schedulable__gte=now_in_utc()-two_months,
-        ).values_list('id', flat=True))
-        if not exam_runs:
-            raise CommandError('There are no exam runs that were schedulable within the last two months')
-
-        course_runs = CourseRun.objects.filter(
-            models.Q(edx_course_key__icontains='3T2022') | models.Q(edx_course_key__icontains='1T2023')
-        )
         final_list = []
-        for course_run in course_runs:
+        courses = Course.objects.filter(program__title__icontains="Data, Economics")
+        for course in courses:
+            exam_run = ExamRun.objects.filter(course=course).order_by("-date_last_schedulable").first()
+            course_run = CourseRun.objects.filter(
+                models.Q(edx_course_key__icontains='3T2022') | models.Q(edx_course_key__icontains='1T2023') | models.Q(
+                    edx_course_key__icontains='2T2023')
+            ).filter(course=course).filter(is_discontinued=False).order_by("start_date").first()
+            if course_run is None:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"course id {course.id} has no current/future course runs"
+                    )
+                )
+                continue
+            if exam_run is None:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"course id {course.id} has no exam runs"
+                    )
+                )
+                continue
+
             enrolled_user_ids = set(CachedEnrollment.get_cached_users(course_run))
             exam_auths = ExamAuthorization.objects.filter(
-                exam_run__in=exam_runs,
-                course=course_run.course,
+                exam_run=exam_run,
+                course=course,
                 exam_taken=False
             ).exclude(user__in=enrolled_user_ids).values_list('user__email', flat=True)
             if exam_auths:
-                [final_list.append((auth_email, course_run.course_id)) for auth_email in exam_auths]
+                [final_list.append((auth_email, course.id)) for auth_email in exam_auths]
+
         file_name = 'authorized_users.csv'
         path = '{}/{}'.format(settings.BASE_DIR, file_name)
         with open(path, 'w') as f:
