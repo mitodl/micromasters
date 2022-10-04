@@ -929,7 +929,7 @@ class DashboardPage extends React.Component {
       prices.data,
       coupons.coupons
     )
-    let financialAidCard
+    let financialAidCard, examCard
     if (program.financial_aid_availability && !this.shouldSkipFinancialAid()) {
       financialAidCard = (
         <FinancialAidCard
@@ -944,6 +944,16 @@ class DashboardPage extends React.Component {
           setDocsInstructionsVisibility={this.setDocsInstructionsVisibility}
           ui={ui}
           financialAid={financialAid}
+        />
+      )
+    }
+    if (!SETTINGS.FEATURES.TURN_PAYMENT_OFF) {
+      examCard = (
+        <FinalExamCard
+          profile={profile}
+          program={program}
+          ui={ui}
+          navigateToProfile={this.navigateToProfile}
         />
       )
     }
@@ -963,12 +973,7 @@ class DashboardPage extends React.Component {
           {this.renderExamEnrollmentDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program} />
-            <FinalExamCard
-              profile={profile}
-              program={program}
-              ui={ui}
-              navigateToProfile={this.navigateToProfile}
-            />
+            {examCard}
             {financialAidCard}
             <CourseListCard
               program={program}
