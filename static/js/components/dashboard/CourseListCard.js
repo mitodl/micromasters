@@ -147,8 +147,8 @@ export default class CourseListCard extends React.Component {
     return (
       <p className={priceMessageClassName}>
         To get credit for the courses in this program, you must pay for a
-        verified certificate from MITx Online. If you want to audit courses for FREE
-        and upgrade later, click Enroll then choose the audit option.
+        verified certificate from MITx Online. If you want to audit courses for
+        FREE and upgrade later, click Enroll then choose the audit option.
       </p>
     )
   }
