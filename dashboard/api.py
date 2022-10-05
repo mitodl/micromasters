@@ -184,6 +184,7 @@ def get_info_for_program(mmtrack):
         "description": mmtrack.program.description,
         "title": mmtrack.program.title,
         "financial_aid_availability": mmtrack.financial_aid_available,
+        "has_exams": mmtrack.has_exams,
         "courses": [],
         "exam_card_status": mmtrack.get_exam_card_status(),
         "grade_average": mmtrack.calculate_final_grade_average(),
@@ -197,6 +198,7 @@ def get_info_for_program(mmtrack):
     }
     if mmtrack.financial_aid_available:
         data["financial_aid_user_info"] = FinancialAidDashboardSerializer.serialize(mmtrack.user, mmtrack.program)
+    if mmtrack.has_exams:
         data["grade_records_url"] = reverse('grade_records', args=[mmtrack.get_program_enrollment().id])
 
     program_letter_url = mmtrack.get_program_letter_url()
@@ -639,7 +641,7 @@ def get_certificate_url(mmtrack, course):
     best_grade = mmtrack.get_best_final_grade_for_course(course)
     if best_grade:
         course_key = best_grade.course_run.edx_course_key
-        if mmtrack.financial_aid_available:
+        if mmtrack.has_exams:
             certificate = mmtrack.get_course_certificate(course)
             if certificate:
                 url = reverse('certificate', args=[certificate.hash])

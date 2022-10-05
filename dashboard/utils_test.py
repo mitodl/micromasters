@@ -84,6 +84,8 @@ class MMTrackTest(MockedESTestCase):
 
         # and the program with financial aid
         finaid_course = CourseFactory.create(program=cls.program_financial_aid)
+        cls.finaid_course_2 = CourseFactory.create(program=cls.program_financial_aid)
+        ExamRunFactory.create(course=cls.finaid_course_2)
         cls.now = now_in_utc()
         cls.end_date = cls.now - timedelta(weeks=45)
         cls.crun_fa = CourseRunFactory.create(
@@ -155,7 +157,7 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.certificates == self.cached_edx_user_data.certificates
         assert mmtrack.financial_aid_available == self.program_financial_aid.financial_aid_availability
         assert mmtrack.edx_course_keys == {self.crun_fa.edx_course_key, self.crun_fa2.edx_course_key}
-        assert mmtrack.paid_course_fa == {self.crun_fa.course.id: False}
+        assert mmtrack.paid_course_fa == {self.crun_fa.course.id: False, self.finaid_course_2.id: False}
 
     @ddt.data(Order.FULFILLED, Order.PARTIALLY_REFUNDED)
     def test_fa_paid(self, order_status):
@@ -170,14 +172,14 @@ class MMTrackTest(MockedESTestCase):
             program=self.program_financial_aid,
             edx_user_data=self.cached_edx_user_data
         )
-        assert mmtrack_paid.paid_course_fa == {self.crun_fa.course.id: True}
+        assert mmtrack_paid.paid_course_fa == {self.crun_fa.course.id: True, self.finaid_course_2.id: False}
 
         mmtrack = MMTrack(
             user=UserFactory.create(),
             program=self.program_financial_aid,
             edx_user_data=self.cached_edx_user_data
         )
-        assert mmtrack.paid_course_fa == {self.crun_fa.course.id: False}
+        assert mmtrack.paid_course_fa == {self.crun_fa.course.id: False, self.finaid_course_2.id: False}
 
     def test_is_course_in_program(self):
         """

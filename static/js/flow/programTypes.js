@@ -33,6 +33,7 @@ export type Program = {
   id:                         number,
   title:                      string,
   financial_aid_availability: boolean,
+  has_exams:                  boolean,
   financial_aid_user_info:    FinancialAidUserInfo,
   exam_card_status:        string,
   grade_average:              ?number,
