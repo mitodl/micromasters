@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.227.0
+---------------
+
+- Remove the Proctored Exam Card (#5230)
+
 Version 0.226.0 (Released September 26, 2022)
 ---------------
 
