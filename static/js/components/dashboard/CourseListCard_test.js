@@ -32,7 +32,7 @@ import {
   FA_STATUS_PENDING_DOCS
 } from "../../constants"
 import { makeCoupon, makeCourseCoupon } from "../../factories/dashboard"
-import {programBackendName} from "../../util/util";
+import { programBackendName } from "../../util/util"
 
 describe("CourseListCard", () => {
   let program,
