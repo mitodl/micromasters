@@ -127,7 +127,9 @@ describe("CourseListCard", () => {
       assert.lengthOf(messageEl, 1)
       assert.include(
         messageEl.text(),
-        `you must pay for a verified certificate from ${programBackendName(program)}.`
+        `you must pay for a verified certificate from ${programBackendName(
+          program
+        )}.`
       )
     })
 
