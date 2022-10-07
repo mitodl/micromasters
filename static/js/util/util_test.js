@@ -37,7 +37,8 @@ import {
   sortedCourseRuns,
   mapObj,
   wait,
-  findObjByName
+  findObjByName,
+  programBackendName
 } from "../util/util"
 import {
   EDUCATION_LEVELS,
@@ -48,7 +49,10 @@ import {
   MASTERS,
   PROFILE_STEP_LABELS,
   PERSONAL_STEP,
-  EDUCATION_STEP
+  EDUCATION_STEP,
+  COURSEWARE_BACKEND_MITXONLINE,
+  COURSEWARE_BACKEND_NAMES,
+  COURSEWARE_BACKEND_EDXORG
 } from "../constants"
 import {
   USER_PROFILE_RESPONSE,
@@ -865,6 +869,29 @@ describe("utility functions", () => {
       const expected = [run1, run2, run3, run4]
       const actual = sortedCourseRuns(program)
       assert.deepEqual(actual, expected)
+    })
+  })
+  describe("programBackendName", () => {
+    it("returns the backend name for the program", () => {
+      const run1 = makeRun(1)
+      const run2 = makeRun(2)
+      const run3 = makeRun(3)
+      const run4 = makeRun(4)
+      const course1 = makeCourse(1)
+      course1.runs = [run1, run2]
+      const course2 = makeCourse(2)
+      course2.runs = [run3, run4]
+      const program = makeProgram()
+      program.courses = [course1, course2]
+
+      const expected = COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_EDXORG]
+      const actual = programBackendName(program)
+      assert.deepEqual(actual, expected)
+      run3.courseware_backend = COURSEWARE_BACKEND_MITXONLINE
+      assert.deepEqual(
+        programBackendName(program),
+        COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_MITXONLINE]
+      )
     })
   })
 

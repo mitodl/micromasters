@@ -16,7 +16,10 @@ import {
   STATUS_PASSED,
   EDUCATION_LEVELS,
   PROFILE_STEP_LABELS,
-  PROFILE_STEP_ORDER
+  PROFILE_STEP_ORDER,
+  COURSEWARE_BACKEND_MITXONLINE,
+  COURSEWARE_BACKEND_EDXORG,
+  COURSEWARE_BACKEND_NAMES
 } from "../constants"
 import type {
   Profile,
@@ -575,6 +578,18 @@ export function sortedCourseRuns(program: Program): Array<CourseRun> {
   )
 }
 
+export function programBackendName(program: Program): string {
+  const courses = program.courses
+  if (
+    R.any(
+      R.equals(COURSEWARE_BACKEND_MITXONLINE),
+      R.pluck("courseware_backend", R.unnest(R.pluck("runs", courses)))
+    )
+  ) {
+    return COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_MITXONLINE]
+  }
+  return COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_EDXORG]
+}
 // lets you edit both keys and values
 // just pass a function that expects and returns [key, value]
 export const mapObj = R.curry((fn, obj) =>
