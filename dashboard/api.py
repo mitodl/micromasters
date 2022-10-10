@@ -193,7 +193,8 @@ def get_info_for_program(mmtrack):
             if mmtrack.program.electives_set.exists()
             else mmtrack.program.course_set.count()
         ),
-        "number_courses_passed": mmtrack.get_number_of_passed_courses_for_completion()
+        "number_courses_passed": mmtrack.get_number_of_passed_courses_for_completion(),
+        "has_mitxonline_courses": mmtrack.program.has_mitxonline_courses
     }
     if mmtrack.financial_aid_available:
         data["financial_aid_user_info"] = FinancialAidDashboardSerializer.serialize(mmtrack.user, mmtrack.program)

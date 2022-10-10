@@ -887,7 +887,7 @@ describe("utility functions", () => {
       const expected = COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_EDXORG]
       const actual = programBackendName(program)
       assert.deepEqual(actual, expected)
-      run3.courseware_backend = COURSEWARE_BACKEND_MITXONLINE
+      program.has_mitxonline_courses = true
       assert.deepEqual(
         programBackendName(program),
         COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_MITXONLINE]
