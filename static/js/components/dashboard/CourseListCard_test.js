@@ -32,6 +32,7 @@ import {
   FA_STATUS_PENDING_DOCS
 } from "../../constants"
 import { makeCoupon, makeCourseCoupon } from "../../factories/dashboard"
+import { programBackendName } from "../../util/util"
 
 describe("CourseListCard", () => {
   let program,
@@ -126,7 +127,9 @@ describe("CourseListCard", () => {
       assert.lengthOf(messageEl, 1)
       assert.include(
         messageEl.text(),
-        "you must pay for a verified certificate from edx.org."
+        `you must pay for a verified certificate from ${programBackendName(
+          program
+        )}.`
       )
     })
 

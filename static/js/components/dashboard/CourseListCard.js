@@ -16,7 +16,7 @@ import {
   COUPON_CONTENT_TYPE_PROGRAM
 } from "../../constants"
 import { isFreeCoupon } from "../../lib/coupon"
-import { formatPrice } from "../../util/util"
+import { formatPrice, programBackendName } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
 
@@ -147,8 +147,9 @@ export default class CourseListCard extends React.Component {
     return (
       <p className={priceMessageClassName}>
         To get credit for the courses in this program, you must pay for a
-        verified certificate from edx.org. If you want to audit courses for FREE
-        and upgrade later, click Enroll then choose the audit option.
+        verified certificate from {programBackendName(program)}. If you want to
+        audit courses for FREE and upgrade later, click Enroll then choose the
+        audit option.
       </p>
     )
   }

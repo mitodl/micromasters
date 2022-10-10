@@ -16,7 +16,10 @@ import {
   STATUS_PASSED,
   EDUCATION_LEVELS,
   PROFILE_STEP_LABELS,
-  PROFILE_STEP_ORDER
+  PROFILE_STEP_ORDER,
+  COURSEWARE_BACKEND_MITXONLINE,
+  COURSEWARE_BACKEND_EDXORG,
+  COURSEWARE_BACKEND_NAMES
 } from "../constants"
 import type {
   Profile,
@@ -573,6 +576,12 @@ export function sortedCourseRuns(program: Program): Array<CourseRun> {
   return R.unnest(
     R.map(R.sortBy(R.prop("position")), R.pluck("runs", sortedCourses))
   )
+}
+
+export function programBackendName(program: Program): string {
+  return program.has_mitxonline_courses
+    ? COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_MITXONLINE]
+    : COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_EDXORG]
 }
 
 // lets you edit both keys and values
