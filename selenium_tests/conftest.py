@@ -14,6 +14,7 @@ from selenium.webdriver import (
     Remote,
 )
 
+from exams.factories import ExamRunFactory
 from selenium_tests.util import (
     Browser,
     DEFAULT_PASSWORD,
@@ -181,7 +182,8 @@ def base_test_data():
         financial_aid_availability=True,
         price=1000,
     )
-    CourseRunFactory.create(course__program=program)
+    course_run = CourseRunFactory.create(course__program=program)
+    ExamRunFactory.create(course=course_run.course)
     TierProgramFactory.create_properly_configured_batch(2, program=program)
     # Create users
     staff_user, student_user = (create_user_for_login(is_staff=True), create_user_for_login(is_staff=False))
