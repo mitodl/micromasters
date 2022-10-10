@@ -1847,6 +1847,7 @@ class InfoProgramTest(MockedESTestCase):
             'number_courses_passed': 0,
             "grade_average": 91,
             "certificate": "",
+            "has_mitxonline_courses": False,
         }
         self.assertEqual(res, expected_data)
 
@@ -1889,6 +1890,7 @@ class InfoProgramTest(MockedESTestCase):
             'number_courses_passed': 0,
             "grade_average": 91,
             "certificate": "",
+            "has_mitxonline_courses": False,
         }
         self.assertEqual(res, expected_data)
 
@@ -1917,6 +1919,7 @@ class InfoProgramTest(MockedESTestCase):
             "number_courses_passed": 0,
             "grade_average": 91,
             "certificate": "",
+            "has_mitxonline_courses": False,
         }
         self.assertEqual(res, expected_data)
 
@@ -1959,6 +1962,7 @@ class InfoProgramTest(MockedESTestCase):
             "number_courses_passed": 0,
             "grade_average": 91,
             "certificate": "",
+            "has_mitxonline_courses": False,
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.id]),
         }
         self.assertEqual(res, expected_data)
@@ -1990,6 +1994,7 @@ class InfoProgramTest(MockedESTestCase):
             "number_courses_passed": 3,
             "grade_average": 91,
             "certificate": "",
+            "has_mitxonline_courses": False,
             "program_letter_url": reverse('program_letter', args=[self.program_letter.uuid])
         }
         self.assertEqual(res, expected_data)
