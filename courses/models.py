@@ -69,7 +69,8 @@ class Program(TimestampedModel):
         """
         Return true if as least one course has at least one run that is on mitxonline
         """
-        return BACKEND_MITX_ONLINE in self.enrollable_courseware_backends
+        course_runs = CourseRun.objects.filter(course__program=self).not_discontinued()
+        return BACKEND_MITX_ONLINE in list({run.courseware_backend for run in course_runs})
 
 
 class Course(models.Model):
