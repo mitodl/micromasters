@@ -1954,8 +1954,6 @@ class InfoProgramTest(MockedESTestCase):
         res = api.get_info_for_program(self.mmtrack)
         for course in self.courses:
             mock_info_course.assert_any_call(course, self.mmtrack)
-        print(res)
-        print("Response")
         expected_data = {
             "id": self.program.pk,
             "description": self.program.description,
@@ -1971,7 +1969,6 @@ class InfoProgramTest(MockedESTestCase):
             "certificate": "",
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.id]),
         }
-        print(expected_data)
 
         self.assertEqual(res, expected_data)
 
