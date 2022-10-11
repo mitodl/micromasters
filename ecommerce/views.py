@@ -1,7 +1,7 @@
 """Views from ecommerce"""
 import logging
 import traceback
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from django.conf import settings
 from django.db import transaction
@@ -21,6 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from courses.models import CourseRun
+from backends.constants import BACKEND_MITX_ONLINE
 from ecommerce.api import (
     create_unfulfilled_order,
     enroll_user_on_success,
@@ -33,6 +34,7 @@ from ecommerce.api import (
 from ecommerce.constants import (
     CYBERSOURCE_DECISION_ACCEPT,
     CYBERSOURCE_DECISION_CANCEL,
+    MITXONLINE_CART_URL
 )
 from ecommerce.exceptions import EcommerceException
 from ecommerce.models import (
@@ -82,6 +84,7 @@ class CheckoutView(APIView):
             course__program__live=True,
             edx_course_key=course_id,
         )
+
         if course_run.course.program.financial_aid_availability:
             order = create_unfulfilled_order(course_id, request.user)
             payment_callback_url = request.build_absolute_uri(PAYMENT_CALL_BACK_URL)
@@ -123,6 +126,13 @@ class CheckoutView(APIView):
                 payload = generate_cybersource_sa_payload(order, payment_callback_url, user_ip)
                 url = settings.CYBERSOURCE_SECURE_ACCEPTANCE_URL
                 method = 'POST'
+
+        elif course_run.courseware_backend == BACKEND_MITX_ONLINE:
+            # Redirect the user to MITxOnline Cart page
+            payload = {}
+            url = urljoin(MITXONLINE_CART_URL, 'add/?course_id={}'.format(quote(course_id)))
+            method = 'GET'
+
         else:
             # This redirects the user to edX to purchase the course there
             payload = {}
