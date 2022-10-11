@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.228.0
+---------------
+
+- refactor: recator the enroll button for MITxOnline (DEDP) (#5233)
+- Updating usages of fin_aid_availability (#5232)
+- Remove mention of edx.org (#5231)
+- Update list learners eligible for enrollment upgrade (#5223)
+
 Version 0.227.0 (Released October 11, 2022)
 ---------------
 
