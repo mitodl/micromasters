@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.228.0
+Version 0.228.0 (Released October 11, 2022)
 ---------------
 
 - refactor: recator the enroll button for MITxOnline (DEDP) (#5233)
