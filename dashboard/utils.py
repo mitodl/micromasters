@@ -51,6 +51,7 @@ class MMTrack:
     edx_course_keys = set()
     edx_course_keys_no_exam = set()  # Course keys for courses that don't have exams
     exam_card_status = None
+    has_exams = False
 
     def __init__(self, user, program, edx_user_data):
         """
@@ -77,7 +78,8 @@ class MMTrack:
             )
             self.edx_course_keys = set(self.edx_key_course_map.keys())
 
-            if self.financial_aid_available:
+            self.has_exams = ExamRun.objects.filter(course__program=self.program).exists()
+            if self.has_exams:
                 # edx course keys for courses with no exam
                 self.edx_course_keys_no_exam = set(CourseRun.objects.not_discontinued().filter(
                     course__program=program, course__exam_runs__isnull=True
@@ -218,7 +220,7 @@ class MMTrack:
             bool: whether the user is paid
         """
         # financial aid programs need to have a paid entry for the course
-        if self.financial_aid_available:
+        if self.has_exams:
             # get the course associated with the course key
             course = Course.objects.get(courserun__edx_course_key=edx_course_key)
             return self.paid_course_fa.get(course.id, False)
@@ -479,7 +481,7 @@ class MMTrack:
         Returns:
             int: A number of passed courses.
         """
-        if self.financial_aid_available:
+        if self.has_exams:
             return sum([
                 CombinedFinalGrade.objects.filter(user=self.user, course__program=self.program).count(),
                 self.count_passing_courses_for_keys(self.edx_course_keys_no_exam)
@@ -527,7 +529,7 @@ class MMTrack:
         Returns:
             int: the number of passed unique courses
         """
-        if self.program.financial_aid_availability:
+        if self.has_exams:
             return MicromastersCourseCertificate.objects.filter(
                 user=self.user,
                 course_id__in=course_ids

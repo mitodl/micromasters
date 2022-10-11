@@ -1826,6 +1826,7 @@ class InfoProgramTest(MockedESTestCase):
         self.mmtrack.configure_mock(**{
             'program': self.program,
             'financial_aid_available': False,
+            'has_exams': False,
             'get_exam_card_status.return_value': ExamProfile.PROFILE_SUCCESS,
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
@@ -1842,6 +1843,7 @@ class InfoProgramTest(MockedESTestCase):
             "title": self.program.title,
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": False,
+            "has_exams": False,
             "exam_card_status": ExamProfile.PROFILE_SUCCESS,
             'number_courses_required': 3,
             'number_courses_passed': 0,
@@ -1858,6 +1860,7 @@ class InfoProgramTest(MockedESTestCase):
         self.mmtrack.configure_mock(**{
             'program': self.program,
             'financial_aid_available': False,
+            'has_exams': False,
             'get_exam_card_status.return_value': ExamProfile.PROFILE_SUCCESS,
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
@@ -1885,6 +1888,7 @@ class InfoProgramTest(MockedESTestCase):
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1},
                         {'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": False,
+            "has_exams": False,
             "exam_card_status": ExamProfile.PROFILE_SUCCESS,
             'number_courses_required': 5,
             'number_courses_passed': 0,
@@ -1900,6 +1904,7 @@ class InfoProgramTest(MockedESTestCase):
         self.mmtrack.configure_mock(**{
             'program': self.program_no_courses,
             'financial_aid_available': False,
+            'has_exams': False,
             'get_exam_card_status.return_value': ExamProfile.PROFILE_INVALID,
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
@@ -1914,6 +1919,7 @@ class InfoProgramTest(MockedESTestCase):
             "title": self.program_no_courses.title,
             "courses": [],
             "financial_aid_availability": False,
+            "has_exams": False,
             "exam_card_status": ExamProfile.PROFILE_INVALID,
             "number_courses_required": 0,
             "number_courses_passed": 0,
@@ -1932,6 +1938,7 @@ class InfoProgramTest(MockedESTestCase):
             'get_exam_card_status.return_value': ExamProfile.PROFILE_IN_PROGRESS,
             'calculate_final_grade_average.return_value': 91,
             'financial_aid_available': True,
+            'has_exams': True,
             'get_program_certificate_url.return_value': "",
             'get_program_enrollment.return_value': self.program_enrollment,
             'get_program_letter_url.return_value': "",
@@ -1956,6 +1963,7 @@ class InfoProgramTest(MockedESTestCase):
             "title": self.program.title,
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": True,
+            "has_exams": True,
             "financial_aid_user_info": serialized_fin_aid,
             "exam_card_status": ExamProfile.PROFILE_IN_PROGRESS,
             "number_courses_required": self.program.course_set.count(),
@@ -1965,6 +1973,7 @@ class InfoProgramTest(MockedESTestCase):
             "has_mitxonline_courses": False,
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.id]),
         }
+
         self.assertEqual(res, expected_data)
 
     @patch('dashboard.api.get_info_for_course', autospec=True)
@@ -1973,6 +1982,7 @@ class InfoProgramTest(MockedESTestCase):
         self.mmtrack.configure_mock(**{
             'program': self.program,
             'financial_aid_available': False,
+            'has_exams': False,
             'get_exam_card_status.return_value': ExamProfile.PROFILE_SUCCESS,
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
@@ -1989,6 +1999,7 @@ class InfoProgramTest(MockedESTestCase):
             "title": self.program.title,
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": False,
+            "has_exams": False,
             "exam_card_status": ExamProfile.PROFILE_SUCCESS,
             "number_courses_required": self.program.course_set.count(),
             "number_courses_passed": 3,
@@ -2360,6 +2371,7 @@ class GetCertificateForCourseTests(CourseTests):
         """Test edx certificate url for non FA courses"""
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
         self.mmtrack.financial_aid_available = False
+        self.mmtrack.has_exams = False
         self.mmtrack.has_passing_certificate.return_value = (certificate_type == "verified") and is_passing
 
         cert_json = {

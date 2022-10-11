@@ -122,7 +122,7 @@ export default class ProgressWidget extends React.Component {
             View Certificate
           </button>
           {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
-            program.financial_aid_availability &&
+            program.has_exams &&
             gradeRecordsLink(program.grade_records_url)}
 
           {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&

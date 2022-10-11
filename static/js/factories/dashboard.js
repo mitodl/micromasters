@@ -141,6 +141,7 @@ export const makeProgram = (): Program => {
     courses:                    courses,
     id:                         programId,
     financial_aid_availability: true,
+    has_exams:                  true,
     financial_aid_user_info:    {
       application_status:  FA_STATUS_APPROVED,
       date_documents_sent: "2016-01-01",
