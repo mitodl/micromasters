@@ -219,6 +219,11 @@ class MMTrack:
         Returns:
             bool: whether the user is paid
         """
+        # edx_course_key for a course run can either be unique or None.
+        # If edx course keys lookup is none we should have no payment against it
+        if edx_course_key is None:
+            return False
+
         # financial aid programs need to have a paid entry for the course
         if self.has_exams:
             # get the course associated with the course key
