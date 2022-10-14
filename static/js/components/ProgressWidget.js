@@ -70,7 +70,7 @@ export const circularProgressWidget = (
 export const gradeRecordsLink = (url: string): React$Element<*> => {
   return (
     <a
-      className="mm-minor-action"
+      className="mm-minor-action records-link"
       href={url}
       target="_blank"
       rel="noopener noreferrer"
@@ -122,7 +122,7 @@ export default class ProgressWidget extends React.Component {
             View Certificate
           </button>
           {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
-            program.has_exams &&
+            program.grade_records_url &&
             gradeRecordsLink(program.grade_records_url)}
 
           {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
@@ -148,7 +148,7 @@ export default class ProgressWidget extends React.Component {
             program.program_letter_url
           )}
           {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
-            program.financial_aid_availability &&
+            program.grade_records_url &&
             gradeRecordsLink(program.grade_records_url)}
         </CardContent>
       </Card>
