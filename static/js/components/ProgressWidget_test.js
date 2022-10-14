@@ -177,9 +177,6 @@ describe("ProgressWidget", () => {
     program["grade_records_url"] = "grade_records_url"
     const wrapper = shallow(<ProgressWidget program={program} />)
 
-    assert.equal(
-      wrapper.find(".records-link").text(),
-      "View Program Record"
-    )
+    assert.equal(wrapper.find(".records-link").text(), "View Program Record")
   })
 })
