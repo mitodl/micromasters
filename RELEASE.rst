@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.228.1 (Released October 17, 2022)
+---------------
+
+- fix: A course is not paid for if edx_course_key is None (#5238)
+
 Version 0.228.0 (Released October 11, 2022)
 ---------------
 
