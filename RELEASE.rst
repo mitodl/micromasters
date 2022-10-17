@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.229.0
+---------------
+
+- Show grade records if there is link (#5241)
+- List learners paid, have exam, not enrolled (#5239)
+
 Version 0.228.1 (Released October 17, 2022)
 ---------------
 
