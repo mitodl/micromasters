@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.229.0
+Version 0.229.0 (Released October 18, 2022)
 ---------------
 
 - Show grade records if there is link (#5241)
