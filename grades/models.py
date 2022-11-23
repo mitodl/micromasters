@@ -197,6 +197,11 @@ class MicromastersProgramCommendation(TimestampedModel):
     program = models.ForeignKey(Program, null=False, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Indicates whether or not the program letter is active",
+        verbose_name="is_active",
+    )
 
     class Meta:
         unique_together = ('user', 'program')

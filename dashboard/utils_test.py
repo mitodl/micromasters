@@ -818,6 +818,12 @@ class MMTrackTest(MockedESTestCase):
 
         assert mmtrack.get_program_letter_url() == reverse('program_letter', args=[letter.uuid])
 
+        # Don't return inactive letters
+        letter.is_active = False
+        letter.save()
+
+        assert mmtrack.get_program_letter_url() == ""
+
     def test_get_best_final_grade_for_course(self):
         """
         Test for get_best_final_grade_for_course to return the highest grade over all course runs

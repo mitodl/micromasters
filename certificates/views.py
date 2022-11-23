@@ -143,7 +143,7 @@ class ProgramLetterView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         letter = (
-            MicromastersProgramCommendation.objects.filter(uuid=kwargs.get('letter_uuid')).
+            MicromastersProgramCommendation.objects.filter(uuid=kwargs.get('letter_uuid'), is_active=True).
             select_related('program', 'user__profile').
             first()
         )
