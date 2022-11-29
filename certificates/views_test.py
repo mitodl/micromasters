@@ -160,6 +160,20 @@ def test_program_letter_without_text(client):
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
+def test_program_letter_inactive(client):
+    """Verify that view program letter returns 404 if Program letter is inactive"""
+    letter = MicromastersProgramCommendationFactory.create(is_active=False)
+    program = letter.program
+    signatory = ProgramLetterSignatoryFactory.create(program_page__program=program)
+    program_letter_logo = ImageFactory()
+    signatory.program_page.program_letter_logo = program_letter_logo
+    program_letter_text = "<p>some example text</p>"
+    signatory.program_page.program_letter_text = program_letter_text
+    signatory.program_page.save()
+    resp = client.get(program_letter_url(letter.uuid))
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_valid_program_letter(client):
     """Test that a request for a valid program letter with signatories results in a 200"""
     letter = MicromastersProgramCommendationFactory.create()

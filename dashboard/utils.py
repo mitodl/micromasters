@@ -684,7 +684,7 @@ class MMTrack:
         """
         letter = self.program_letter_qset().filter(
             program__programpage__program_letter_text__isnull=False,
-            program__programpage__program_letter_logo__isnull=False).annotate(
+            program__programpage__program_letter_logo__isnull=False, is_active=True).annotate(
                 signatories=Count('program__programpage__program_letter_signatories')).filter(
                     signatories__gt=0).first()
 
