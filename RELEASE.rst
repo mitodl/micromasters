@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.230.0
+Version 0.230.0 (Released November 30, 2022)
 ---------------
 
 - fix: Validate program letters and server active only (#5253)
