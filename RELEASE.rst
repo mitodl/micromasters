@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.230.1
+---------------
+
+- fix a typo in the program page sidebar (#5243)
+
 Version 0.230.0 (Released November 30, 2022)
 ---------------
 
