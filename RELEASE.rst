@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.230.1
+Version 0.230.1 (Released December 01, 2022)
 ---------------
 
 - Peg python-tests ubuntu version to 20.04 (matching heroku stack) (#5260)
