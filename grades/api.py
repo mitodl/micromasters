@@ -279,16 +279,18 @@ def generate_program_letter(user, program):
         user (User): a Django user.
         program (programs.models.Program): program where the user is enrolled.
     """
-    if MicromastersProgramCommendation.objects.filter(user=user, program=program).exists():
+    if MicromastersProgramCommendation.objects.filter(user=user, program=program, is_active=True).exists():
         log.info('User [%s] already has a letter for program [%s]', user, program)
         return
 
     if (program.financial_aid_availability and
             MicromastersProgramCertificate.objects.filter(user=user, program=program).exists()):
-        MicromastersProgramCommendation.objects.create(user=user, program=program)
+        MicromastersProgramCommendation.objects.update_or_create(user=user, program=program,
+                                                                 defaults={"is_active": True})
         return
     if completed_program(user, program):
-        MicromastersProgramCommendation.objects.create(user=user, program=program)
+        MicromastersProgramCommendation.objects.update_or_create(user=user, program=program,
+                                                                 defaults={"is_active": True})
         log.info(
             'Created MM program letter for [%s] in program [%s]',
             user.username,

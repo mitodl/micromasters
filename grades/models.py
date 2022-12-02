@@ -207,11 +207,7 @@ class MicromastersProgramCommendation(TimestampedModel):
         unique_together = ('user', 'program')
 
     def __str__(self):
-        return 'Program letter for user={user}, program={program}, uuid="{uuid}"'.format(
-            user=self.user,
-            program=self.program,
-            uuid=self.uuid,
-        )
+        return f"Program letter for user={self.user}, program={self.program}, uuid={self.uuid}, is_active={self.is_active}"
 
 
 class CourseRunGradingStatus(TimestampedModel):
