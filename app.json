@@ -64,6 +64,10 @@
       "description": "The base URL of the edX instance to use for logging in.",
       "required": true
     },
+    "EDX_CALLBACK_URL": {
+      "description": "The base URL of the edX instance to use for logging in.",
+      "required": true
+    },
     "EDXORG_CLIENT_ID": {
       "description": "The OAuth client ID configured in the edX instance.",
       "required": true
