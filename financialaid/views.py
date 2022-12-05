@@ -236,7 +236,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "authenticated": not self.request.user.is_anonymous,
-            "edx_base_url": settings.EDXORG_BASE_URL,
+            "edx_base_url": settings.EDXORG_CALLBACK_URL,
             "mitxonline_base_url": settings.MITXONLINE_BASE_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)

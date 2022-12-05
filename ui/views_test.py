@@ -248,7 +248,7 @@ class DashboardTests(ViewsTests):
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
-            EDXORG_BASE_URL=edx_base_url,
+            EDXORG_CALLBACK_URL=edx_base_url,
             MITXONLINE_BASE_URL=mitxonline_base_url,
             MITXONLINE_URL=mitxonline_url,
             WEBPACK_DEV_SERVER_HOST=host,
@@ -709,7 +709,7 @@ class TestUsersPage(ViewsTests):
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
-            EDXORG_BASE_URL=edx_base_url,
+            EDXORG_CALLBACK_URL=edx_base_url,
             MITXONLINE_BASE_URL=mitxonline_base_url,
             MITXONLINE_URL=mitxonline_url,
             WEBPACK_DEV_SERVER_HOST=host,
@@ -794,7 +794,7 @@ class TestUsersPage(ViewsTests):
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
-            EDXORG_BASE_URL=edx_base_url,
+            EDXORG_CALLBACK_URL=edx_base_url,
             MITXONLINE_BASE_URL=mitxonline_base_url,
             MITXONLINE_URL=mitxonline_url,
             WEBPACK_DEV_SERVER_HOST=host,

@@ -121,7 +121,7 @@ $ make requiements
 
   - Add a new hostname (if not already exists) in your `/etc/hosts` file (e.g: `127.0.0.1    edx.odl.local`)
   - If you are also configuring mitX Online auth, add a secondary hostname (e.g: `127.0.0.1    edx.odl.local edx2.odl.local`)
-  - If Micromasters isn't able to access the Open edX hostname directly (primarily due to the way networking is handled in compose projects) you will need to set `OPENEDX_HOST_ENTRY` in `.env` file such that Mircomasters is able to resolve the Open edX hostname from within the container. Typically this would mean setting the value similar to `edx.odl.local:172.22.0.1` where the IP is the gateway IP on the Micromasters docker network. If you're enabled mitX Online auth, use a value like `edx.odl.local edx2.odl.local:172.22.0.1`
+  - If Micromasters isn't able to access the Open edX hostname directly (primarily due to the way networking is handled in compose projects) you will need to set `OPENEDX_HOST_ENTRY` in `.env` file such that Mircomasters is able to resolve the Open edX hostname from within the container. Typically this would mean setting the value similar to `edx.odl.local:172.22.0.1` where the IP is the gateway IP on the Micromasters docker network.  If you're enabled mitX Online auth, use a value like `edx.odl.local edx2.odl.local:172.22.0.1`
 
 #### Configure Micromasters to support OAuth2 authentication from Open edX
 
@@ -137,6 +137,7 @@ $ make requiements
       - Other values are arbitrary but be sure to fill them all out. Save the client id and secret for later
   - In Micromasters:
     - Set `EDXORG_BASE_URL` to the correct URL that is accessible from Micromasters container and host, e.g. `http://edx.odl.local:18000/`
+    - Set `EDXORG_CALLBACK_URL` to the URL from which Micromasters will receive OAuth callbacks from edX, e.g. `http://host.docker.internal:18000/`
     - Set `OPENEDX_API_CLIENT_ID` to the client id
     - Set `OPENEDX_API_CLIENT_SECRET` to the client secret
 

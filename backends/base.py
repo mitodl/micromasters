@@ -43,7 +43,7 @@ class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
     name = 'edxorg'
     ID_KEY = 'edx_id'
     REQUEST_TOKEN_URL = None
-    EDX_BASE_URL = None
+    EDXORG_CALLBACK_URL = None
 
     # Settings for Django OAUTH toolkit
     DEFAULT_SCOPE = ['read', 'write']
@@ -68,7 +68,7 @@ class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
         Returns:
             str: the full url
         """
-        return urljoin(cls.EDX_BASE_URL, path)
+        return urljoin(cls.EDXORG_CALLBACK_URL, path)
 
     def user_data(self, access_token, *args, **kwargs):
         """
@@ -83,7 +83,7 @@ class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
             dict: a dictionary containing user information
                 coming from the remote service.
         """
-        edx_client = EdxApi({'access_token': access_token}, self.EDX_BASE_URL)
+        edx_client = EdxApi({'access_token': access_token}, self.EDXORG_CALLBACK_URL)
         info = edx_client.user_info.get_user_info()
         return {'name': info.name, 'username': info.username, 'email': info.email}
 

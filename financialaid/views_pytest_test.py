@@ -203,7 +203,7 @@ class TestReviewViews():
         """
         settings.GA_TRACKING_ID = 'track'
         settings.REACT_GA_DEBUG = True
-        settings.EDXORG_BASE_URL = 'edx_base_url'
+        settings.EDXORG_CALLBACK_URL = 'edx_base_url'
         settings.MITXONLINE_BASE_URL = "mitxonline_base_url"
         resp = staff_client.get(program_review_url)
 
@@ -214,7 +214,7 @@ class TestReviewViews():
             'gaTrackingID': settings.GA_TRACKING_ID,
             'reactGaDebug': settings.REACT_GA_DEBUG,
             'authenticated': True,
-            'edx_base_url': settings.EDXORG_BASE_URL,
+            'edx_base_url': settings.EDXORG_CALLBACK_URL,
             "mitxonline_base_url": settings.MITXONLINE_BASE_URL,
         }
 
