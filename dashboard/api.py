@@ -649,7 +649,7 @@ def get_certificate_url(mmtrack, course):
         elif mmtrack.has_passing_certificate(course_key):
             download_url = mmtrack.certificates.get_verified_cert(course_key).download_url
             if download_url:
-                url = urljoin(settings.EDXORG_BASE_URL, download_url)
+                url = urljoin(settings.EDXORG_CALLBACK_URL, download_url)
     return url
 
 

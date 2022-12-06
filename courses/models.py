@@ -123,7 +123,7 @@ class Course(models.Model):
         if not course_run.edx_course_key:
             return ""
         return urllib.parse.urljoin(
-            settings.EDXORG_BASE_URL,
+            settings.EDXORG_CALLBACK_URL,
             'courses/{key}/about'.format(key=course_run.edx_course_key)
         )
 

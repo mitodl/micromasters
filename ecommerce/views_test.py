@@ -133,7 +133,7 @@ class CheckoutViewTests(MockedESTestCase):
         assert generate_mock.call_count == 1
         assert generate_mock.call_args[0] == (order, 'http://testserver/payment-callback/', fake_ip)
 
-    @override_settings(EDXORG_BASE_URL='http://edx_base')
+    @override_settings(EDXORG_CALLBACK_URL='http://edx_base')
     def test_provides_edx_link(self):
         """If the program doesn't have financial aid, the checkout API should provide a link to go to edX"""
         user = UserFactory.create()

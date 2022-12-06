@@ -171,7 +171,7 @@ SESSION_ENGINE = get_string('SESSION_ENGINE', 'django.contrib.sessions.backends.
 SESSION_COOKIE_NAME = get_string('SESSION_COOKIE_NAME', 'sessionid')
 
 EDXORG_BASE_URL = get_string('EDXORG_BASE_URL', 'https://courses.edx.org/')
-EDX_CALLBACK_URL = get_string('EDX_CALLBACK_URL', 'https://courses.edx.org/')
+EDXORG_CALLBACK_URL = get_string('EDXORG_CALLBACK_URL', 'https://courses.edx.org/')
 MITXONLINE_BASE_URL = get_string('MITXONLINE_BASE_URL', '')
 MITXONLINE_URL = get_string('MITXONLINE_URL', '')
 MITXONLINE_STAFF_ACCESS_TOKEN = get_string('MITXONLINE_STAFF_ACCESS_TOKEN', None)
