@@ -9,7 +9,8 @@ class EdxOrgOAuth2(BaseEdxOAuth2):
     """
     EDX.org OAuth2 authentication backend
     """
-    name = 'edxorg'
+
+    name = "edxorg"
     EDX_BASE_URL = settings.EDXORG_BASE_URL
     EDXORG_CALLBACK_URL = settings.EDXORG_CALLBACK_URL
 

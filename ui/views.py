@@ -32,6 +32,7 @@ class ReactView(View):
     """
     Abstract view for templates using React
     """
+
     template_name = "dashboard.html"
 
     def get_context(self, request):
@@ -49,10 +50,15 @@ class ReactView(View):
         if not user.is_anonymous:
             roles = [
                 {
-                    'program': role.program.id,
-                    'role': role.role,
-                    'permissions': [perm for perm, value in available_perm_status(user).items() if value is True]
-                } for role in user.role_set.all()
+                    "program": role.program.id,
+                    "role": role.role,
+                    "permissions": [
+                        perm
+                        for perm, value in available_perm_status(user).items()
+                        if value is True
+                    ],
+                }
+                for role in user.role_set.all()
             ]
 
         js_settings = {
@@ -66,18 +72,28 @@ class ReactView(View):
             "release_version": settings.VERSION,
             "environment": settings.ENVIRONMENT,
             "sentry_dsn": settings.SENTRY_DSN,
-            "search_url": reverse('search_api', kwargs={"opensearch_url": ""}),
+            "search_url": reverse("search_api", kwargs={"opensearch_url": ""}),
             "support_email": settings.EMAIL_SUPPORT,
             "user": serialize_maybe_user(request.user),
             "es_page_size": settings.OPENSEARCH_DEFAULT_PAGE_SIZE,
             "public_path": public_path(request),
             "FEATURES": {
-                "PROGRAM_LEARNERS": settings.FEATURES.get('PROGRAM_LEARNERS_ENABLED', False),
-                "DISCUSSIONS_POST_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_POST_UI', False),
-                "DISCUSSIONS_CREATE_CHANNEL_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_CREATE_CHANNEL_UI', False),
-                "PROGRAM_RECORD_LINK": settings.FEATURES.get('PROGRAM_RECORD_LINK', False),
-                "ENABLE_PROGRAM_LETTER": settings.FEATURES.get('ENABLE_PROGRAM_LETTER', False),
-                "TURN_PAYMENT_OFF": settings.FEATURES.get('TURN_PAYMENT_OFF', False)
+                "PROGRAM_LEARNERS": settings.FEATURES.get(
+                    "PROGRAM_LEARNERS_ENABLED", False
+                ),
+                "DISCUSSIONS_POST_UI": settings.FEATURES.get(
+                    "OPEN_DISCUSSIONS_POST_UI", False
+                ),
+                "DISCUSSIONS_CREATE_CHANNEL_UI": settings.FEATURES.get(
+                    "OPEN_DISCUSSIONS_CREATE_CHANNEL_UI", False
+                ),
+                "PROGRAM_RECORD_LINK": settings.FEATURES.get(
+                    "PROGRAM_RECORD_LINK", False
+                ),
+                "ENABLE_PROGRAM_LETTER": settings.FEATURES.get(
+                    "ENABLE_PROGRAM_LETTER", False
+                ),
+                "TURN_PAYMENT_OFF": settings.FEATURES.get("TURN_PAYMENT_OFF", False),
             },
             "open_discussions_redirect_url": settings.OPEN_DISCUSSIONS_REDIRECT_URL,
         }
@@ -106,9 +122,9 @@ class ReactView(View):
         return redirect(request.build_absolute_uri())
 
 
-@method_decorator(require_mandatory_urls, name='dispatch')
-@method_decorator(login_required, name='dispatch')
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(require_mandatory_urls, name="dispatch")
+@method_decorator(login_required, name="dispatch")
+@method_decorator(csrf_exempt, name="dispatch")
 class DashboardView(ReactView):
     """
     Wrapper for dashboard view which asserts certain logged in requirements
@@ -120,11 +136,12 @@ class UsersView(ReactView):
     View for learner pages. This gets handled by the dashboard view like all other
     React handled views, but we also want to return a 404 if the user does not exist.
     """
+
     def get(self, request, *args, **kwargs):
         """
         Handle GET requests
         """
-        user = kwargs.pop('user')
+        user = kwargs.pop("user")
         if user is not None:
             if not CanSeeIfNotPrivate().has_permission(request, self):
                 raise Http404
@@ -137,6 +154,7 @@ class UsersView(ReactView):
 
 class SignInView(ReactView):
     """Sign In view"""
+
     template_name = "signin.html"
 
     def get_context(self, request):
@@ -151,16 +169,20 @@ class SignInView(ReactView):
         """
         context = super().get_context(request)
 
-        program_id = request.GET.get('program', None)
-        next_url = request.GET.get('next', None)
+        program_id = request.GET.get("program", None)
+        next_url = request.GET.get("next", None)
         mitxonline_enabled = settings.FEATURES.get("MITXONLINE_LOGIN", False)
 
-        program = Program.objects.filter(id=program_id[0]).first() if mitxonline_enabled and program_id else None
+        program = (
+            Program.objects.filter(id=program_id[0]).first()
+            if mitxonline_enabled and program_id
+            else None
+        )
         params = {"next": next_url}
         return {
             **context,
             "program": program,
-            "login_qs": f"?{urlencode(params)}" if next_url else '',
+            "login_qs": f"?{urlencode(params)}" if next_url else "",
         }
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
@@ -185,7 +207,6 @@ class SignInView(ReactView):
                     program = coupon.content_object
                 elif isinstance(coupon.content_object, Course):
                     program = coupon.content_object.program
-
 
             if program:
                 params = request.GET.copy()
@@ -214,19 +235,21 @@ def standard_error_page(request, status_code, template_filename):
         context={
             "has_zendesk_widget": True,
             "is_public": True,
-            "js_settings_json": json.dumps({
-                "release_version": settings.VERSION,
-                "environment": settings.ENVIRONMENT,
-                "sentry_dsn": settings.SENTRY_DSN,
-                "user": serialize_maybe_user(request.user),
-            }),
+            "js_settings_json": json.dumps(
+                {
+                    "release_version": settings.VERSION,
+                    "environment": settings.ENVIRONMENT,
+                    "sentry_dsn": settings.SENTRY_DSN,
+                    "user": serialize_maybe_user(request.user),
+                }
+            ),
             "authenticated": authenticated,
             "name": name,
             "username": request.user.username,
             "is_staff": has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]),
             "support_email": settings.EMAIL_SUPPORT,
             "sentry_dsn": settings.SENTRY_DSN,
-        }
+        },
     )
     response.status_code = status_code
     return response
@@ -265,5 +288,6 @@ class BackgroundImagesCSSView(TemplateView):
     Pass a CSS file through Django's template system, so that we can make
     the URLs point to a CDN.
     """
+
     template_name = "background-images.css"
     content_type = "text/css"

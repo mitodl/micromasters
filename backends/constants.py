@@ -3,8 +3,8 @@
 # courseware backend constants
 from micromasters.settings import MITXONLINE_BASE_URL, EDXORG_CALLBACK_URL
 
-BACKEND_EDX_ORG = 'edxorg'
-BACKEND_MITX_ONLINE = 'mitxonline'
+BACKEND_EDX_ORG = "edxorg"
+BACKEND_MITX_ONLINE = "mitxonline"
 COURSEWARE_BACKENDS = [
     BACKEND_MITX_ONLINE,
     BACKEND_EDX_ORG,
