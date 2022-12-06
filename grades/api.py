@@ -295,8 +295,11 @@ def generate_program_letter(user, program):
 
     if created is not None:
         log.info(
-            f"{'Created' if created else 'Activated'} MM program letter for {user.username} in program {program.title}")
-
+            '[%s] MM program letter for [%s] in program [%s]',
+            'Created' if created else 'Activated',
+            user.username,
+            program.title
+        )
 
 
 def update_or_create_combined_final_grade(user, course):
