@@ -40,7 +40,7 @@ a template to create your ``.env`` file. For MicroMasters to work, it needs 4 va
 
 - ``EDXORG_CALLBACK_URL``
 
-    The callback URL from where MicroMaster will receive OAuth responses from the LMS server on your machine. This
+    The callback URL from which MicroMasters will receive OAuth responses from the LMS server on your machine. This
     _should_ typically be ``http://host.docker.internal:18000/``.
 
 - ``EDXORG_CLIENT_ID`` and ``EDXORG_CLIENT_SECRET``

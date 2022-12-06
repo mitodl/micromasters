@@ -137,7 +137,7 @@ $ make requiements
       - Other values are arbitrary but be sure to fill them all out. Save the client id and secret for later
   - In Micromasters:
     - Set `EDXORG_BASE_URL` to the correct URL that is accessible from Micromasters container and host, e.g. `http://edx.odl.local:18000/`
-    - Set `EDXORG_CALLBACK_URL` to the URL from which Micromasters will receive callbacks from edX, e.g. `http://host.docker.internal:18000/`
+    - Set `EDXORG_CALLBACK_URL` to the URL from which Micromasters will receive OAuth callbacks from edX, e.g. `http://host.docker.internal:18000/`
     - Set `OPENEDX_API_CLIENT_ID` to the client id
     - Set `OPENEDX_API_CLIENT_SECRET` to the client secret
 
