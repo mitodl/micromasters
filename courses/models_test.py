@@ -42,7 +42,7 @@ class ProgramTests(MockedESTestCase):
             title="Title Run",
             freeze_grade_date=now - timedelta(weeks=1),
         )
-        CourseRunGradingStatus.objects.create(course_run=run, status="complete")
+        CourseRunGradingStatus.objects.create(course_run=run, status='complete')
         return run
 
     @data(
@@ -66,7 +66,7 @@ class ProgramTests(MockedESTestCase):
         assert course_1.program.has_frozen_grades_for_all_courses() is result
 
     def test_enrollable_course_runs(self):
-        """Test that enrollable_course_runs only returns currently enrollable runs"""
+        """ Test that enrollable_course_runs only returns currently enrollable runs """
         program = ProgramFactory.create()
         enrollable_runs = [
             # a current run with enrollment_start and enrollment_end
@@ -77,9 +77,7 @@ class ProgramTests(MockedESTestCase):
         # future runs aren't enrollable
         CourseRunFactory.create(course__program=program, future_run=True)
         # runs with both enrollment datetimes set as NULL aren't enrollable
-        CourseRunFactory.create(
-            course__program=program, enrollment_start=None, enrollment_end=None
-        )
+        CourseRunFactory.create(course__program=program, enrollment_start=None, enrollment_end=None)
 
         assert list(program.enrollable_course_runs.order_by("id")) == enrollable_runs
 
@@ -105,16 +103,9 @@ class CourseModelTests(MockedESTestCase):
         super().setUp()
         self.now = now_in_utc()
 
-    def create_run(
-        self,
-        course=None,
-        start=None,
-        end=None,
-        enr_start=None,
-        enr_end=None,
-        upgrade_deadline=None,
-        freeze_grade_date=None,
-    ):
+    def create_run(self, course=None, start=None, end=None,
+                   enr_start=None, enr_end=None, upgrade_deadline=None,
+                   freeze_grade_date=None):
         """helper function to create course runs"""
         # pylint: disable=too-many-arguments
         return CourseRunFactory.create(
@@ -156,7 +147,7 @@ class HasFrozenRunsTests(CourseModelTests):
         """
         now = now_in_utc()
         course_run = self.create_run(freeze_grade_date=now - timedelta(weeks=1))
-        CourseRunGradingStatus.objects.create(course_run=course_run, status="complete")
+        CourseRunGradingStatus.objects.create(course_run=course_run, status='complete')
 
         assert self.course.has_frozen_runs() is True
 
@@ -166,7 +157,7 @@ class HasFrozenRunsTests(CourseModelTests):
         """
         now = now_in_utc()
         course_run = self.create_run(freeze_grade_date=now - timedelta(weeks=1))
-        CourseRunGradingStatus.objects.create(course_run=course_run, status="complete")
+        CourseRunGradingStatus.objects.create(course_run=course_run, status='complete')
         self.create_run()
         assert self.course.has_frozen_runs() is True
 
@@ -176,18 +167,14 @@ class HasFrozenRunsTests(CourseModelTests):
         """
         now = now_in_utc()
         not_frozen_run = self.create_run(freeze_grade_date=now - timedelta(weeks=1))
-        CourseRunGradingStatus.objects.create(
-            course_run=not_frozen_run, status="pending"
-        )
+        CourseRunGradingStatus.objects.create(course_run=not_frozen_run, status='pending')
         assert self.course.has_frozen_runs() is False
 
 
 # Silencing a pylint warning caused by ddt
 # pylint: disable=too-many-arguments
 @ddt
-class FirstUnexpiredRunTests(
-    CourseModelTests
-):  # pylint: disable=too-many-public-methods
+class FirstUnexpiredRunTests(CourseModelTests):  # pylint: disable=too-many-public-methods
     """Tests for first_unexpired_run function"""
 
     def test_no_run(self):
@@ -247,7 +234,7 @@ class FirstUnexpiredRunTests(
             enr_end=self.from_weeks(1),
         )
         self.create_run(
-            start=self.now + timedelta(52),
+            start=self.now+timedelta(52),
             end=self.from_weeks(62),
             enr_start=self.from_weeks(40),
             enr_end=self.from_weeks(50),
@@ -311,39 +298,19 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
 
     @data(
         # course starts in future, enrollment future
-        [
-            1,
-            10,
-            1,
-            2,
-            "Starts {:%b %-d, %Y} - Enrollment {:%m/%Y}".format(
-                from_weeks(1), from_weeks(1)
-            ),
-        ],
+        [1, 10, 1, 2, 'Starts {:%b %-d, %Y} - Enrollment {:%m/%Y}'.format(from_weeks(1), from_weeks(1))],
         # course starts in future, enrollment open
-        [1, 10, -1, 10, "Starts {:%b %-d, %Y} - Enrollment Open".format(from_weeks(1))],
+        [1, 10, -1, 10, 'Starts {:%b %-d, %Y} - Enrollment Open'.format(from_weeks(1))],
         # course starts in future, enrollment open with no end
-        [
-            1,
-            10,
-            -1,
-            None,
-            "Starts {:%b %-d, %Y} - Enrollment Open".format(from_weeks(1)),
-        ],
+        [1, 10, -1, None, 'Starts {:%b %-d, %Y} - Enrollment Open'.format(from_weeks(1))],
         # course starts in future, no enrollment dates
-        [1, 10, None, None, "Starts {:%b %-d, %Y}".format(from_weeks(1))],
+        [1, 10, None, None, 'Starts {:%b %-d, %Y}'.format(from_weeks(1))],
         # course is currently running, enrollment is open, ending soon
-        [
-            -1,
-            10,
-            -1,
-            10,
-            "Ongoing - Enrollment Ends {:%b %-d, %Y}".format(from_weeks(10)),
-        ],
+        [-1, 10, -1, 10, 'Ongoing - Enrollment Ends {:%b %-d, %Y}'.format(from_weeks(10))],
         # course is currently running without end, enrollment is open, no end
-        [-1, None, -1, None, "Ongoing - Enrollment Open"],
+        [-1, None, -1, None, 'Ongoing - Enrollment Open'],
         # course is currently running, enrollment is closed
-        [-1, 10, -2, -1, "Not available"],
+        [-1, 10, -2, -1, 'Not available'],
     )
     @unpack
     def test_enrollment_text(self, start, end, enr_start, enr_end, expected):
@@ -366,7 +333,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
             enrollment_start=None,
             enrollment_end=None,
         )
-        assert self.course.enrollment_text == "Coming Fall 2017"
+        assert self.course.enrollment_text == 'Coming Fall 2017'
 
     def test_url_with_no_run(self):
         """Test course url with no course runs"""
@@ -395,7 +362,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
             enrollment_start=self.from_weeks(-1),
             enrollment_end=None,
             enrollment_url="http://enrollment.url/",
-            edx_course_key="course_key",
+            edx_course_key="course_key"
         )
         assert course_run.course.url == "http://enrollment.url/"
 
@@ -409,10 +376,11 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
             enrollment_start=self.from_weeks(-1),
             enrollment_end=None,
             enrollment_url=None,
-            edx_course_key="course_key",
+            edx_course_key="course_key"
         )
         expected = urljoin(
-            BASE_URL, "courses/{key}/about".format(key=course_run.edx_course_key)
+            BASE_URL,
+            'courses/{key}/about'.format(key=course_run.edx_course_key)
         )
         assert course_run.course.url == expected
 
@@ -437,9 +405,14 @@ class CourseRunTests(CourseModelTests):
         Test that save method treats blank and null edx_course_key
         values as null
         """
-        test_run = CourseRun.objects.create(course=self.course, title="test_run")
+        test_run = CourseRun.objects.create(
+            course=self.course,
+            title='test_run'
+        )
         test_run_blank_edx_key = CourseRun.objects.create(
-            course=self.course, title="test_run_blank_edx_key", edx_course_key=""
+            course=self.course,
+            title='test_run_blank_edx_key',
+            edx_course_key=''
         )
         assert test_run.edx_course_key is None
         assert test_run_blank_edx_key.edx_course_key is None
@@ -541,7 +514,9 @@ class CourseRunTests(CourseModelTests):
     @unpack
     def test_is_upgradable(self, upgrade_deadline, expected):
         """Test for is_upgradable property"""
-        course_run = self.create_run(upgrade_deadline=self.from_weeks(upgrade_deadline))
+        course_run = self.create_run(
+            upgrade_deadline=self.from_weeks(upgrade_deadline)
+        )
         assert course_run.is_upgradable is expected
 
     @data(
@@ -553,7 +528,9 @@ class CourseRunTests(CourseModelTests):
     @unpack
     def test_can_freeze_grades(self, freeze_date, expected):
         """Test for the can_freeze_grades property"""
-        course_run = self.create_run(freeze_grade_date=self.from_weeks(freeze_date))
+        course_run = self.create_run(
+            freeze_grade_date=self.from_weeks(freeze_date)
+        )
         assert course_run.can_freeze_grades is expected
 
     def test_can_freeze_grades_raises(self):
@@ -566,11 +543,12 @@ class CourseRunTests(CourseModelTests):
         """Test for the get_runs_to_freeze classmethod"""
         course_runs = []
         for week_increment in (-1, -2, 1, None):
-            course_runs.append(
-                self.create_run(freeze_grade_date=self.from_weeks(week_increment))
-            )
+            course_runs.append(self.create_run(
+                freeze_grade_date=self.from_weeks(week_increment)
+            ))
         CourseRunGradingStatus.objects.create(
-            course_run=course_runs[1], status=FinalGradeStatus.COMPLETE
+            course_run=course_runs[1],
+            status=FinalGradeStatus.COMPLETE
         )
         runs_to_freeze = CourseRun.get_freezable()
         freeze_run_ids = [course_run.pk for course_run in runs_to_freeze]
@@ -603,8 +581,8 @@ class CourseRunTests(CourseModelTests):
         assert course_run.has_future_exam is False
 
     def test_enrollable(self):
-        """Test CourseRun.objects.enrollable()"""
+        """ Test CourseRun.objects.enrollable() """
         enrollable_run = CourseRunFactory.create()  # enrollable
-        CourseRunFactory.create(future_run=True)  # not enrollable
+        CourseRunFactory.create(future_run=True) # not enrollable
 
         assert list(CourseRun.objects.enrollable()) == [enrollable_run]

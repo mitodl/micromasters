@@ -25,18 +25,15 @@ class Topic(models.Model):
     """
     Topic for a program
     """
-
     name = models.CharField(max_length=128, unique=True)
 
     def __str__(self):
         return self.name
 
-
 class Program(TimestampedModel):
     """
     A degree someone can pursue, e.g. "Supply Chain Management"
     """
-
     title = models.CharField(max_length=255)
     live = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
@@ -59,12 +56,12 @@ class Program(TimestampedModel):
 
     @cached_property
     def enrollable_course_runs(self):
-        """Return the set of course runs"""
+        """ Return the set of course runs """
         return CourseRun.objects.filter(course__program=self).enrollable()
 
     @cached_property
     def enrollable_courseware_backends(self):
-        """Return the set of courseware backends"""
+        """ Return the set of courseware backends """
         return list({run.courseware_backend for run in self.enrollable_course_runs})
 
     @cached_property
@@ -73,9 +70,7 @@ class Program(TimestampedModel):
         Return true if as least one course has at least one run that is on mitxonline
         """
         course_runs = CourseRun.objects.filter(course__program=self).not_discontinued()
-        return BACKEND_MITX_ONLINE in list(
-            {run.courseware_backend for run in course_runs}
-        )
+        return BACKEND_MITX_ONLINE in list({run.courseware_backend for run in course_runs})
 
 
 class Course(models.Model):
@@ -85,7 +80,6 @@ class Course(models.Model):
     given course instance (aka course run), but rather only the things that are
     general across multiple course runs.
     """
-
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     position_in_program = models.PositiveSmallIntegerField()
 
@@ -104,24 +98,17 @@ class Course(models.Model):
         return self.title
 
     class Meta:
-        unique_together = (
-            "program",
-            "position_in_program",
-        )
-        ordering = ("position_in_program",)
+        unique_together = ('program', 'position_in_program',)
+        ordering = ('position_in_program',)
 
     def get_promised_run(self):
         """
         Get a run that does not have start_date,
         only fuzzy_start_date
         """
-        return (
-            self.courserun_set.not_discontinued()
-            .filter(
-                models.Q(start_date=None) & models.Q(fuzzy_start_date__isnull=False)
-            )
-            .first()
-        )
+        return self.courserun_set.not_discontinued().filter(
+            models.Q(start_date=None) & models.Q(fuzzy_start_date__isnull=False)
+        ).first()
 
     @property
     def url(self):
@@ -137,7 +124,7 @@ class Course(models.Model):
             return ""
         return urllib.parse.urljoin(
             settings.EDXORG_CALLBACK_URL,
-            "courses/{key}/about".format(key=course_run.edx_course_key),
+            'courses/{key}/about'.format(key=course_run.edx_course_key)
         )
 
     @property
@@ -163,19 +150,21 @@ class Course(models.Model):
 
         if course_run.is_current:
             if course_run.enrollment_end:
-                end_text = "Enrollment Ends {:%b %-d, %Y}".format(
+                end_text = 'Enrollment Ends {:%b %-d, %Y}'.format(
                     course_run.enrollment_end
                 )
             else:
-                end_text = "Enrollment Open"
+                end_text = 'Enrollment Open'
             return "Ongoing - {end}".format(end=end_text)
         elif course_run.is_future:
             if course_run.is_future_enrollment_open:
-                end_text = " - Enrollment Open"
+                end_text = ' - Enrollment Open'
             elif course_run.enrollment_start:
-                end_text = " - Enrollment {:%m/%Y}".format(course_run.enrollment_start)
+                end_text = ' - Enrollment {:%m/%Y}'.format(
+                    course_run.enrollment_start
+                )
             else:
-                end_text = ""
+                end_text = ''
             return "Starts {start:%b %-d, %Y}{end}".format(
                 start=course_run.start_date,
                 end=end_text,
@@ -187,9 +176,7 @@ class Course(models.Model):
         """
         Return true if has any frozen runs
         """
-        return any(
-            [run.has_frozen_grades for run in self.courserun_set.not_discontinued()]
-        )
+        return any([run.has_frozen_grades for run in self.courserun_set.not_discontinued()])
 
     def first_unexpired_run(self):
         """
@@ -199,7 +186,7 @@ class Course(models.Model):
         """
         return first_matching_item(
             self.courserun_set.not_discontinued(),
-            lambda course_run: course_run.is_unexpired,
+            lambda course_run: course_run.is_unexpired
         )
 
 
@@ -207,17 +194,15 @@ class CourseRunQuerySet(models.QuerySet):
     """
     Custom QuerySet for CourseRuns
     """
-
     def enrollable(self):
         """Returns a new query that returns currently enrollable runs"""
         now = now_in_utc()
         return self.filter(
             # null start dates are excluded by default
-            models.Q(enrollment_start__lte=now)
-            & (
+            models.Q(enrollment_start__lte=now) & (
                 # null end dates are considered +Infinity
-                models.Q(enrollment_end__isnull=True)
-                | models.Q(enrollment_end__gt=now)
+                models.Q(enrollment_end__isnull=True) |
+                models.Q(enrollment_end__gt=now)
             )
         ).not_discontinued()
 
@@ -232,13 +217,10 @@ class CourseRun(models.Model):
     - Summer 2017". This is different than the logical notion of a course, but
       rather a specific instance of that course being taught.
     """
-
     objects = CourseRunQuerySet.as_manager()
 
     title = models.CharField(max_length=255)
-    edx_course_key = models.CharField(
-        max_length=255, blank=True, null=True, unique=True
-    )
+    edx_course_key = models.CharField(max_length=255, blank=True, null=True, unique=True)
     enrollment_start = models.DateTimeField(blank=True, null=True, db_index=True)
     start_date = models.DateTimeField(blank=True, null=True, db_index=True)
     enrollment_end = models.DateTimeField(blank=True, null=True, db_index=True)
@@ -246,38 +228,32 @@ class CourseRun(models.Model):
     upgrade_deadline = models.DateTimeField(blank=True, null=True, db_index=True)
     freeze_grade_date = models.DateTimeField(blank=True, null=True, db_index=True)
     fuzzy_start_date = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
+        max_length=255, blank=True, null=True,
         help_text="If you don't know when your course will run exactly, "
-        "put something here like 'Fall 2019'.",
-    )
+        "put something here like 'Fall 2019'.")
     fuzzy_enrollment_start_date = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
+        max_length=255, blank=True, null=True,
         help_text="If you don't know when enrollments "
         "for your course will open exactly, "
-        "put something here like 'Fall 2019'.",
-    )
+        "put something here like 'Fall 2019'.")
     enrollment_url = models.URLField(blank=True, null=True)
     prerequisites = models.TextField(blank=True, null=True)
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     courseware_backend = models.CharField(
         max_length=32,
         choices=[(backend, backend) for backend in COURSEWARE_BACKENDS],
-        default=BACKEND_EDX_ORG,
+        default=BACKEND_EDX_ORG
     )
     is_discontinued = models.BooleanField(
         default=False,
         help_text=(
             "Setting this to true will discontinue the course run, "
             "which will cause it to no longer be actionable."
-        ),
+        )
     )
 
     class Meta:
-        ordering = ("start_date",)
+        ordering = ('start_date', )
         indexes = (
             models.Index(fields=("id", "is_discontinued")),
             models.Index(fields=("course", "is_discontinued")),
@@ -349,7 +325,8 @@ class CourseRun(models.Model):
         Checks if the course can be upgraded
         A null value means that the upgrade window is always open
         """
-        return self.upgrade_deadline is None or (self.upgrade_deadline > now_in_utc())
+        return (self.upgrade_deadline is None or
+                (self.upgrade_deadline > now_in_utc()))
 
     @property
     def is_not_beyond_enrollment(self):
@@ -358,9 +335,9 @@ class CourseRun(models.Model):
         """
         now = now_in_utc()
         return (
-            self.enrollment_end is None
-            and (self.end_date is None or self.end_date > now)
-        ) or self.enrollment_end > now
+            (self.enrollment_end is None and (self.end_date is None or self.end_date > now)) or
+            self.enrollment_end > now
+        )
 
     @property
     def is_unexpired(self):
@@ -375,7 +352,7 @@ class CourseRun(models.Model):
         Checks if the final grades can be frozen.
         """
         if self.freeze_grade_date is None:
-            raise ImproperlyConfigured("Missing freeze_grade_date")
+            raise ImproperlyConfigured('Missing freeze_grade_date')
         return now_in_utc() > self.freeze_grade_date
 
     @property
@@ -394,20 +371,18 @@ class CourseRun(models.Model):
         """
         Check if the course run has any future exam runs
         """
-        return self.course.exam_runs.filter(
-            date_last_eligible__gt=now_in_utc().date()
-        ).exists()
+        return self.course.exam_runs.filter(date_last_eligible__gt=now_in_utc().date()).exists()
 
     @classmethod
     def get_freezable(cls):
         """
         Returns a queryset of all the runs that can freeze final grade according to the freeze date.
         """
-        course_runs = (
-            cls.objects.exclude(freeze_grade_date=None)
-            .exclude(courserungradingstatus__status=FinalGradeStatus.COMPLETE)
-            .filter(freeze_grade_date__lt=now_in_utc())
-        )
+        course_runs = cls.objects.exclude(
+            freeze_grade_date=None
+        ).exclude(
+            courserungradingstatus__status=FinalGradeStatus.COMPLETE
+        ).filter(freeze_grade_date__lt=now_in_utc())
 
         return course_runs
 
@@ -417,16 +392,14 @@ class ElectivesSet(models.Model):
     This represents an electives requirement for a program, with choice of courses and
     required number of courses to be passed.
     """
-
-    program = models.ForeignKey(
-        Program, related_name="electives_set", on_delete=models.CASCADE
-    )
+    program = models.ForeignKey(Program, related_name="electives_set", on_delete=models.CASCADE)
     required_number = models.PositiveSmallIntegerField()
     title = models.CharField(max_length=255)
 
     def __str__(self):
         return 'An electives set "{title}" for program "{program_title}"'.format(
-            title=self.title, program_title=self.program.title
+            title=self.title,
+            program_title=self.program.title
         )
 
 
@@ -434,17 +407,14 @@ class ElectiveCourse(models.Model):
     """
     Links to a course to an ElectivesSet
     """
-
     course = models.OneToOneField(Course, on_delete=models.CASCADE)
     electives_set = models.ForeignKey(ElectivesSet, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = (
-            "course",
-            "electives_set",
-        )
+        unique_together = ('course', 'electives_set',)
 
     def __str__(self):
         return 'Elective course "{course_title}" in electives set "{electives_set}"'.format(
-            course_title=self.course.title, electives_set=self.electives_set.title
+            course_title=self.course.title,
+            electives_set=self.electives_set.title
         )

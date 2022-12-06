@@ -34,7 +34,7 @@ from ecommerce.api import (
 from ecommerce.constants import (
     CYBERSOURCE_DECISION_ACCEPT,
     CYBERSOURCE_DECISION_CANCEL,
-    MITXONLINE_CART_URL,
+    MITXONLINE_CART_URL
 )
 from ecommerce.exceptions import EcommerceException
 from ecommerce.models import (
@@ -59,7 +59,6 @@ class CheckoutView(APIView):
     View for checkout API. This creates an Order in our system and provides a dictionary to
     send to Cybersource
     """
-
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
@@ -76,7 +75,7 @@ class CheckoutView(APIView):
         """
         user_ip, _ = get_client_ip(request)
         try:
-            course_id = request.data["course_id"]
+            course_id = request.data['course_id']
         except KeyError:
             raise ValidationError("Missing course_id")
 
@@ -99,14 +98,15 @@ class CheckoutView(APIView):
                     log.exception(
                         "Error occurred when enrolling user in one or more courses for order %s. "
                         "See other errors above for more info.",
-                        order,
+                        order
                     )
                     try:
                         MailgunClient().send_individual_email(
                             "Error occurred when enrolling user during $0 checkout",
                             "Error occurred when enrolling user during $0 checkout for {order}. "
                             "Exception: {exception}".format(
-                                order=order, exception=traceback.format_exc()
+                                order=order,
+                                exception=traceback.format_exc()
                             ),
                             settings.ECOMMERCE_EMAIL,
                         )
@@ -119,42 +119,31 @@ class CheckoutView(APIView):
 
                 # This redirects the user to our order success page
                 payload = {}
-                url = make_dashboard_receipt_url(
-                    payment_callback_url, course_id, "receipt"
-                )
-                method = "GET"
+                url = make_dashboard_receipt_url(payment_callback_url, course_id, 'receipt')
+                method = 'GET'
             else:
                 # This generates a signed payload which is submitted as an HTML form to CyberSource
-                payload = generate_cybersource_sa_payload(
-                    order, payment_callback_url, user_ip
-                )
+                payload = generate_cybersource_sa_payload(order, payment_callback_url, user_ip)
                 url = settings.CYBERSOURCE_SECURE_ACCEPTANCE_URL
-                method = "POST"
+                method = 'POST'
 
         elif course_run.courseware_backend == BACKEND_MITX_ONLINE:
             # Redirect the user to MITxOnline Cart page
             payload = {}
-            url = urljoin(
-                MITXONLINE_CART_URL, "add/?course_id={}".format(quote(course_id))
-            )
-            method = "GET"
+            url = urljoin(MITXONLINE_CART_URL, 'add/?course_id={}'.format(quote(course_id)))
+            method = 'GET'
 
         else:
             # This redirects the user to edX to purchase the course there
             payload = {}
-            url = urljoin(
-                settings.EDXORG_CALLBACK_URL,
-                "/course_modes/choose/{}/".format(course_id),
-            )
-            method = "GET"
+            url = urljoin(settings.EDXORG_CALLBACK_URL, '/course_modes/choose/{}/'.format(course_id))
+            method = 'GET'
 
-        return Response(
-            {
-                "payload": payload,
-                "url": url,
-                "method": method,
-            }
-        )
+        return Response({
+            'payload': payload,
+            'url': url,
+            'method': method,
+        })
 
 
 class OrderFulfillmentView(APIView):
@@ -165,7 +154,7 @@ class OrderFulfillmentView(APIView):
     """
 
     authentication_classes = ()
-    permission_classes = (IsSignedByCyberSource,)
+    permission_classes = (IsSignedByCyberSource, )
 
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
@@ -175,19 +164,17 @@ class OrderFulfillmentView(APIView):
         receipt = Receipt.objects.create(data=request.data)
 
         # Link the order with the receipt if we can parse it
-        reference_number = request.data["req_reference_number"]
+        reference_number = request.data['req_reference_number']
         order = get_new_order_by_reference_number(reference_number)
         receipt.order = order
         receipt.save()
 
-        decision = request.data["decision"]
+        decision = request.data['decision']
         if order.status == Order.FAILED and decision == CYBERSOURCE_DECISION_CANCEL:
             # This is a duplicate message, ignore since it's already handled
             return Response(status=HTTP_200_OK)
         elif order.status != Order.CREATED:
-            raise EcommerceException(
-                "Order {} is expected to have status 'created'".format(order.id)
-            )
+            raise EcommerceException("Order {} is expected to have status 'created'".format(order.id))
 
         if decision != CYBERSOURCE_DECISION_ACCEPT:
             order.status = Order.FAILED
@@ -204,7 +191,7 @@ class OrderFulfillmentView(APIView):
                         "Order fulfillment failed for order {order}".format(
                             order=order,
                         ),
-                        settings.ECOMMERCE_EMAIL,
+                        settings.ECOMMERCE_EMAIL
                     )
                 except:  # pylint: disable=bare-except
                     log.exception(
@@ -223,14 +210,15 @@ class OrderFulfillmentView(APIView):
                 log.exception(
                     "Error occurred when enrolling user in one or more courses for order %s. "
                     "See other errors above for more info.",
-                    order,
+                    order
                 )
                 try:
                     MailgunClient().send_individual_email(
                         "Error occurred when enrolling user during order fulfillment",
                         "Error occurred when enrolling user during order fulfillment for {order}. "
                         "Exception: {exception}".format(
-                            order=order, exception=traceback.format_exc()
+                            order=order,
+                            exception=traceback.format_exc()
                         ),
                         settings.ECOMMERCE_EMAIL,
                     )
@@ -250,7 +238,6 @@ class CouponsView(ListModelMixin, GenericViewSet):
     - what coupons they have available if those coupons would be automatically applied on checkout
     - what coupons they have for a given coupon code, even if those coupons wouldn't be automatically applied
     """
-
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
@@ -267,11 +254,7 @@ class UserCouponsView(APIView):
     """
     View for coupon/user attachments. Used to create attachments for a user for a coupon.
     """
-
-    permission_classes = (
-        IsLoggedInUser,
-        IsAuthenticated,
-    )
+    permission_classes = (IsLoggedInUser, IsAuthenticated,)
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
@@ -302,17 +285,16 @@ class UserCouponsView(APIView):
             return Response(
                 status=HTTP_200_OK,
                 data={
-                    "message": "Attached user to coupon successfully.",
-                    "coupon": CouponSerializer(coupon).data,
-                },
+                    'message': 'Attached user to coupon successfully.',
+                    'coupon': CouponSerializer(coupon).data,
+                }
             )
 
 
-@method_decorator(csrf_exempt, name="dispatch")
+@method_decorator(csrf_exempt, name='dispatch')
 class PaymentCallBackView(RedirectView):
     """
     payment callback view that will redirect to dashboard url
     """
-
     url = DASHBOARD_URL
     query_string = True

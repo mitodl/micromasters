@@ -11,7 +11,11 @@ from django.db.models import F, Q
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView, get_object_or_404, UpdateAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    get_object_or_404,
+    UpdateAPIView
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
@@ -28,11 +32,17 @@ from financialaid.api import (
     get_formatted_course_price,
     get_no_discount_tier_program,
 )
-from financialaid.constants import FinancialAidJustification, FinancialAidStatus
-from financialaid.models import FinancialAid, TierProgram
+from financialaid.constants import (
+    FinancialAidJustification,
+    FinancialAidStatus
+)
+from financialaid.models import (
+    FinancialAid,
+    TierProgram
+)
 from financialaid.permissions import (
     UserCanEditFinancialAid,
-    FinancialAidUserMatchesLoggedInUser,
+    FinancialAidUserMatchesLoggedInUser
 )
 from financialaid.serializers import (
     FinancialAidActionSerializer,
@@ -54,13 +64,12 @@ class FinancialAidRequestView(CreateAPIView):
     View for financial aid request API. Takes income, currency, and program, then determines whether review
     is necessary, and if not, sets the appropriate tier for personalized pricing.
     """
-
     serializer_class = FinancialAidRequestSerializer
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
     )
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):  # pragma: no cover
         """
@@ -75,12 +84,11 @@ class FinancialAidSkipView(UpdateAPIView):
     aid object exists, and then either creates or updates a financial aid object to reflect
     the user skipping financial aid.
     """
-
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
     )
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
 
     def update(self, request, *args, **kwargs):
         """
@@ -94,14 +102,10 @@ class FinancialAidSkipView(UpdateAPIView):
         if not ProgramEnrollment.objects.filter(program=program.id, user=user).exists():
             raise ValidationError("User not in program.")
 
-        financialaid = (
-            FinancialAid.objects.filter(
-                user=user,
-                tier_program__program=program,
-            )
-            .exclude(status=FinancialAidStatus.RESET)
-            .first()
-        )
+        financialaid = FinancialAid.objects.filter(
+            user=user,
+            tier_program__program=program,
+        ).exclude(status=FinancialAidStatus.RESET).first()
         if financialaid is None:
             financialaid = FinancialAid(
                 user=user,
@@ -111,9 +115,7 @@ class FinancialAidSkipView(UpdateAPIView):
             )
 
         if financialaid.status in FinancialAidStatus.TERMINAL_STATUSES:
-            raise ValidationError(
-                "Financial aid application cannot be skipped once it's been approved or skipped."
-            )
+            raise ValidationError("Financial aid application cannot be skipped once it's been approved or skipped.")
 
         financialaid.tier_program = get_no_discount_tier_program(program.id)
         financialaid.status = FinancialAidStatus.SKIPPED
@@ -126,7 +128,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     View for reviewing financial aid requests.
     Note: In the future, it may be worth factoring out the code for sorting into its own subclass of ListView
     """
-
     paginate_by = 50
     context_object_name = "financial_aid_objects"
     template_name = "review_financial_aid.html"
@@ -142,11 +143,21 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     sort_field = None
     sort_direction = ""
     sort_fields = {
-        "adjusted_cost": {"display": "Adjusted Cost"},
-        "date_calculated": {"display": "Date Calculated"},
-        "last_name": {"display": "Name/Location"},
-        "reported_income": {"display": "Income/Yr."},
-        "date_documents_sent": {"display": "Date Docs Sent"},
+        "adjusted_cost": {
+            "display": "Adjusted Cost"
+        },
+        "date_calculated": {
+            "display": "Date Calculated"
+        },
+        "last_name": {
+            "display": "Name/Location"
+        },
+        "reported_income": {
+            "display": "Income/Yr."
+        },
+        "date_documents_sent": {
+            "display": "Date Docs Sent"
+        }
     }
     sort_field_mappings = {
         "date_calculated": "created_on",
@@ -163,11 +174,9 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             Program,
             id=self.kwargs["program_id"],  # pylint: disable=unsubscriptable-object
             live=True,
-            financial_aid_availability=True,
+            financial_aid_availability=True
         )
-        return has_object_permission(
-            Permissions.CAN_EDIT_FINANCIAL_AID, self.request.user, self.program
-        )
+        return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, self.request.user, self.program)
 
     def get_context_data(self, **kwargs):  # pylint: disable=arguments-differ
         """
@@ -181,15 +190,17 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
         context["email_serializer"] = GenericMailSerializer()
         context["current_sort_field"] = "{sort_direction}{sort_field}".format(
-            sort_direction=self.sort_direction, sort_field=self.sort_field
+            sort_direction=self.sort_direction,
+            sort_field=self.sort_field
         )
         context["current_program_id"] = self.program.id
-        context["tier_programs"] = (
-            TierProgram.objects.filter(
-                program_id=context["current_program_id"], current=True
-            )
-            .order_by("discount_amount")
-            .annotate(adjusted_cost=self.course_price - F("discount_amount"))
+        context["tier_programs"] = TierProgram.objects.filter(
+            program_id=context["current_program_id"],
+            current=True
+        ).order_by(
+            "discount_amount"
+        ).annotate(
+            adjusted_cost=self.course_price - F("discount_amount")
         )
         context["search_query"] = self.search_query
 
@@ -214,12 +225,10 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             field_dict["sort_field"] = "{sort_direction}{sort_field}".format(
                 # If this field is our current sort field, we want to toggle the sort direction, else default ""
                 sort_direction=new_sort_direction if field == self.sort_field else "",
-                sort_field=field,
+                sort_field=field
             )
             # If this field is the current sort field, we want to indicate the current sort direction
-            field_dict["direction_display"] = (
-                self.sort_direction if field == self.sort_field else None
-            )
+            field_dict["direction_display"] = self.sort_direction if field == self.sort_field else None
         context["sort_fields"] = self.sort_fields
 
         # Required for styling
@@ -234,9 +243,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         context["authenticated"] = not self.request.user.is_anonymous
         context["is_public"] = False
         context["has_zendesk_widget"] = True
-        context["is_staff"] = has_role(
-            self.request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]
-        )
+        context["is_staff"] = has_role(self.request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         return context
 
     def get_queryset(self):
@@ -244,14 +251,13 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         Gets queryset for ListView to return to view
         """
         # Filter by program (self.program set in test_func())
-        financial_aids = FinancialAid.objects.filter(tier_program__program=self.program)
+        financial_aids = FinancialAid.objects.filter(
+            tier_program__program=self.program
+        )
 
         # Filter by status
         self.selected_status = self.kwargs.get("status", None)
-        if (
-            self.selected_status is None
-            or self.selected_status not in FinancialAidStatus.ALL_STATUSES
-        ):
+        if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
             self.selected_status = self.default_status
         financial_aids = financial_aids.filter(status=self.selected_status)
 
@@ -259,23 +265,21 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         self.search_query = self.request.GET.get("search_query", "")
         search_query = reduce(
             lambda q, term: (
-                q
-                | Q(user__profile__first_name__icontains=term)
-                | Q(user__profile__last_name__icontains=term)
-                | Q(user__username__icontains=term)
-                | Q(user__email__icontains=term)
+                q |
+                Q(user__profile__first_name__icontains=term) |
+                Q(user__profile__last_name__icontains=term) |
+                Q(user__username__icontains=term) |
+                Q(user__email__icontains=term)
             ),
             self.search_query.split(),
-            Q(),
+            Q()
         )
         if search_query:
             financial_aids = financial_aids.filter(search_query)
 
         # Annotate with adjusted cost
         self.course_price = self.program.price
-        financial_aids = financial_aids.annotate(
-            adjusted_cost=self.course_price - F("tier_program__discount_amount")
-        )
+        financial_aids = financial_aids.annotate(adjusted_cost=self.course_price - F("tier_program__discount_amount"))
 
         # Sort by field
         self.sort_field = self.request.GET.get("sort_by", self.default_sort_field)
@@ -289,9 +293,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         financial_aids = financial_aids.order_by(
             "{sort_direction}{sort_field}".format(
                 sort_direction=self.sort_direction,
-                sort_field=self.sort_field_mappings.get(
-                    self.sort_field, self.sort_field
-                ),
+                sort_field=self.sort_field_mappings.get(self.sort_field, self.sort_field)
             )
         )
 
@@ -302,7 +304,6 @@ class FinancialAidActionView(UpdateAPIView):
     """
     View for modifying financial aid request statuses as a Staff user
     """
-
     serializer_class = FinancialAidActionSerializer
     permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
     lookup_field = "id"
@@ -314,7 +315,6 @@ class FinancialAidDetailView(UpdateAPIView):
     """
     View for updating a FinancialAid record
     """
-
     serializer_class = FinancialAidSerializer
     authentication_classes = (
         SessionAuthentication,
@@ -330,16 +330,13 @@ class CoursePriceListView(APIView):
     """
     View for retrieving a learner's price for course runs in all enrolled programs
     """
-
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
     )
     permission_classes = (IsAuthenticated, CanReadIfStaffOrSelf)
 
-    def get(
-        self, request, username, *args, **kwargs
-    ):  # pylint: disable=unused-argument
+    def get(self, request, username, *args, **kwargs):  # pylint: disable=unused-argument
         """
         GET handler
         """
@@ -349,15 +346,18 @@ class CoursePriceListView(APIView):
         )
 
         program_enrollments = (
-            ProgramEnrollment.objects.select_related("user", "program")
-            .filter(user=user, program__live=True)
-            .all()
+            ProgramEnrollment.objects
+            .select_related('user', 'program')
+            .filter(user=user, program__live=True).all()
         )
         formatted_course_prices = [
             get_formatted_course_price(program_enrollment)
             for program_enrollment in program_enrollments
         ]
-        serializer = FormattedCoursePriceSerializer(formatted_course_prices, many=True)
+        serializer = FormattedCoursePriceSerializer(
+            formatted_course_prices,
+            many=True
+        )
         return Response(data=serializer.data)
 
 
@@ -365,12 +365,11 @@ class CoursePriceDetailView(APIView):
     """
     View for retrieving a learner's price for a course run
     """
-
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
     )
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
@@ -381,7 +380,7 @@ class CoursePriceDetailView(APIView):
             ProgramEnrollment,
             user=user,
             program__id=self.kwargs["program_id"],
-            program__live=True,
+            program__live=True
         )
         serializer = FormattedCoursePriceSerializer(
             get_formatted_course_price(program_enrollment)
