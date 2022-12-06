@@ -2384,7 +2384,7 @@ class GetCertificateForCourseTests(CourseTests):
             "grade": "0.98"
         }
         self.mmtrack.certificates = CachedCertificate.deserialize_edx_data([cert_json])
-        certificate_url = urljoin(settings.EDXORG_BASE_URL, "certificates/user/course_key") if has_url else ""
+        certificate_url = urljoin(settings.EDXORG_CALLBACK_URL, "certificates/user/course_key") if has_url else ""
         assert api.get_certificate_url(self.mmtrack, self.course) == certificate_url
 
 
@@ -2530,7 +2530,7 @@ def test_refresh_user_data(db, mocker):
     api.refresh_user_data(user.id, BACKEND_EDX_ORG)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
-    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
+    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_CALLBACK_URL)
     for cache_type in CachedEdxDataApi.EDX_SUPPORTED_CACHES:
         update_cache_mock.assert_any_call(user, edx_api, cache_type, BACKEND_EDX_ORG)
 
@@ -2616,7 +2616,7 @@ def test_refresh_failed_edx_client(db, mocker):
     api.refresh_user_data(user.id, BACKEND_EDX_ORG)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
-    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
+    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_CALLBACK_URL)
     assert update_cache_mock.called is False
 
 

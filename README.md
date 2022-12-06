@@ -38,6 +38,11 @@ a template to create your ``.env`` file. For MicroMasters to work, it needs 4 va
     The base URL where the LMS server is running on your machine. This
     _should_ typically be ``http://edx.odl.local:18000``.
 
+- ``EDXORG_CALLBACK_URL``
+
+    The callback URL from which MicroMasters will receive OAuth responses from the LMS server on your machine. This
+    _should_ typically be ``http://host.docker.internal:18000/``.
+
 - ``EDXORG_CLIENT_ID`` and ``EDXORG_CLIENT_SECRET``
 
     These values can be found in the Django OAuth Toolkit Application you created [above](https://github.com/mitodl/micromasters/blob/master/docs/configure_open_edx.md).
@@ -51,11 +56,10 @@ a template to create your ``.env`` file. For MicroMasters to work, it needs 4 va
 
 The following settings should be configured before running the app:
 
-- `EDXORG_BASE_URL`, `EDXORG_CLIENT_ID` and `EDXORG_CLIENT_SECRET`
+- `EDXORG_BASE_URL`, `EDXORG_CALLBACK_URL`, `EDXORG_CLIENT_ID` and `EDXORG_CLIENT_SECRET`
 
     If you're running edX locally as detailed in the steps above, you've already done this. If you're running
-    against a deployed edX instance, `EDXORG_BASE_URL` should be the base URL of that instance, and you'll need to get
-    the client id/secret values from devops.
+    against a deployed edX instance, `EDXORG_BASE_URL` and `EDXORG_CALLBACK_URL` should be the base URL of that instance, and you'll need to get the client id/secret values from devops.
 
 - `GOOGLE_API_KEY`
 

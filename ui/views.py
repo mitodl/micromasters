@@ -59,7 +59,7 @@ class ReactView(View):
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "host": webpack_dev_server_host(request),
-            "edx_base_url": settings.EDXORG_BASE_URL,
+            "edx_base_url": settings.EDXORG_CALLBACK_URL,
             "mitxonline_base_url": settings.MITXONLINE_BASE_URL,
             "mitxonline_url": settings.MITXONLINE_URL,
             "roles": roles,

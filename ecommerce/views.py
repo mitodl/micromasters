@@ -136,7 +136,7 @@ class CheckoutView(APIView):
         else:
             # This redirects the user to edX to purchase the course there
             payload = {}
-            url = urljoin(settings.EDXORG_BASE_URL, '/course_modes/choose/{}/'.format(course_id))
+            url = urljoin(settings.EDXORG_CALLBACK_URL, '/course_modes/choose/{}/'.format(course_id))
             method = 'GET'
 
         return Response({
