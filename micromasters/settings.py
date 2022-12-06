@@ -443,7 +443,6 @@ HIJACK_LOGOUT_REDIRECT_URL = '/admin/auth/user'
 
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"
-WAGTAIL_DATE_FORMAT = '%b.%-d.%Y'
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = get_int('WAGTAILIMAGES_MAX_UPLOAD_SIZE', 20971620)  # default 25 MB
 MEDIA_ROOT = get_string('MEDIA_ROOT', '/var/media/')
 MEDIA_URL = '/media/'
