@@ -104,7 +104,7 @@
           </h3>
           {% for semester_date in  page.semester_dates.all %}
             <div class="semester-date">
-              {{ semester_date.semester_name }}: starts {{ semester_date.start_date }}
+              {{ semester_date.semester_name }}: starts {{ semester_date.start_date|date:'M d, Y' }}
             </div>
           {% endfor %}
         </div>
