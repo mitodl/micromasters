@@ -584,7 +584,7 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
             CourseRunGradingStatus.objects.create(course_run=run_elective, status='complete')
             ElectiveCourse.objects.create(course=run_elective.course, electives_set=electives_set)
 
-        letter_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
+        letter_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program, is_active=True)
         assert letter_qset.exists() is False
         api.generate_program_letter(self.user, self.program)
         assert letter_qset.exists() is False
@@ -596,6 +596,12 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
                 status='complete',
                 grade=0.8
             )
+        api.generate_program_letter(self.user, self.program)
+        assert letter_qset.exists() is True
+
+        # Test that the inactive letters get activated
+        letter_qset.update(is_active=False)
+        assert letter_qset.exists() is False
         api.generate_program_letter(self.user, self.program)
         assert letter_qset.exists() is True
 
@@ -611,10 +617,16 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
                 program=self.program
             )
 
-        cert_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
-        assert cert_qset.exists() is False
+        letter_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program, is_active=True)
+        assert letter_qset.exists() is False
         api.generate_program_letter(self.user, self.program)
-        assert cert_qset.exists() is True
+        assert letter_qset.exists() is True
+
+        # Test that the inactive letters get activated
+        letter_qset.update(is_active=False)
+        assert letter_qset.exists() is False
+        api.generate_program_letter(self.user, self.program)
+        assert letter_qset.exists() is True
 
     def test_already_has_program_letter(self):
         """

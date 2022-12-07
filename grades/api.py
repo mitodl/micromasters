@@ -272,25 +272,34 @@ def completed_program(user, program):
 
 def generate_program_letter(user, program):
     """
-    Create a program letter if the user has a MM course certificate
-    for each course in the program and program is non-fa.
+    Create a program letter based on:
+
+    1. If the program is Financial Assistance based and the user has a certificate for that program.
+    2. If a program is not Financial Assistance based and the user has completed the program e.g. The user has
+       an MM course certificate (Completed course) for required courses in the program.
 
     Args:
         user (User): a Django user.
         program (programs.models.Program): program where the user is enrolled.
     """
-    if MicromastersProgramCommendation.objects.filter(user=user, program=program).exists():
+    if MicromastersProgramCommendation.objects.filter(user=user, program=program, is_active=True).exists():
         log.info('User [%s] already has a letter for program [%s]', user, program)
         return
 
-    if (program.financial_aid_availability and
-            MicromastersProgramCertificate.objects.filter(user=user, program=program).exists()):
-        MicromastersProgramCommendation.objects.create(user=user, program=program)
-        return
-    if completed_program(user, program):
-        MicromastersProgramCommendation.objects.create(user=user, program=program)
+    created = None
+    if (program.financial_aid_availability and MicromastersProgramCertificate.objects.filter(user=user,
+                                                                                             program=program).exists()):
+        _, created = MicromastersProgramCommendation.objects.update_or_create(user=user, program=program,
+                                                                              defaults={"is_active": True})
+
+    elif completed_program(user, program):
+        _, created = MicromastersProgramCommendation.objects.update_or_create(user=user, program=program,
+                                                                              defaults={"is_active": True})
+
+    if created is not None:
         log.info(
-            'Created MM program letter for [%s] in program [%s]',
+            '[%s] MM program letter for [%s] in program [%s]',
+            'Created' if created else 'Activated',
             user.username,
             program.title
         )
