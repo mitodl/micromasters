@@ -128,7 +128,7 @@ class MicromastersProgramCertificateAdmin(admin.ModelAdmin):
 class MicromastersProgramCommendationAdmin(admin.ModelAdmin):
     """Admin for MicromastersProgramCommendation"""
     model = models.MicromastersProgramCommendation
-    list_display = ('id', 'user_username', 'program', 'uuid', 'created_on', 'updated_on')
+    list_display = ('id', 'user_username', 'program', 'uuid', 'is_active', 'created_on', 'updated_on')
     readonly_fields = ('created_on', 'updated_on')
     list_filter = ('program',)
     raw_id_fields = ('user',)
