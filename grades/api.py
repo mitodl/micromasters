@@ -272,8 +272,11 @@ def completed_program(user, program):
 
 def generate_program_letter(user, program):
     """
-    Create a program letter if the user has a MM course certificate
-    for each course in the program and program is non-fa.
+    Create a program letter based on:
+
+    1. If the program is Financial Assistance based and the user has a certificate for that program.
+    2. If a program is not Financial Assistance based and the user has completed the program e.g. The user has
+       an MM course certificate (Completed course) for required courses in the program.
 
     Args:
         user (User): a Django user.
