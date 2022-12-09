@@ -1,6 +1,20 @@
 Release Notes
 =============
 
+Version 0.230.2 (Released December 09, 2022)
+---------------
+
+- fix: enhance the program letter generation for active status (#5262)
+- Add Admin model for Program Letter (#5265)
+- Remove unneeded instruction
+- Removed change intended for another branch
+- Revert "Format"
+- Updated configure edx doc
+- Updated documentation.
+- Format
+- Working hold
+- Actually add my changes
+
 Version 0.230.1 (Released December 01, 2022)
 ---------------
 
