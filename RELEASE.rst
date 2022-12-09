@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.230.2
+Version 0.230.2 (Released December 09, 2022)
 ---------------
 
 - fix: enhance the program letter generation for active status (#5262)
