@@ -20,7 +20,7 @@ def edx_authorize_url(base_url):
     Returns:
         str: the authorize url
     """
-    return urljoin(base_url, '/oauth2/authorize/')
+    return urljoin(base_url, "/oauth2/authorize/")
 
 
 def edx_access_token_url(base_url):
@@ -33,28 +33,29 @@ def edx_access_token_url(base_url):
     Returns:
         str: the access token url
     """
-    return urljoin(base_url, '/oauth2/access_token/')
+    return urljoin(base_url, "/oauth2/access_token/")
 
 
 class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
     """
     Base edx OAuth2 authentication backend
     """
-    name = 'edxorg'
-    ID_KEY = 'edx_id'
+
+    name = "edxorg"
+    ID_KEY = "edx_id"
     REQUEST_TOKEN_URL = None
-    EDXORG_CALLBACK_URL = None
+    AUTH_CALLBACK_URL = None
 
     # Settings for Django OAUTH toolkit
-    DEFAULT_SCOPE = ['read', 'write']
+    DEFAULT_SCOPE = ["read", "write"]
 
-    ACCESS_TOKEN_METHOD = 'POST'
+    ACCESS_TOKEN_METHOD = "POST"
     REDIRECT_STATE = False
     EXTRA_DATA = [
-        ('refresh_token', 'refresh_token', True),
-        ('expires_in', 'expires_in'),
-        ('token_type', 'token_type', True),
-        ('scope', 'scope'),
+        ("refresh_token", "refresh_token", True),
+        ("expires_in", "expires_in"),
+        ("token_type", "token_type", True),
+        ("scope", "scope"),
     ]
 
     @classmethod
@@ -68,7 +69,7 @@ class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
         Returns:
             str: the full url
         """
-        return urljoin(cls.EDXORG_CALLBACK_URL, path)
+        return urljoin(cls.AUTH_CALLBACK_URL, path)
 
     def user_data(self, access_token, *args, **kwargs):
         """
@@ -83,9 +84,9 @@ class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
             dict: a dictionary containing user information
                 coming from the remote service.
         """
-        edx_client = EdxApi({'access_token': access_token}, self.EDXORG_CALLBACK_URL)
+        edx_client = EdxApi({"access_token": access_token}, self.AUTH_CALLBACK_URL)
         info = edx_client.user_info.get_user_info()
-        return {'name': info.name, 'username': info.username, 'email': info.email}
+        return {"name": info.name, "username": info.username, "email": info.email}
 
     def get_user_details(self, response):
         """
@@ -104,16 +105,16 @@ class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
                 the following keys:
                 <remote_id>, `username`, `email`, `fullname`, `first_name`, `last_name`
         """
-        full, _, _ = self.get_user_names(response['name'])
+        full, _, _ = self.get_user_names(response["name"])
 
         return {
-            'edx_id': response['username'],
-            'username': response['username'],
-            'email': response['email'],
-            'fullname': full,
+            "edx_id": response["username"],
+            "username": response["username"],
+            "email": response["email"],
+            "fullname": full,
             # the following are not necessary because they are used only inside the User object.
-            'first_name': '',
-            'last_name': '',
+            "first_name": "",
+            "last_name": "",
         }
 
     def get_user_id(self, details, response):
@@ -141,5 +142,5 @@ class BaseEdxOAuth2(abc.ABC, BaseOAuth2):
             dict of information about the user
         """
         response = super().refresh_token(token, *args, **kwargs)
-        response['updated_at'] = now_in_utc().timestamp()
+        response["updated_at"] = now_in_utc().timestamp()
         return response
