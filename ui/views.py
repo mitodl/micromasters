@@ -60,7 +60,7 @@ class ReactView(View):
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "host": webpack_dev_server_host(request),
             "edx_base_url": settings.EDXORG_CALLBACK_URL,
-            "mitxonline_base_url": settings.MITXONLINE_BASE_URL,
+            "mitxonline_base_url": settings.MITXONLINE_CALLBACK_URL,
             "mitxonline_url": settings.MITXONLINE_URL,
             "roles": roles,
             "release_version": settings.VERSION,
