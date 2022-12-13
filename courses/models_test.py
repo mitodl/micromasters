@@ -366,7 +366,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
         )
         assert course_run.course.url == "http://enrollment.url/"
 
-    @override_settings(AUTH_CALLBACK_URL=BASE_URL)
+    @override_settings(EDXORG_CALLBACK_URL=BASE_URL)
     def test_url_with_course_key(self):
         """Test course url with a course key and no enrollment_url"""
         course_run = CourseRunFactory.create(
