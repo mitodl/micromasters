@@ -9,9 +9,11 @@ class MitxOnlineOAuth2(BaseEdxOAuth2):
     """
     mitX Online OAuth2 authentication backend
     """
-    name = 'mitxonline'
-    EDX_BASE_URL = settings.MITXONLINE_BASE_URL
+
+    name = "mitxonline"
+    AUTH_BASE_URL = settings.MITXONLINE_BASE_URL
+    AUTH_CALLBACK_URL = settings.MITXONLINE_CALLBACK_URL
 
     # Settings for Django OAUTH toolkit
-    AUTHORIZATION_URL = edx_authorize_url(EDX_BASE_URL)
-    ACCESS_TOKEN_URL = edx_access_token_url(EDX_BASE_URL)
+    AUTHORIZATION_URL = edx_authorize_url(AUTH_BASE_URL)
+    ACCESS_TOKEN_URL = edx_access_token_url(AUTH_CALLBACK_URL)

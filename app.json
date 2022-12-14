@@ -68,12 +68,28 @@
       "description": "The callback URL from which edX instance will be calling Micromasters when logging in.",
       "required": true
     },
+    "MITXONLINE_BASE_URL": {
+      "description": "The base URL of the mitxonline instance to use for logging in.",
+      "required": true
+    },
+    "MITXONLINE_CALLBACK_URL": {
+      "description": "The callback URL from which mitxonline instance will be calling Micromasters when logging in.",
+      "required": true
+    },
     "EDXORG_CLIENT_ID": {
       "description": "The OAuth client ID configured in the edX instance.",
       "required": true
     },
     "EDXORG_CLIENT_SECRET": {
       "description": "The OAuth client secret configured in the edX instance.",
+      "required": true
+    },
+    "MITXONLINE_CLIENT_ID": {
+      "description": "The OAuth client ID configured in the mitxonline instance.",
+      "required": true
+    },
+    "MITXONLINE_CLIENT_SECRET": {
+      "description": "The OAuth client secret configured in the mitxonline instance.",
       "required": true
     },
     "OPENSEARCH_HTTP_AUTH": {

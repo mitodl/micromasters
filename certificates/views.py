@@ -43,7 +43,7 @@ class CertificateView(TemplateView):
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "edx_base_url": settings.EDXORG_CALLBACK_URL,
-            "mitxonline_base_url": settings.MITXONLINE_BASE_URL,
+            "mitxonline_base_url": settings.MITXONLINE_CALLBACK_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)
         context["twitter_share_text"] = "I just earned a Certificate on @Micromasters! Check it out: "
@@ -229,7 +229,7 @@ class BaseGradeRecordView(ABC, TemplateView):
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "edx_base_url": settings.EDXORG_CALLBACK_URL,
-            "mitxonline_base_url": settings.MITXONLINE_BASE_URL,
+            "mitxonline_base_url": settings.MITXONLINE_CALLBACK_URL,
             "authenticated": authenticated,
             "partner_schools": list(PartnerSchool.objects.values_list("id", "name")),
             "hash": enrollment.share_hash,

@@ -251,7 +251,7 @@ class EdxPipelineApiTest(MockedESTestCase):
 
         mocked_get_json.assert_called_once_with(
             urljoin(
-                edxorg.EdxOrgOAuth2.EDX_BASE_URL,
+                edxorg.EdxOrgOAuth2.AUTH_BASE_URL,
                 '/api/user/v1/accounts/{0}'.format(get_social_username(self.user))
             ),
             headers={'Authorization': 'Bearer foo_token'}
