@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+Version 0.231.0
+---------------
+
+- Fix failing tests
+- Update app.json
+- Rename attributes
+- Fix: hold
+- Fix
+
 Version 0.230.2 (Released December 09, 2022)
 ---------------
 
