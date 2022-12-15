@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.231.0
+Version 0.231.0 (Released December 15, 2022)
 ---------------
 
 - Fix failing tests
