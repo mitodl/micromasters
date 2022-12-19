@@ -633,7 +633,7 @@ class MMTrackTest(MockedESTestCase):
         final_grade.save()
         assert mmtrack.has_paid(key) is False
 
-    def test_not_paid_fa_with_course_run_paid_on_edx(self):
+    def test_not_paid_fa_with_enrollment_verified_on_edx(self):
         """
         Test for has_paid is True for FA programs in case
         there is no payment but enrollment is verified on edx
