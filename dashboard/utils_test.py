@@ -646,8 +646,6 @@ class MMTrackTest(MockedESTestCase):
         course_with_exam_1 = CourseFactory.create(program=self.program_financial_aid)
         ExamRunFactory.create(course=course_with_exam_1)
         key = "course-v1:edX+DemoX+Demo_Course"
-        assert key in mmtrack.enrollments
-        assert mmtrack.is_enrolled(key) is True
         assert mmtrack.has_verified_enrollment(key) is True
         assert mmtrack.has_paid(key) is True
 
