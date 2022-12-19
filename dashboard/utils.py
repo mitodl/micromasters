@@ -223,13 +223,15 @@ class MMTrack:
         # If edx course keys lookup is none we should have no payment against it
         if edx_course_key is None:
             return False
-
-        # financial aid programs need to have a paid entry for the course
+        has_paid = False
+        # financial aid programs might have a paid entry for the course
         if self.has_exams:
             # get the course associated with the course key
             course = Course.objects.get(courserun__edx_course_key=edx_course_key)
-            return self.paid_course_fa.get(course.id, False)
+            has_paid = self.paid_course_fa.get(course.id, False)
 
+        if has_paid:
+            return True
         # normal programs need to have paid_on_edx in the final grades or a verified enrollment
         if self.has_final_grade(edx_course_key):
             return self.has_final_grade_paid_on_edx(edx_course_key)

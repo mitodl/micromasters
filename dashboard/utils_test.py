@@ -96,6 +96,8 @@ class MMTrackTest(MockedESTestCase):
             enrollment_end=cls.now-timedelta(weeks=53),
             edx_course_key="course-v1:odl+FOO101+CR-FALL15"
         )
+        # a financial aid program has exams
+        ExamRunFactory.create()
         cls.crun_fa2 = CourseRunFactory.create(
             course=finaid_course
         )
@@ -615,7 +617,7 @@ class MMTrackTest(MockedESTestCase):
 
     def test_not_paid_fa_with_course_run_paid_on_edx(self):
         """
-        Test for has_paid is False for FA programs even in case
+        Test for has_paid is True for FA programs in case
         there is a final grade with course_run_paid_on_edx=True
         """
         mmtrack = MMTrack(
@@ -626,10 +628,28 @@ class MMTrackTest(MockedESTestCase):
         key = self.crun_fa.edx_course_key
         assert mmtrack.has_paid(key) is False
         final_grade = FinalGradeFactory.create(user=self.user, course_run=self.crun_fa, course_run_paid_on_edx=True)
-        assert mmtrack.has_paid(key) is False
+        assert mmtrack.has_paid(key) is True
         final_grade.course_run_paid_on_edx = False
         final_grade.save()
         assert mmtrack.has_paid(key) is False
+
+    def test_not_paid_fa_with_course_run_paid_on_edx(self):
+        """
+        Test for has_paid is True for FA programs in case
+        there is no payment but enrollment is verified on edx
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        course_with_exam_1 = CourseFactory.create(program=self.program_financial_aid)
+        ExamRunFactory.create(course=course_with_exam_1)
+        key = "course-v1:edX+DemoX+Demo_Course"
+        assert key in mmtrack.enrollments
+        assert mmtrack.is_enrolled(key) is True
+        assert mmtrack.has_verified_enrollment(key) is True
+        assert mmtrack.has_paid(key) is True
 
     def test_has_paid_fa_with_course_run_paid_on_mm(self):
         """
