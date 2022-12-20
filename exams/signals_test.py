@@ -114,8 +114,7 @@ class ExamSignalsTest(MockedESTestCase):
         order = OrderFactory.create(user=self.profile.user, fulfilled=False)
         LineFactory.create(course_key=self.course_run.edx_course_key, order=order)
 
-        # There is no ExamProfile or ExamAuthorization before creating the FinalGrade.
-        assert ExamProfile.objects.filter(profile=self.profile).exists() is False
+        # There is no ExamAuthorization before creating the FinalGrade.
         assert ExamAuthorization.objects.filter(
             user=self.profile.user,
             course=self.course_run.course
@@ -174,12 +173,12 @@ class ExamSignalsTest(MockedESTestCase):
 
     def test_update_exam_authorization_cached_enrollment_user_not_paid(self):
         """
-        Test no exam profile created when user enrolled in the course but not paid for it.
+        Test no exam profile created when user enrolled in the course but their enrollment is verified
         """
         # exam profile before enrollment
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
         CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
-        assert ExamProfile.objects.filter(profile=self.profile).exists() is False
+        assert ExamProfile.objects.filter(profile=self.profile).exists() is True
 
     def test_update_exam_authorization_cached_enrollment_when_no_exam_run(self):
         """
