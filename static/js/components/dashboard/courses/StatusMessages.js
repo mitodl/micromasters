@@ -22,10 +22,7 @@ import {
   COURSE_ACTION_CALCULATE_PRICE,
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
-  STATUS_CURRENTLY_ENROLLED,
   COURSE_ACTION_ENROLL,
-  COURSEWARE_BACKEND_NAMES,
-  DASHBOARD_BACKEND_BASE_URLS
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -38,11 +35,9 @@ import {
   notNilorEmpty,
   hasCanUpgradeCourseRun,
   hasMissedDeadlineCourseRun,
-  hasCurrentlyEnrolledCourseRun
 } from "./util"
 import {
   hasPassingExamGrade,
-  hasFailingExamGrade,
   hasPassedCourseRun
 } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
@@ -119,7 +114,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     firstRun,
     course,
     expandedStatuses,
-    setShowExpandedCourseStatus,
+    setShowExpandedCourseStatus
   } = props
 
   const exams = course.has_exam
