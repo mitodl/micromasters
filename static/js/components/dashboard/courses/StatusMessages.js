@@ -22,7 +22,7 @@ import {
   COURSE_ACTION_CALCULATE_PRICE,
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
-  COURSE_ACTION_ENROLL,
+  COURSE_ACTION_ENROLL
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -34,12 +34,9 @@ import {
   isOfferedInUncertainFuture,
   notNilorEmpty,
   hasCanUpgradeCourseRun,
-  hasMissedDeadlineCourseRun,
+  hasMissedDeadlineCourseRun
 } from "./util"
-import {
-  hasPassingExamGrade,
-  hasPassedCourseRun
-} from "../../../lib/grades"
+import { hasPassingExamGrade, hasPassedCourseRun } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
 
 type Message = {
