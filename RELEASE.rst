@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.232.0
+---------------
+
+- Update has_paid to use edx data (#5274)
+
 Version 0.231.0 (Released December 15, 2022)
 ---------------
 
