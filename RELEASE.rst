@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.232.0
+Version 0.232.0 (Released January 09, 2023)
 ---------------
 
 - Update has_paid to use edx data (#5274)
