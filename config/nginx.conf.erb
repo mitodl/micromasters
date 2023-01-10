@@ -75,10 +75,6 @@ http {
             try_files $uri $uri/ /staticfiles/$1 /staticfiles/$1/ =404;
         }
 
-        location = /robots.txt {
-            alias /app/static/robots.txt;
-        }
-
         location = /.well-known/dnt-policy.txt {
             return 204;
         }
