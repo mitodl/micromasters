@@ -4,15 +4,12 @@ import React from "react"
 import R from "ramda"
 import moment from "moment-timezone"
 
-import type { Coupon } from "../../../flow/couponTypes"
 import type {
   Course,
   CourseRun,
   FinancialAidUserInfo
 } from "../../../flow/programTypes"
-import { makeCouponMessage } from "../../../lib/coupon"
 import {
-  COUPON_CONTENT_TYPE_COURSE,
   COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
   FA_PENDING_STATUSES,
@@ -67,8 +64,6 @@ type CalculateMessagesProps = {
   expandedStatuses: Set<number>,
   setShowExpandedCourseStatus: (n: number) => void,
   setExamEnrollmentDialogVisibility: (b: boolean) => void,
-  setSelectedExamCouponCourse: (n: number) => void,
-  coupon?: Coupon
 }
 
 const courseStartMessage = (run: CourseRun) => {
@@ -104,7 +99,6 @@ const enrollmentDateMessage = (run: CourseRun) => {
 // sometimes there really isn't a better way :/
 export const calculateMessages = (props: CalculateMessagesProps) => {
   const {
-    coupon,
     courseAction,
     financialAid,
     hasFinancialAid,
@@ -150,14 +144,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         action: courseAction(firstRun, COURSE_ACTION_ENROLL)
       }
     ])
-  }
-
-  if (
-    coupon &&
-    coupon.content_type === COUPON_CONTENT_TYPE_COURSE &&
-    coupon.object_id === course.id
-  ) {
-    messages.push({ message: makeCouponMessage(coupon) })
   }
 
   // User never enrolled

@@ -6,7 +6,6 @@ import Button from "@material-ui/core/Button"
 import R from "ramda"
 
 import SpinnerButton from "../SpinnerButton"
-import type { Coupon } from "../../flow/couponTypes"
 import type { CourseRun, FinancialAidUserInfo } from "../../flow/programTypes"
 import {
   STATUS_NOT_PASSED,
@@ -19,7 +18,6 @@ import {
   COURSE_ACTION_REENROLL,
   COURSE_ACTION_CALCULATE_PRICE
 } from "../../constants"
-import { isFreeCoupon } from "../../lib/coupon"
 import { isEnrollableRun } from "./courses/util"
 
 export default class CourseAction extends React.Component {
@@ -37,7 +35,6 @@ export default class CourseAction extends React.Component {
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     setCalculatePriceDialogVisibility: (b: boolean) => void,
-    coupon: ?Coupon,
     actionType: string,
     checkout: (s: string) => void
   }
@@ -77,19 +74,12 @@ export default class CourseAction extends React.Component {
 
   handleEnrollButtonClick(run: CourseRun): void {
     const {
-      coupon,
-      courseRun,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility
     } = this.props
 
     setEnrollSelectedCourseRun(run)
-
-    if (coupon && isFreeCoupon(coupon) && !courseRun.has_paid) {
-      this.redirectToOrderSummary(run)
-    } else {
-      setEnrollCourseDialogVisibility(true)
-    }
+    setEnrollCourseDialogVisibility(true)
   }
 
   renderEnrollButton(run: CourseRun, actionType: string): React$Element<*> {
