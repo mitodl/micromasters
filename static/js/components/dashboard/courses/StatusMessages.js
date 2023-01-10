@@ -22,10 +22,7 @@ import {
   COURSE_ACTION_CALCULATE_PRICE,
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
-  STATUS_CURRENTLY_ENROLLED,
-  COURSE_ACTION_ENROLL,
-  COURSEWARE_BACKEND_NAMES,
-  DASHBOARD_BACKEND_BASE_URLS
+  COURSE_ACTION_ENROLL
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -37,14 +34,9 @@ import {
   isOfferedInUncertainFuture,
   notNilorEmpty,
   hasCanUpgradeCourseRun,
-  hasMissedDeadlineCourseRun,
-  hasCurrentlyEnrolledCourseRun
+  hasMissedDeadlineCourseRun
 } from "./util"
-import {
-  hasPassingExamGrade,
-  hasFailingExamGrade,
-  hasPassedCourseRun
-} from "../../../lib/grades"
+import { hasPassingExamGrade, hasPassedCourseRun } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
 
 type Message = {
@@ -119,15 +111,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     firstRun,
     course,
     expandedStatuses,
-    setShowExpandedCourseStatus,
-    setSelectedExamCouponCourse,
-    setExamEnrollmentDialogVisibility
+    setShowExpandedCourseStatus
   } = props
 
   const exams = course.has_exam
   const paid = firstRun.has_paid
   const passedExam = hasPassingExamGrade(course)
-  const failedExam = hasFailingExamGrade(course)
   const paymentDueDate = moment(
     R.defaultTo("", firstRun.course_upgrade_deadline)
   )
@@ -276,81 +265,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   }
 
-  // Exam messages only
-  if (
-    (hasPassedCourseRun(course) || hasCurrentlyEnrolledCourseRun(course)) &&
-    exams &&
-    paid
-  ) {
-    let message =
-      "There are currently no exams available. Please check back later."
-    let passedMsg = ""
-    if (passedExam || failedExam) {
-      passedMsg = passedExam
-        ? "You passed the exam."
-        : "You did not pass the exam."
-      if (course.has_to_pay && course.can_schedule_exam) {
-        passedMsg = `${passedMsg} If you want to re-take the exam, you need to pay again.`
-      }
-      message = passedMsg
-    }
-    if (course.can_schedule_exam && course.exam_course_key) {
-      message = (
-        <span>
-          {`${passedMsg} You are authorized to take the virtual proctored exam for this course. Please `}
-          <a
-            onClick={() => {
-              setSelectedExamCouponCourse(course.id)
-              setExamEnrollmentDialogVisibility(true)
-            }}
-          >
-            register now.
-          </a>
-          {` You must register by ${
-            course.exam_register_end_date
-          } to be eligible to take the exam between ${
-            course.current_exam_dates
-          }.`}
-          <br />
-          <br />
-          If you have already registered for the exam, you can access the exam
-          through your{" "}
-          <a href={DASHBOARD_BACKEND_BASE_URLS[firstRun.courseware_backend]}>
-            {COURSEWARE_BACKEND_NAMES[firstRun.courseware_backend]} dashboard.
-          </a>
-        </span>
-      )
-    } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
-      message =
-        `${passedMsg} You can register to take the exam starting ` +
-        `on ${formatDate(course.exams_schedulable_in_future[0])}.`
-    }
-
-    if (course.has_to_pay) {
-      messages.push({
-        message: message,
-        action:  courseAction(firstRun, COURSE_ACTION_PAY)
-      })
-    } else {
-      messages.push({ message: message })
-    }
-
-    if (
-      firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
-      S.isJust(futureEnrollableRun(course))
-    ) {
-      messages.push({
-        message: (
-          <span>
-            {"If you want to re-take the course you can "}
-            <a onClick={() => setShowExpandedCourseStatus(course.id)}>
-              re-enroll.
-            </a>
-          </span>
-        )
-      })
-    }
-  }
   // all cases where courseRun is not currently in progress
   // passed means user also paid
   if (hasPassedCourseRun(course)) {
@@ -374,55 +288,33 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     const dueDate = paymentDueDate.isValid()
       ? ` (Payment due on ${paymentDueDate.format(DASHBOARD_FORMAT)})`
       : ""
-    if (exams) {
-      messages.push({
-        message: `The edX course is complete, but you need to pass the exam.${dueDate}`,
-        action:  courseAction(firstRun, COURSE_ACTION_PAY)
-      })
-    } else {
-      messages.push({
-        message: `The edX course is complete, but you need to pay to get credit.${dueDate}`,
-        action:  courseAction(firstRun, COURSE_ACTION_PAY)
-      })
-    }
+    messages.push({
+      message: `The edX course is complete, but you need to pay to get credit.${dueDate}`,
+      action:  courseAction(firstRun, COURSE_ACTION_PAY)
+    })
     return S.Just(messages)
   } else if (hasMissedDeadlineCourseRun(course)) {
     // the course finished can't pay
-    if (exams) {
-      const futureExamMessage = R.isEmpty(course.exam_date_next_semester)
-        ? " There are no future exams scheduled at this time. Please check back later."
-        : ` You can pay now to take the next exam, scheduled for ${
-          course.exam_date_next_semester
-        }.`
-
-      messages.push({
-        message:
-          "You missed the payment deadline to take the proctored exam this term." +
-          `${futureExamMessage}`,
-        action: courseAction(firstRun, COURSE_ACTION_PAY)
-      })
-    } else {
-      const date = run => formatDate(run.course_start_date)
-      const msg = run => {
-        return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
-          run
-        )}.${enrollmentDateMessage(run)}`
-      }
-      messages.push(
-        S.maybe(
-          {
-            message:
-              "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
-              "There are no future runs of this course scheduled at this time."
-          },
-          run => ({
-            message: msg(run),
-            action:  courseAction(run, COURSE_ACTION_REENROLL)
-          }),
-          futureEnrollableRun(course)
-        )
-      )
+    const date = run => formatDate(run.course_start_date)
+    const msg = run => {
+      return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
+        run
+      )}.${enrollmentDateMessage(run)}`
     }
+    messages.push(
+      S.maybe(
+        {
+          message:
+            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+            "There are no future runs of this course scheduled at this time."
+        },
+        run => ({
+          message: msg(run),
+          action:  courseAction(run, COURSE_ACTION_REENROLL)
+        }),
+        futureEnrollableRun(course)
+      )
+    )
   }
   if (hasFailedCourseRun(course) && !hasPassedCourseRun(course)) {
     return S.Just(

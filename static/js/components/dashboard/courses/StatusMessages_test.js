@@ -340,26 +340,6 @@ describe("Course Status Messages", () => {
       )
     })
 
-    describe("should prompt users who are paid and enrolled in the class, if applicable", () => {
-      beforeEach(() => {
-        makeRunCurrent(course.runs[0])
-        makeRunPaid(course.runs[0])
-        makeRunEnrolled(course.runs[0])
-      })
-
-      it("should inform that no exam is available", () => {
-        course.has_exam = true
-        course.can_schedule_exam = false
-        course.exams_schedulable_in_future = []
-
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          {
-            message:
-              "There are currently no exams available. Please check back later."
-          }
-        ])
-      })
-    })
     describe("should prompt users who are paid and passed but course is in progress, if applicable", () => {
       beforeEach(() => {
         makeRunCurrent(course.runs[0])
@@ -367,34 +347,7 @@ describe("Course Status Messages", () => {
         makeRunPassed(course.runs[0])
       })
 
-      it("should prompt about current exam if already passed exam", () => {
-        course.has_exam = true
-        course.can_schedule_exam = true
-        course.proctorate_exams_grades = [makeProctoredExamResult()]
-        course.proctorate_exams_grades[0].passed = true
-        course.exam_course_key = "http://example.com"
-        course.exam_register_end_date = "Jan 17"
-        course.current_exam_dates = "Jan 30 - Feb 5"
-        const messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(messages[0]["message"], "You passed this course.")
-        const mountedOne = shallow(messages[1]["message"])
-        assert.equal(
-          mountedOne.text().trim(),
-          "You passed the exam. You are authorized to take the virtual proctored exam for this course. " +
-            "Please register now. " +
-            `You must register by Jan 17 to be eligible to take the exam between ${
-              course.current_exam_dates
-            }.If ` +
-            "you have already registered for the exam, you can access the exam through your edX dashboard."
-        )
-        const mountedTwo = shallow(messages[2]["message"])
-        assert.equal(
-          mountedTwo.text().trim(),
-          "If you want to re-take the course you can re-enroll."
-        )
-      })
-
-      it("should prompt when passed the course and exam", () => {
+      it("should prompt when passed the course", () => {
         course.has_exam = true
         course.can_schedule_exam = true
         course.proctorate_exams_grades = [makeProctoredExamResult()]
@@ -402,177 +355,6 @@ describe("Course Status Messages", () => {
 
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
-        assert.equal(messages[1]["message"], "You passed the exam.")
-        const mounted = shallow(messages[2]["message"])
-        assert.equal(
-          mounted.text().trim(),
-          "If you want to re-take the course you can re-enroll."
-        )
-      })
-    })
-
-    describe("should prompt users who pass the class and paid to take the exam, if applicable", () => {
-      beforeEach(() => {
-        makeRunPast(course.runs[0])
-        makeRunPassed(course.runs[0])
-        makeRunPaid(course.runs[0])
-        makeRunFuture(course.runs[1])
-        course.has_exam = true
-      })
-      it("should include an expanded message, if the expanded status set includes the course id", () => {
-        calculateMessagesProps.expandedStatuses.add(course.id)
-        const messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(messages.length, 3)
-        assert.deepEqual(messages[2], {
-          message: `Next course starts ${formatDate(
-            course.runs[1].course_start_date
-          )}.`,
-          action: "course action was called"
-        })
-        assert(
-          calculateMessagesProps.courseAction.calledWith(
-            course.runs[1],
-            COURSE_ACTION_REENROLL
-          )
-        )
-      })
-      it("should not prompt to take an exam if course has no exams", () => {
-        course.runs = [course.runs[0]]
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          {
-            message:
-              "There are currently no exams available. Please check back later."
-          }
-        ])
-      })
-      ;[["edxorg", "mitxonline"]].forEach(([courseBackend]) => {
-        it(`should prompt the user to take ${courseBackend} exam if exam coupon available`, () => {
-          course.runs = [course.runs[0]]
-          course.can_schedule_exam = true
-          course.exam_register_end_date = "Jan 17"
-          course.current_exam_dates = "Jan 30 - Feb 5"
-
-          let messages = calculateMessages(calculateMessagesProps).value
-          assert.equal(
-            messages[0]["message"],
-            "There are currently no exams available. Please check back later."
-          )
-          course.runs[0].courseware_backend = courseBackend
-          course.exam_course_key = "http://example-url.com"
-          messages = calculateMessages(calculateMessagesProps).value
-          const mounted = shallow(messages[0]["message"])
-          const courseBackendText =
-            courseBackend === "edxorg" ? "edX" : "MITx Online"
-          assert.equal(
-            mounted.text(),
-            " You are authorized to take the virtual proctored exam for this " +
-              "course. Please register now. " +
-              `You must register by Jan 17 to be eligible to take the exam between ${
-                course.current_exam_dates
-              }.If ` +
-              `you have already registered for the exam, you can access the exam through your ${courseBackendText} dashboard.`
-          )
-          const [registerLink, courseBackendLink] = mounted.find("a")
-          assert.exists(registerLink)
-          assert.equal(registerLink.props.children, "register now.")
-          assert.exists(courseBackendLink)
-          const courseBackendLinkUrl =
-            courseBackend === "edxorg"
-              ? "/edx/courses/"
-              : "/mitxonline/dashboard/"
-          assert.equal(courseBackendLink.props.href, courseBackendLinkUrl)
-        })
-      })
-      it("should let the user know when can take exam in the future", () => {
-        course.runs = [course.runs[0]]
-        course.can_schedule_exam = false
-        course.exams_schedulable_in_future = [
-          moment()
-            .add(2, "day")
-            .format()
-        ]
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          {
-            message:
-              " You can register to take the exam starting " +
-              `on ${formatDate(course.exams_schedulable_in_future[0])}.`
-          }
-        ])
-      })
-      it("message for passed exam", () => {
-        course.runs = [course.runs[0]]
-        course.can_schedule_exam = true
-        course.proctorate_exams_grades = [makeProctoredExamResult()]
-        course.proctorate_exams_grades[0].passed = true
-        course.exam_register_end_date = "Jan 17"
-        course.current_exam_dates = "Jan 30 - Feb 5"
-
-        let messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(messages[0]["message"], "You passed this course.")
-        assert.equal(messages[1]["message"], "You passed the exam.")
-
-        course.exam_course_key = "http://example.com"
-        messages = calculateMessages(calculateMessagesProps).value
-        const mounted = shallow(messages[1]["message"])
-        assert.equal(
-          mounted.text(),
-          "You passed the exam. You are authorized to take the virtual proctored " +
-            "exam for this course. Please register now. " +
-            `You must register by Jan 17 to be eligible to take the exam between ${
-              course.current_exam_dates
-            }.If ` +
-            "you have already registered for the exam, you can access the exam through your edX dashboard."
-        )
-      })
-      // Cases with failed exam attempts
-      it("should prompt the user when failed exam", () => {
-        course.runs = [course.runs[0]]
-        course.proctorate_exams_grades = [makeProctoredExamResult()]
-        course.proctorate_exams_grades[0].passed = false
-        course.can_schedule_exam = false
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          { message: "You did not pass the exam." }
-        ])
-      })
-      it("should prompt the user to take another exam if there is exam coupon url", () => {
-        course.runs = [course.runs[0]]
-        course.proctorate_exams_grades = [makeProctoredExamResult()]
-        course.proctorate_exams_grades[0].passed = false
-        course.can_schedule_exam = true
-        course.exam_register_end_date = "Jan 17"
-        course.current_exam_dates = "Jun 30 and July 5"
-
-        let messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(messages[0]["message"], "You did not pass the exam.")
-
-        course.exam_course_key = "http://example.com"
-        messages = calculateMessages(calculateMessagesProps).value
-        const mounted = shallow(messages[0]["message"])
-        assert.equal(
-          mounted.text(),
-          "You did not pass the exam. You are authorized to take the virtual proctored " +
-            "exam for this course. Please register now. " +
-            "You must register by Jan 17 to be eligible to take the exam between Jun 30 and July 5.If " +
-            "you have already registered for the exam, you can access the exam through your edX dashboard."
-        )
-      })
-      it("should prompt about upcoming exam, is failed and has attempt", () => {
-        course.runs = [course.runs[0]]
-        course.proctorate_exams_grades = [makeProctoredExamResult()]
-        course.proctorate_exams_grades[0].passed = false
-        course.can_schedule_exam = false
-        course.exams_schedulable_in_future = [
-          moment()
-            .add(2, "day")
-            .format()
-        ]
-
-        const messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(
-          messages[0]["message"],
-          "You did not pass the exam. You can register to take the exam starting on " +
-            `${formatDate(course.exams_schedulable_in_future[0])}.`
-        )
       })
     })
 
@@ -589,18 +371,11 @@ describe("Course Status Messages", () => {
       course.proctorate_exams_grades = [makeProctoredExamResult()]
       course.proctorate_exams_grades[0].passed = true
       const messages = calculateMessages(calculateMessagesProps).value
-      assert.equal(messages.length, 3)
+      assert.equal(messages.length, 1)
       assert.equal(messages[0]["message"], "You passed this course.")
-      assert.equal(messages[1]["message"], "You passed the exam.")
-      let mounted = shallow(messages[2]["message"])
-      assert.equal(
-        mounted.text().trim(),
-        "If you want to re-take the course you can re-enroll."
-      )
-
       course.certificate_url = "certificate_url"
       const [{ message }] = calculateMessages(calculateMessagesProps).value
-      mounted = shallow(message)
+      const mounted = shallow(message)
       assert.equal(
         mounted.text(),
         "You passed this course! View Certificate | Re-enroll"
@@ -724,50 +499,6 @@ describe("Course Status Messages", () => {
       ])
     })
 
-    it("should have a message for missing the payment deadline to take an exam", () => {
-      course.runs = [course.runs[0]]
-      makeRunPast(course.runs[0])
-      makeRunMissedDeadline(course.runs[0])
-      makeRunOverdue(course.runs[0])
-
-      course.has_exam = true
-      course.current_exam_dates = "Mar 12 - Mar 22, 2018"
-
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          message:
-            "You missed the payment deadline to take the proctored exam this term. There are no future exams " +
-            "scheduled at this time. Please check back later.",
-          action: "course action was called"
-        }
-      ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
-    })
-
-    it("should have a message for missing the payment deadline has future exam", () => {
-      course.runs = [course.runs[0]]
-      makeRunPast(course.runs[0])
-      makeRunMissedDeadline(course.runs[0])
-      makeRunOverdue(course.runs[0])
-
-      course.has_exam = true
-      course.exam_date_next_semester = "Apr 10, 2021"
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          message:
-            "You missed the payment deadline to take the proctored exam " +
-            "this term. You can pay now to take the next exam, scheduled for " +
-            `${course.exam_date_next_semester}.`,
-          action: "course action was called"
-        }
-      ])
-    })
-
     it("should nag about paying after the edx course is complete", () => {
       makeRunPast(course.runs[0])
       makeRunCanUpgrade(course.runs[0])
@@ -798,46 +529,6 @@ describe("Course Status Messages", () => {
           message:
             "The edX course is complete, but you need to pay to get credit.",
           action: "course action was called"
-        }
-      ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
-    })
-
-    it("should nag slightly differently if the course has an exam", () => {
-      makeRunPast(course.runs[0])
-      makeRunCanUpgrade(course.runs[0])
-      makeRunDueSoon(course.runs[0])
-      course.has_exam = true
-      const date = moment(course.runs[0].course_upgrade_deadline).format(
-        DASHBOARD_FORMAT
-      )
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          message: `The edX course is complete, but you need to pass the exam. (Payment due on ${date})`,
-          action:  "course action was called"
-        }
-      ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
-    })
-
-    it("should nag slightly differently if the course has an exam with no deadline", () => {
-      makeRunPast(course.runs[0])
-      makeRunCanUpgrade(course.runs[0])
-      course.has_exam = true
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          message: "The edX course is complete, but you need to pass the exam.",
-          action:  "course action was called"
         }
       ])
       assert(
