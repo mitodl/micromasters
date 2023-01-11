@@ -2346,6 +2346,7 @@ class GetCertificateForCourseTests(CourseTests):
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
         MicromastersCourseCertificateFactory.create(course=self.course, user=self.user)
         self.mmtrack.get_course_certificate.return_value = None
+        self.mmtrack.has_passing_certificate.return_value = False
 
         assert api.get_certificate_url(self.mmtrack, self.course) == ''
 
@@ -2358,6 +2359,7 @@ class GetCertificateForCourseTests(CourseTests):
         """Test has passing grade but no certificate"""
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
         self.mmtrack.get_course_certificate.return_value = None
+        self.mmtrack.has_passing_certificate.return_value = False
         assert api.get_certificate_url(self.mmtrack, self.course) == ''
 
     @ddt.data(
@@ -2370,8 +2372,6 @@ class GetCertificateForCourseTests(CourseTests):
     def test_edx_course_certificate(self, certificate_type, is_passing, has_url):
         """Test edx certificate url for non FA courses"""
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
-        self.mmtrack.financial_aid_available = False
-        self.mmtrack.has_exams = False
         self.mmtrack.has_passing_certificate.return_value = (certificate_type == "verified") and is_passing
 
         cert_json = {

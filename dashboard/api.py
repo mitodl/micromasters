@@ -645,8 +645,8 @@ def get_certificate_url(mmtrack, course):
         if mmtrack.has_exams:
             certificate = mmtrack.get_course_certificate(course)
             if certificate:
-                url = reverse('certificate', args=[certificate.hash])
-        elif mmtrack.has_passing_certificate(course_key):
+                return reverse('certificate', args=[certificate.hash])
+        if mmtrack.has_passing_certificate(course_key):
             download_url = mmtrack.certificates.get_verified_cert(course_key).download_url
             if download_url:
                 url = urljoin(settings.EDXORG_CALLBACK_URL, download_url)
