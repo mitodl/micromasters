@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.232.1
+---------------
+
+- Remove status messages about exams (#5278)
+
 Version 0.232.0 (Released January 09, 2023)
 ---------------
 
