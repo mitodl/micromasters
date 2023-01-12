@@ -63,7 +63,7 @@ type CalculateMessagesProps = {
   course: Course,
   expandedStatuses: Set<number>,
   setShowExpandedCourseStatus: (n: number) => void,
-  setExamEnrollmentDialogVisibility: (b: boolean) => void,
+  setExamEnrollmentDialogVisibility: (b: boolean) => void
 }
 
 const courseStartMessage = (run: CourseRun) => {
