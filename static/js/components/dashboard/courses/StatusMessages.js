@@ -102,7 +102,6 @@ const enrollmentDateMessage = (run: CourseRun) => {
 // sometimes there really isn't a better way :/
 export const calculateMessages = (props: CalculateMessagesProps) => {
   const {
-    coupon,
     courseAction,
     financialAid,
     hasFinancialAid,
