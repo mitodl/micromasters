@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.232.2
+Version 0.232.2 (Released January 17, 2023)
 ---------------
 
 - Dashboard API: Show any certificate for course (#5285)
