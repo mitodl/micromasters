@@ -157,48 +157,6 @@ describe("Course Status Messages", () => {
       ])
     })
 
-    it("should include information about a course coupon", () => {
-      const makeAmountMessageStub = sandbox
-        .stub(libCoupon, "makeAmountMessage")
-        .returns("all of the money")
-      const makeCouponTargetMessageStub = sandbox
-        .stub(libCoupon, "makeCouponReason")
-        .returns(", because why not")
-      const program = makeProgram()
-      const coupon = makeCoupon(program)
-      coupon.content_type = COUPON_CONTENT_TYPE_COURSE
-      coupon.object_id = program.courses[0].id
-      calculateMessagesProps.course = program.courses[0]
-      makeRunCurrent(calculateMessagesProps.course.runs[0])
-      makeRunEnrolled(calculateMessagesProps.course.runs[0])
-      calculateMessagesProps.coupon = coupon
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          message:
-            "You will get all of the money off the cost for this course, because why not."
-        }
-      ])
-      assert.isTrue(makeAmountMessageStub.calledWith(coupon))
-      assert.isTrue(makeCouponTargetMessageStub.calledWith(coupon))
-    })
-
-    it("should display 'You will receive 100% off' message", () => {
-      const program = makeProgram()
-      const coupon = makeCoupon(program)
-      coupon.content_type = COUPON_CONTENT_TYPE_COURSE
-      coupon.object_id = program.courses[0].id
-      coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
-      coupon.amount = Decimal("1")
-      calculateMessagesProps.course = program.courses[0]
-      calculateMessagesProps.coupon = coupon
-      const messages = calculateMessages(calculateMessagesProps).value
-
-      assert.equal(
-        messages[0]["message"],
-        "You will get 100% off the cost for this course."
-      )
-    })
-
     it("should nag unpaid auditors to pay", () => {
       makeRunCurrent(course.runs[0])
       makeRunCanUpgrade(course.runs[0])

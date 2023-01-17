@@ -10,9 +10,7 @@ import type {
   CourseRun,
   FinancialAidUserInfo
 } from "../../../flow/programTypes"
-import { makeCouponMessage } from "../../../lib/coupon"
 import {
-  COUPON_CONTENT_TYPE_COURSE,
   COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
   FA_PENDING_STATUSES,
@@ -104,7 +102,6 @@ const enrollmentDateMessage = (run: CourseRun) => {
 // sometimes there really isn't a better way :/
 export const calculateMessages = (props: CalculateMessagesProps) => {
   const {
-    coupon,
     courseAction,
     financialAid,
     hasFinancialAid,
@@ -150,14 +147,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         action: courseAction(firstRun, COURSE_ACTION_ENROLL)
       }
     ])
-  }
-
-  if (
-    coupon &&
-    coupon.content_type === COUPON_CONTENT_TYPE_COURSE &&
-    coupon.object_id === course.id
-  ) {
-    messages.push({ message: makeCouponMessage(coupon) })
   }
 
   // User never enrolled
