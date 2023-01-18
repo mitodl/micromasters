@@ -77,7 +77,6 @@ class ReactView(View):
                 "DISCUSSIONS_CREATE_CHANNEL_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_CREATE_CHANNEL_UI', False),
                 "PROGRAM_RECORD_LINK": settings.FEATURES.get('PROGRAM_RECORD_LINK', False),
                 "ENABLE_PROGRAM_LETTER": settings.FEATURES.get('ENABLE_PROGRAM_LETTER', False),
-                "TURN_PAYMENT_OFF": settings.FEATURES.get('TURN_PAYMENT_OFF', False)
             },
             "open_discussions_redirect_url": settings.OPEN_DISCUSSIONS_REDIRECT_URL,
         }

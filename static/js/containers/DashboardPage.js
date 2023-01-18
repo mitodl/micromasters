@@ -70,7 +70,6 @@ import { findCourseRun } from "../util/util"
 import CourseListCard from "../components/dashboard/CourseListCard"
 import DashboardUserCard from "../components/dashboard/DashboardUserCard"
 import FinancialAidCard from "../components/dashboard/FinancialAidCard"
-import FinalExamCard from "../components/dashboard/FinalExamCard"
 import ErrorMessage from "../components/ErrorMessage"
 import LearnersInProgramCard from "../components/LearnersInProgramCard"
 import ProgressWidget from "../components/ProgressWidget"
@@ -929,7 +928,7 @@ class DashboardPage extends React.Component {
       prices.data,
       coupons.coupons
     )
-    let financialAidCard, examCard
+    let financialAidCard
     if (program.financial_aid_availability && !this.shouldSkipFinancialAid()) {
       financialAidCard = (
         <FinancialAidCard
@@ -944,16 +943,6 @@ class DashboardPage extends React.Component {
           setDocsInstructionsVisibility={this.setDocsInstructionsVisibility}
           ui={ui}
           financialAid={financialAid}
-        />
-      )
-    }
-    if (!SETTINGS.FEATURES.TURN_PAYMENT_OFF) {
-      examCard = (
-        <FinalExamCard
-          profile={profile}
-          program={program}
-          ui={ui}
-          navigateToProfile={this.navigateToProfile}
         />
       )
     }
@@ -973,7 +962,6 @@ class DashboardPage extends React.Component {
           {this.renderExamEnrollmentDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program} />
-            {examCard}
             {financialAidCard}
             <CourseListCard
               program={program}

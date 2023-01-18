@@ -298,7 +298,6 @@ class DashboardTests(ViewsTests):
                     'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                     'PROGRAM_RECORD_LINK': False,
                     'ENABLE_PROGRAM_LETTER': False,
-                    'TURN_PAYMENT_OFF': False,
 
                 },
                 'open_discussions_redirect_url': open_discussions_redirect_url
@@ -760,7 +759,6 @@ class TestUsersPage(ViewsTests):
                         'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                         'PROGRAM_RECORD_LINK': False,
                         'ENABLE_PROGRAM_LETTER': False,
-                        'TURN_PAYMENT_OFF': False,
                     },
                     'open_discussions_redirect_url': open_discussions_redirect_url
                 }
@@ -838,7 +836,6 @@ class TestUsersPage(ViewsTests):
                         'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                         'PROGRAM_RECORD_LINK': False,
                         'ENABLE_PROGRAM_LETTER': False,
-                        'TURN_PAYMENT_OFF': False,
                     },
                     'open_discussions_redirect_url': open_discussions_redirect_url
                 }
