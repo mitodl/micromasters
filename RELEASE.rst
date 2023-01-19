@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.232.3
+Version 0.232.3 (Released January 19, 2023)
 ---------------
 
 - Remove the display of coupon messages (#5286)
