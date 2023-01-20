@@ -146,6 +146,10 @@
       "description": "E-mail to send 500 reports to.",
       "required": false
     },
+    "MICROMASTERS_BASE_URL": {
+      "description": "Base url for the application in the format PROTOCOL://HOSTNAME[:PORT]",
+      "required": true
+    },
     "MICROMASTERS_CORS_ORIGIN_WHITELIST": {
       "description": "List of origins to allow CORS requests from (e.g. ['otherhost.com', 'myhost.edu'])",
       "required": false
@@ -199,6 +203,10 @@
       "description": "Application-level SSL redirect setting.",
       "required": false,
       "value": "True"
+    },
+    "MICROMASTERS_SITE_ID": {
+      "description": "The default site id for django sites framework",
+      "required": false
     },
     "MICROMASTERS_USE_S3": {
       "description": "Use S3 for storage backend (required on Heroku)",
@@ -265,6 +273,10 @@
     },
     "REDIS_MAX_CONNECTIONS": {
       "description": "Max number of redis connections per worker",
+      "required": false
+    },
+    "ROBOTS_CACHE_TIMEOUT": {
+      "description": "How long the robots.txt file should be cached",
       "required": false
     },
     "SECRET_KEY": {

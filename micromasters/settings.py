@@ -35,6 +35,8 @@ init_sentry(
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+SITE_BASE_URL = get_string("MICROMASTERS_BASE_URL", None)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -83,6 +85,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
     'server_status',
@@ -105,6 +108,9 @@ INSTALLED_APPS = (
     'modelcluster',
     'taggit',
 
+    # django-robots
+    "robots",
+
     # Hijack
     'hijack',
     'compat',
@@ -115,6 +121,7 @@ INSTALLED_APPS = (
     'corsheaders',
 
     # Our INSTALLED_APPS
+    'micromasters',
     'backends',
     'cms',
     'courses',
@@ -147,6 +154,7 @@ MIDDLEWARE = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.sites.middleware.CurrentSiteMiddleware",
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
 )
@@ -213,6 +221,10 @@ OAUTH_MAINTENANCE_MODE = get_bool('OAUTH_MAINTENANCE_MODE', False)
 
 ROOT_URLCONF = 'micromasters.urls'
 
+# django-robots
+ROBOTS_USE_HOST = False
+ROBOTS_CACHE_TIMEOUT = get_int("ROBOTS_CACHE_TIMEOUT", 60 * 60 * 24)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -267,6 +279,8 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+
+SITE_ID = get_string("MICROMASTERS_SITE_ID", 1)
 
 TIME_ZONE = 'UTC'
 

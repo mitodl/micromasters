@@ -34,6 +34,10 @@ urlpatterns += [
     url('', include('discussions.urls')),
     url(r'^status/', include('server_status.urls')),
     url('', include('ui.urls')),
+
+    # Django Robots
+    url("robots.txt", include("robots.urls")),
+
     # Hijack
     url(r'^hijack/', include('hijack.urls', namespace='hijack')),
     # Wagtail
