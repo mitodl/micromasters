@@ -5,7 +5,7 @@ Portal for learners and course teams to access MITx MicroMasters programs.
 
 # Initial setup
 
-MicroMasters mostly follows the same [initial setup steps outlined in the common ODL web app guide](https://github.com/mitodl/handbook/blob/master/common-web-app-guide.md).
+MicroMasters mostly follows the same [initial setup steps outlined in the common ODL web app guide](https://mitodl.github.io/handbook/how-to/common-web-app-guide.html).
 Run through those steps in order with the following changes:
 
 1. After [creating the database models](https://github.com/mitodl/handbook/blob/master/common-web-app-guide.md#3-create-database-tables-from-the-django-models), you should create the Opensearch indices via management command:
