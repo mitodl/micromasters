@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.233.0
+---------------
+
+- Update README.md
+- feat: add django-robots for dynamic robots.txt (#5280)
+
 Version 0.232.3 (Released January 19, 2023)
 ---------------
 
