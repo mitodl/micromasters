@@ -129,7 +129,7 @@ describe("CourseListCard", () => {
         assert.lengthOf(messageEl, 1)
         assert.include(
           messageEl.text(),
-          "You need to calculate your course price before you can pay for courses."
+          "To get credit for the courses in this program, you must pay for a verified certificate from"
         )
       })
 
@@ -144,7 +144,7 @@ describe("CourseListCard", () => {
         assert.lengthOf(messageEl, 1)
         assert.include(
           messageEl.text(),
-          "Courses in this program are free, because of your coupon."
+          "To get credit for the courses in this program, you must pay for a verified certificate from"
         )
       })
     })
