@@ -126,16 +126,26 @@ describe("CourseListCard", () => {
         changeToFinancialAid(FA_STATUS_CREATED, false)
         const wrapper = renderCourseListCard()
         const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 0)
+        assert.lengthOf(messageEl, 1)
+        assert.include(
+          messageEl.text(),
+          "You need to calculate your course price before you can pay for courses."
+        )
       })
 
       it("does not display price with both coupon and financial aid", () => {
         changeToFinancialAid(FA_STATUS_APPROVED, true)
         const coupon = makeCoupon(program)
+        coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
+        coupon.amount = new Decimal("1")
         const couponPrices = calculatePrices([program], [coursePrice], [coupon])
         const wrapper = renderCourseListCard({ couponPrices })
         const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 0)
+        assert.lengthOf(messageEl, 1)
+        assert.include(
+          messageEl.text(),
+          "Courses in this program are free, because of your coupon."
+        )
       })
     })
   })
