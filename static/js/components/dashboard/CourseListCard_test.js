@@ -121,139 +121,22 @@ describe("CourseListCard", () => {
   }
 
   describe("pricing message", () => {
-    it("is displayed", () => {
-      const wrapper = renderCourseListCard()
-      const messageEl = wrapper.find(".price-message")
-      assert.lengthOf(messageEl, 1)
-      assert.include(
-        messageEl.text(),
-        `you must pay for a verified certificate from ${programBackendName(
-          program
-        )}.`
-      )
-    })
 
     describe("with financial aid", () => {
-      it("requires applying for financial aid", () => {
+      it(" does not require applying for financial aid", () => {
         changeToFinancialAid(FA_STATUS_CREATED, false)
         const wrapper = renderCourseListCard()
         const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "You need to calculate your course price before you can pay for courses."
-        )
-
-        const linkEl = messageEl.find("a.calculate-link")
-        assert.include(linkEl.text(), "calculate your course price")
-        linkEl.simulate("click")
-        sinon.assert.calledOnce(openFinancialAidCalculatorStub)
+        assert.lengthOf(messageEl, 0)
       })
 
-      it("notifies about pending financial aid", () => {
-        changeToFinancialAid(FA_STATUS_PENDING_DOCS, true)
-        const wrapper = renderCourseListCard()
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "Your personal course price is pending, and needs to be approved before you can " +
-            "pay for courses. Or you can audit courses for free by clicking Enroll."
-        )
-      })
-
-      it("displays price after financial aid", () => {
-        changeToFinancialAid(FA_STATUS_APPROVED, true)
-        const wrapper = renderCourseListCard()
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "Your Personal Course Price is $4000 USD per course."
-        )
-      })
-
-      it("displays price with fixed discount coupon", () => {
+      it("does not display price with both coupon and financial aid", () => {
         changeToFinancialAid(FA_STATUS_APPROVED, true)
         const coupon = makeCoupon(program)
         const couponPrices = calculatePrices([program], [coursePrice], [coupon])
         const wrapper = renderCourseListCard({ couponPrices })
         const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "Your price is $3950 USD per course, including both financial aid and your coupon."
-        )
-      })
-
-      it("should show regular course price on coupon message", () => {
-        changeToFinancialAid(FA_STATUS_APPROVED, true)
-        const coupon = makeCourseCoupon(program.courses[0], program)
-        const couponPrices = calculatePrices([program], [coursePrice], [coupon])
-        const wrapper = renderCourseListCard({ couponPrices })
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "Your Personal Course Price is $4000 USD per course."
-        )
-      })
-
-      it("displays regular price on course coupon message for financial aid program", () => {
-        changeToFinancialAid(FA_STATUS_APPROVED, true)
-        const coupon = makeCourseCoupon(program.courses[0], program)
-        const couponPrices = calculatePrices([program], [coursePrice], [coupon])
-        const wrapper = renderCourseListCard({ couponPrices })
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "Your Personal Course Price is $4000 USD per course."
-        )
-      })
-
-      it("displays price with percentage discount coupon", () => {
-        changeToFinancialAid(FA_STATUS_APPROVED, true)
-        const coupon = makeCoupon(program)
-        coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
-        coupon.amount = new Decimal("0.30")
-        const couponPrices = calculatePrices([program], [coursePrice], [coupon])
-        const wrapper = renderCourseListCard({ couponPrices })
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "Your price is $2800 USD per course, including both financial aid and your coupon."
-        )
-      })
-
-      it("displays price with both coupon and financial aid", () => {
-        changeToFinancialAid(FA_STATUS_APPROVED, true)
-        const coupon = makeCoupon(program)
-        const couponPrices = calculatePrices([program], [coursePrice], [coupon])
-        const wrapper = renderCourseListCard({ couponPrices })
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        // This is $4000 - a $50 discount from the coupon
-        assert.include(
-          messageEl.text(),
-          "Your price is $3950 USD per course, including both financial aid and your coupon."
-        )
-      })
-
-      it("handles 100% coupon (special case)", () => {
-        changeToFinancialAid(FA_STATUS_APPROVED, true)
-        const coupon = makeCoupon(program)
-        coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
-        coupon.amount = new Decimal("1")
-        const couponPrices = calculatePrices([program], [coursePrice], [coupon])
-        const wrapper = renderCourseListCard({ couponPrices })
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "Courses in this program are free, because of your coupon."
-        )
+        assert.lengthOf(messageEl, 0)
       })
     })
   })

@@ -10,13 +10,7 @@ import CourseRow from "./CourseRow"
 import FinancialAidCalculator from "../../containers/FinancialAidCalculator"
 import type { CourseRun } from "../../flow/programTypes"
 import type { UIState } from "../../reducers/ui"
-import {
-  FA_TERMINAL_STATUSES,
-  FA_PENDING_STATUSES,
-  COUPON_CONTENT_TYPE_PROGRAM
-} from "../../constants"
-import { isFreeCoupon } from "../../lib/coupon"
-import { formatPrice, programBackendName } from "../../util/util"
+import { programBackendName } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
 
@@ -45,42 +39,10 @@ export default class CourseListCard extends React.Component {
     showStaffView: boolean
   }
 
-  getProgramCouponPrice = (): CouponPrice => {
-    const { couponPrices, program } = this.props
-    if (!couponPrices) {
-      // shouldn't happen, we should not be here unless we already checked this
-      throw new Error("No coupon prices available")
-    }
-    const couponPrice = couponPrices.pricesInclCouponByProgram.get(program.id)
-    if (!couponPrice) {
-      // This shouldn't happen since we should have waited for the API requests to finish before getting here
-      throw new Error(`Unable to find program ${program.id} in list of prices`)
-    }
-    return couponPrice
-  }
-
   handleCalculatePriceClick = (e: Event) => {
     const { openFinancialAidCalculator } = this.props
     if (openFinancialAidCalculator) openFinancialAidCalculator()
     e.preventDefault()
-  }
-
-  renderCalculatePriceLink(): ?React$Element<*> {
-    const calculateLink = (
-      <a
-        href="#"
-        className="calculate-link"
-        onClick={this.handleCalculatePriceClick}
-      >
-        calculate your course price
-      </a>
-    )
-    return (
-      <p className={priceMessageClassName}>
-        *You need to {calculateLink} before you can pay for courses. Or you can
-        audit courses for free by clicking Enroll.
-      </p>
-    )
   }
 
   renderPriceMessage(): ?React$Element<*> {
