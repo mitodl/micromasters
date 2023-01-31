@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.233.0
+Version 0.233.0 (Released January 31, 2023)
 ---------------
 
 - Update README.md
