@@ -5,7 +5,7 @@ import R from "ramda"
 import Card from "@material-ui/core/Card"
 
 import type { Program, Course } from "../../flow/programTypes"
-import type { CouponPrice, CouponPrices } from "../../flow/couponTypes"
+import type { CouponPrices } from "../../flow/couponTypes"
 import CourseRow from "./CourseRow"
 import FinancialAidCalculator from "../../containers/FinancialAidCalculator"
 import type { CourseRun } from "../../flow/programTypes"

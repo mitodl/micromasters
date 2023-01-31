@@ -121,7 +121,6 @@ describe("CourseListCard", () => {
   }
 
   describe("pricing message", () => {
-
     describe("with financial aid", () => {
       it(" does not require applying for financial aid", () => {
         changeToFinancialAid(FA_STATUS_CREATED, false)
