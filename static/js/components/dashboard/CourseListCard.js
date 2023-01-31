@@ -83,66 +83,8 @@ export default class CourseListCard extends React.Component {
     )
   }
 
-  renderFinancialAidPriceMessage(): ?React$Element<*> {
-    const { program } = this.props
-    const finAidStatus = program.financial_aid_user_info.application_status
-
-    if (FA_TERMINAL_STATUSES.includes(finAidStatus)) {
-      const { coupon, price } = this.getProgramCouponPrice()
-
-      if (coupon) {
-        // financial aid + coupon
-        return (
-          <p className={priceMessageClassName}>
-            Your price is <strong>{formatPrice(price)} USD per course,</strong>{" "}
-            including both financial aid and your coupon. If you want to audit
-            courses for FREE and upgrade later, click Enroll then choose the
-            audit option.
-          </p>
-        )
-      } else {
-        return (
-          <p className={priceMessageClassName}>
-            Your Personal Course Price is{" "}
-            <strong>{formatPrice(price)} USD per course.</strong> If you want to
-            audit courses for FREE and upgrade later, click Enroll then choose
-            the audit option.
-          </p>
-        )
-      }
-    } else if (FA_PENDING_STATUSES.includes(finAidStatus)) {
-      return (
-        <p className={priceMessageClassName}>
-          *Your personal course price is pending, and needs to be approved
-          before you can pay for courses. Or you can audit courses for free by
-          clicking Enroll.
-        </p>
-      )
-    } else {
-      return this.renderCalculatePriceLink()
-    }
-  }
-
   renderPriceMessage(): ?React$Element<*> {
     const { program } = this.props
-    const { coupon } = this.getProgramCouponPrice()
-
-    // Special case: 100% off coupon
-    if (
-      coupon &&
-      isFreeCoupon(coupon) &&
-      coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM
-    ) {
-      return (
-        <p className={priceMessageClassName}>
-          Courses in this program are free, because of your coupon.
-        </p>
-      )
-    }
-
-    if (program.financial_aid_availability) {
-      return this.renderFinancialAidPriceMessage()
-    }
 
     return (
       <p className={priceMessageClassName}>
