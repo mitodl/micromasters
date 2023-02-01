@@ -536,13 +536,19 @@ class MMTrack:
         Returns:
             int: the number of passed unique courses
         """
-        if self.has_exams:
-            return MicromastersCourseCertificate.objects.filter(
-                user=self.user,
-                course_id__in=course_ids
-            ).values_list('course__id', flat=True).distinct().count()
-        else:
-            return self.count_passed_final_grades_for_course_ids(course_ids)
+        passed_courses = 0
+        for course_id in course_ids:
+            best_grade = self.final_grade_qset.filter(course_run__course_id=course_id).order_by('-grade').passed().first()
+            if best_grade is None:
+                continue
+            if MicromastersCourseCertificate.objects.filter(user=self.user, course_id=course_id).exists():
+                passed_courses += 1
+            elif self.has_passing_certificate(best_grade.course_run.edx_course_key):
+                passed_courses += 1
+
+        return passed_courses
+
+
 
     def get_number_of_passed_courses_for_completion(self):
         """
