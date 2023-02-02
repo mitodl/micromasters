@@ -488,28 +488,7 @@ class MMTrack:
         Returns:
             int: A number of passed courses.
         """
-        if self.has_exams:
-            return sum([
-                CombinedFinalGrade.objects.filter(user=self.user, course__program=self.program).count(),
-                self.count_passing_courses_for_keys(self.edx_course_keys_no_exam)
-            ])
-        else:
-            return self.count_passing_courses_for_keys(self.edx_course_keys)
-
-    def count_passing_courses_for_keys(self, edx_course_keys):
-        """
-        Calculate the number of passed courses for a given list of edx_course_keys
-
-        Args:
-            edx_course_keys (set): a set of edx_course_keys
-        Returns:
-            int: A number of passed courses
-        """
-        return (
-            self.final_grade_qset.for_course_run_keys(edx_course_keys).passed()
-            .values_list('course_run__course__id', flat=True)
-            .distinct().count()
-        )
+        return self.get_number_of_passed_courses(self.edx_course_keys)
 
     def count_passed_final_grades_for_course_ids(self, course_ids):
         """
@@ -575,7 +554,7 @@ class MMTrack:
             passed_courses += self.get_number_of_passed_courses(core_courses_ids)
             return passed_courses
         else:
-            return self.count_courses_passed()
+            return self.get_number_of_passed_courses(self.edx_course_keys)
 
     def get_exam_card_status(self):  # pylint: disable=too-many-return-statements
         """
