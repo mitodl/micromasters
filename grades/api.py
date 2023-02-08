@@ -39,14 +39,8 @@ def _compute_grade_for_fa(user_edx_run_data):
         UserFinalGrade: a namedtuple of (float, bool,) representing the final grade
             of the user in the course run and whether she passed it
     """
-    if user_edx_run_data.certificate is not None:
-        run_passed = user_edx_run_data.certificate.status == 'downloadable'
-        # the following line should be updated when
-        # we add support for honor enrollments and certificates in the edx-api-client
-        payed_on_edx = user_edx_run_data.certificate.certificate_type in ['honor', 'verified']
-    else:
-        run_passed = user_edx_run_data.current_grade.passed
-        payed_on_edx = False
+    run_passed = user_edx_run_data.current_grade.passed
+    payed_on_edx = user_edx_run_data.enrollment.mode in ['verified', 'honor']
     # making sure the grade is a float
     try:
         grade = float(user_edx_run_data.current_grade.percent)
@@ -96,7 +90,7 @@ def _get_compute_func(course_run):
     Returns:
         function: a function to be called to compute the final grade
     """
-    return _compute_grade_for_fa if course_run.course.program.financial_aid_availability else _compute_grade_for_non_fa
+    return _compute_grade_for_fa if course_run.course.has_exam else _compute_grade_for_non_fa
 
 
 def get_final_grade(user, course_run):
