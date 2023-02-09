@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.234.0
+---------------
+
+- fix: update image, quote, name
+- refactor: remove proctored exams card and FEATURE_TURN_PAYMENT_OFF flag (#5289)
+
 Version 0.233.0 (Released January 31, 2023)
 ---------------
 
