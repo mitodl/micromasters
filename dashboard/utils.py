@@ -6,6 +6,8 @@ from decimal import Decimal
 from math import floor
 
 import datetime
+
+import pytz
 from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
@@ -541,7 +543,7 @@ class MMTrack:
             course_ids_passing_grade = FinalGrade.objects.filter(
                 user=self.user,
                 course_run__course_id__in=course_ids,
-                course_run__start_date__gt=datetime.datetime(2022, 9, 1, 18, 00),
+                course_run__start_date__gt=datetime.datetime(2022, 9, 1, tzinfo=pytz.UTC),
             ).passed().values_list('course__id', flat=True).distinct()
             num_certs = MicromastersCourseCertificate.objects.filter(
                 user=self.user,
