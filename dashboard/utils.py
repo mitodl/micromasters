@@ -544,7 +544,7 @@ class MMTrack:
                 user=self.user,
                 course_run__course_id__in=course_ids,
                 course_run__start_date__gt=datetime.datetime(2022, 9, 1, tzinfo=pytz.UTC),
-            ).passed().values_list('course__id', flat=True).distinct()
+            ).passed().values_list('course_run__course__id', flat=True).distinct()
             num_certs = MicromastersCourseCertificate.objects.filter(
                 user=self.user,
                 course_id__in=list(set(course_ids) - set(course_ids_passing_grade))
