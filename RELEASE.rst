@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.234.0
+Version 0.234.0 (Released February 15, 2023)
 ---------------
 
 - fix: update image, quote, name
