@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.235.0
+Version 0.235.0 (Released February 15, 2023)
 ---------------
 
 - Remove message about coupon pricing from dashboard (#5297)
