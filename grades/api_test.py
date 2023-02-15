@@ -418,6 +418,7 @@ class GradeAPITests(MockedESTestCase):
         assert fg_qset.count() == 1
 
 
+@ddt.ddt
 class GenerateCertificatesAPITests(MockedESTestCase):
     """
     Tests for final grades api
