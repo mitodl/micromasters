@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.235.0
+---------------
+
+- Remove message about coupon pricing from dashboard (#5297)
+- Update computation of final grades for courses with exams (#5303)
+
 Version 0.234.0 (Released February 15, 2023)
 ---------------
 
