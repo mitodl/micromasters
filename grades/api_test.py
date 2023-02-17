@@ -1,10 +1,12 @@
 """
 Tests for grades API
 """
+import datetime
 from datetime import timedelta
 from unittest.mock import patch, MagicMock
 
 import ddt
+import pytz
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django_redis import get_redis_connection
@@ -416,6 +418,7 @@ class GradeAPITests(MockedESTestCase):
         assert fg_qset.count() == 1
 
 
+@ddt.ddt
 class GenerateCertificatesAPITests(MockedESTestCase):
     """
     Tests for final grades api
@@ -488,10 +491,17 @@ class GenerateCertificatesAPITests(MockedESTestCase):
         api.generate_program_certificate(self.user, self.program)
         assert cert_qset.exists() is False
 
-    def test_final_grade_with_no_certificate(self):
+    @ddt.data(
+        (2021, False),
+        (2022, True),
+    )
+    @ddt.unpack
+    def test_final_grade_with_no_certificate(self, year, cert_generated):
         """
-        Test has a final grade but no certificate
+        Test has a final grade but no certificate, before and after Sept 1st, 22
         """
+        self.run_1.start_date = datetime.datetime(year, 10, 1, tzinfo=pytz.UTC)
+        self.run_1.save()
         FinalGradeFactory.create(
             user=self.user,
             course_run=self.run_1,
@@ -504,7 +514,7 @@ class GenerateCertificatesAPITests(MockedESTestCase):
         cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
         assert cert_qset.exists() is False
         api.generate_program_certificate(self.user, self.program)
-        assert cert_qset.exists() is False
+        assert cert_qset.exists() is cert_generated
 
     def test_already_has_program_certificate(self):
         """

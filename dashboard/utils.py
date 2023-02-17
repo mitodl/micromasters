@@ -5,6 +5,9 @@ import logging
 from decimal import Decimal
 from math import floor
 
+import datetime
+
+import pytz
 from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
@@ -537,10 +540,16 @@ class MMTrack:
             int: the number of passed unique courses
         """
         if self.has_exams:
-            return MicromastersCourseCertificate.objects.filter(
+            course_ids_passing_grade = FinalGrade.objects.filter(
                 user=self.user,
-                course_id__in=course_ids
+                course_run__course_id__in=course_ids,
+                course_run__start_date__gt=datetime.datetime(2022, 9, 1, tzinfo=pytz.UTC),
+            ).passed().values_list('course_run__course__id', flat=True).distinct()
+            num_certs = MicromastersCourseCertificate.objects.filter(
+                user=self.user,
+                course_id__in=list(set(course_ids) - set(course_ids_passing_grade))
             ).values_list('course__id', flat=True).distinct().count()
+            return num_certs + len(course_ids_passing_grade)
         else:
             return self.count_passed_final_grades_for_course_ids(course_ids)
 
