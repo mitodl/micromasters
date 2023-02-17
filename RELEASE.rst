@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.235.1
+---------------
+
+- Count passing final grades since Fall 22 (#5307)
+
 Version 0.235.0 (Released February 15, 2023)
 ---------------
 
