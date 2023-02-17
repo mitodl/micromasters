@@ -78,7 +78,8 @@ const COURSE: Course = {
   proctorate_exams_grades:     [],
   is_elective:                 false,
   certificate_url:             "",
-  overall_grade:               ""
+  overall_grade:               "",
+  is_passed:                   false
 }
 
 const PROGRAM: AvailableProgram = {

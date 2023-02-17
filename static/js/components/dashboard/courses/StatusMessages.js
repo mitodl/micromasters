@@ -34,7 +34,7 @@ import {
   hasCanUpgradeCourseRun,
   hasMissedDeadlineCourseRun
 } from "./util"
-import { hasPassingExamGrade, hasPassedCourseRun } from "../../../lib/grades"
+import { hasPassedCourseRun } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
 
 type Message = {
@@ -113,10 +113,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   const exams = course.has_exam
   const paid = firstRun.has_paid
-  const passedExam = hasPassingExamGrade(course)
-  const is_firstRun_fall22 = moment(run.course_start_date).isBefore(
-    moment("9/1/2022")
-  )
   const paymentDueDate = moment(
     R.defaultTo("", firstRun.course_upgrade_deadline)
   )
