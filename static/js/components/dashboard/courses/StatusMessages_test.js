@@ -307,9 +307,7 @@ describe("Course Status Messages", () => {
 
       it("should prompt when passed the course", () => {
         course.has_exam = true
-        course.can_schedule_exam = true
-        course.proctorate_exams_grades = [makeProctoredExamResult()]
-        course.proctorate_exams_grades[0].passed = true
+        course.is_passed = true
 
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
@@ -320,6 +318,7 @@ describe("Course Status Messages", () => {
       makeRunPast(course.runs[0])
       makeRunPassed(course.runs[0])
       makeRunPaid(course.runs[0])
+      course.is_passed = true
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message: "You passed this course."
