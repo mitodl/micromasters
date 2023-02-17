@@ -247,7 +247,8 @@ def get_info_for_course(course, mmtrack):
         "is_elective": ElectiveCourse.objects.filter(course=course).exists(),
         "has_exam": course.has_exam,
         "certificate_url": get_certificate_url(mmtrack, course),
-        "overall_grade": mmtrack.get_overall_final_grade_for_course(course)
+        "overall_grade": mmtrack.get_overall_final_grade_for_course(course),
+        "is_passed": mmtrack.has_passed_course(course)
     }
 
     def _add_run(run, mmtrack_, status):
@@ -303,7 +304,7 @@ def get_info_for_course(course, mmtrack):
         _add_run(run_status.course_run, mmtrack, CourseStatus.CURRENTLY_ENROLLED)
     # check if we need to check the certificate
     elif run_status.status == CourseRunStatus.CHECK_IF_PASSED:
-        if not mmtrack.has_passed_course(run_status.course_run.edx_course_key):
+        if not mmtrack.has_passed_course_run(run_status.course_run.edx_course_key):
             _add_run(run_status.course_run, mmtrack, CourseRunStatus.NOT_PASSED)
         else:
             _add_run(run_status.course_run, mmtrack, CourseStatus.PASSED)
@@ -329,7 +330,7 @@ def get_info_for_course(course, mmtrack):
     # the first one (or two in some cases) has been added with the logic before
     for run_status in run_statuses:
         if run_status.status == CourseRunStatus.CHECK_IF_PASSED:
-            if mmtrack.has_passed_course(run_status.course_run.edx_course_key):
+            if mmtrack.has_passed_course_run(run_status.course_run.edx_course_key):
                 # in this case the user might have passed the course also in the past
                 _add_run(run_status.course_run, mmtrack, CourseStatus.PASSED)
             else:

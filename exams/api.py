@@ -73,7 +73,7 @@ def authorize_for_exam_run(user, course_run, exam_run):
     ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
 
     # if they didn't pass, they don't get authorized
-    if not mmtrack.has_passed_course(course_run.edx_course_key):
+    if not mmtrack.has_passed_course_run(course_run.edx_course_key):
         errors_message = MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE.format(
             user=mmtrack.user.username,
             course_id=course_run.edx_course_key

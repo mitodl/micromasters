@@ -358,17 +358,41 @@ class MMTrack:
                 return True
         return False
 
-    def has_passed_course(self, edx_course_key):
+    def has_passed_course_run_run(self, edx_course_key):
         """
         Returns whether the user has passed a course run.
 
         Args:
             edx_course_key (str): an edX course run key
         Returns:
-            bool: whether the user has passed the course
+            bool: whether the user has passed the course_run
         """
         final_grade = self.get_final_grade(edx_course_key)
         return final_grade.passed if final_grade else False
+
+    def has_passed_course(self, course):
+        """
+        Returns true if the user has passed this course overall
+        Args:
+            course (Course): course instance
+
+        Returns:
+            bool: whether the user has passed the course
+        """
+        if self.has_exams:
+            course_cert = MicromastersCourseCertificate.objects.filter(
+                user=self.user,
+                course_id=course.id).exists()
+            if course_cert:
+                return True
+            else:
+                return FinalGrade.objects.filter(
+                    user=self.user,
+                    course_run__course_id=course.id,
+                    course_run__start_date__gt=datetime.datetime(2022, 9, 1, tzinfo=pytz.UTC),
+                ).passed().exists()
+        else:
+            return self.final_grade_qset.filter(course_run__course_id=course.id).passed().exists()
 
     def get_final_grade_percent(self, edx_course_key):
         """
