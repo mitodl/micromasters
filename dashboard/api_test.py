@@ -901,6 +901,7 @@ class InfoCourseTest(CourseTests):
         # default behavior for some mmtrack mocked methods
         self.mmtrack.get_course_proctorate_exam_results.return_value = []
         self.mmtrack.get_overall_final_grade_for_course.return_value = ""
+        self.mmtrack.has_passed_course.return_value = False
 
     def assert_course_equal(
             self,
@@ -915,7 +916,7 @@ class InfoCourseTest(CourseTests):
             has_to_pay=False,
             has_exam=False,
             is_elective=False,
-            proct_exams=None
+            proct_exams=None,
     ):
         """Helper to format the course info"""
         proct_exams = proct_exams or []
@@ -939,6 +940,7 @@ class InfoCourseTest(CourseTests):
             "has_exam": has_exam,
             "certificate_url": "",
             "overall_grade": "",
+            "is_passed": False
         }
         # remove the runs part: assumed checked with the mock assertion
         del course_data_from_call['runs']
