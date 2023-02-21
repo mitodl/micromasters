@@ -358,7 +358,7 @@ class MMTrack:
                 return True
         return False
 
-    def has_passed_course_run_run(self, edx_course_key):
+    def has_passed_course_run(self, edx_course_key):
         """
         Returns whether the user has passed a course run.
 
