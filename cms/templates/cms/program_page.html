@@ -149,7 +149,15 @@
           <p>
             Courses delivered on
           </p>
-          <img src="{% static 'images/edx_logo.svg' %}" alt="edX" />
+            {% if page.program.has_mitxonline_courses %}
+                <img
+                  class="mitx_logo"
+                  src="{% static 'images/logo-mitxonline.png' %}"
+                  alt="MITx"
+                />
+            {% else %}
+                <img src="{% static 'images/edx_logo.svg' %}" alt="edX" />
+            {% endif %}
         </div>
       </div>
       {% endblock %}
