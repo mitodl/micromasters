@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.236.0
+---------------
+
+- Product Pade: delievered on logo (#5312)
+
 Version 0.235.1 (Released February 21, 2023)
 ---------------
 
