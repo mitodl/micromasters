@@ -97,7 +97,7 @@ class ExamAuthorizationApiTests(TestCase):
         create_order(user, self.course_run)
         mmtrack = get_mmtrack(user, self.program)
         self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
-        self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
+        self.assertTrue(mmtrack.has_passed_course_run(self.course_run.edx_course_key))
 
         # Neither user has exam profile nor authorization.
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
@@ -123,7 +123,7 @@ class ExamAuthorizationApiTests(TestCase):
         create_order(self.user, self.course_run)
         mmtrack = get_mmtrack(self.user, self.program)
         self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
-        self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
+        self.assertTrue(mmtrack.has_passed_course_run(self.course_run.edx_course_key))
 
         # Neither user has exam profile nor authorization.
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
@@ -148,7 +148,7 @@ class ExamAuthorizationApiTests(TestCase):
         create_order(self.user, self.course_run)
         mmtrack = get_mmtrack(self.user, self.program)
         self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
-        self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
+        self.assertTrue(mmtrack.has_passed_course_run(self.course_run.edx_course_key))
         old_run = ExamRunFactory.create(course=self.course_run.course)
         ExamAuthorizationFactory.create_batch(
             ATTEMPTS_PER_PAID_RUN_OLD,
@@ -273,14 +273,14 @@ class ExamAuthorizationApiTests(TestCase):
         test exam_authorization when user has not passed course but paid.
         """
         create_order(self.user, self.course_run)
-        with patch('dashboard.utils.MMTrack.has_passed_course', autospec=True, return_value=False):
+        with patch('dashboard.utils.MMTrack.has_passed_course_run', autospec=True, return_value=False):
             mmtrack = get_mmtrack(self.user, self.program)
             expected_errors_message = MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE.format(
                 user=mmtrack.user.username,
                 course_id=self.course_run.edx_course_key
             )
             assert mmtrack.has_paid(self.course_run.edx_course_key) is True
-            assert mmtrack.has_passed_course(self.course_run.edx_course_key) is False
+            assert mmtrack.has_passed_course_run(self.course_run.edx_course_key) is False
 
             # Neither user has exam profile nor authorization.
             assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False

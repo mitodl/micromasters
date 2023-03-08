@@ -35,7 +35,7 @@ class AlterDataCommandTests(MockedESTestCase):
         grade = Decimal('0.75')
         set_to_passed(user=self.user, course_run=course_run, grade=grade)
         mmtrack = get_mmtrack(self.user, course_run.course.program)
-        assert mmtrack.has_passed_course(course_run.edx_course_key)
+        assert mmtrack.has_passed_course_run(course_run.edx_course_key)
         assert int(mmtrack.get_final_grade_percent(course_run.edx_course_key)) == (grade * 100)
 
     @ddt.data('fa', 'non_fa')
@@ -45,7 +45,7 @@ class AlterDataCommandTests(MockedESTestCase):
         grade = Decimal('0.55')
         set_to_failed(user=self.user, course_run=course_run, grade=grade)
         mmtrack = get_mmtrack(self.user, course_run.course.program)
-        assert not mmtrack.has_passed_course(course_run.edx_course_key)
+        assert not mmtrack.has_passed_course_run(course_run.edx_course_key)
         assert int(mmtrack.get_final_grade_percent(course_run.edx_course_key)) == (grade * 100)
 
     @ddt.data('fa', 'non_fa')

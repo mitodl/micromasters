@@ -34,7 +34,7 @@ import {
   hasCanUpgradeCourseRun,
   hasMissedDeadlineCourseRun
 } from "./util"
-import { hasPassingExamGrade, hasPassedCourseRun } from "../../../lib/grades"
+import { hasPassedCourseRun } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
 
 type Message = {
@@ -113,7 +113,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   const exams = course.has_exam
   const paid = firstRun.has_paid
-  const passedExam = hasPassingExamGrade(course)
   const paymentDueDate = moment(
     R.defaultTo("", firstRun.course_upgrade_deadline)
   )
@@ -200,12 +199,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     })
   }
   // course is passed and paid but no certificate yet
-  if (firstRun["status"] === "passed" && paid && !course.certificate_url) {
-    if (!exams || (exams && passedExam)) {
-      messages.push({
-        message: "You passed this course."
-      })
-    }
+  if (!course.certificate_url && course.is_passed) {
+    messages.push({
+      message: "You passed this course."
+    })
   }
   // Course is running, user has already paid,
   if (

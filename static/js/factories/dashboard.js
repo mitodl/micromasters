@@ -120,7 +120,8 @@ export const makeCourse = (positionInProgram: number): Course => {
     is_elective:                 false,
     proctorate_exams_grades:     [],
     certificate_url:             "",
-    overall_grade:               ""
+    overall_grade:               "",
+    is_passed:                   false
   }
 }
 

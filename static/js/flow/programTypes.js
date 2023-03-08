@@ -73,6 +73,7 @@ export type Course = {
   has_exam:                     boolean,
   certificate_url:              string,
   overall_grade:                string,
+  is_passed:                    boolean,
 }
 
 export type ProgramPageCourse = {

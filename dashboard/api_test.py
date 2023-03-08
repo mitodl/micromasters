@@ -901,6 +901,7 @@ class InfoCourseTest(CourseTests):
         # default behavior for some mmtrack mocked methods
         self.mmtrack.get_course_proctorate_exam_results.return_value = []
         self.mmtrack.get_overall_final_grade_for_course.return_value = ""
+        self.mmtrack.has_passed_course.return_value = False
 
     def assert_course_equal(
             self,
@@ -915,7 +916,7 @@ class InfoCourseTest(CourseTests):
             has_to_pay=False,
             has_exam=False,
             is_elective=False,
-            proct_exams=None
+            proct_exams=None,
     ):
         """Helper to format the course info"""
         proct_exams = proct_exams or []
@@ -939,6 +940,7 @@ class InfoCourseTest(CourseTests):
             "has_exam": has_exam,
             "certificate_url": "",
             "overall_grade": "",
+            "is_passed": False
         }
         # remove the runs part: assumed checked with the mock assertion
         del course_data_from_call['runs']
@@ -1142,7 +1144,7 @@ class InfoCourseTest(CourseTests):
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay, mock_exam_course_key):
         """test for get_info_for_course for course with run not passed and nothing offered"""
         self.mmtrack.configure_mock(**{
-            'has_passed_course.return_value': False,
+            'has_passed_course_run.return_value': False,
             'is_enrolled_mmtrack.return_value': True
         })
         with patch(
@@ -1169,7 +1171,7 @@ class InfoCourseTest(CourseTests):
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay, mock_exam_course_key):
         """test for get_info_for_course for course with a course current and another not passed"""
         self.mmtrack.configure_mock(**{
-            'has_passed_course.return_value': False,
+            'has_passed_course_run.return_value': False,
             'is_enrolled_mmtrack.return_value': True
         })
         with patch(
@@ -1198,7 +1200,7 @@ class InfoCourseTest(CourseTests):
         test for get_info_for_course in case a check if the course has been passed is required
         """
         self.mmtrack.configure_mock(**{
-            'has_passed_course.return_value': False,
+            'has_passed_course_run.return_value': False,
             'is_enrolled_mmtrack.return_value': True
         })
         with patch(
@@ -1255,7 +1257,7 @@ class InfoCourseTest(CourseTests):
         test for get_info_for_course in case a check if the course has been passed
         is required for the course, the course has not been passed and there is no next run
         """
-        self.mmtrack.configure_mock(**{'has_passed_course.return_value': False})
+        self.mmtrack.configure_mock(**{'has_passed_course_run.return_value': False})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1283,7 +1285,7 @@ class InfoCourseTest(CourseTests):
         is required for the course and the course has been passed
         """
         self.mmtrack.configure_mock(**{
-            'has_passed_course.return_value': True,
+            'has_passed_course_run.return_value': True,
             'is_enrolled_mmtrack.return_value': True
         })
         with patch(
@@ -1433,7 +1435,7 @@ class InfoCourseTest(CourseTests):
         test for get_info_for_course in case the less recent course is flagged to be checked if passed
         """
         self.mmtrack.configure_mock(**{
-            'has_passed_course.return_value': True,
+            'has_passed_course_run.return_value': True,
             'is_enrolled_mmtrack.return_value': True
         })
         with patch(

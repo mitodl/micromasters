@@ -259,9 +259,9 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.is_enrolled_mmtrack(course_id) is True
 
     @ddt.data(True, False)
-    def test_has_passed_course(self, final_grade_passed):
+    def test_has_passed_course_run(self, final_grade_passed):
         """
-        Test that has_passed_course returns True when a passed FinalGrade exists
+        Test that has_passed_course_run returns True when a passed FinalGrade exists
         """
         final_grade = FinalGradeFactory.create(
             user=self.user,
@@ -273,18 +273,18 @@ class MMTrackTest(MockedESTestCase):
             program=self.program,
             edx_user_data=self.cached_edx_user_data
         )
-        assert mmtrack.has_passed_course(final_grade.course_run.edx_course_key) is final_grade_passed
+        assert mmtrack.has_passed_course_run(final_grade.course_run.edx_course_key) is final_grade_passed
 
-    def test_has_passed_course_no_grade(self):
+    def test_has_passed_course_run_no_grade(self):
         """
-        Test that has_passed_course returns False when no FinalGrade exists
+        Test that has_passed_course_run returns False when no FinalGrade exists
         """
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
             edx_user_data=self.cached_edx_user_data
         )
-        assert mmtrack.has_passed_course('random-course-id') is False
+        assert mmtrack.has_passed_course_run('random-course-id') is False
 
     def test_get_final_grade_percent(self):
         """
