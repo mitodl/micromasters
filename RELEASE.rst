@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.236.1 (Released March 14, 2023)
+---------------
+
+- Dashboard: Adding "You passed this course" message with no certificates (#5310)
+
 Version 0.236.0 (Released March 09, 2023)
 ---------------
 
