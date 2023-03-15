@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.236.2
+---------------
+
+- Remove old exam settings (#5317)
+
 Version 0.236.1 (Released March 14, 2023)
 ---------------
 
