@@ -65,6 +65,7 @@ class ExamAuthorizationAdmin(admin.ModelAdmin):
     search_fields = (
         'exam_run__id',
         'course__course_number',
+        'user_email',
     )
     raw_id_fields = ('user',)
 
