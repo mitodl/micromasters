@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.236.3
+---------------
+
+- Admin: Make it possible to search exam auths (#5319)
+
 Version 0.236.2 (Released March 16, 2023)
 ---------------
 
