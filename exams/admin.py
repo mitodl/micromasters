@@ -56,6 +56,8 @@ class ExamAuthorizationAdmin(admin.ModelAdmin):
         'course_number',
         'exam_run_id',
         'exam_coupon_url',
+        'exam_taken',
+        'exam_no_show',
     )
     list_filter = (
         'exam_run__id',
@@ -65,6 +67,7 @@ class ExamAuthorizationAdmin(admin.ModelAdmin):
     search_fields = (
         'exam_run__id',
         'course__course_number',
+        'user__email',
     )
     raw_id_fields = ('user',)
 
