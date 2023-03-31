@@ -8,6 +8,8 @@ amqp==5.0.9
     # via kombu
 anyascii==0.2.0
     # via wagtail
+asttokens==2.2.1
+    # via stack-data
 backcall==0.1.0
     # via ipython
 beautifulsoup4==4.8.2
@@ -49,9 +51,7 @@ cryptography==3.3.2
     #   pyopenssl
     #   social-auth-core
 decorator==4.3.0
-    # via
-    #   ipython
-    #   traitlets
+    # via ipython
 defusedxml==0.7.1
     # via
     #   python3-openid
@@ -122,6 +122,8 @@ edx-opaque-keys==0.4
     # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
+executing==1.2.0
+    # via stack-data
 factory-boy==2.8.1
     # via -r requirements.in
 faker==0.9.1
@@ -136,10 +138,8 @@ html5lib==0.999999999
     #   wagtail
 idna==2.7
     # via requests
-ipython==7.31.1
+ipython==8.10.0
     # via -r requirements.in
-ipython-genutils==0.2.0
-    # via traitlets
 jedi==0.18.0
     # via ipython
 jmespath==0.10.0
@@ -189,7 +189,7 @@ pillow==8.3.2
     #   -r requirements.in
     #   robohash
     #   wagtail
-prompt-toolkit==2.0.5
+prompt-toolkit==3.0.36
     # via
     #   click-repl
     #   ipython
@@ -197,6 +197,8 @@ psycopg2==2.8.6
     # via -r requirements.in
 ptyprocess==0.6.0
     # via pexpect
+pure-eval==0.2.2
+    # via stack-data
 pycountry==16.11.27.1
     # via -r requirements.in
 pycparser==2.21
@@ -249,6 +251,7 @@ sentry-sdk==1.1.0
 six==1.14.0
     # via
     #   -r requirements.in
+    #   asttokens
     #   click-repl
     #   cryptography
     #   django-compat
@@ -258,13 +261,11 @@ six==1.14.0
     #   html5lib
     #   l18n
     #   opensearch-dsl
-    #   prompt-toolkit
     #   pyopenssl
     #   python-dateutil
     #   social-auth-app-django
     #   social-auth-core
     #   stevedore
-    #   traitlets
 social-auth-app-django==3.1.0
     # via -r requirements.in
 social-auth-core==3.4.0
@@ -275,6 +276,8 @@ soupsieve==2.0.1
     # via beautifulsoup4
 sqlparse==0.3.0
     # via django
+stack-data==0.6.2
+    # via ipython
 static3==0.5.1
     # via
     #   -r requirements.in
@@ -287,7 +290,7 @@ text-unidecode==1.2
     # via faker
 tornado==5.1.1
     # via robohash
-traitlets==4.3.2
+traitlets==5.9.0
     # via
     #   ipython
     #   matplotlib-inline
