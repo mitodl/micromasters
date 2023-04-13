@@ -7,9 +7,9 @@ WORKDIR /tmp
 
 COPY apt.txt /tmp/apt.txt
 RUN apt-get update
-RUN apt-get install -y $(grep -vE "^\s*#" apt.txt  | tr "\n" " ")
+RUN apt-get install --no-install-recommends -y $(grep -vE "^\s*#" apt.txt  | tr "\n" " ")
 
-RUN apt-get update && apt-get install libpq-dev postgresql-client -y
+RUN apt-get update && apt-get install --no-install-recommends libpq-dev postgresql-client -y
 
 # pip
 RUN curl --silent --location https://bootstrap.pypa.io/get-pip.py | python3 -
