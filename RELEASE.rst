@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.237.0
+---------------
+
+- fix: removed discontinued codecov PyPI package (#5328)
+- Remove edx logo from certificates (#5325)
+- Upgrade minimist (#5321)
+- Bump ipython from 7.31.1 to 8.10.0 (#5306)
+
 Version 0.236.3 (Released March 23, 2023)
 ---------------
 
