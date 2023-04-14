@@ -1,6 +1,5 @@
 astroid==2.4.2
 bpython
-codecov
 ddt
 django-debug-toolbar
 ipdb
