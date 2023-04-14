@@ -11,6 +11,7 @@ from celery import group
 from django.conf import settings
 import pytz
 
+from backends.constants import COURSEWARE_BACKENDS
 from dashboard.api import (
     calculate_users_to_refresh_in_bulk,
     refresh_user_data,
@@ -97,4 +98,5 @@ def batch_update_user_data_subtasks(students, expiration_timestamp):
     for user_id in students:
         # if we are past the expiration time we should stop any extra work
         if expiration > now_in_utc():
-            refresh_user_data(user_id)
+            for backend in COURSEWARE_BACKENDS:
+                refresh_user_data(user_id, backend)

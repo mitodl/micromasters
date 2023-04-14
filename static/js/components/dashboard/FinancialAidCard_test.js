@@ -48,8 +48,9 @@ describe("FinancialAidCard", () => {
   const renderCard = (props = {}) => {
     const program = props.program || DASHBOARD_RESPONSE.programs[1]
     const dashboard = {
-      programs:          [program],
-      is_edx_data_fresh: true
+      programs:                    [program],
+      is_edx_data_fresh:           true,
+      invalid_backend_credentials: []
     }
     const couponPrices = calculatePrices(
       dashboard.programs,

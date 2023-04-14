@@ -5,6 +5,7 @@ from datetime import timedelta
 
 import pytest
 
+from backends.constants import COURSEWARE_BACKENDS
 from dashboard.tasks import (
     batch_update_user_data,
     batch_update_user_data_subtasks,
@@ -60,9 +61,10 @@ def test_batch_update(mocker, db):  # pylint: disable=unused-argument
     assert is_near_now(lock_mock_init.call_args[0][1] - timedelta(hours=5))
     calc_mock.assert_called_once_with()
     lock_mock.acquire.assert_called_once_with()
-    assert refresh_mock.call_count == len(users)
-    for user in users:
-        refresh_mock.assert_any_call(user.id)
+    assert refresh_mock.call_count == len(users) * len(COURSEWARE_BACKENDS)
+    for backend in COURSEWARE_BACKENDS:
+        for user in users:
+            refresh_mock.assert_any_call(user.id, backend)
     release_mock.assert_called_once_with(LOCK_ID, token)
 
 

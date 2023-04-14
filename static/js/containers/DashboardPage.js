@@ -94,6 +94,7 @@ import { currencyForCountry } from "../lib/currency"
 import DocsInstructionsDialog from "../components/DocsInstructionsDialog"
 import CouponNotificationDialog from "../components/CouponNotificationDialog"
 import CourseEnrollmentDialog from "../components/CourseEnrollmentDialog"
+import SocialAuthReauthenticateDialog from "../components/SocialAuthReauthenticateDialog"
 import { INCOME_DIALOG } from "./FinancialAidCalculator"
 import { processCheckout } from "./OrderSummaryPage"
 import { getOwnDashboard, getOwnCoursePrices } from "../reducers/util"
@@ -1031,6 +1032,9 @@ class DashboardPage extends React.Component {
             {pageContent}
             {this.renderCourseContactPaymentDialog()}
           </Loader>
+          <SocialAuthReauthenticateDialog
+            invalidBackendCredentials={dashboard.invalidBackendCredentials}
+          />
         </div>
       </DocumentTitle>
     )

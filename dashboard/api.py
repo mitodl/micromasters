@@ -15,7 +15,7 @@ from django.urls import reverse
 from django_redis import get_redis_connection
 from edx_api.client import EdxApi
 
-from backends.constants import COURSEWARE_BACKEND_URL, BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
+from backends.constants import COURSEWARE_BACKEND_URL, COURSEWARE_BACKENDS
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
 from courses.models import Program, ElectiveCourse, CourseRun
@@ -147,12 +147,21 @@ def get_user_program_info(user, *, update_cache=True):
     Returns:
         list: Enrolled Program information
     """
+    invalid_backend_credentials = []
     if update_cache:
-        update_cache_for_backend(user, BACKEND_EDX_ORG)
-        update_cache_for_backend(user, BACKEND_MITX_ONLINE)
+        for backend in COURSEWARE_BACKENDS:
+            try:
+                update_cache_for_backend(user, backend)
+            except InvalidCredentialStored:
+                log.info("Invalid credentials token for user: %s, provider: %s", user, backend)
+                invalid_backend_credentials.append(backend)
+            except:  # pylint: disable=bare-except
+                log.exception("Unexpected error refreshing user dashboard")
+
     response_data = {
         "programs": [],
-        "is_edx_data_fresh": CachedEdxDataApi.are_all_caches_fresh(user)
+        "is_edx_data_fresh": CachedEdxDataApi.are_all_caches_fresh(user),
+        "invalid_backend_credentials": invalid_backend_credentials,
     }
     all_programs = (
         Program.objects.filter(live=True, programenrollment__user=user).prefetch_related(
@@ -696,7 +705,7 @@ def calculate_users_to_refresh_in_bulk():
     )
 
 
-def refresh_user_data(user_id, provider=BACKEND_EDX_ORG):
+def refresh_user_data(user_id, provider):
     """
     Refresh the edx cache data for a user.
 
@@ -764,15 +773,16 @@ def update_cache_for_backend(user, provider):
         provider (str): name of the courseware backend
         user (django.contrib.auth.models.User): A user
     """
+    user_social = None
     try:
         user_social = get_social_auth(user, provider)
     except ObjectDoesNotExist:
         log.info('No social auth for %s for user %s', provider, user.username)
-        return
+
     if user_social is not None:
         try:
             utils.refresh_user_token(user_social)
-        except utils.InvalidCredentialStored:
+        except InvalidCredentialStored:
             raise
         except:  # pylint: disable=bare-except
             log.exception('Impossible to refresh user credentials in dashboard view')
@@ -782,7 +792,6 @@ def update_cache_for_backend(user, provider):
             for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
                 CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type, provider)
         except InvalidCredentialStored:
-            # this needs to raise in order to force the user re-login
             raise
         except:  # pylint: disable=bare-except
             log.exception('Impossible to refresh edX cache')
