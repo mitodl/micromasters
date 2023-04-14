@@ -6,7 +6,8 @@ import type { APIErrorInfo } from '../flow/generalTypes'
 // likely to change in very near future
 export type Dashboard = {
   programs: Array<Program>,
-  is_edx_data_fresh: boolean
+  is_edx_data_fresh: boolean,
+  invalid_backend_credentials: Array<string>
 }
 
 export type DashboardState = {
@@ -15,6 +16,7 @@ export type DashboardState = {
   fetchStatus?: string,
   noSpinner: boolean,
   errorInfo?: APIErrorInfo,
+  invalidBackendCredentials: Array<string>
 }
 
 export type DashboardsState = {

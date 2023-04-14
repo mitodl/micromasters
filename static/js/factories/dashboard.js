@@ -51,7 +51,11 @@ const newFinancialAidId = makeCounter()
 
 export const makeDashboard = (): Dashboard => {
   const programs = R.range(1, 3).map(makeProgram)
-  return { programs: programs, is_edx_data_fresh: true }
+  return {
+    programs:                    programs,
+    is_edx_data_fresh:           true,
+    invalid_backend_credentials: []
+  }
 }
 
 export const makeAvailableProgram = (

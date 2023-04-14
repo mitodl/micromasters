@@ -66,9 +66,10 @@ describe("dashboard reducers", () => {
       ]).then(state => {
         const dashboardState = state[SETTINGS.user.username]
         assert.deepEqual(dashboardState, {
-          programs:       [],
-          isEdxDataFresh: true,
-          noSpinner:      false
+          programs:                  [],
+          isEdxDataFresh:            true,
+          invalidBackendCredentials: [],
+          noSpinner:                 false
         })
       })
     })
@@ -108,10 +109,11 @@ describe("dashboard reducers", () => {
     const _username = "_username"
 
     const successExpectation = {
-      programs:       DASHBOARD_RESPONSE.programs,
-      isEdxDataFresh: DASHBOARD_RESPONSE.is_edx_data_fresh,
-      fetchStatus:    FETCH_SUCCESS,
-      noSpinner:      false
+      programs:                  DASHBOARD_RESPONSE.programs,
+      isEdxDataFresh:            DASHBOARD_RESPONSE.is_edx_data_fresh,
+      invalidBackendCredentials: [],
+      fetchStatus:               FETCH_SUCCESS,
+      noSpinner:                 false
     }
 
     beforeEach(() => {
@@ -137,7 +139,12 @@ describe("dashboard reducers", () => {
         state => {
           assert.deepEqual(state, {
             [_username]: successExpectation,
-            [username]:  { programs: [], isEdxDataFresh: true, noSpinner: false }
+            [username]:  {
+              programs:                  [],
+              isEdxDataFresh:            true,
+              noSpinner:                 false,
+              invalidBackendCredentials: []
+            }
           })
         }
       )
@@ -152,11 +159,12 @@ describe("dashboard reducers", () => {
         assert.deepEqual(state, {
           [username]:  successExpectation,
           [_username]: {
-            fetchStatus:    FETCH_FAILURE,
-            errorInfo:      "err",
-            programs:       [],
-            isEdxDataFresh: true,
-            noSpinner:      false
+            fetchStatus:               FETCH_FAILURE,
+            errorInfo:                 "err",
+            programs:                  [],
+            invalidBackendCredentials: [],
+            isEdxDataFresh:            true,
+            noSpinner:                 false
           }
         })
       })
@@ -185,10 +193,11 @@ describe("dashboard reducers", () => {
       ]).then(state => {
         assert.deepEqual(state, {
           username: {
-            noSpinner:      true,
-            isEdxDataFresh: true,
-            programs:       DASHBOARD_RESPONSE.programs,
-            fetchStatus:    FETCH_PROCESSING
+            noSpinner:                 true,
+            isEdxDataFresh:            true,
+            programs:                  DASHBOARD_RESPONSE.programs,
+            invalidBackendCredentials: [],
+            fetchStatus:               FETCH_PROCESSING
           }
         })
       })

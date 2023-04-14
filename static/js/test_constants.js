@@ -914,8 +914,9 @@ export const USER_PROGRAM_RESPONSE = deepFreeze({
 })
 
 export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
-  is_edx_data_fresh: true,
-  programs:          [
+  is_edx_data_fresh:         true,
+  invalidBackendCredentials: [],
+  programs:                  [
     {
       description:             "Not passed program",
       title:                   "Not passed program",

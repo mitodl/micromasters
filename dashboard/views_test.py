@@ -95,6 +95,7 @@ class DashboardTest(MockedESTestCase, APITestCase):
         assert {self.program_1.id, self.program_2.id} == {
             res_item['id'] for res_item in result.data['programs']
         }
+        assert result.data["invalid_backend_credentials"] == []
 
     @ddt.data(Instructor, Staff)
     @patch('dashboard.api.update_cache_for_backend')
@@ -119,33 +120,12 @@ class DashboardTest(MockedESTestCase, APITestCase):
         assert {self.program_1.id, self.program_2.id} == {
             res_item['id'] for res_item in result.data['programs']
         }
+        assert result.data["invalid_backend_credentials"] == []
 
         update_mock.assert_not_called()
 
-    @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
-    @patch('backends.utils.refresh_user_token', autospec=True)
-    @ddt.data(400, 401,)
-    def test_http_error_propagated_from_back_functions(
-            self, status_code, refr_token, refr_cache):  # pylint: disable=unused-argument
-        """
-        Tests that if an InvalidCredentialStored is raised from the backend,
-        """
-        refr_cache.side_effect = InvalidCredentialStored('foo message', status_code)
-        result = self.client.get(self.url)
-        assert result.status_code == status_code
 
-    @patch('backends.utils.refresh_user_token', autospec=True)
-    def test_refresh_token_fails(self, refr_token):
-        """
-        Test if the refresh_user_token raises any other kind of exception
-        """
-        refr_token.side_effect = ZeroDivisionError
-        result = self.client.get(self.url)
-        assert result.status_code == status.HTTP_200_OK
-        assert 'programs' in result.data
-        assert 'is_edx_data_fresh' in result.data
-
-
+@ddt.ddt
 class DashboardTokensTest(MockedESTestCase, APITestCase):
     """
     Tests for access tokens in dashboard Rest API
@@ -212,13 +192,14 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         assert res.status_code == status.HTTP_200_OK
 
     @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
-    def test_refresh_token_error_server(self, mock_refresh):
+    @ddt.data(400, 401,)
+    def test_refresh_token_invalid(self, status_code, mock_refresh):
         """Test to check what happens when the OAUTH server returns an invalid status code"""
         def raise_http_error(*args, **kwargs):  # pylint: disable=unused-argument
             """Mock function to raise an exception"""
             error = HTTPError()
             error.response = MagicMock()
-            error.response.status_code = 400
+            error.response.status_code = status_code
             raise error
 
         mock_refresh.side_effect = raise_http_error
@@ -229,7 +210,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         self.update_social_extra_data(extra_data)
         res = self.get_with_mocked_enrollments()
         assert mock_refresh.called
-        assert res.status_code == status.HTTP_400_BAD_REQUEST
+        assert res.status_code == status.HTTP_200_OK
 
 
 @ddt.ddt

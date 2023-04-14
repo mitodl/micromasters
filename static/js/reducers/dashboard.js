@@ -15,9 +15,10 @@ import type { Action } from "../flow/reduxTypes"
 import { updateStateByUsername } from "./util"
 
 export const INITIAL_DASHBOARD_STATE: DashboardState = {
-  programs:       [],
-  isEdxDataFresh: true,
-  noSpinner:      false
+  programs:                  [],
+  isEdxDataFresh:            true,
+  noSpinner:                 false,
+  invalidBackendCredentials: []
 }
 
 const INITIAL_DASHBOARDS_STATE: DashboardsState = {}
@@ -50,10 +51,12 @@ export const dashboard = (
     }
   case RECEIVE_DASHBOARD_SUCCESS:
     return updateStateByUsername(state, username, {
-      fetchStatus:    FETCH_SUCCESS,
-      programs:       action.payload.programs,
-      isEdxDataFresh: action.payload.is_edx_data_fresh,
-      noSpinner:      false
+      fetchStatus:               FETCH_SUCCESS,
+      programs:                  action.payload.programs,
+      isEdxDataFresh:            action.payload.is_edx_data_fresh,
+      invalidBackendCredentials:
+          action.payload.invalid_backend_credentials || [],
+      noSpinner: false
     })
   case RECEIVE_DASHBOARD_FAILURE:
     return updateStateByUsername(state, username, {
