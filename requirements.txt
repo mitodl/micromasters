@@ -154,8 +154,10 @@ jsonpointer==2.0
     # via jsonpatch
 kombu==5.2.3
     # via celery
-l18n==2018.5
-    # via wagtail
+l18n==2021.3
+    # via
+    #   -r requirements.in
+    #   wagtail
 matplotlib-inline==0.1.3
     # via ipython
 newrelic==6.0.1.155
@@ -222,7 +224,7 @@ python-dateutil==2.5.3
     #   opensearch-dsl
 python3-openid==3.1.0
     # via social-auth-core
-pytz==2018.5
+pytz==2023.3
     # via
     #   celery
     #   django
