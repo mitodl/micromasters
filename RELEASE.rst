@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.237.0
+Version 0.237.0 (Released April 19, 2023)
 ---------------
 
 - Fix deployments due to conflict with a few library versions.
