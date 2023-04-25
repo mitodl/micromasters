@@ -1,4 +1,4 @@
-FROM node:14.18.2
+FROM node:14.18.2-bullseye
 
 LABEL maintainer "ODL DevOps <mitx-devops@mit.edu>"
 
@@ -7,8 +7,6 @@ RUN apt-get update && apt-get install libelf1
 COPY package.json /src/
 
 COPY scripts /src/scripts
-
-RUN node /src/scripts/install_yarn.js
 
 RUN mkdir -p /home/node/.cache/yarn
 
