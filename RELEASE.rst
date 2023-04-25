@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.238.0
+---------------
+
+- Prompt learners to reauthenticate
+- Fix stale version of yarn install
+
 Version 0.237.0 (Released April 19, 2023)
 ---------------
 
