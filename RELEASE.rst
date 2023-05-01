@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.238.0
+Version 0.238.0 (Released May 01, 2023)
 ---------------
 
 - Prompt learners to reauthenticate
