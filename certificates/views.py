@@ -261,17 +261,15 @@ class BaseGradeRecordView(ABC, TemplateView):
             combined_grade = CombinedFinalGrade.objects.filter(user=user, course=course).first()
             letter_grade = convert_to_letter(combined_grade.grade) if combined_grade else ""
             earned = get_certificate_url(mmtrack, course)
-            attempts = mmtrack.get_course_proctorate_exam_results(course).count()
             if best_grade and best_grade.is_already_combined:
                 combined_grade = best_grade
                 letter_grade = convert_to_letter(best_grade.grade_percent)
                 earned = best_grade.passed
-                attempts = ""
 
             context['courses'].append({
                 "title": course.title,
                 "edx_course_key": best_grade.course_run.edx_course_key if best_grade else "",
-                "attempts": attempts,
+                "attempts": mmtrack.get_course_proctorate_exam_results(course).count(),
                 "letter_grade": letter_grade,
                 "status": "Earned" if earned else "Not Earned",
                 "date_earned": combined_grade.created_on if combined_grade else "",
