@@ -453,7 +453,7 @@ class MMTrack:
         best_grade = self.get_best_final_grade_for_course(course)
         if best_grade is None:
             return ""
-        if not course.has_exam:
+        if not course.has_exam or best_grade.is_already_combined:
             return str(round(best_grade.grade_percent))
 
         combined_grade = CombinedFinalGrade.objects.filter(user=self.user, course=course)

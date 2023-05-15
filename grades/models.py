@@ -2,6 +2,8 @@
 Models for the grades app
 """
 import uuid
+import datetime
+import pytz
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -101,6 +103,13 @@ class FinalGrade(TimestampedModel, AuditableModel):
     def grade_percent(self):
         """Returns the grade field value as a number out of 100 (or None if the value is None)"""
         return self.grade * 100 if self.grade is not None else None
+
+    @property
+    def is_already_combined(self):
+        """
+        Returns true if this grade is for a course run that started after Sept 1st, 2022
+        """
+        return self.course_run.start_date > datetime.datetime(2022, 9, 1, tzinfo=pytz.UTC)
 
     @classmethod
     def get_frozen_users(cls, course_run):
