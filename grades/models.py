@@ -2,8 +2,6 @@
 Models for the grades app
 """
 import uuid
-import datetime
-import pytz
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.core.validators import MaxValueValidator, MinValueValidator
