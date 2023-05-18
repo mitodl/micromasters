@@ -16,7 +16,7 @@ from courses.models import CourseRun, Course
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import ProgramEnrollment
 from ecommerce.models import Order, Line
-from grades.constants import FinalGradeStatus
+from grades.constants import FinalGradeStatus, NEW_COMBINED_FINAL_GRADES_DATE
 from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
@@ -389,7 +389,7 @@ class MMTrack:
                 return FinalGrade.objects.filter(
                     user=self.user,
                     course_run__course_id=course.id,
-                    course_run__start_date__gt=datetime.datetime(2022, 9, 1, tzinfo=pytz.UTC),
+                    course_run__start_date__gt=NEW_COMBINED_FINAL_GRADES_DATE,
                 ).passed().exists()
         else:
             return self.final_grade_qset.filter(course_run__course_id=course.id).passed().exists()
@@ -567,7 +567,7 @@ class MMTrack:
             course_ids_passing_grade = FinalGrade.objects.filter(
                 user=self.user,
                 course_run__course_id__in=course_ids,
-                course_run__start_date__gt=datetime.datetime(2022, 9, 1, tzinfo=pytz.UTC),
+                course_run__start_date__gt=NEW_COMBINED_FINAL_GRADES_DATE,
             ).passed().values_list('course_run__course__id', flat=True).distinct()
             num_certs = MicromastersCourseCertificate.objects.filter(
                 user=self.user,
