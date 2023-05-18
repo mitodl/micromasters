@@ -15,7 +15,7 @@ from courses.models import (
 )
 from exams.models import ExamRun
 from exams.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
-from grades.constants import FinalGradeStatus
+from grades.constants import FinalGradeStatus, NEW_COMBINED_FINAL_GRADES_DATE
 from micromasters.models import (
     AuditableModel,
     AuditModel,
@@ -101,6 +101,13 @@ class FinalGrade(TimestampedModel, AuditableModel):
     def grade_percent(self):
         """Returns the grade field value as a number out of 100 (or None if the value is None)"""
         return self.grade * 100 if self.grade is not None else None
+
+    @property
+    def is_already_combined(self):
+        """
+        Returns true if this grade is for a course run that started after Sept 1st, 2022
+        """
+        return self.course_run.start_date > NEW_COMBINED_FINAL_GRADES_DATE
 
     @classmethod
     def get_frozen_users(cls, course_run):
