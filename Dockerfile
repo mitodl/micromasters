@@ -48,6 +48,7 @@ RUN poetry install
 # Add project
 COPY . /src
 
+USER root
 RUN apt-get clean && apt-get purge
 USER mitodl
 
