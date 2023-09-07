@@ -23,6 +23,7 @@ from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order
 from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRunFactory
 from exams.models import ExamProfile, ExamAuthorization
+from grades.constants import NEW_COMBINED_FINAL_GRADES_DATE
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
 from grades.models import FinalGrade, MicromastersProgramCertificate, CombinedFinalGrade, \
     MicromastersProgramCommendation, CourseRunGradingStatus
@@ -863,7 +864,8 @@ class MMTrackTest(MockedESTestCase):
             FinalGradeFactory.create(user=self.user, course_run=course_run, grade=grade, passed=True)
         assert mmtrack.get_best_final_grade_for_course(finaid_course).grade == 0.8
 
-    def test_get_overall_final_grade_for_course(self):
+    @ddt.data(True, False)
+    def test_get_overall_final_grade_for_course(self, before_exam_merge):
         """
         Test for get_overall_final_grade_for_course to return CombinedFinalGrade for course
         """
@@ -877,8 +879,17 @@ class MMTrackTest(MockedESTestCase):
         FinalGradeFactory.create(user=self.user, course_run=self.crun_fa, passed=True, grade=0.8)
         assert mmtrack.get_overall_final_grade_for_course(finaid_course) == "80"
         ExamRunFactory.create(course=finaid_course)
-        CombinedFinalGrade.objects.create(user=self.user, course=finaid_course, grade="74")
-        assert mmtrack.get_overall_final_grade_for_course(finaid_course) == "74"
+        if before_exam_merge:
+            # if the course run end date is before Fall 2022
+            self.crun_fa.start_date = NEW_COMBINED_FINAL_GRADES_DATE - timedelta(days=1)
+            self.crun_fa.save()
+            CombinedFinalGrade.objects.create(user=self.user, course=finaid_course, grade="74")
+            assert mmtrack.get_overall_final_grade_for_course(finaid_course) == "74"
+        else:
+            self.crun_fa.start_date = NEW_COMBINED_FINAL_GRADES_DATE + timedelta(days=1)
+            self.crun_fa.save()
+            CombinedFinalGrade.objects.create(user=self.user, course=finaid_course, grade="80")
+            assert mmtrack.get_overall_final_grade_for_course(finaid_course) == "80"
 
     def test_get_best_proctored_exam_grade(self):
         """
