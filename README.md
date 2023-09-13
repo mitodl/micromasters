@@ -250,3 +250,14 @@ pass the program: `Num required courses`.
 ## Session persistence issue
 If you experience intermittent logouts while browsing the application and a general ephemeral behaviour from user sessions, switch the Django session backend by adding the following in your environment file:
 `SESSION_ENGINE=django.contrib.sessions.backends.file`
+
+
+# Updating python dependencies
+
+Python dependencies are managed with poetry.  If you need to add a new dependency, run this command:
+
+```
+docker compose run --rm web poetry add <dependency>
+```
+This will update the `pyproject.toml` and `poetry.lock` files.  Then run `docker-compose build web celery` to make the change permanent in your docker images.
+Refer to the [poetry documentation](https://python-poetry.org/docs/cli/) for particulars about specifying versions, removing dependencies, etc.
