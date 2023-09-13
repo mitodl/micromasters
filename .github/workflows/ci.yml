@@ -47,6 +47,13 @@ jobs:
       - name: Apt install
         run: cat Aptfile | sudo xargs apt-get install
 
+      - name: Install poetry
+          uses: snok/install-poetry@v1
+          with:
+            version: 1.5.1
+            virtualenvs-create: true
+            virtualenvs-in-project: true
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -61,7 +68,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        run: pip install -r requirements.txt -r test_requirements.txt
+        run: poetry install --no-interaction
 
       - name: Lint
         run: pylint ./**/*.py
