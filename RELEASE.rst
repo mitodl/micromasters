@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+Version 0.239.0
+---------------
+
+- Use poetry for python dependency management (#5345)
+- Remove President's quote (#5346)
+- Delete PR Template
+- Delete PR Template
+- Delete PR Template
+- Update the Program record to display grades properly (#5341)
+
 Version 0.238.0 (Released May 01, 2023)
 ---------------
 
