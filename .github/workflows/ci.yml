@@ -85,7 +85,7 @@ jobs:
           export MEDIA_ROOT="$(mktemp -d)"
           sudo mkdir /var/media 
           sudo chown -R $USER:$USER /var/media
-          tox
+          poetry run tox
         env:
           DEBUG: 'False'
           NODE_ENV: 'production'
