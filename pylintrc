@@ -1,6 +1,7 @@
 [MASTER]
 ignore=migrations,.git
 load-plugins = pylint_django
+django-settings-module = micromasters.settings
 
 [BASIC]
 # Allow django's urlpatterns, and our log preference
