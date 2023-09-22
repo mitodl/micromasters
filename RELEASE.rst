@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.239.0
+Version 0.239.0 (Released September 22, 2023)
 ---------------
 
 - Revert "Use poetry for python dependency management (#5345)" (#5350)
