@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.240.0
+---------------
+
+- Add a quote from the president with a picture (#5366)
+- Add renovate.json (#5352)
+
 Version 0.239.0 (Released September 22, 2023)
 ---------------
 
