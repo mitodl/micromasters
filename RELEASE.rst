@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.240.0
+Version 0.240.0 (Released February 06, 2024)
 ---------------
 
 - Add a quote from the president with a picture (#5366)
