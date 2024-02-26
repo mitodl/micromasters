@@ -3,10 +3,7 @@
   background-image: url({% static "images/homepage.jpg" %});
 }
 .navbar .navbar-header .brand-logo {
-  background-image: url({% static "images/mit_logo.svg" %});
-}
-.navbar .navbar-header .brand-logo:hover {
-  background-image: url({% static "images/mit_logo_on.svg" %});
+  background-image: url({% static "images/micromasters_logo.svg" %});
 }
 .navbar .navbar-header .micromasters-logo {
   background-image: url({% static "images/micromasters_logo_programs.svg" %});
