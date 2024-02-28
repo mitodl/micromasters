@@ -84,33 +84,22 @@ export default class Navbar extends React.Component {
     setNavDrawerOpen: (b: boolean) => void
   }
 
-  renderProfileHeader = () => [
-    <img
-      src="/static/images/mit-logo-transparent.svg"
-      alt="MIT"
-      key="header-logo"
-    />,
-    <span className="mdl-layout-title profile-header" key="header-text">
-      MITx MicroMasters Programs
-    </span>
-  ]
+  renderProfileHeader =  <img
+    src="/static/images/micromasters_logo_white.svg"
+    alt="MicroMasters Programs"
+    key="header-logo"
+  />
 
   renderAuthenticatedHeader = (link: string) => [
     <Link to={link} key="header-logo-link">
-      <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
-    </Link>,
-    <span className="mdl-layout-title" key="header-text-link">
-      <Link to={link}>MITx MicroMasters Programs</Link>
-    </span>
+      <img src="/static/images/micromasters_logo_white.svg" alt="MicroMasters Programs" />
+    </Link>
   ]
 
   renderUnauthenticatedHeader = (link: string) => [
     <a href={link} key="header-logo-link">
-      <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
-    </a>,
-    <span className="mdl-layout-title" key="header-text-link">
-      <a href={link}>MITx MicroMasters Programs</a>
-    </span>
+      <img src="/static/images/micromasters_logo_white.svg" alt="MicroMasters Programs" />
+    </a>
   ]
 
   programSelector = (): React$Element<*> => {
