@@ -84,21 +84,29 @@ export default class Navbar extends React.Component {
     setNavDrawerOpen: (b: boolean) => void
   }
 
-  renderProfileHeader =  <img
-    src="/static/images/micromasters_logo_white.svg"
-    alt="MicroMasters Programs"
-    key="header-logo"
-  />
+  renderProfileHeader = (
+    <img
+      src="/static/images/micromasters_logo_white.svg"
+      alt="MicroMasters Programs"
+      key="header-logo"
+    />
+  )
 
   renderAuthenticatedHeader = (link: string) => [
     <Link to={link} key="header-logo-link">
-      <img src="/static/images/micromasters_logo_white.svg" alt="MicroMasters Programs" />
+      <img
+        src="/static/images/micromasters_logo_white.svg"
+        alt="MicroMasters Programs"
+      />
     </Link>
   ]
 
   renderUnauthenticatedHeader = (link: string) => [
     <a href={link} key="header-logo-link">
-      <img src="/static/images/micromasters_logo_white.svg" alt="MicroMasters Programs" />
+      <img
+        src="/static/images/micromasters_logo_white.svg"
+        alt="MicroMasters Programs"
+      />
     </a>
   ]
 
