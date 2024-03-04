@@ -27,6 +27,7 @@ from micromasters.utils import webpack_dev_server_host
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
 from cms.blocks import CourseTeamBlock, ImageWithLinkBlock, ResourceBlock
+from wagtail.api import APIField
 
 common_table_options = {
     'startRows': 3,
@@ -450,6 +451,16 @@ class ProgramPage(Page):
 
         return context
 
+    api_fields = [
+        APIField('title'),
+        APIField('program_letter_footer'),
+        APIField('program_letter_footer_text'),
+        APIField('program_letter_header_text'),
+        APIField('program_letter_logo'),
+        APIField('program_letter_text'),
+        APIField('program_letter_signatories'),
+    ]
+
 
 def get_program_page_context(programpage, request):
     """ Get context for the program page"""
@@ -717,4 +728,11 @@ class ProgramLetterSignatory(Orderable):
                 FieldPanel('signature_image'),
             ]
         )
+    ]
+
+    api_fields = [
+        APIField('name'),
+        APIField('title_line_1'),
+        APIField('title_line_2'),
+        APIField('signature_image'),
     ]

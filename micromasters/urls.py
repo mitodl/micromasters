@@ -25,6 +25,7 @@ urlpatterns += [
     url(r'', include('backends.urls')),
     url(r'^admin/', admin.site.urls),
     url('', include('courses.urls')),
+    url("", include("cms.urls")),
     url('', include('dashboard.urls')),
     url('', include('ecommerce.urls')),
     url('', include('financialaid.urls')),
