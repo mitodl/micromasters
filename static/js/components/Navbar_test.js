@@ -30,7 +30,7 @@ describe("Navbar", () => {
       "/dashboard",
       "/learner/jane",
       "/settings",
-      "/dashboard",
+      "/dashboard"
     ])
   })
 
@@ -47,7 +47,7 @@ describe("Navbar", () => {
         "/automaticemails",
         "/learner/jane",
         "/settings",
-        "/learners",
+        "/learners"
       ])
     }
   })
