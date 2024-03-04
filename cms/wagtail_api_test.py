@@ -1,7 +1,3 @@
-"""
-cms views
-"""
-from django.contrib.auth.views import redirect_to_login
 from django.urls import reverse
 from cms.factories import ProgramPageFactory, ProgramLetterSignatoryFactory
 from django.urls import reverse
