@@ -91,9 +91,9 @@ INSTALLED_APPS = (
     'django_filters',
     'server_status',
     'social_django',
-    'wagtail.api.v2',
 
     # WAGTAIL
+    'wagtail.api.v2',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.contrib.table_block',

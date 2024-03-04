@@ -2,10 +2,6 @@
 
 from django.conf.urls import include, url
 from rest_framework import routers
-
-from cms.views import (
-    ProgramPageViewSet,
-)
 from cms.api import api_router
 
 urlpatterns = [

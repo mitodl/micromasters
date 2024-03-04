@@ -453,6 +453,8 @@ class ProgramPage(Page):
 
     api_fields = [
         APIField('title'),
+        APIField('description'),
+        APIField('program_id'),
         APIField('program_letter_footer'),
         APIField('program_letter_footer_text'),
         APIField('program_letter_header_text'),
