@@ -5,12 +5,6 @@
 .navbar .navbar-header .brand-logo {
   background-image: url({% static "images/micromasters_logo_white.svg" %});
 }
-.navbar .navbar-header .micromasters-logo {
-  background-image: url({% static "images/micromasters_logo_programs.svg" %});
-}
-.navbar .navbar-header .micromasters-logo:hover {
-  background-image: url({% static "images/micromasters_logo_on_programs.svg" %});
-}
 .how-it-works-section .reasons-images-wrap::after {
   content: url({% static "images/hiw-arrow2.png" %});
 }
