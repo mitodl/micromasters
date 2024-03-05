@@ -1,7 +1,6 @@
 """URLs for courses and programs"""
 
-from django.conf.urls import include, url
-from rest_framework import routers
+from django.conf.urls import url
 from cms.api import api_router
 
 urlpatterns = [

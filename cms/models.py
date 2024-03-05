@@ -20,6 +20,7 @@ from wagtail.core.models import Orderable, Page
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.images.models import Image
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.api import APIField
 
 from courses.models import Program
 from micromasters.serializers import serialize_maybe_user
@@ -27,7 +28,7 @@ from micromasters.utils import webpack_dev_server_host
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
 from cms.blocks import CourseTeamBlock, ImageWithLinkBlock, ResourceBlock
-from wagtail.api import APIField
+
 
 common_table_options = {
     'startRows': 3,

@@ -1,3 +1,6 @@
+"""
+Integrate Wagtail's builtin api endpointss
+"""
 from wagtail.api.v2.views import PagesAPIViewSet
 from wagtail.api.v2.router import WagtailAPIRouter
 from wagtail.images.api.v2.views import ImagesAPIViewSet
