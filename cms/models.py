@@ -20,6 +20,7 @@ from wagtail.core.models import Orderable, Page
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.images.models import Image
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.api import APIField
 
 from courses.models import Program
 from micromasters.serializers import serialize_maybe_user
@@ -27,6 +28,7 @@ from micromasters.utils import webpack_dev_server_host
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
 from cms.blocks import CourseTeamBlock, ImageWithLinkBlock, ResourceBlock
+
 
 common_table_options = {
     'startRows': 3,
@@ -450,6 +452,18 @@ class ProgramPage(Page):
 
         return context
 
+    api_fields = [
+        APIField('title'),
+        APIField('description'),
+        APIField('program_id'),
+        APIField('program_letter_footer'),
+        APIField('program_letter_footer_text'),
+        APIField('program_letter_header_text'),
+        APIField('program_letter_logo'),
+        APIField('program_letter_text'),
+        APIField('program_letter_signatories'),
+    ]
+
 
 def get_program_page_context(programpage, request):
     """ Get context for the program page"""
@@ -717,4 +731,11 @@ class ProgramLetterSignatory(Orderable):
                 FieldPanel('signature_image'),
             ]
         )
+    ]
+
+    api_fields = [
+        APIField('name'),
+        APIField('title_line_1'),
+        APIField('title_line_2'),
+        APIField('signature_image'),
     ]

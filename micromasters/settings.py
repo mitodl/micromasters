@@ -88,10 +88,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'server_status',
     'social_django',
 
     # WAGTAIL
+    'wagtail.api.v2',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.contrib.table_block',
