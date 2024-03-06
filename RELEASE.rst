@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+Version 0.241.0
+---------------
+
+- Updating logos and favicon (#5369)
+- lint
+- removing unused import
+- adding tests and detail view
+- adding initial api integration with wagtail
+
 Version 0.240.0 (Released February 06, 2024)
 ---------------
 
