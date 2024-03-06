@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.241.0
+Version 0.241.0 (Released March 06, 2024)
 ---------------
 
 - Updating logos and favicon (#5369)
