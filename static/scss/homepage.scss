@@ -33,28 +33,16 @@ a {
         float: left;
       }
 
-      .brand-logo,
-      .micromasters-logo {
+      .brand-logo {
         float: left;
         /* background image from background-images.css */
         background-repeat: no-repeat;
-        height: 36px;
-        width: 51px;
         overflow: visible;
         position: relative;
-      }
-
-      .brand-logo {
-        height: 36px;
-        width: 51px;
+        height: 48px;
+        width: 250px;
         top: 2px;
         margin-right: 15px;
-      }
-
-      .micromasters-logo {
-        height: 23px;
-        width: 263px;
-        top: 8px;
       }
 
       .divider-large {

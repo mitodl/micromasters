@@ -145,7 +145,7 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, userActions).then(
         ([wrapper]) => {
           assert.equal(
-            2,
+            1,
             wrapper.find(".micromasters-nav").find("a[href='/dashboard']")
               .length
           )
@@ -1329,7 +1329,7 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, anonymousUserActions).then(
         ([wrapper]) => {
           assert.equal(
-            2,
+            1,
             wrapper.find(".micromasters-nav").find("a[href='/']").length
           )
         }
