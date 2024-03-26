@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.241.1
+---------------
+
+- Correct the link in the logo (#5372)
+
 Version 0.241.0 (Released March 06, 2024)
 ---------------
 
