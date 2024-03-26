@@ -207,7 +207,7 @@ pycparser==2.21
     # via cffi
 pygments==2.7.4
     # via ipython
-pyjwt==1.5.2
+pyjwt==2.4.0
     # via
     #   open-discussions-client
     #   social-auth-core
