@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.241.2
+---------------
+
+- fix: redirect footer logo to the open learning (#5374)
+
 Version 0.241.1 (Released March 26, 2024)
 ---------------
 
