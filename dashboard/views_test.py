@@ -529,13 +529,16 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('backends.utils.refresh_user_token', autospec=True)
-    def test_user_is_not_authorized(self, mock_refresh):
+    @patch('dashboard.views.ExamAuthorization.objects', autospec=True)
+    def test_user_is_not_authorized(self, mock_exam_auth, mock_refresh):
         """
         The user must be authorized for this exam run
+        in order to be enrolled
         """
+        mock_exam_auth.filter.return_value.exists.return_value = False
         resp = self.client.post(self.url, {'exam_course_id': self.exam_course_id}, format='json')
-        assert resp.status_code == status.HTTP_401_UNAUTHORIZED
-        assert mock_refresh.call_count == 1
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        assert mock_refresh.call_count == 0
 
     @patch('backends.utils.refresh_user_token', autospec=True)
     def test_refresh_token_fails(self, mock_refresh):
