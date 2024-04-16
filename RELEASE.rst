@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.242.0
+---------------
+
+- Test should not try to refresh token (#5382)
+
 Version 0.241.2 (Released April 02, 2024)
 ---------------
 
