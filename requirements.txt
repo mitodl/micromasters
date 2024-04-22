@@ -205,7 +205,7 @@ pycountry==16.11.27.1
     # via -r requirements.in
 pycparser==2.21
     # via cffi
-pygments==2.7.4
+pygments==2.15.0
     # via ipython
 pyjwt==1.5.2
     # via
