@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.242.1
+---------------
+
+- chore(deps): update dependency pygments to v2.15.0 [security]
+- chore(deps): update dependency uwsgi to v2.0.22 [security]
+
 Version 0.242.0 (Released April 17, 2024)
 ---------------
 
