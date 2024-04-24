@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.242.1
+Version 0.242.1 (Released April 24, 2024)
 ---------------
 
 - chore(deps): update dependency pygments to v2.15.0 [security]
