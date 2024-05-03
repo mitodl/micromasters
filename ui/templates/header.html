@@ -4,6 +4,7 @@
           <a class="brand-logo" href="{{ request.build_absolute_uri }}" rel="noopener noreferrer"></a>
         </div>
         <div class="pull-right" style="padding-top:4px">
+        {% if page.program.id != 2 %}
           {% if authenticated %}
           <a class="header-dashboard-link" href="/dashboard">My Dashboard</a>
           <a class="header-dashboard-link" href="/logout">
@@ -15,6 +16,7 @@
             Create Account
           </a>
           {% endif %}
+        {% endif %}
         </div>
       </div>
   </nav>

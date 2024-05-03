@@ -63,17 +63,23 @@
                   href="{{ page.program_subscribe_link }}"
                   target="blank">Learn More</a>
         {% else %}
-          {% if not authenticated %}
-            <a href="{% url 'signin' %}?program={{page.program.id}}" class="mdl-button hero-button mdl-cell--hide-phone">
-              Create Account
-            </a>
-            <div class="log-in mdl-cell--hide-phone">
-              Already a Member?
-              <a href="{% url 'signin' %}?program={{page.program.id}}">
-                Sign In
-              </a>
-            </div>
-          {% endif %}
+            {% if page.program.id == 2 %}
+                <a href="https://mitxonline.mit.edu/create-account/" class="mdl-button hero-button mdl-cell--hide-phone">
+                  Enroll on MITx Online
+                </a>
+            {% else %}
+              {% if not authenticated %}
+                <a href="{% url 'signin' %}?program={{page.program.id}}" class="mdl-button hero-button mdl-cell--hide-phone">
+                  Create Account {{page.program.id}}
+                </a>
+                <div class="log-in mdl-cell--hide-phone">
+                  Already a Member?
+                  <a href="{% url 'signin' %}?program={{page.program.id}}">
+                    Sign In
+                  </a>
+                </div>
+              {% endif %}
+            {% endif %}
         {% endif %}
       </div>
     {% endif %}
