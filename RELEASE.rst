@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.242.2
+---------------
+
+- Removing sign in buttons from DEDP page (#5389)
+- chore(deps): update dependency requests to v2.31.0 [security]
+
 Version 0.242.1 (Released April 24, 2024)
 ---------------
 
