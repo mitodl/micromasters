@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.242.2
+Version 0.242.2 (Released May 20, 2024)
 ---------------
 
 - make "MITx Online" mixed case (#5391)
