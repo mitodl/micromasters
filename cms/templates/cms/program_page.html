@@ -61,16 +61,16 @@
         {% if page.program_subscribe_link %}
             <a class="mdl-button hero-button"
                   href="{{ page.program_subscribe_link }}"
-                  target="blank">Learn More</a>
+                  target="blank">LEARN MORE</a>
         {% else %}
             {% if page.program.id == 2 %}
                 <a href="https://mitxonline.mit.edu/create-account/" class="mdl-button hero-button mdl-cell--hide-phone">
-                  Enroll on MITx Online
+                  ENROLL ON MITx ONLINE
                 </a>
             {% else %}
               {% if not authenticated %}
                 <a href="{% url 'signin' %}?program={{page.program.id}}" class="mdl-button hero-button mdl-cell--hide-phone">
-                  Create Account {{page.program.id}}
+                  CREATE ACCOUNT
                 </a>
                 <div class="log-in mdl-cell--hide-phone">
                   Already a Member?
