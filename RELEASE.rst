@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.242.3
+---------------
+
+- chore(deps): update dependency idna to v3 [security]
+
 Version 0.242.2 (Released May 20, 2024)
 ---------------
 
