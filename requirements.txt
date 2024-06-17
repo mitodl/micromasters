@@ -211,7 +211,7 @@ pyjwt==1.5.2
     # via
     #   open-discussions-client
     #   social-auth-core
-pymongo==3.7.1
+pymongo==4.6.3
     # via edx-opaque-keys
 pyopenssl==21.0.0
     # via -r requirements.in
