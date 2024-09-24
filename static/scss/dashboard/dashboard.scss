@@ -360,16 +360,18 @@
     color: black;
     border-radius: 3px;
   }
+
   .callout {
     margin: 22px 27px;
     padding: 15px;
 
-    img{
+    img {
       height: 32px;
       vertical-align: baseline;
       display: inline-block;
       padding-left: 0;
     }
+
     div {
       width: 90%;
       display: inline-block;
@@ -378,9 +380,10 @@
       flex-shrink: 1;
     }
   }
+
   .callout-warning {
     border-left: 2px solid #ffc107;
-    background: #FFF3CC;
+    background: #fff3cc;
   }
 }
 
