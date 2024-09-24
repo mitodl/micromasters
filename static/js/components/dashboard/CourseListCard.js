@@ -12,7 +12,7 @@ import type { UIState } from "../../reducers/ui"
 import { programBackendName } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
-import {COURSEWARE_BACKEND_MITXONLINE} from "../../constants"
+import { COURSEWARE_BACKEND_MITXONLINE } from "../../constants"
 
 const priceMessageClassName = "price-message"
 
@@ -48,10 +48,12 @@ export default class CourseListCard extends React.Component {
   renderGradesOutOfDateMessage(): ?React$Element<*> {
     return (
       <div className="callout callout-warning">
-        <img src="/static/images/c-warning-1.svg" alt="Warning"></img>
+        <img src="/static/images/c-warning-1.svg" alt="Warning" />
         <div>
           The following course, enrollment, and grade information is outdated.
-          Please visit <a href={`/login/${COURSEWARE_BACKEND_MITXONLINE}/`}>MITx Online</a> for accurate information.
+          Please visit{" "}
+          <a href={`/login/${COURSEWARE_BACKEND_MITXONLINE}/`}>MITx Online</a>{" "}
+          for accurate information.
         </div>
       </div>
     )
@@ -126,8 +128,11 @@ export default class CourseListCard extends React.Component {
           <h2>
             {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
           </h2>
-          {showStaffView ? null :
-            (program.id === 2 ? this.renderGradesOutOfDateMessage() : this.renderPriceMessage())}
+          {showStaffView
+            ? null
+            : program.id === 2
+              ? this.renderGradesOutOfDateMessage()
+              : this.renderPriceMessage()}
           {courseRows}
         </CardContent>
       </Card>
