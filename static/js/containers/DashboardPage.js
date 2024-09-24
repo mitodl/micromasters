@@ -69,7 +69,6 @@ import { clearCalculatorEdit } from "../actions/financial_aid"
 import { findCourseRun } from "../util/util"
 import CourseListCard from "../components/dashboard/CourseListCard"
 import DashboardUserCard from "../components/dashboard/DashboardUserCard"
-import FinancialAidCard from "../components/dashboard/FinancialAidCard"
 import ErrorMessage from "../components/ErrorMessage"
 import LearnersInProgramCard from "../components/LearnersInProgramCard"
 import ProgressWidget from "../components/ProgressWidget"
@@ -908,9 +907,7 @@ class DashboardPage extends React.Component {
       dashboard,
       prices,
       profile: { profile },
-      documents,
       ui,
-      financialAid,
       coupons,
       discussionsFrontpage
     } = this.props
@@ -929,24 +926,6 @@ class DashboardPage extends React.Component {
       prices.data,
       coupons.coupons
     )
-    let financialAidCard
-    if (program.financial_aid_availability && !this.shouldSkipFinancialAid()) {
-      financialAidCard = (
-        <FinancialAidCard
-          program={program}
-          couponPrices={couponPrices}
-          openFinancialAidCalculator={this.openFinancialAidCalculator}
-          documents={documents}
-          setDocumentSentDate={this.setDocumentSentDate}
-          skipFinancialAid={this.skipFinancialAid}
-          updateDocumentSentDate={this.updateDocumentSentDate}
-          setConfirmSkipDialogVisibility={this.setConfirmSkipDialogVisibility}
-          setDocsInstructionsVisibility={this.setDocsInstructionsVisibility}
-          ui={ui}
-          financialAid={financialAid}
-        />
-      )
-    }
 
     return (
       <div>
@@ -963,7 +942,6 @@ class DashboardPage extends React.Component {
           {this.renderExamEnrollmentDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program} />
-            {financialAidCard}
             <CourseListCard
               program={program}
               couponPrices={couponPrices}

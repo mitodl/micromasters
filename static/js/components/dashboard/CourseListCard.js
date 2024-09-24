@@ -7,12 +7,12 @@ import Card from "@material-ui/core/Card"
 import type { Program, Course } from "../../flow/programTypes"
 import type { CouponPrices } from "../../flow/couponTypes"
 import CourseRow from "./CourseRow"
-import FinancialAidCalculator from "../../containers/FinancialAidCalculator"
 import type { CourseRun } from "../../flow/programTypes"
 import type { UIState } from "../../reducers/ui"
 import { programBackendName } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
+import {COURSEWARE_BACKEND_MITXONLINE} from "../../constants"
 
 const priceMessageClassName = "price-message"
 
@@ -43,6 +43,19 @@ export default class CourseListCard extends React.Component {
     const { openFinancialAidCalculator } = this.props
     if (openFinancialAidCalculator) openFinancialAidCalculator()
     e.preventDefault()
+  }
+
+  renderGradesOutOfDateMessage(): ?React$Element<*> {
+
+    return (
+      <div className="callout callout-warning">
+        <img src="/static/images/c-warning-1.svg" alt="Warning"></img>
+        <div>
+          The following course, enrollment, and grade information is outdated.
+          Please visit <a href={`/login/${COURSEWARE_BACKEND_MITXONLINE}/`}>MITx Online</a> for accurate information.
+        </div>
+      </div>
+    )
   }
 
   renderPriceMessage(): ?React$Element<*> {
@@ -111,11 +124,11 @@ export default class CourseListCard extends React.Component {
     return (
       <Card shadow={0} className="card course-list">
         <CardContent className="course-list-content">
-          <FinancialAidCalculator />
           <h2>
             {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
           </h2>
-          {showStaffView ? null : this.renderPriceMessage()}
+          {showStaffView ? null :
+            (program.id === 2 ? this.renderGradesOutOfDateMessage() : this.renderPriceMessage())}
           {courseRows}
         </CardContent>
       </Card>
