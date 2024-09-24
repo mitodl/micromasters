@@ -46,7 +46,6 @@ export default class CourseListCard extends React.Component {
   }
 
   renderGradesOutOfDateMessage(): ?React$Element<*> {
-
     return (
       <div className="callout callout-warning">
         <img src="/static/images/c-warning-1.svg" alt="Warning"></img>
