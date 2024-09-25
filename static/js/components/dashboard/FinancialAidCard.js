@@ -293,7 +293,7 @@ export default class FinancialAidCard extends React.Component {
           fetchSkipStatus={financialAid.fetchSkipStatus}
         />
         <CardContent>
-          <h2>Personal Course Pricing hi</h2>
+          <h2>Personal Course Pricing</h2>
           <div>{contents}</div>
           <div className="no-calls-message">
             If you have questions, contact us using the Help button at the

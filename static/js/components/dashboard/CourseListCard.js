@@ -7,6 +7,7 @@ import Card from "@material-ui/core/Card"
 import type { Program, Course } from "../../flow/programTypes"
 import type { CouponPrices } from "../../flow/couponTypes"
 import CourseRow from "./CourseRow"
+import FinancialAidCalculator from "../../containers/FinancialAidCalculator"
 import type { CourseRun } from "../../flow/programTypes"
 import type { UIState } from "../../reducers/ui"
 import { programBackendName } from "../../util/util"
@@ -125,6 +126,7 @@ export default class CourseListCard extends React.Component {
     return (
       <Card shadow={0} className="card course-list">
         <CardContent className="course-list-content">
+          <FinancialAidCalculator />
           <h2>
             {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
           </h2>
