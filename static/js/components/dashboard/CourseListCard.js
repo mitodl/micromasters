@@ -115,7 +115,11 @@ export default class CourseListCard extends React.Component {
           <h2>
             {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
           </h2>
-          {showStaffView ? null : this.renderPriceMessage()}
+          {showStaffView
+            ? null
+            : program.id === 2
+              ? null
+              : this.renderPriceMessage()}
           {courseRows}
         </CardContent>
       </Card>
