@@ -53,7 +53,9 @@ export default class CourseListCard extends React.Component {
         <div>
           The following course, enrollment, and grade information is outdated.
           Please{" "}
-          <a href={`/login/${COURSEWARE_BACKEND_MITXONLINE}/`}>visit MITx Online</a>{" "}
+          <a href={`/login/${COURSEWARE_BACKEND_MITXONLINE}/`}>
+            visit MITx Online
+          </a>{" "}
           for accurate information.
         </div>
       </div>
