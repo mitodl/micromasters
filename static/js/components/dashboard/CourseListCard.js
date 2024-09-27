@@ -52,7 +52,7 @@ export default class CourseListCard extends React.Component {
         <img src="/static/images/c-warning-1.svg" alt="Warning" />
         <div>
           The following course, enrollment, and grade information is outdated.
-          <br/>
+          <br />
           Please{" "}
           <a href={`/login/${COURSEWARE_BACKEND_MITXONLINE}/`}>
             visit MITx Online
