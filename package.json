@@ -153,8 +153,7 @@
     "enzyme-adapter-react-16": "^1.15.2"
   },
   "resolutions": {
-    "merge": "^2.1.1",
-    "cheerio": "1.0.0-rc.12"
+    "merge": "^2.1.1"
   },
   "packageManager": "yarn@3.1.1"
 }
