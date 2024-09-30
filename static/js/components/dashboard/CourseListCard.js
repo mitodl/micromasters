@@ -13,7 +13,10 @@ import type { UIState } from "../../reducers/ui"
 import { programBackendName } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
-import { COURSEWARE_BACKEND_MITXONLINE } from "../../constants"
+import {
+  COURSEWARE_BACKEND_EDXORG,
+  COURSEWARE_BACKEND_MITXONLINE
+} from "../../constants"
 
 const priceMessageClassName = "price-message"
 
@@ -47,6 +50,7 @@ export default class CourseListCard extends React.Component {
   }
 
   renderGradesOutOfDateMessage(): ?React$Element<*> {
+    const { program } = this.props
     return (
       <div className="callout callout-warning">
         <img src="/static/images/c-warning-1.svg" alt="Warning" />
@@ -54,25 +58,18 @@ export default class CourseListCard extends React.Component {
           The following course, enrollment, and grade information is outdated.
           <br />
           Please{" "}
-          <a href={`/login/${COURSEWARE_BACKEND_MITXONLINE}/`}>
+          <a
+            href={`/login/${
+              program.has_mitxonline_courses
+                ? COURSEWARE_BACKEND_MITXONLINE
+                : COURSEWARE_BACKEND_EDXORG
+            }/`}
+          >
             visit MITx Online
           </a>{" "}
           for accurate information.
         </div>
       </div>
-    )
-  }
-
-  renderPriceMessage(): ?React$Element<*> {
-    const { program } = this.props
-
-    return (
-      <p className={priceMessageClassName}>
-        To get credit for the courses in this program, you must pay for a
-        verified certificate from {programBackendName(program)}. If you want to
-        audit courses for FREE and upgrade later, click Enroll then choose the
-        audit option.
-      </p>
     )
   }
 
@@ -133,11 +130,7 @@ export default class CourseListCard extends React.Component {
           <h2>
             {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
           </h2>
-          {showStaffView
-            ? null
-            : program.id === 2
-              ? this.renderGradesOutOfDateMessage()
-              : this.renderPriceMessage()}
+          {showStaffView ? null : this.renderGradesOutOfDateMessage()}
           {courseRows}
         </CardContent>
       </Card>

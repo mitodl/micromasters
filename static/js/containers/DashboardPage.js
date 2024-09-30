@@ -963,7 +963,6 @@ class DashboardPage extends React.Component {
           {this.renderExamEnrollmentDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program} />
-            {financialAidCard}
             <CourseListCard
               program={program}
               couponPrices={couponPrices}
