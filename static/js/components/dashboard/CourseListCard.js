@@ -18,7 +18,6 @@ import {
   COURSEWARE_BACKEND_MITXONLINE
 } from "../../constants"
 
-
 export default class CourseListCard extends React.Component {
   props: {
     program: Program,
