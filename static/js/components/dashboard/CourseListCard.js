@@ -18,7 +18,6 @@ import {
   COURSEWARE_BACKEND_MITXONLINE
 } from "../../constants"
 
-const priceMessageClassName = "price-message"
 
 export default class CourseListCard extends React.Component {
   props: {
@@ -65,7 +64,7 @@ export default class CourseListCard extends React.Component {
                 : COURSEWARE_BACKEND_EDXORG
             }/`}
           >
-            visit MITx Online
+            visit {programBackendName(program)}
           </a>{" "}
           for accurate information.
         </div>
