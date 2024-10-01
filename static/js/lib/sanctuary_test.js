@@ -138,18 +138,33 @@ describe("sanctuary util functions", () => {
     const left = S.Left(2)
     const right = S.Right(4)
     it("returns a Left if passed one, regardless of predicate", () => {
-      assertIsLeft(filterE(x => x === 2, left), 2)
-      assertIsLeft(filterE(x => x !== 2, left), 2)
+      assertIsLeft(
+        filterE(x => x === 2, left),
+        2
+      )
+      assertIsLeft(
+        filterE(x => x !== 2, left),
+        2
+      )
     })
 
     it("returns a Left if predicate(right.value) === false", () => {
-      assertIsLeft(filterE(x => x === 2, right), 4)
+      assertIsLeft(
+        filterE(x => x === 2, right),
+        4
+      )
       assertIsLeft(filterE(R.isNil, right), 4)
     })
 
     it("returns a Right if predicate(right.value) === true", () => {
-      assertIsRight(filterE(x => x === 4, right), 4)
-      assertIsRight(filterE(x => x % 2 === 0, right), 4)
+      assertIsRight(
+        filterE(x => x === 4, right),
+        4
+      )
+      assertIsRight(
+        filterE(x => x % 2 === 0, right),
+        4
+      )
     })
   })
 

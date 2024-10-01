@@ -69,7 +69,10 @@ describe("Course Grades", () => {
   })
 
   it("should only display the course grade if has_exam == false", () => {
-    [[true, 3], [false, 1]].forEach(([hasExam, expectedGradeCount]) => {
+    [
+      [true, 3],
+      [false, 1]
+    ].forEach(([hasExam, expectedGradeCount]) => {
       course.has_exam = hasExam
       const grades = renderGrades()
       assert.equal(

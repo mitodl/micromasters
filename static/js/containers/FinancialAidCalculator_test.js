@@ -532,9 +532,7 @@ describe("FinancialAidCalculator", function() {
           )
           assert.equal(
             document.querySelector(".api-error").textContent,
-            `There was an error (Error 500: an error message). Please contact ${
-              SETTINGS.support_email
-            } \
+            `There was an error (Error 500: an error message). Please contact ${SETTINGS.support_email} \
 if you continue to have problems.`
           )
           const state = helper.store.getState()

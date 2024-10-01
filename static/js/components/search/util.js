@@ -104,12 +104,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
         const matcher = matchFieldName(oldKey)
         filtersMap = R.compose(
           R.fromPairs,
-          R.reject(
-            R.compose(
-              matcher,
-              R.view(R.lensIndex(0))
-            )
-          ),
+          R.reject(R.compose(matcher, R.view(R.lensIndex(0)))),
           R.toPairs
         )(filtersMap)
 

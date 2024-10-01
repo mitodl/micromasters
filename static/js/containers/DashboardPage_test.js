@@ -447,10 +447,8 @@ describe("DashboardPage", function() {
       ).then(() => {
         assert.deepEqual(helper.store.getState().ui.toastMessage, {
           title:   "Course Enrollment",
-          message: `Something went wrong. You paid for this course '${
-            course.title
-          }' but are not enrolled.`,
-          icon: TOAST_FAILURE
+          message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+          icon:    TOAST_FAILURE
         })
       })
     })
@@ -842,9 +840,7 @@ describe("DashboardPage", function() {
 
     for (const faExpectedObj of faExpectedStateList) {
       it(`shows the payment teaser dialog when a user lacks permission
-        to contact a course team with financial aid status: ${
-  faExpectedObj.hasFA
-}`, () => {
+        to contact a course team with financial aid status: ${faExpectedObj.hasFA}`, () => {
         const course = makeCourse()
         course.has_contact_email = true
         // Set all course runs to unpaid

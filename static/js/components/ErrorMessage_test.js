@@ -48,7 +48,10 @@ describe("ErrorMessage", () => {
     const renderErrorMessage = props => {
       return makeStrippedHtml(<ErrorMessage {...props} />)
     }
-    const codeAttributes = [["error_code", "500"], ["errorStatusCode", 404]]
+    const codeAttributes = [
+      ["error_code", "500"],
+      ["errorStatusCode", 404]
+    ]
     const messageAttributes = [
       ["user_message", "A message"],
       ["detail", "Some details"]
