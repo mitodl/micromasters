@@ -64,7 +64,4 @@ const mapDispatchToProps = dispatch =>
     ["setRevokeShareDialogVisibility", setRevokeShareDialogVisibility]
   ])
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RevokeShareDialog)
+export default connect(mapStateToProps, mapDispatchToProps)(RevokeShareDialog)

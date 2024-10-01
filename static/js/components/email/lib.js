@@ -205,12 +205,9 @@ export const getFilters = (root: Object) => {
 }
 
 export const AUTOMATIC_EMAIL_ADMIN_CONFIG: EmailConfig = {
-  title:           "Edit Email Campaign",
-  editEmail:       actions.automaticEmails.patch,
-  emailSendParams: R.compose(
-    convertEmailEdit,
-    R.prop("inputs")
-  ),
+  title:             "Edit Email Campaign",
+  editEmail:         actions.automaticEmails.patch,
+  emailSendParams:   R.compose(convertEmailEdit, R.prop("inputs")),
   supportBulkEmails: true,
 
   emailOpenParams: (emailOpenParams: AutomaticEmail) => ({

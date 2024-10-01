@@ -416,9 +416,7 @@ describe("Course Status Messages", () => {
         ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`
       ]
     ]) {
-      it(`should nag about missing the payment deadline when future re-enrollments and date is ${
-        nextEnrollmentStart[0]
-      }`, () => {
+      it(`should nag about missing the payment deadline when future re-enrollments and date is ${nextEnrollmentStart[0]}`, () => {
         makeRunPast(course.runs[0])
         makeRunMissedDeadline(course.runs[0])
         makeRunOverdue(course.runs[0])
@@ -427,10 +425,8 @@ describe("Course Status Messages", () => {
         const date = formatDate(course.runs[1].course_start_date)
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.${
-              nextEnrollmentStart[1]
-            }`,
-            action: "course action was called"
+            message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
+            action:  "course action was called"
           }
         ])
         assert(
@@ -534,9 +530,7 @@ describe("Course Status Messages", () => {
         ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`
       ]
     ]) {
-      it(`should inform next enrollment date after failing edx course when date is ${
-        nextEnrollmentStart[0]
-      }`, () => {
+      it(`should inform next enrollment date after failing edx course when date is ${nextEnrollmentStart[0]}`, () => {
         makeRunPast(course.runs[0])
         makeRunFailed(course.runs[0])
         makeRunFuture(course.runs[1])
@@ -546,10 +540,8 @@ describe("Course Status Messages", () => {
         )
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: `You did not pass the course, but you can re-enroll. Next course starts ${date}.${
-              nextEnrollmentStart[1]
-            }`,
-            action: "course action was called"
+            message: `You did not pass the course, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
+            action:  "course action was called"
           }
         ])
         assert(
