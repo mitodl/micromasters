@@ -51,8 +51,7 @@ export default class CourseListCard extends React.Component {
       <div className="callout callout-warning">
         <img src="/static/images/c-warning-1.svg" alt="Warning" />
         <div>
-          The following course, enrollment, and grade information is outdated.
-          <br />
+          The following course, enrollment, and grade information is outdated.{" "}
           {hasSocialAuthMessage}{" "}
           <a
             href={
