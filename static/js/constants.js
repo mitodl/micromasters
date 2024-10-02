@@ -123,6 +123,10 @@ export const TOAST_SUCCESS = "done"
 export const TOAST_FAILURE = "error"
 
 export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, "courses/")
+export const EDX_BASE_DASHBOARD_LINK = urljoin(
+  SETTINGS.edx_base_url,
+  "dashboard/programs/"
+)
 export const MITXONLINE_LINK_BASE = urljoin(
   SETTINGS.mitxonline_base_url,
   "courses/"

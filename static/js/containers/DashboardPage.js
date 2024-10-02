@@ -943,6 +943,7 @@ class DashboardPage extends React.Component {
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program} />
             <CourseListCard
+              email={profile.email}
               program={program}
               couponPrices={couponPrices}
               key={program.id}

@@ -14,12 +14,13 @@ import { programBackendName } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
 import {
-  COURSEWARE_BACKEND_EDXORG,
-  COURSEWARE_BACKEND_MITXONLINE
+  EDX_BASE_DASHBOARD_LINK,
+  MITXONLINE_DASHBOARD_LINK
 } from "../../constants"
 
 export default class CourseListCard extends React.Component {
   props: {
+    email: string,
     program: Program,
     couponPrices?: CouponPrices,
     openFinancialAidCalculator?: () => void,
@@ -41,29 +42,23 @@ export default class CourseListCard extends React.Component {
     showStaffView: boolean
   }
 
-  handleCalculatePriceClick = (e: Event) => {
-    const { openFinancialAidCalculator } = this.props
-    if (openFinancialAidCalculator) openFinancialAidCalculator()
-    e.preventDefault()
-  }
-
   renderGradesOutOfDateMessage(): ?React$Element<*> {
-    const { program } = this.props
+    const { program, email } = this.props
     return (
       <div className="callout callout-warning">
         <img src="/static/images/c-warning-1.svg" alt="Warning" />
         <div>
           The following course, enrollment, and grade information is outdated.
           <br />
-          Please{" "}
+          Please use your current email <b>{email}</b> to {" "}
           <a
-            href={`/login/${
+            href={
               program.has_mitxonline_courses
-                ? COURSEWARE_BACKEND_MITXONLINE
-                : COURSEWARE_BACKEND_EDXORG
-            }/`}
+                ? MITXONLINE_DASHBOARD_LINK
+                : EDX_BASE_DASHBOARD_LINK
+            }
           >
-            visit {programBackendName(program)}
+            login to {programBackendName(program)}
           </a>{" "}
           for accurate information.
         </div>
