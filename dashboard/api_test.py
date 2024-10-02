@@ -2059,6 +2059,7 @@ class InfoProgramTest(MockedESTestCase):
             "grade_average": 91,
             "certificate": "",
             "has_mitxonline_courses": False,
+            "has_socialauth_for_backend": True,
             "program_letter_url": reverse('program_letter', args=[self.program_letter.uuid])
         }
         self.assertEqual(res, expected_data)
