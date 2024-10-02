@@ -1898,6 +1898,8 @@ class InfoProgramTest(MockedESTestCase):
             "grade_average": 91,
             "certificate": "",
             "has_mitxonline_courses": False,
+            "has_socialauth_for_backend": True,
+
         }
         self.assertEqual(res, expected_data)
 
@@ -1943,6 +1945,7 @@ class InfoProgramTest(MockedESTestCase):
             "grade_average": 91,
             "certificate": "",
             "has_mitxonline_courses": False,
+            "has_socialauth_for_backend": True,
         }
         self.assertEqual(res, expected_data)
 
@@ -1974,6 +1977,7 @@ class InfoProgramTest(MockedESTestCase):
             "grade_average": 91,
             "certificate": "",
             "has_mitxonline_courses": False,
+            "has_socialauth_for_backend": True,
         }
         self.assertEqual(res, expected_data)
 
@@ -2019,6 +2023,7 @@ class InfoProgramTest(MockedESTestCase):
             "grade_average": 91,
             "certificate": "",
             "has_mitxonline_courses": False,
+            "has_socialauth_for_backend": True,
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.id]),
         }
 
