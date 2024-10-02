@@ -99,7 +99,6 @@ describe("CourseListCard", () => {
             updateEmailEdit={() => undefined}
             sendEmail={() => undefined}
             emailDialogVisibility={false}
-            email={INITIAL_EMAIL_STATE}
             setEnrollCourseDialogVisibility={() => undefined}
             setEnrollSelectedCourseRun={() => undefined}
             setCalculatePriceDialogVisibility={() => undefined}

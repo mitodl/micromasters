@@ -20,7 +20,7 @@ import {
 
 export default class CourseListCard extends React.Component {
   props: {
-    email: string,
+    email?: string,
     program: Program,
     couponPrices?: CouponPrices,
     openFinancialAidCalculator?: () => void,
