@@ -157,13 +157,14 @@ export const makeProgram = (): Program => {
     },
     exam_card_status:
       PEARSON_STATUSES[Math.floor(Math.random() * PEARSON_STATUSES.length)],
-    grade_average:           Math.floor(Math.random() * 100),
-    certificate:             "",
-    grade_records_url:       "",
-    program_letter_url:      "",
-    number_courses_required: courses.length,
-    number_courses_passed:   0,
-    has_mitxonline_courses:  false
+    grade_average:              Math.floor(Math.random() * 100),
+    certificate:                "",
+    grade_records_url:          "",
+    program_letter_url:         "",
+    number_courses_required:    courses.length,
+    number_courses_passed:      0,
+    has_mitxonline_courses:     false,
+    has_socialauth_for_backend: true
   }
 }
 

@@ -42,7 +42,8 @@ export type Program = {
   program_letter_url:         string,
   number_courses_required:    number,
   number_courses_passed:      number,
-  has_mitxonline_courses:     boolean
+  has_mitxonline_courses:     boolean,
+  has_socialauth_for_backend: boolean
 }
 
 export type ProctoredExamResult = {

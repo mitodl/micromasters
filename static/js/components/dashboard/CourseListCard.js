@@ -44,13 +44,16 @@ export default class CourseListCard extends React.Component {
 
   renderGradesOutOfDateMessage(): ?React$Element<*> {
     const { program, email } = this.props
+    const hasSocialAuthMessage = program.has_socialauth_for_backend
+      ? "Please visit"
+      : `Please use your current email ${email ? email : ""} to login to`
     return (
       <div className="callout callout-warning">
         <img src="/static/images/c-warning-1.svg" alt="Warning" />
         <div>
           The following course, enrollment, and grade information is outdated.
           <br />
-          Please use your current email <b>{email}</b> to{" "}
+          {hasSocialAuthMessage}{" "}
           <a
             href={
               program.has_mitxonline_courses
@@ -58,7 +61,7 @@ export default class CourseListCard extends React.Component {
                 : EDX_BASE_DASHBOARD_LINK
             }
           >
-            login to {programBackendName(program)}
+            {programBackendName(program)}
           </a>{" "}
           for accurate information.
         </div>
