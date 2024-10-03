@@ -15,9 +15,10 @@ from django.urls import reverse
 from django_redis import get_redis_connection
 from edx_api.client import EdxApi
 
-from backends.constants import COURSEWARE_BACKEND_URL, COURSEWARE_BACKENDS
+from backends.constants import COURSEWARE_BACKEND_URL, COURSEWARE_BACKENDS, BACKEND_MITX_ONLINE, BACKEND_EDX_ORG
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
+from backends.utils import has_social_auth
 from courses.models import Program, ElectiveCourse, CourseRun
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
@@ -188,6 +189,8 @@ def get_info_for_program(mmtrack):
         dict: a dictionary containing information about the program
     """
     # basic data for the program
+    backend = BACKEND_MITX_ONLINE if mmtrack.program.has_mitxonline_courses else BACKEND_EDX_ORG
+    print(has_social_auth(mmtrack.user, backend))
     data = {
         "id": mmtrack.program.pk,
         "description": mmtrack.program.description,
@@ -204,8 +207,10 @@ def get_info_for_program(mmtrack):
             else mmtrack.program.course_set.count()
         ),
         "number_courses_passed": mmtrack.get_number_of_passed_courses_for_completion(),
-        "has_mitxonline_courses": mmtrack.program.has_mitxonline_courses
+        "has_mitxonline_courses": mmtrack.program.has_mitxonline_courses,
+        "has_socialauth_for_backend": has_social_auth(mmtrack.user, backend)
     }
+
     if mmtrack.financial_aid_available:
         data["financial_aid_user_info"] = FinancialAidDashboardSerializer.serialize(mmtrack.user, mmtrack.program)
     if mmtrack.has_exams:

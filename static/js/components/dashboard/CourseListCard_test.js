@@ -99,7 +99,6 @@ describe("CourseListCard", () => {
             updateEmailEdit={() => undefined}
             sendEmail={() => undefined}
             emailDialogVisibility={false}
-            email={INITIAL_EMAIL_STATE}
             setEnrollCourseDialogVisibility={() => undefined}
             setEnrollSelectedCourseRun={() => undefined}
             setCalculatePriceDialogVisibility={() => undefined}
@@ -119,36 +118,6 @@ describe("CourseListCard", () => {
       }
     )
   }
-
-  describe("pricing message", () => {
-    describe("with financial aid", () => {
-      it(" does not require applying for financial aid", () => {
-        changeToFinancialAid(FA_STATUS_CREATED, false)
-        const wrapper = renderCourseListCard()
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "To get credit for the courses in this program, you must pay for a verified certificate from"
-        )
-      })
-
-      it("does not display price with both coupon and financial aid", () => {
-        changeToFinancialAid(FA_STATUS_APPROVED, true)
-        const coupon = makeCoupon(program)
-        coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
-        coupon.amount = new Decimal("1")
-        const couponPrices = calculatePrices([program], [coursePrice], [coupon])
-        const wrapper = renderCourseListCard({ couponPrices })
-        const messageEl = wrapper.find(".price-message")
-        assert.lengthOf(messageEl, 1)
-        assert.include(
-          messageEl.text(),
-          "To get credit for the courses in this program, you must pay for a verified certificate from"
-        )
-      })
-    })
-  })
 
   it("creates a CourseRow for each course", () => {
     const now = moment()

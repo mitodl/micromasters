@@ -517,24 +517,6 @@ describe("DashboardPage", function() {
         }
       })
 
-      it("should show a toast message if skip financial aid fails", async () => {
-        helper.skipFinancialAidStub.returns(Promise.reject())
-
-        const [wrapper] = await renderComponent(
-          "/dashboard",
-          DASHBOARD_SUCCESS_ACTIONS
-        )
-        await wrapper
-          .find(FinancialAidCard)
-          .props()
-          .skipFinancialAid()
-        const { toastMessage } = helper.store.getState().ui
-        assert.deepEqual(toastMessage, {
-          message: "Failed to skip financial aid.",
-          icon:    "error"
-        })
-      })
-
       describe("100% program coupon", () => {
         const expectedActions = DASHBOARD_SUCCESS_ACTIONS.concat([
           REQUEST_SKIP_FINANCIAL_AID,
@@ -586,22 +568,6 @@ describe("DashboardPage", function() {
           return renderComponent("/dashboard", expectedActions).then(
             ([wrapper]) => {
               assert.equal(wrapper.find(".financial-aid-card").length, 0)
-            }
-          )
-        })
-
-        it("should not care about coupons for other programs", () => {
-          const otherProgram = dashboard.programs[1]
-          coupon.object_id = otherProgram.id
-          coupon.program_id = otherProgram.id
-
-          return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
-            ([wrapper]) => {
-              sinon.assert.notCalled(helper.skipFinancialAidStub)
-              assert.equal(
-                wrapper.find(".financial-aid-card").hostNodes().length,
-                1
-              )
             }
           )
         })

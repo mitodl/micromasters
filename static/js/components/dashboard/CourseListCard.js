@@ -13,11 +13,14 @@ import type { UIState } from "../../reducers/ui"
 import { programBackendName } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
-
-const priceMessageClassName = "price-message"
+import {
+  EDX_BASE_DASHBOARD_LINK,
+  MITXONLINE_DASHBOARD_LINK
+} from "../../constants"
 
 export default class CourseListCard extends React.Component {
   props: {
+    email?: string,
     program: Program,
     couponPrices?: CouponPrices,
     openFinancialAidCalculator?: () => void,
@@ -39,22 +42,29 @@ export default class CourseListCard extends React.Component {
     showStaffView: boolean
   }
 
-  handleCalculatePriceClick = (e: Event) => {
-    const { openFinancialAidCalculator } = this.props
-    if (openFinancialAidCalculator) openFinancialAidCalculator()
-    e.preventDefault()
-  }
-
-  renderPriceMessage(): ?React$Element<*> {
-    const { program } = this.props
-
+  renderGradesOutOfDateMessage(): ?React$Element<*> {
+    const { program, email } = this.props
+    const hasSocialAuthMessage = program.has_socialauth_for_backend
+      ? "Please visit"
+      : `Please use your current email ${email ? email : ""} to login to`
     return (
-      <p className={priceMessageClassName}>
-        To get credit for the courses in this program, you must pay for a
-        verified certificate from {programBackendName(program)}. If you want to
-        audit courses for FREE and upgrade later, click Enroll then choose the
-        audit option.
-      </p>
+      <div className="callout callout-warning">
+        <img src="/static/images/c-warning-1.svg" alt="Warning" />
+        <div>
+          The following course, enrollment, and grade information is outdated.{" "}
+          {hasSocialAuthMessage}{" "}
+          <a
+            href={
+              program.has_mitxonline_courses
+                ? MITXONLINE_DASHBOARD_LINK
+                : EDX_BASE_DASHBOARD_LINK
+            }
+          >
+            {programBackendName(program)}
+          </a>{" "}
+          for accurate information.
+        </div>
+      </div>
     )
   }
 
@@ -115,7 +125,7 @@ export default class CourseListCard extends React.Component {
           <h2>
             {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
           </h2>
-          {showStaffView ? null : this.renderPriceMessage()}
+          {showStaffView ? null : this.renderGradesOutOfDateMessage()}
           {courseRows}
         </CardContent>
       </Card>
