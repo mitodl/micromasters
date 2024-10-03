@@ -127,7 +127,7 @@ export default class CourseListCard extends React.Component {
           </h2>
           {showStaffView ? null : this.renderGradesOutOfDateMessage()}
           <div className="parent-overlay">
-            <div className="overlay"></div>
+            <div className="overlay" />
             {courseRows}
           </div>
         </CardContent>
