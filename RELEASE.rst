@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.243.0
+---------------
+
+- Add warning message to DEDP dashboard (#5399)
+- chore(deps): update dependency requests to v2.32.2 [security]
+- Delete .github/ISSUE_TEMPLATE directory (#5379)
+- chore(deps): update dependency idna to v3 [security]
+
 Version 0.242.2 (Released May 20, 2024)
 ---------------
 
