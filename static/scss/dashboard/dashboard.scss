@@ -20,6 +20,22 @@
   font-weight: 600;
 }
 
+.parent-overlay {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: block;
+  z-index: 999;
+  background-color: black;
+  opacity: 0.2;
+}
+
 .dashboard {
 
   h2 {
