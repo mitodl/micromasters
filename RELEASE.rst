@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.243.0
+Version 0.243.0 (Released October 07, 2024)
 ---------------
 
 - Add warning message to DEDP dashboard (#5399)
