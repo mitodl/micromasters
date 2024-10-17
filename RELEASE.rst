@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.243.1
+Version 0.243.1 (Released October 17, 2024)
 ---------------
 
 - Adding overlay over course rows (#5403)
