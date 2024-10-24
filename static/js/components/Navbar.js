@@ -170,7 +170,14 @@ export default class Navbar extends React.Component {
             </div>
             <div className="links">
               {adminLink(closeDrawer, "/dashboard", "Dashboard", "dashboard")}
-              {adminLink(closeDrawer, "https://bi.ol.mit.edu/superset/dashboard/11/", "Learners", "people", true, true)}
+              {adminLink(
+                closeDrawer,
+                "https://bi.ol.mit.edu/superset/dashboard/11/",
+                "Learners",
+                "people",
+                true,
+                true
+              )}
               {adminLink(closeDrawer, "/cms", "CMS", "description", true, true)}
               {financialAidLink(
                 closeDrawer,
