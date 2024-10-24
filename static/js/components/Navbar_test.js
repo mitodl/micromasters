@@ -43,7 +43,6 @@ describe("Navbar", () => {
         "/learner/jane",
         "/learner/jane",
         "/dashboard",
-        "/learners",
         "/automaticemails",
         "/learner/jane",
         "/settings",
