@@ -144,7 +144,7 @@ class Course(models.Model):
         if not course_run or not course_run.start_date:
             promised_run = self.get_promised_run()
             if promised_run:
-                return "Coming " + promised_run.fuzzy_start_date
+                return promised_run.fuzzy_start_date
             else:
                 return "Not available"
 
