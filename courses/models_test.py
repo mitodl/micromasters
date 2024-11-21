@@ -333,7 +333,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
             enrollment_start=None,
             enrollment_end=None,
         )
-        assert self.course.enrollment_text == 'Coming Fall 2017'
+        assert self.course.enrollment_text == 'Fall 2017'
 
     def test_url_with_no_run(self):
         """Test course url with no course runs"""
