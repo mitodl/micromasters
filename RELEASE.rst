@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.244.0
+Version 0.244.0 (Released November 21, 2024)
 ---------------
 
 - Learner search goes to BI (#5405)
