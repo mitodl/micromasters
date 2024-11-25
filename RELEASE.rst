@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.244.1
+Version 0.244.1 (Released November 25, 2024)
 ---------------
 
 - Remore coming from fuzzy start date (#5407)
