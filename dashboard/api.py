@@ -730,8 +730,8 @@ def refresh_user_data(user_id, provider):
     # get the credentials for the current user for edX
     try:
         user_social = get_social_auth(user, provider)
-    except:
-        log.exception('user "%s" does not have edX credentials', user.username)
+    except ObjectDoesNotExist:
+        log.info('No social auth for %s for user %s', provider, user.username)
         return
 
     try:
