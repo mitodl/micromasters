@@ -24,7 +24,7 @@ botocore==1.19.63
     #   s3transfer
 celery==5.2.2
     # via -r requirements.in
-certifi==2018.1.18
+certifi==2023.7.22
     # via
     #   -r requirements.in
     #   opensearch-py
