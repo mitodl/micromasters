@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.245.0
+---------------
+
+- chore(deps): update dependency click-didyoumean to v0.3.1 (#5410)
+- Just log info when user has no social auth (#5411)
+
 Version 0.244.1 (Released November 25, 2024)
 ---------------
 
