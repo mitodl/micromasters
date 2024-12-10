@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.245.0
+Version 0.245.0 (Released December 10, 2024)
 ---------------
 
 - chore(deps): update dependency click-didyoumean to v0.3.1 (#5410)
