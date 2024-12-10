@@ -296,7 +296,7 @@ traitlets==5.9.0
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==1.26.5
+urllib3==1.26.18
     # via
     #   -r requirements.in
     #   botocore
