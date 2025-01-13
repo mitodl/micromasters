@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.246.0
+---------------
+
+- Make discussions sync crontab configurable
+- Update quote on home page (#5415)
+
 Version 0.245.0 (Released December 10, 2024)
 ---------------
 
