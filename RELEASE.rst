@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.246.0
+Version 0.246.0 (Released January 13, 2025)
 ---------------
 
 - Make discussions sync crontab configurable
