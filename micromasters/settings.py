@@ -497,6 +497,7 @@ CELERY_RESULT_BACKEND = get_string(
 CELERY_TASK_ALWAYS_EAGER = get_bool("CELERY_TASK_ALWAYS_EAGER", False) or get_bool("CELERY_ALWAYS_EAGER", False)
 CELERY_TASK_EAGER_PROPAGATES = (get_bool("CELERY_TASK_EAGER_PROPAGATES", True) or
                                 get_bool("CELERY_EAGER_PROPAGATES_EXCEPTIONS", True))
+CRONTAB_DISCUSSIONS_SYNC = get_string("CRONTAB_DISCUSSIONS_SYNC", None)
 CELERY_BEAT_SCHEDULE = {
     'batch-update-user-data-every-friday-every-6-hrs': {
         'task': 'dashboard.tasks.batch_update_user_data',
@@ -516,7 +517,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     'discussions-sync-memberships-every-minute': {
         'task': 'discussions.tasks.sync_channel_memberships',
-        'schedule': crontab(minute='*', hour='*')
+        'schedule': crontab(*CRONTAB_DISCUSSIONS_SYNC.split()) if CRONTAB_DISCUSSIONS_SYNC else crontab(minute='*', hour='*')
     },
     'freeze-final-grades-every-24-hrs-few-times': {
         'task': 'grades.tasks.find_course_runs_and_freeze_grades',
