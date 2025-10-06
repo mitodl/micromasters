@@ -124,14 +124,6 @@ et-xmlfile==1.1.0
     # via openpyxl
 executing==1.2.0
     # via stack-data
-factory-boy==2.8.1
-    # via -r requirements.in
-faker==0.9.1
-    # via
-    #   -r requirements.in
-    #   factory-boy
-flaky==3.7.0
-    # via -r requirements.in
 html5lib==0.999999999
     # via
     #   -r requirements.in
@@ -220,7 +212,6 @@ python-dateutil==2.5.3
     #   -r requirements.in
     #   botocore
     #   edx-api-client
-    #   faker
     #   opensearch-dsl
 python3-openid==3.1.0
     # via social-auth-core
@@ -259,7 +250,6 @@ six==1.14.0
     #   django-compat
     #   django-role-permissions
     #   edx-opaque-keys
-    #   faker
     #   html5lib
     #   l18n
     #   opensearch-dsl
@@ -288,8 +278,6 @@ stevedore==1.29.0
     # via edx-opaque-keys
 tablib[xls,xlsx]==3.0.0
     # via wagtail
-text-unidecode==1.2
-    # via faker
 tornado==5.1.1
     # via robohash
 traitlets==5.9.0
