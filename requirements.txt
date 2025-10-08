@@ -234,7 +234,7 @@ redis==3.5.3
     # via
     #   -r requirements.in
     #   django-redis
-requests==2.32.2
+requests==2.32.4
     # via
     #   -r requirements.in
     #   edx-api-client
