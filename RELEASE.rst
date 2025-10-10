@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.247.0
+---------------
+
+- adding import_course command and course run sync (#5429)
+- update
+
 Version 0.246.0 (Released January 13, 2025)
 ---------------
 
