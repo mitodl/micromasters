@@ -102,34 +102,10 @@ describe("CourseAction", () => {
     for (const data of [
       ["", "", true],
       ["foo/bar/baz", "", true],
-      [
-        "foo/bar/baz",
-        moment()
-          .add(10, "days")
-          .toISOString(),
-        true
-      ],
-      [
-        "",
-        moment()
-          .add(10, "days")
-          .toISOString(),
-        true
-      ],
-      [
-        "",
-        moment()
-          .subtract(10, "days")
-          .toISOString(),
-        true
-      ],
-      [
-        "foo/bar/baz",
-        moment()
-          .subtract(10, "days")
-          .toISOString(),
-        false
-      ]
+      ["foo/bar/baz", moment().add(10, "days").toISOString(), true],
+      ["", moment().add(10, "days").toISOString(), true],
+      ["", moment().subtract(10, "days").toISOString(), true],
+      ["foo/bar/baz", moment().subtract(10, "days").toISOString(), false]
     ]) {
       it(`should ${data[2] ? "disable" : "enable"} Re-Enroll button`, () => {
         const run = course.runs[0]

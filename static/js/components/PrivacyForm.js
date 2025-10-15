@@ -65,12 +65,8 @@ class PrivacyForm extends ProfileFormFields {
     label: string,
     options: Option[]
   ): React$Element<*> {
-    const {
-      profile,
-      updateProfile,
-      validator,
-      updateValidationVisibility
-    } = this.props
+    const { profile, updateProfile, validator, updateValidationVisibility } =
+      this.props
     const onChange = e => {
       const clone = _.cloneDeep(profile)
       let value = e.target.value

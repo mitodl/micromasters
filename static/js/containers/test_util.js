@@ -39,12 +39,11 @@ export const DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS = SUCCESS_ACTIONS.concat([
   actions.discussionsFrontpage.get.successType
 ])
 
-export const DASHBOARD_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.concat(
-  [
+export const DASHBOARD_SUCCESS_ACTIONS =
+  DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.concat([
     actions.programLearners.get.requestType,
     actions.programLearners.get.successType
-  ]
-)
+  ])
 
 export const DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS = R.filter(
   R.compose(

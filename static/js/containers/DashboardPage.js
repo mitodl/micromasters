@@ -206,10 +206,8 @@ class DashboardPage extends React.Component {
         dispatch(
           setToastMessage({
             title:   "Course Enrollment",
-            message: `Something went wrong. You paid for this course '${
-              course.title
-            }' but are not enrolled.`,
-            icon: TOAST_FAILURE
+            message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+            icon:    TOAST_FAILURE
           })
         )
       } else {

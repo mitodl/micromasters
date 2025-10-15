@@ -215,6 +215,7 @@ class App extends React.Component {
     }
 
     return (
+      // $FlowFixMe
       <Toast onTimeout={this.clearMessage}>
         <div className="toast-message">
           {icon}

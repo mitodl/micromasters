@@ -1,3 +1,4 @@
+// @flow
 // eslint-disable-next-line no-redeclare
 /* global document: false, window: false, SETTINGS: false */
 /* eslint-disable no-unused-vars */
@@ -165,13 +166,14 @@ describe("DashboardPage", function() {
   })
 
   it("should not load the discussions frontpage if the OD URL is not set", async () => {
+    // $FlowFixMe
     SETTINGS.open_discussions_redirect_url = undefined
     await renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS)
   })
   ;[true, false].forEach(showCard => {
     it(`should ${
       showCard ? "show" : "not show"
-    } discussions card when feature flag is ${showCard}`, () => {
+    } discussions card when feature flag is ${showCard.toString()}`, () => {
       SETTINGS.FEATURES.DISCUSSIONS_POST_UI = showCard
       return renderComponent(
         "/dashboard",
@@ -235,10 +237,7 @@ describe("DashboardPage", function() {
 
     return renderComponent("/dashboard", actionsNoFrontpage).then(
       ([wrapper]) => {
-        const text = wrapper
-          .find(".no-program-card")
-          .hostNodes()
-          .text()
+        const text = wrapper.find(".no-program-card").hostNodes().text()
         assert.equal(
           text,
           "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
@@ -274,6 +273,7 @@ describe("DashboardPage", function() {
             const enrollBtn = document.querySelector(".enroll-button")
             return helper
               .listenForActions([SET_ENROLL_PROGRAM_DIALOG_ERROR], () => {
+                // $FlowFixMe
                 enrollBtn.click()
               })
               .then(() => {
@@ -290,6 +290,7 @@ describe("DashboardPage", function() {
                         .at(2)
                         .props()
                       props.setSelectedProgram(availablePrograms[0].id)
+                      // $FlowFixMe
                       enrollBtn.click()
                     }
                   )
@@ -305,11 +306,7 @@ describe("DashboardPage", function() {
   it("should show a <Grades /> component, and open the dialog when clicked", () => {
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
       ([wrapper]) => {
-        wrapper
-          .find(Grades)
-          .find(".open-popup")
-          .first()
-          .simulate("click")
+        wrapper.find(Grades).find(".open-popup").first().simulate("click")
         const state = helper.store.getState().ui
         const key = gradeDetailPopupKey(
           COURSE_GRADE,
@@ -329,12 +326,7 @@ describe("DashboardPage", function() {
     helper.store.dispatch(showDialog(key))
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
       ([wrapper]) => {
-        wrapper
-          .find(Grades)
-          .find(Dialog)
-          .first()
-          .props()
-          .onClose()
+        wrapper.find(Grades).find(Dialog).first().props().onClose()
         const state = helper.store.getState().ui
         assert.isFalse(state.dialogVisibility[key])
       }
@@ -375,7 +367,9 @@ describe("DashboardPage", function() {
     it("shows the order status toast when the query param is set for a success", () => {
       const course = findCourse(
         course =>
+          // $FlowFixMe
           course.runs.length > 0 &&
+          // $FlowFixMe
           course.runs[0].status === STATUS_CURRENTLY_ENROLLED
       )
       const run = course.runs[0]
@@ -396,7 +390,9 @@ describe("DashboardPage", function() {
       it("doesn't have a toast message loop on success", () => {
         const course = findCourse(
           course =>
+            // $FlowFixMe
             course.runs.length > 0 &&
+            // $FlowFixMe
             course.runs[0].status === STATUS_CURRENTLY_ENROLLED
         )
         const run = course.runs[0]
@@ -436,7 +432,9 @@ describe("DashboardPage", function() {
     it("shows the toast when the query param is set for a success but user is not enrolled", () => {
       const course = findCourse(
         course =>
+          // $FlowFixMe
           course.runs.length > 0 &&
+          // $FlowFixMe
           course.runs[0].status === STATUS_PAID_BUT_NOT_ENROLLED
       )
       const run = course.runs[0]
@@ -447,10 +445,8 @@ describe("DashboardPage", function() {
       ).then(() => {
         assert.deepEqual(helper.store.getState().ui.toastMessage, {
           title:   "Course Enrollment",
-          message: `Something went wrong. You paid for this course '${
-            course.title
-          }' but are not enrolled.`,
-          icon: TOAST_FAILURE
+          message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+          icon:    TOAST_FAILURE
         })
       })
     })
@@ -458,6 +454,7 @@ describe("DashboardPage", function() {
     it("sets the course run to have a pending status", () => {
       const course = findCourse(
         course =>
+          // $FlowFixMe
           course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
       )
       const run = course.runs[0]
@@ -468,9 +465,12 @@ describe("DashboardPage", function() {
       ).then(() => {
         const [courseRun] = findCourseRun(
           helper.store.getState().dashboard[SETTINGS.user.username].programs,
+          // $FlowFixMe
           _run => _run.course_id === run.course_id
         )
+        // $FlowFixMe
         assert.equal(run.course_id, courseRun.course_id)
+        // $FlowFixMe
         assert.equal(courseRun.status, STATUS_PENDING_ENROLLMENT)
       })
     })
@@ -512,9 +512,7 @@ describe("DashboardPage", function() {
         coupon.amount_type = "percent-discount"
         coupon.amount = Decimal(".05")
         helper.couponsStub.returns(Promise.resolve([coupon]))
-        program.financial_aid_user_info = {
-          has_user_applied: false
-        }
+        program.financial_aid_user_info.has_user_applied = false
       })
 
       describe("100% program coupon", () => {
@@ -533,15 +531,14 @@ describe("DashboardPage", function() {
               program.financial_aid_user_info.application_status = status
               const expectedSkip = !FA_TERMINAL_STATUSES.includes(status)
               // Extra actions dispatched to refresh the dashboard
-              const expectedActionsWithDashboardRequest = expectedActions.concat(
-                [
+              const expectedActionsWithDashboardRequest =
+                expectedActions.concat([
                   REQUEST_DASHBOARD,
                   RECEIVE_DASHBOARD_SUCCESS,
                   actions.prices.get.requestType,
                   actions.prices.get.successType,
                   SET_CONFIRM_SKIP_DIALOG_VISIBILITY
-                ]
-              )
+                ])
               const _actions = expectedSkip
                 ? expectedActionsWithDashboardRequest
                 : DASHBOARD_SUCCESS_ACTIONS
@@ -578,6 +575,7 @@ describe("DashboardPage", function() {
       it("refetches the dashboard after 3 seconds if 2 minutes has not passed", () => {
         const course = findCourse(
           course =>
+            // $FlowFixMe
             course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
         )
         const run = course.runs[0]
@@ -608,6 +606,7 @@ describe("DashboardPage", function() {
       it("shows an error message if more than 30 seconds have passed", () => {
         const course = findCourse(
           course =>
+            // $FlowFixMe
             course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
         )
         const run = course.runs[0]
@@ -616,9 +615,7 @@ describe("DashboardPage", function() {
           `/dashboard?status=receipt&course_key=${encodedKey}`,
           SUCCESS_WITH_TIMEOUT_ACTIONS
         ).then(() => {
-          const past = moment()
-            .add(-125, "seconds")
-            .toISOString()
+          const past = moment().add(-125, "seconds").toISOString()
           helper.store.dispatch(setInitialTime(past))
           sinon.assert.calledWith(waitStub, 3000)
           waitResolve()
@@ -731,7 +728,7 @@ describe("DashboardPage", function() {
     let dashboardResponse
     const faExpectedStateList = [
       {
-        hasFA:           true,
+        hasFA: true,
         expectedMessage:
           "This is a premium feature for learners who have paid for the course."
       },
@@ -747,12 +744,13 @@ describe("DashboardPage", function() {
     beforeEach(() => {
       // Limit the dashboard response to 1 program
       dashboardResponse = {
+        ...DASHBOARD_RESPONSE,
         programs: [R.clone(DASHBOARD_RESPONSE.programs[0])]
       }
     })
 
     it("shows the email composition dialog when a user has permission to contact a course team", () => {
-      const course = makeCourse()
+      const course = makeCourse(1)
       course.has_contact_email = true
       course.runs[0].has_paid = true
       makeRunEnrolled(course.runs[0])
@@ -769,6 +767,7 @@ describe("DashboardPage", function() {
             assert.isFalse(state.ui.paymentTeaserDialogVisibility)
             assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
 
+            // $FlowFixMe
             modifyTextField(document.querySelector(".email-subject"), "subject")
             // it is difficult to programmatically edit the draft-js field
             wrapper
@@ -785,6 +784,7 @@ describe("DashboardPage", function() {
                 HIDE_DIALOG
               ],
               () => {
+                // $FlowFixMe
                 document
                   .querySelector(".email-composition-dialog .save-button")
                   .click()
@@ -808,10 +808,8 @@ describe("DashboardPage", function() {
 
     for (const faExpectedObj of faExpectedStateList) {
       it(`shows the payment teaser dialog when a user lacks permission
-        to contact a course team with financial aid status: ${
-  faExpectedObj.hasFA
-}`, () => {
-        const course = makeCourse()
+        to contact a course team with financial aid status: ${faExpectedObj.hasFA.toString()}`, () => {
+        const course = makeCourse(1)
         course.has_contact_email = true
         // Set all course runs to unpaid
         course.runs = R.chain(R.set(R.lensProp("has_paid"), false), course.runs)
@@ -821,6 +819,7 @@ describe("DashboardPage", function() {
           faExpectedObj.hasFA
         if (faExpectedObj.hasFA) {
           dashboardResponse.programs[0].financial_aid_user_info = {
+            ...dashboardResponse.programs[0].financial_aid_user_info,
             max_possible_cost: 100,
             min_possible_cost: 50,
             has_user_applied:  false
@@ -836,6 +835,7 @@ describe("DashboardPage", function() {
               contactLink.simulate("click")
             }).then(state => {
               assert.equal(
+                // $FlowFixMe
                 document.querySelector(".inner-content > p").textContent,
                 faExpectedObj.expectedMessage
               )
@@ -861,13 +861,16 @@ describe("DashboardPage", function() {
     beforeEach(() => {
       // Limit the dashboard response to 1 program
       dashboardResponse = {
+        ...DASHBOARD_RESPONSE,
         programs: [R.clone(DASHBOARD_RESPONSE.programs[0])]
       }
     })
 
     it("renders correctly", () => {
-      const course = makeCourse()
-      course.runs[0].enrollment_start_date = moment().subtract(2, "days")
+      const course = makeCourse(1)
+      course.runs[0].enrollment_start_date = moment()
+        .subtract(2, "days")
+        .toString()
       dashboardResponse.programs[0].courses = [course]
       helper.dashboardStub.returns(Promise.resolve(dashboardResponse))
 
@@ -889,11 +892,14 @@ describe("DashboardPage", function() {
       it(`${faStatus} status ${
         expectedDisabled ? "disables" : "does not disable"
       } pay now button`, () => {
-        const course = makeCourse()
-        course.runs[0].enrollment_start_date = moment().subtract(2, "days")
+        const course = makeCourse(1)
+        course.runs[0].enrollment_start_date = moment()
+          .subtract(2, "days")
+          .toString()
         dashboardResponse.programs[0].courses = [course]
         dashboardResponse.programs[0].financial_aid_availability = true
         dashboardResponse.programs[0].financial_aid_user_info = {
+          ...dashboardResponse.programs[0].financial_aid_user_info,
           application_status:  faStatus,
           date_documents_sent: "2016-01-01",
           has_user_applied:    true
@@ -909,6 +915,7 @@ describe("DashboardPage", function() {
             }).then(state => {
               assert.isTrue(state.ui.enrollCourseDialogVisibility)
               assert.equal(
+                // $FlowFixMe
                 document.querySelector(".pay-button").disabled,
                 expectedDisabled
               )
@@ -965,7 +972,6 @@ describe("DashboardPage", function() {
         .returns(() => promise)
 
       program.financial_aid_availability = false
-      program.description = "Not passed program"
       program.courses[0].runs = [
         {
           ...program.courses[0].runs[0],
@@ -974,13 +980,13 @@ describe("DashboardPage", function() {
           position:                1,
           has_paid:                false,
           status:                  STATUS_CAN_UPGRADE,
-          course_end_date:         moment().add(1, "months"),
-          course_upgrade_deadline: moment().add(1, "months"),
+          course_end_date:         moment().add(1, "months").toString(),
+          course_upgrade_deadline: moment().add(1, "months").toString(),
           final_grade:             75
         }
       ]
 
-      const dashboardResponse = { programs: [program] }
+      const dashboardResponse = { ...DASHBOARD_RESPONSE, programs: [program] }
       const coursePrices = makeCoursePrices(dashboardResponse)
       const availablePrograms = makeAvailablePrograms(dashboardResponse)
       const programLearners = makeProgramLearners()
@@ -994,10 +1000,7 @@ describe("DashboardPage", function() {
 
       return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
         ([wrapper]) => {
-          wrapper
-            .find(".pay-button")
-            .props()
-            .onClick()
+          wrapper.find(".pay-button").props().onClick()
 
           assert.equal(checkoutStub.callCount, 1)
           assert.deepEqual(checkoutStub.args[0], [

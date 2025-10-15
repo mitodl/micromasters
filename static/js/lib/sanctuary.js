@@ -32,13 +32,15 @@ export const ifNil = R.ifElse(R.isNil, () => S.Nothing)
  *
  * guard :: (a -> b) -> (a -> Maybe b)
  */
-export const guard = (func: Function) => (...args: any) => {
-  if (R.any(R.isNil, args)) {
-    return S.Nothing
-  } else {
-    return S.Just(func(...args))
-  }
-}
+export const guard =
+  (func: Function) =>
+    (...args: any) => {
+      if (R.any(R.isNil, args)) {
+        return S.Nothing
+      } else {
+        return S.Just(func(...args))
+      }
+    }
 
 // getm :: String -> Object -> Maybe a
 export const getm = R.curry((prop, obj) => S.toMaybe(R.prop(prop, obj)))

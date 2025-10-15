@@ -45,12 +45,7 @@ const convertHTMLToEditorState = (html: string): Object => {
 const editorStateFromProps = R.compose(
   S.maybe({ editorState: EditorState.createEmpty() }, R.objOf("editorState")),
   S.map(convertHTMLToEditorState),
-  S.filter(
-    R.compose(
-      R.not,
-      R.isEmpty
-    )
-  ),
+  S.filter(R.compose(R.not, R.isEmpty)),
   getm("body"),
   R.pathOr({}, ["activeEmail", "inputs"])
 )
@@ -73,7 +68,7 @@ type EmailDialogProps = {
   closeAndClearEmailComposer: () => void,
   closeEmailComposerAndSend: () => Promise<void>,
   updateEmailFieldEdit: () => void,
-  renderRecipients?: (filters: ?Array<Filter>) => React$Element<*>,
+  renderRecipients?: (filters: ?Array<Filter>) => React$Element<*> | null,
   updateEmailBody: (e: Object) => void,
   dialogType: string,
   supportBulkEmails: boolean

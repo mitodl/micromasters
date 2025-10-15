@@ -17,20 +17,12 @@ describe("DashboardUserCard", () => {
       <DashboardUserCard profile={profile} program={program} />
     )
     assert.equal(
-      wrapper
-        .find(".dashboard-user-card-image")
-        .find(ProfileImage)
-        .props().profile,
+      wrapper.find(".dashboard-user-card-image").find(ProfileImage).props()
+        .profile,
       profile
     )
     const textContainer = wrapper.find(".dashboard-user-card-text")
-    assert.equal(
-      textContainer
-        .find(Typography)
-        .first()
-        .text(),
-      "Jane"
-    )
+    assert.equal(textContainer.find(Typography).first().text(), "Jane")
 
     assert.equal(
       textContainer.find(".dashboard-user-card-text-program").text(),

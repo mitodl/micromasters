@@ -1,4 +1,6 @@
+// @flow
 import { SET_REVOKE_DIALOG_VISIBILITY } from "../actions/revoke_shared_records_dialog"
+import type { Action } from "../flow/reduxTypes"
 
 export type RevokeShareDialogState = {
   revokeShareDialogVisibility: boolean
@@ -10,7 +12,7 @@ export const INITIAL_REVOKE_SHARE_STATE = {
 
 export const revokeShareDialog = (
   state: RevokeShareDialogState = INITIAL_REVOKE_SHARE_STATE,
-  action
+  action: Action<RevokeShareDialogState>
 ) => {
   switch (action.type) {
   case SET_REVOKE_DIALOG_VISIBILITY:

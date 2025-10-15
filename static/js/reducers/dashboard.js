@@ -51,9 +51,9 @@ export const dashboard = (
     }
   case RECEIVE_DASHBOARD_SUCCESS:
     return updateStateByUsername(state, username, {
-      fetchStatus:               FETCH_SUCCESS,
-      programs:                  action.payload.programs,
-      isEdxDataFresh:            action.payload.is_edx_data_fresh,
+      fetchStatus:    FETCH_SUCCESS,
+      programs:       action.payload.programs,
+      isEdxDataFresh: action.payload.is_edx_data_fresh,
       invalidBackendCredentials:
           action.payload.invalid_backend_credentials || [],
       noSpinner: false

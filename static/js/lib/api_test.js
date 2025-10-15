@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS: false */
 /* eslint-disable no-unused-vars */
 import { assert } from "chai"
@@ -162,7 +163,7 @@ describe("api", function() {
         it(`redirects to login if status = ${statusCode}`, () => {
           fetchJSONStub.returns(Promise.reject({ errorStatusCode: statusCode }))
 
-          return getDashboard().then(
+          return getDashboard("username").then(
             () => {},
             () => {
               const redirectUrl = `http://fake/logout?next=${encodeURIComponent(
@@ -177,7 +178,7 @@ describe("api", function() {
       for (const statusCode of [503, 500, 404]) {
         it(`dashboard api returns error if status = ${statusCode}`, () => {
           fetchJSONStub.returns(Promise.reject({ errorStatusCode: statusCode }))
-          return getDashboard().then(
+          return getDashboard("username").then(
             () => {},
             (error: string) => {
               assert.deepEqual(error, { errorStatusCode: statusCode })
@@ -229,21 +230,25 @@ describe("api", function() {
 
       it("returns expected values when a POST to send a search result email succeeds", () => {
         fetchJSONStub.returns(Promise.resolve(MAIL_RESPONSE))
-        return sendSearchResultMail("subject", "body", searchRequest).then(
-          mailResp => {
-            assert.ok(
-              fetchJSONStub.calledWith("/api/v0/mail/search/", {
-                method: "POST",
-                body:   JSON.stringify({
-                  email_subject:  "subject",
-                  email_body:     "body",
-                  search_request: searchRequest
-                })
+        return sendSearchResultMail(
+          "subject",
+          "body",
+          searchRequest,
+          true
+        ).then(mailResp => {
+          assert.ok(
+            fetchJSONStub.calledWith("/api/v0/mail/search/", {
+              method: "POST",
+              body:   JSON.stringify({
+                email_subject:         "subject",
+                email_body:            "body",
+                search_request:        searchRequest,
+                send_automatic_emails: true
               })
-            )
-            assert.deepEqual(mailResp, MAIL_RESPONSE)
-          }
-        )
+            })
+          )
+          assert.deepEqual(mailResp, MAIL_RESPONSE)
+        })
       })
 
       it("returns expected values when a POST to send a course team email succeeds", () => {
@@ -287,7 +292,7 @@ describe("api", function() {
       it("returns a rejected Promise when a POST to any email sending function fails", () => {
         fetchJSONStub.returns(Promise.reject())
         return assert.isRejected(
-          sendSearchResultMail("subject", "body", searchRequest)
+          sendSearchResultMail("subject", "body", searchRequest, true)
         )
       })
     })
@@ -654,9 +659,11 @@ describe("api", function() {
         it("fails to post list of programs to unenroll", () => {
           fetchJSONStub.returns(Promise.reject())
 
-          return assert.isRejected(unEnrollProgramEnrollments()).then(() => {
-            assert(fetchJSONStub.calledWith("/api/v0/unenroll_programs/"))
-          })
+          return assert
+            .isRejected(unEnrollProgramEnrollments([1, 2]))
+            .then(() => {
+              assert(fetchJSONStub.calledWith("/api/v0/unenroll_programs/"))
+            })
         })
       })
     })

@@ -29,10 +29,7 @@ const noEmailsMessage = () => (
 const emptyMessage = automaticEmails =>
   fetchingEmail(automaticEmails) ? <CircularProgress /> : noEmailsMessage()
 
-const notEmpty = R.compose(
-  R.not,
-  R.isEmpty
-)
+const notEmpty = R.compose(R.not, R.isEmpty)
 
 type AutomaticEmailsType = RestState<Array<AutomaticEmail>> & {
   emailsInFlight: Set<number>

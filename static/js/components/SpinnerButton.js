@@ -1,20 +1,26 @@
+// @flow
 import React from "react"
 import CircularProgress from "@material-ui/core/CircularProgress"
 
 type SpinnerButtonProps = {
   spinning: boolean,
-  component: React.Component<*, *, *>,
+  component: React.Component<*, *, *> | string,
   className?: string,
   onClick?: Function,
   children?: any,
   disabled?: ?boolean,
-  ignoreRecentlyClicked: ?boolean
+  ignoreRecentlyClicked?: ?boolean
+}
+
+type SpinnerButtonState = {
+  recentlyClicked: boolean
 }
 
 export default class SpinnerButton extends React.Component {
   props: SpinnerButtonProps
+  state: SpinnerButtonState
 
-  constructor(props) {
+  constructor(props: SpinnerButtonProps) {
     super(props)
     this.state = {
       // This keeps track of if a button was recently clicked, to indicate
@@ -38,10 +44,11 @@ export default class SpinnerButton extends React.Component {
 
   // If button is not disabled and has an onClick handler, make sure to set recentlyClicked
   // so we display the spinner
-  onClick = (...args) => {
+  onClick = (...args: any[]) => {
     this.setState({
       recentlyClicked: true
     })
+    // $FlowFixMe
     return this.props.onClick(...args)
   }
 
@@ -68,6 +75,7 @@ export default class SpinnerButton extends React.Component {
     }
 
     return (
+      // $FlowFixMe
       <ComponentVariable
         className={className}
         disabled={this.isDisabled()}

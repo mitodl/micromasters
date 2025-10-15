@@ -29,8 +29,8 @@ const devConfig = Object.assign({}, config, {
     new BundleTracker({filename: './webpack-stats.json'})
   ],
   optimization: {
-    namedModules: true,
-    noEmitOnErrors: true
+    moduleIds: "named",
+    emitOnErrors: false
   },
   devtool: 'source-map'
 })

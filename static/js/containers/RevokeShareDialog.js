@@ -1,3 +1,4 @@
+// @flow
 import React from "react"
 import { createSimpleActionHelpers } from "../lib/redux"
 import { setRevokeShareDialogVisibility } from "../actions/revoke_shared_records_dialog"
@@ -11,7 +12,8 @@ import DialogActions from "@material-ui/core/DialogActions"
 class RevokeShareDialog extends React.Component {
   props: {
     open: boolean,
-    setRevokeShareDialogVisibility: (b: boolean) => void
+    setRevokeShareDialogVisibility: (b: boolean) => void,
+    onAllowRevoke: () => void
   }
 
   render() {
@@ -64,7 +66,4 @@ const mapDispatchToProps = dispatch =>
     ["setRevokeShareDialogVisibility", setRevokeShareDialogVisibility]
   ])
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RevokeShareDialog)
+export default connect(mapStateToProps, mapDispatchToProps)(RevokeShareDialog)

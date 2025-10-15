@@ -139,10 +139,7 @@ export function _makeAmountMessage(coupon: Coupon): string {
   case COUPON_AMOUNT_TYPE_FIXED_PRICE:
     return `$${coupon.amount}`
   case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
-    return `${coupon.amount
-      .times(100)
-      .toDecimalPlaces(0)
-      .toString()}%`
+    return `${coupon.amount.times(100).toDecimalPlaces(0).toString()}%`
   default:
     return ""
   }

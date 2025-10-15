@@ -1,3 +1,4 @@
+// @flow
 import React from "react"
 import Dialog from "@material-ui/core/Dialog"
 import _ from "lodash"
@@ -38,23 +39,20 @@ export default class ProgramEnrollmentDialog extends React.Component {
     if (_.isNil(selectedProgram)) {
       setError("No program selected")
     } else {
+      // $FlowFixMe
       enrollInProgram(selectedProgram)
     }
   }
 
+  // $FlowFixMe
   handleSelectedProgramChange = event => {
     const { setSelectedProgram } = this.props
     setSelectedProgram(event.target.value)
   }
 
   render() {
-    const {
-      error,
-      visibility,
-      selectedProgram,
-      programs,
-      fetchAddStatus
-    } = this.props
+    const { error, visibility, selectedProgram, programs, fetchAddStatus } =
+      this.props
 
     const unenrolledPrograms = _.sortBy(
       programs.filter(program => !program.enrolled),

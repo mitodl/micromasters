@@ -1,3 +1,4 @@
+// @flow
 import {
   SET_DIALOG_VISIBILITY,
   SET_SELECTED_SCHOOL
@@ -6,6 +7,7 @@ import {
   SEND_GRADES_EMAIL_SUCCESS,
   SEND_GRADES_EMAIL_FAILURE
 } from "../actions/send_grades_dialog"
+import type { Action } from "../flow/reduxTypes"
 
 export type SendDialogState = {
   sendDialogVisibility: boolean,
@@ -21,7 +23,7 @@ export const INITIAL_SEND_STATE = {
 
 export const sendDialog = (
   state: SendDialogState = INITIAL_SEND_STATE,
-  action
+  action: Action<SendDialogState>
 ) => {
   switch (action.type) {
   case SET_DIALOG_VISIBILITY:

@@ -56,10 +56,9 @@ describe("ProgramEnrollmentDialog", () => {
       return helper
         .renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS)
         .then(([wrapper]) => {
-          const handler = wrapper
-            .find(ProgramEnrollmentDialog)
-            .at(0)
-            .props()[funcName]
+          const handler = wrapper.find(ProgramEnrollmentDialog).at(0).props()[
+            funcName
+          ]
           handler(value)
           assert(stub.calledWith(value))
         })
@@ -71,10 +70,9 @@ describe("ProgramEnrollmentDialog", () => {
       return helper
         .renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS)
         .then(([wrapper]) => {
-          const actual = wrapper
-            .find(ProgramEnrollmentDialog)
-            .at(0)
-            .props()[propName]
+          const actual = wrapper.find(ProgramEnrollmentDialog).at(0).props()[
+            propName
+          ]
           assert.equal(actual, value)
         })
     })

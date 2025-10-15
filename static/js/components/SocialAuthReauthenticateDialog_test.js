@@ -47,10 +47,7 @@ describe("SocialAuthReauthenticateDialog", () => {
 
         it("should have a description of what the learner needs to do", () => {
           const wrapper = renderDialog([invalidAuth])
-          const text = wrapper
-            .find(Grid)
-            .at(0)
-            .text()
+          const text = wrapper.find(Grid).at(0).text()
           assert.equal(
             text,
             `Your account is linked to ${String(

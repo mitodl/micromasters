@@ -84,9 +84,8 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
    * Gets the appropriate range bucket for this element's agg query.
    */
   getRangeBucket(query) {
-    const otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(
-      query
-    )
+    const otherAppliedFiltersOnPath =
+      this.createFilterForOtherElementsOnPath(query)
     const rangeBucket = this.createInnerRangeBucket()
     if (otherAppliedFiltersOnPath) {
       return FilterBucket(this.key, otherAppliedFiltersOnPath, rangeBucket)

@@ -275,8 +275,8 @@ describe("Profile validation functions", () => {
         romanized_last_name:  "b".repeat(51)
       }
       const errors = {
-        first_name:           "Given name must be no more than 30 characters",
-        last_name:            "Family name must be no more than 50 characters",
+        first_name: "Given name must be no more than 30 characters",
+        last_name:  "Family name must be no more than 50 characters",
         romanized_first_name:
           "Latin given name must be no more than 30 characters",
         romanized_last_name:
@@ -751,8 +751,7 @@ describe("Email validation", () => {
         emailValidation(email),
         shouldFail
           ? {
-            body:
-                "All link URLs must start with 'http', 'https', or 'mailto:'"
+            body: "All link URLs must start with 'http', 'https', or 'mailto:'"
           }
           : {}
       )

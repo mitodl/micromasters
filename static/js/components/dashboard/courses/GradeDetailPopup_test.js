@@ -57,10 +57,7 @@ describe("GradeDetailPopup", () => {
     makeRunPaid(course.runs[0])
     const wrapper = renderDetailPopup()
     assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
+      wrapper.find(".course-run-row").first().text(),
       `${course.runs[0].year_season}Paid`
     )
   })
@@ -69,10 +66,7 @@ describe("GradeDetailPopup", () => {
     makeRunEnrolled(course.runs[0])
     const wrapper = renderDetailPopup()
     assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
+      wrapper.find(".course-run-row").first().text(),
       `${course.runs[0].year_season}Auditing`
     )
   })
@@ -82,10 +76,7 @@ describe("GradeDetailPopup", () => {
     makeRunPaid(course.runs[0])
     const wrapper = renderDetailPopup()
     assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
+      wrapper.find(".course-run-row").first().text(),
       `${course.runs[0].year_season}In Progress (paid)`
     )
   })
@@ -94,10 +85,7 @@ describe("GradeDetailPopup", () => {
     makeRunPassed(course.runs[0])
     const wrapper = renderDetailPopup()
     assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
+      wrapper.find(".course-run-row").first().text(),
       `${course.runs[0].year_season}Passed`
     )
   })
@@ -105,10 +93,7 @@ describe("GradeDetailPopup", () => {
   it("shows a grade, if there is one", () => {
     course.runs[0].final_grade = 93
     assert.include(
-      renderDetailPopup()
-        .find(".course-run-row")
-        .first()
-        .text(),
+      renderDetailPopup().find(".course-run-row").first().text(),
       "93"
     )
   })
@@ -116,10 +101,7 @@ describe("GradeDetailPopup", () => {
   it("shows info for a failed course", () => {
     makeRunFailed(course.runs[1])
     assert.equal(
-      renderDetailPopup()
-        .find(".course-run-row")
-        .at(1)
-        .text(),
+      renderDetailPopup().find(".course-run-row").at(1).text(),
       `${course.runs[1].year_season}Not passed`
     )
   })
@@ -128,20 +110,8 @@ describe("GradeDetailPopup", () => {
     course.runs[0].final_grade = 22
     course.runs[1].final_grade = 82
     const wrapper = renderDetailPopup()
-    assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .at(0)
-        .find(Icon).length,
-      0
-    )
-    assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .at(1)
-        .find(Icon).length,
-      1
-    )
+    assert.equal(wrapper.find(".course-run-row").at(0).find(Icon).length, 0)
+    assert.equal(wrapper.find(".course-run-row").at(1).find(Icon).length, 1)
   })
 
   it("includes helpful information", () => {
@@ -165,10 +135,7 @@ describe("GradeDetailPopup", () => {
   it("should display exam grades, if passed the right grade type", () => {
     const wrapper = renderDetailPopup({ gradeType: EXAM_GRADE })
     assert.include(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
+      wrapper.find(".course-run-row").first().text(),
       formatGrade(course.proctorate_exams_grades[0].percentage_grade * 100)
     )
   })
@@ -177,10 +144,7 @@ describe("GradeDetailPopup", () => {
     course.proctorate_exams_grades[0].percentage_grade = 0
     const wrapper = renderDetailPopup({ gradeType: EXAM_GRADE })
     assert.include(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
+      wrapper.find(".course-run-row").first().text(),
       formatGrade(course.proctorate_exams_grades[0].percentage_grade * 100)
     )
   })
@@ -191,19 +155,7 @@ describe("GradeDetailPopup", () => {
     course.proctorate_exams_grades[1].percentage_grade = 0.8
     course.proctorate_exams_grades[1].passed = true
     const wrapper = renderDetailPopup({ gradeType: EXAM_GRADE })
-    assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .at(0)
-        .find(Icon).length,
-      0
-    )
-    assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .at(1)
-        .find(Icon).length,
-      1
-    )
+    assert.equal(wrapper.find(".course-run-row").at(0).find(Icon).length, 0)
+    assert.equal(wrapper.find(".course-run-row").at(1).find(Icon).length, 1)
   })
 })

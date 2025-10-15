@@ -1,3 +1,4 @@
+// @flow
 import React from "react"
 import R from "ramda"
 import _ from "lodash"
@@ -10,8 +11,8 @@ export default class ModifiedSelectedFilter extends React.Component {
   props: {
     labelKey: string,
     labelValue: string,
-    removeFilters: Function,
-    bemBlocks?: any,
+    removeFilter: Function,
+    bemBlocks: any,
     filterId: string
   }
 

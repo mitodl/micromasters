@@ -463,9 +463,8 @@ describe("LearnerPage", function() {
               () => {
                 ReactTestUtils.Simulate.click(button)
                 const dialog = activeDeleteDialog()
-                const cancelButton = dialog.getElementsByClassName(
-                  "cancel-button"
-                )[0]
+                const cancelButton =
+                  dialog.getElementsByClassName("cancel-button")[0]
                 ReactTestUtils.Simulate.click(cancelButton)
               }
             )
@@ -508,9 +507,8 @@ describe("LearnerPage", function() {
               () => {
                 ReactTestUtils.Simulate.click(firstEducationDeleteButton)
                 const dialog = activeDeleteDialog()
-                const confirmButton = dialog.getElementsByClassName(
-                  "delete-button"
-                )[0]
+                const confirmButton =
+                  dialog.getElementsByClassName("delete-button")[0]
                 ReactTestUtils.Simulate.click(confirmButton)
               }
             )
@@ -745,9 +743,8 @@ describe("LearnerPage", function() {
               () => {
                 ReactTestUtils.Simulate.click(button)
                 const dialog = activeDeleteDialog()
-                const cancelButton = dialog.getElementsByClassName(
-                  "cancel-button"
-                )[0]
+                const cancelButton =
+                  dialog.getElementsByClassName("cancel-button")[0]
                 ReactTestUtils.Simulate.click(cancelButton)
               }
             )
@@ -990,8 +987,8 @@ describe("LearnerPage", function() {
         const username = SETTINGS.user.username
         return renderComponent(`/learner/${username}`, userActions).then(
           ([, div]) => {
-            const name = div.getElementsByClassName("profile-title")[0]
-              .textContent
+            const name =
+              div.getElementsByClassName("profile-title")[0].textContent
             assert.deepEqual(name, getPreferredName(USER_PROFILE_RESPONSE))
           }
         )
@@ -1247,10 +1244,7 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
           wrapper.update()
-          wrapper
-            .find(".open-popup")
-            .at(0)
-            .simulate("click")
+          wrapper.find(".open-popup").at(0).simulate("click")
           const state = helper.store.getState().ui
           const key = gradeDetailPopupKey(
             COURSE_GRADE,
@@ -1276,13 +1270,7 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
           wrapper.update()
-          wrapper
-            .find(Grades)
-            .at(0)
-            .find(Dialog)
-            .at(0)
-            .props()
-            .onClose()
+          wrapper.find(Grades).at(0).find(Dialog).at(0).props().onClose()
           const state = helper.store.getState().ui
           assert.isFalse(state.dialogVisibility[key])
         }

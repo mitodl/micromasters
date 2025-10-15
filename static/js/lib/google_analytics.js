@@ -11,17 +11,11 @@ const makeGAEvent = (category, action, label, value) => ({
 })
 
 const removeNilValue = R.when(
-  R.compose(
-    R.isNil,
-    R.prop("value")
-  ),
+  R.compose(R.isNil, R.prop("value")),
   R.dissoc("value")
 )
 
-const formatGAEvent = R.compose(
-  removeNilValue,
-  makeGAEvent
-)
+const formatGAEvent = R.compose(removeNilValue, makeGAEvent)
 
 export const sendGAEvent = (
   category: string,

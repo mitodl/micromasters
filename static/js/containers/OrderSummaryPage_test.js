@@ -62,10 +62,7 @@ describe("OrderSummaryPage", () => {
         DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS
       ).then(([wrapper]) => {
         wrapper.update()
-        wrapper
-          .find("SpinnerButton")
-          .props()
-          .onClick()
+        wrapper.find("SpinnerButton").props().onClick()
 
         assert.equal(checkoutStub.callCount, 1)
         assert.deepEqual(checkoutStub.args[0], [run.course_id])
@@ -94,10 +91,7 @@ describe("OrderSummaryPage", () => {
         DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS
       ).then(([wrapper]) => {
         wrapper.update()
-        wrapper
-          .find("SpinnerButton")
-          .props()
-          .onClick()
+        wrapper.find("SpinnerButton").props().onClick()
 
         assert.equal(checkoutStub.callCount, 1)
         assert.deepEqual(checkoutStub.args[0], [run.course_id])

@@ -1,3 +1,15 @@
 {
-  "extends": "eslint-config-mitodl"
+  "extends": ["eslint-config-mitodl", "eslint-config-mitodl/flow", "eslint-config-mitodl/mocha"],
+  "plugins": ["import"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    // disabled for now to ensure no code changes
+    "no-unused-vars": "off",
+    "operator-linebreak": "off",
+    "react/jsx-no-target-blank": "off"
+  }
 }

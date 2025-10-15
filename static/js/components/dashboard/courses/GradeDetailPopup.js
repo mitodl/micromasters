@@ -156,12 +156,8 @@ type GradeDetailPopupProps = {
 }
 
 const GradeDetailPopup = (props: GradeDetailPopupProps) => {
-  const {
-    course,
-    setShowGradeDetailDialog,
-    dialogVisibility,
-    gradeType
-  } = props
+  const { course, setShowGradeDetailDialog, dialogVisibility, gradeType } =
+    props
 
   return (
     <Dialog

@@ -100,11 +100,8 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
   }
 
   toggleFilterVisibility = (): void => {
-    const {
-      filterName,
-      checkFilterVisibility,
-      setFilterVisibility
-    } = this.props
+    const { filterName, checkFilterVisibility, setFilterVisibility } =
+      this.props
     setFilterVisibility(filterName, !checkFilterVisibility(filterName))
   }
 

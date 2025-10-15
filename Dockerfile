@@ -1,4 +1,4 @@
-FROM python:3.9-bullseye
+FROM python:3.9.24
 LABEL maintainer "ODL DevOps <mitx-devops@mit.edu>"
 
 

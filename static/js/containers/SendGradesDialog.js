@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS:false */
 import React from "react"
 import { connect } from "react-redux"
@@ -141,7 +142,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SendGradesDialog)
+export default connect(mapStateToProps, mapDispatchToProps)(SendGradesDialog)

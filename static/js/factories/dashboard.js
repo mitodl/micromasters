@@ -90,13 +90,11 @@ export const makeAvailablePrograms = (
 export const makeRun = (position: number): CourseRun => {
   const runId = newRunId()
   return {
-    id:              runId,
-    course_id:       `course-v1:${runId}`,
-    title:           `Run ${runId}`,
-    position:        position,
-    course_end_date: moment()
-      .subtract(1, "day")
-      .format(),
+    id:                 runId,
+    course_id:          `course-v1:${runId}`,
+    title:              `Run ${runId}`,
+    position:           position,
+    course_end_date:    moment().subtract(1, "day").format(),
     status:             STATUS_OFFERED,
     has_paid:           false,
     year_season:        `Spring ${moment().year()}`,

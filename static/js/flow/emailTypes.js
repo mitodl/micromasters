@@ -38,11 +38,11 @@ export type AllEmailsState = {
 export type EmailConfig = {
   title: string,
   supportBulkEmails: boolean,
-  renderSubheading: (activeEmail: EmailState) => React$Element<*>,
+  renderSubheading?: (activeEmail: EmailState) => React$Element<*>,
   emailOpenParams: (args: any) => Object,
-  getEmailSendFunction: () => Function,
+  getEmailSendFunction?: () => Function,
   emailSendParams: (emailState: EmailState, searchkit?: Object) => Array<any>,
-  renderRecipients?: (filters: ?Array<Filter>) => React$Element<*>,
+  renderRecipients?: (filters: ?Array<Filter>) => React$Element<*> | null,
 };
 
 export type AutomaticEmail = {
