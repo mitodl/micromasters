@@ -15,5 +15,5 @@ declare module 'redux-asserts' {
     createListenForActions: (stateFunc?: StateFunc) => ListenForActionsFunc,
     createDispatchThen: (stateFunc?: StateFunc) => DispatchThenFunc
   }
-  declare export function configureTestStore(reducerFunc?: (state: State) => State): TestStore;
+  declare export default function configureTestStore(reducerFunc?: (state: State) => State): TestStore;
 }
