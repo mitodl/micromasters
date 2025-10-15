@@ -341,6 +341,7 @@ class EmploymentForm extends ProfileFormFields {
       // eslint-disable-next-line camelcase
       profile: { work_history }
     } = this.props
+    // eslint-disable-next-line camelcase
     if (showSwitch && work_history.length === 0) {
       return this.renderWorkQuestionForm()
     } else {

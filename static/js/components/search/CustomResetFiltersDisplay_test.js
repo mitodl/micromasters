@@ -49,13 +49,7 @@ describe("CustomResetFiltersDisplay", () => {
       }
     })
     const wrapper = renderFilters()
-    assert.equal(
-      wrapper
-        .children()
-        .children()
-        .text(),
-      "Clear all filters"
-    )
+    assert.equal(wrapper.children().children().text(), "Clear all filters")
   })
 
   it("reset filter link does not render when hasFilters is false", () => {

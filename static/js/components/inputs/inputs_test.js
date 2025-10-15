@@ -286,10 +286,7 @@ describe("Profile inputs", () => {
       inputProps.profile.country_key = "US"
       inputProps.profile.state_key = "US-MA"
       const countryField = renderCountrySelect()
-      countryField
-        .find(SelectField)
-        .props()
-        .onChange({ value: "AL" })
+      countryField.find(SelectField).props().onChange({ value: "AL" })
       assert.equal(inputProps.profile.country_key, "AL")
       assert.equal(inputProps.profile.state_key, null)
     })

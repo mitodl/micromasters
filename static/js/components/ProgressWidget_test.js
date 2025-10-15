@@ -127,18 +127,9 @@ describe("ProgressWidget", () => {
   it("progress widget display", () => {
     const wrapper = shallow(<ProgressWidget program={program} />)
 
+    assert.equal(wrapper.find(".progress-title").children().text(), "Progress")
     assert.equal(
-      wrapper
-        .find(".progress-title")
-        .children()
-        .text(),
-      "Progress"
-    )
-    assert.equal(
-      wrapper
-        .find(".text-course-complete")
-        .children()
-        .text(),
+      wrapper.find(".text-course-complete").children().text(),
       "Courses complete"
     )
     assert.equal(wrapper.find(".circular-progress-widget-txt").text(), "3/5")
@@ -166,10 +157,7 @@ describe("ProgressWidget", () => {
     const wrapper = shallow(<ProgressWidget program={program} />)
 
     assert.equal(
-      wrapper
-        .find(".mm-minor-action")
-        .children()
-        .text(),
+      wrapper.find(".mm-minor-action").children().text(),
       "View Program Letter"
     )
   })

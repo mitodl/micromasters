@@ -68,10 +68,7 @@ describe("SocialAuthDialog", () => {
 
         it("should have a description of what the learner needs to do", () => {
           const wrapper = renderDialog(unauthenticatedEnrollment)
-          const text = wrapper
-            .find(Grid)
-            .at(0)
-            .text()
+          const text = wrapper.find(Grid).at(0).text()
           assert.equal(
             text,
             `Courses for ${

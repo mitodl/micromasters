@@ -1,3 +1,4 @@
+// @flow
 import React from "react"
 import { createSimpleActionHelpers } from "../lib/redux"
 import {
@@ -12,6 +13,7 @@ import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 
 class CopyLinkDialog extends React.Component {
+  input: any
   props: {
     open: boolean,
     setShareDialogVisibility: (b: boolean) => void,
@@ -62,6 +64,7 @@ class CopyLinkDialog extends React.Component {
                 value={recordShareLink}
               />
             </form>
+            {/* $FlowFixMe */}
             {document.queryCommandSupported("copy") && (
               <div>
                 <button
@@ -93,7 +96,4 @@ const mapDispatchToProps = dispatch =>
     ["setRecordShareLink", setRecordShareLink]
   ])
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CopyLinkDialog)
+export default connect(mapStateToProps, mapDispatchToProps)(CopyLinkDialog)

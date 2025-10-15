@@ -50,13 +50,8 @@ export default class CountrySelectField extends React.Component {
   }
 
   onChange = (selection: Option): void => {
-    const {
-      stateKeySet,
-      countryKeySet,
-      updateProfile,
-      validator,
-      profile
-    } = this.props
+    const { stateKeySet, countryKeySet, updateProfile, validator, profile } =
+      this.props
     // clear state field when country field changes
     const clone = _.cloneDeep(profile)
     _.set(clone, stateKeySet, null)

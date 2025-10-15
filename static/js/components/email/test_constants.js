@@ -1,3 +1,4 @@
+// @flow
 import React from "react"
 import { INITIAL_EMAIL_STATE } from "../../reducers/email"
 import type { EmailState } from "../../flow/emailTypes"

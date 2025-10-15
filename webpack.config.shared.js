@@ -40,19 +40,5 @@ module.exports = {
       path.resolve(__dirname, "node_modules/@material-ui"),
     ],
     loader: 'babel-loader',
-    query: {
-      "presets": [
-        ["env", { "modules": false }],
-        "latest",
-        "react",
-      ],
-      "plugins": [
-        "transform-flow-strip-types",
-        "react-hot-loader/babel",
-        "transform-object-rest-spread",
-        "transform-class-properties",
-        "syntax-dynamic-import",
-      ]
-    }
   },
 };

@@ -30,20 +30,11 @@ describe("DiscussionCard", () => {
     assert.equal(postDisplay.find("img").props().src, post.profile_image)
 
     assert.equal(
-      postDisplay
-        .find("a")
-        .at(0)
-        .props().href,
+      postDisplay.find("a").at(0).props().href,
       postURL(post.id, post.channel_name)
     )
 
-    assert.equal(
-      postDisplay
-        .find("a")
-        .at(0)
-        .text(),
-      post.title
-    )
+    assert.equal(postDisplay.find("a").at(0).text(), post.title)
   })
 
   it("should link to the original channel", () => {
@@ -52,30 +43,15 @@ describe("DiscussionCard", () => {
     const [post] = postList
 
     assert.equal(
-      postDisplay
-        .find("a")
-        .at(1)
-        .props().href,
+      postDisplay.find("a").at(1).props().href,
       channelURL(post.channel_name)
     )
 
-    assert.equal(
-      postDisplay
-        .find("a")
-        .at(1)
-        .text(),
-      post.channel_name
-    )
+    assert.equal(postDisplay.find("a").at(1).text(), post.channel_name)
   })
 
   it("should link to open discussions", () => {
     const wrapper = renderCard()
-    assert.equal(
-      wrapper
-        .find("a")
-        .at(0)
-        .props().href,
-      "/discussions"
-    )
+    assert.equal(wrapper.find("a").at(0).props().href, "/discussions")
   })
 })

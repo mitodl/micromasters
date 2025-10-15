@@ -69,7 +69,10 @@ describe("Course Grades", () => {
   })
 
   it("should only display the course grade if has_exam == false", () => {
-    [[true, 3], [false, 1]].forEach(([hasExam, expectedGradeCount]) => {
+    [
+      [true, 3],
+      [false, 1]
+    ].forEach(([hasExam, expectedGradeCount]) => {
       course.has_exam = hasExam
       const grades = renderGrades()
       assert.equal(
@@ -121,17 +124,11 @@ describe("Course Grades", () => {
     examGrade.passed = true
     course.proctorate_exams_grades.push(examGrade)
     const grades = renderGrades()
-    grades
-      .find(".open-popup")
-      .first()
-      .simulate("click")
+    grades.find(".open-popup").first().simulate("click")
     assert.ok(
       setShowGradeDetailDialogStub.calledWith(true, COURSE_GRADE, course.title)
     )
-    grades
-      .find(".open-popup")
-      .at(1)
-      .simulate("click")
+    grades.find(".open-popup").at(1).simulate("click")
     assert.ok(
       setShowGradeDetailDialogStub.calledWith(true, EXAM_GRADE, course.title)
     )

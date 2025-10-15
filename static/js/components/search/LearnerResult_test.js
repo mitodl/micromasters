@@ -87,9 +87,7 @@ describe("LearnerResult", () => {
   })
 
   it("should include the user's location for US residence", () => {
-    const result = renderLearnerResult()
-      .find(".learner-location")
-      .find("span")
+    const result = renderLearnerResult().find(".learner-location").find("span")
     assert.include(result.text(), USER_PROFILE_RESPONSE.city)
     assert.include(result.text(), USER_PROFILE_RESPONSE.country)
     assert.include(result.text(), USER_PROFILE_RESPONSE.state_or_territory)
@@ -128,9 +126,7 @@ describe("LearnerResult", () => {
   it("should not include the user's current program grade if the searching user is not staff", () => {
     SETTINGS.roles = []
     assert.isFalse(
-      renderLearnerResult()
-        .find(".learner-grade .percent")
-        .exists()
+      renderLearnerResult().find(".learner-grade .percent").exists()
     )
   })
 
@@ -165,10 +161,7 @@ describe("LearnerResult", () => {
   it("should use the small avatar", () => {
     const result = renderLearnerResult()
     assert.isTrue(
-      result
-        .find(".learner-avatar")
-        .find(ProfileImage)
-        .props().useSmall
+      result.find(".learner-avatar").find(ProfileImage).props().useSmall
     )
   })
 

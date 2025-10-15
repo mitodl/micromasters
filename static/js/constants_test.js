@@ -1,3 +1,4 @@
+// @flow
 /* eslint-disable no-unused-vars */
 import _ from "lodash"
 import { assert } from "chai"

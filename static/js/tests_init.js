@@ -1,11 +1,55 @@
 // Define globals we would usually get from Django
-import React from "react"
 import ReactDOM from "react-dom"
-import { configure } from "enzyme"
+import Enzyme from "enzyme"
 import Adapter from "enzyme-adapter-react-16"
-import * as ReactTransitionGroup from "react-transition-group"
+import { JSDOM } from "jsdom"
+import webcrypto from "@trust/webcrypto"
+import raf from "raf"
 
-configure({ adapter: new Adapter() })
+// jsdom initialization here adapted from https://airbnb.io/enzyme/docs/guides/jsdom.html
+
+const jsdom = new JSDOM("<!doctype html><html><body></body></html>", {
+  url: "http://fake/"
+})
+const { window } = jsdom
+
+const { polyfill } = raf
+
+polyfill(global)
+polyfill(window)
+
+// polyfill for the web crypto module
+window.crypto = webcrypto
+
+// We need to explicitly change the URL when window.location is used
+
+function copyProps(src, target) {
+  Object.defineProperties(target, {
+    ...Object.getOwnPropertyDescriptors(src),
+    ...Object.getOwnPropertyDescriptors(target)
+  })
+}
+
+global.window = window
+global.document = window.document
+global.requestAnimationFrame = function(callback) {
+  return setTimeout(callback, 0)
+}
+global.cancelAnimationFrame = function(id) {
+  clearTimeout(id)
+}
+copyProps(window, global)
+
+Object.defineProperty(window, "location", {
+  set: value => {
+    if (!value.startsWith("http")) {
+      value = `http://fake${value}`
+    }
+    jsdom.reconfigure({ url: value })
+  }
+})
+
+Enzyme.configure({ adapter: new Adapter() })
 
 const _createSettings = () => ({
   user: {
@@ -44,16 +88,6 @@ if (!Object.entries) {
 }
 
 import fetchMock from "fetch-mock"
-// Mock react-transition-group which is used by material-ui. It causes test failures due to a callback timed to
-// occur after the test has already cleaned up the DOM elements.
-const FakeTransition = ({ children }) => children()
-const FakeCSSTransition = props =>
-  props.in ? <FakeTransition>{props.children}</FakeTransition> : null
-// adapted from https://testing-library.com/docs/example-react-transition-group
-// eslint-disable-next-line no-import-assign
-ReactTransitionGroup.Transition = FakeTransition
-// eslint-disable-next-line no-import-assign
-ReactTransitionGroup.CSSTransition = FakeCSSTransition
 
 // eslint-disable-next-line mocha/no-top-level-hooks
 beforeEach(() => {

@@ -711,12 +711,7 @@ describe("utility functions", () => {
       const phrase = "CÖ"
       const result = highlight(name, phrase)
       assert.equal(shallow(result).text(), name)
-      assert.equal(
-        shallow(result)
-          .find(".highlight")
-          .text(),
-        "Cô"
-      )
+      assert.equal(shallow(result).find(".highlight").text(), "Cô")
     })
 
     it("doesn't highlight if phrase doesn't match", () => {
@@ -731,12 +726,7 @@ describe("utility functions", () => {
       const catdogfish = "🐱🐶🐟"
       const result = highlight(catdogfish, dog)
       assert.equal(catdogfish, shallow(result).text())
-      assert.equal(
-        dog,
-        shallow(result)
-          .find(".highlight")
-          .text()
-      )
+      assert.equal(dog, shallow(result).find(".highlight").text())
     })
 
     it("handles multiple matches", () => {

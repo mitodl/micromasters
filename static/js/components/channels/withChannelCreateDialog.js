@@ -102,9 +102,7 @@ export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
           this.closeAndClearDialog()
 
           if (SETTINGS.open_discussions_redirect_url) {
-            const channelUrl = `${
-              SETTINGS.open_discussions_redirect_url
-            }channel/${channel.name}`
+            const channelUrl = `${SETTINGS.open_discussions_redirect_url}channel/${channel.name}`
             window.open(channelUrl, "_self")
           }
         },
@@ -114,11 +112,9 @@ export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
       )
     }
 
-    updateFieldEdit = R.curry(
-      (fieldName, e): void => {
-        this.updateChannelChanges(fieldName, e.target.value)
-      }
-    )
+    updateFieldEdit = R.curry((fieldName, e): void => {
+      this.updateChannelChanges(fieldName, e.target.value)
+    })
 
     render() {
       const {

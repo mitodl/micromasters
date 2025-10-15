@@ -3,19 +3,19 @@ export TMP_FILE=$(mktemp)
 
 if [[ ! -z "$COVERAGE" ]]
 then
-    export CMD="node ./node_modules/nyc/bin/nyc.js --reporter=html mocha"
+    export CMD="npx nyc --reporter=html mocha"
 elif [[ ! -z "$CODECOV" ]]
 then
-    export CMD="node ./node_modules/nyc/bin/nyc.js --reporter=lcovonly -R spec mocha"
+    export CMD="npx nyc --reporter=lcovonly -R spec mocha"
 elif [[ ! -z "$WATCH" ]]
 then
-    export CMD="node ./node_modules/mocha/bin/_mocha --watch"
+    export CMD="npx mocha --watch"
 else
-    export CMD="node ./node_modules/mocha/bin/_mocha"
+    export CMD="npx mocha"
 fi
 
 export FILE_PATTERN=${1:-'"static/**/*/*_test.js"'}
-CMD_ARGS="--require ./static/js/babelhook.js static/js/global_init.js $FILE_PATTERN"
+CMD_ARGS="$FILE_PATTERN --exit"
 
 # Second argument (if specified) should be a string that will match specific test case descriptions
 #
@@ -31,7 +31,7 @@ if [[ ! -z "$2" ]]; then
     CMD_ARGS+=" -g \"$2\""
 fi
 
-eval "$CMD $CMD_ARGS" 2> >(tee "$TMP_FILE")
+eval "NODE_ENV=test $CMD $CMD_ARGS" 2> >(tee "$TMP_FILE")
 
 export TEST_RESULT=$?
 

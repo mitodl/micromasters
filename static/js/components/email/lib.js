@@ -1,3 +1,4 @@
+// @flow
 import React from "react"
 import Grid from "@material-ui/core/Grid"
 import R from "ramda"
@@ -40,6 +41,7 @@ export const renderFilterOptions = R.map(filter => {
   }
 
   if (
+    // $FlowFixMe
     R.or(isLocation(labelKey), isTranslated) &&
     filter.value in translations
   ) {
@@ -106,11 +108,12 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
   emailSendParams: (emailState, searchkit) => [
     emailState.inputs.subject || "",
     emailState.inputs.body || "",
+    // $FlowFixMe
     searchkit.buildQuery().query,
     emailState.inputs.sendAutomaticEmails || false
   ],
 
-  renderRecipients: (filters?: Array<Filter>) => {
+  renderRecipients: (filters: ?Array<Filter>) => {
     if (!filters || filters.length <= 0) {
       return null
     }
@@ -140,7 +143,10 @@ export const LEARNER_EMAIL_CONFIG: EmailConfig = {
             <img
               src={activeEmail.params.profileImage}
               className="rounded-profile-image small"
-              alt={`${activeEmail.subheading} profile image`}
+              alt={
+                /* $FlowFixMe */
+                `${activeEmail.subheading} profile image`
+              }
             />
             <span>{activeEmail.subheading}</span>
           </div>
@@ -171,6 +177,7 @@ export const convertEmailEdit = mapObj(([k, v]) => [
   v
 ])
 
+// $FlowFixMe
 export const findFilters = tree => {
   // eslint-disable-next-line no-prototype-builtins
   if (tree.hasOwnProperty("term") && !tree.term.hasOwnProperty("program.id")) {
@@ -193,6 +200,7 @@ export const findFilters = tree => {
 }
 
 const serializeValue = (value: Object | string) =>
+  // $FlowFixMe
   _.isObject(value) ? `${value.gte} - ${value.lte}` : value
 
 export const getFilters = (root: Object) => {
@@ -205,12 +213,9 @@ export const getFilters = (root: Object) => {
 }
 
 export const AUTOMATIC_EMAIL_ADMIN_CONFIG: EmailConfig = {
-  title:           "Edit Email Campaign",
-  editEmail:       actions.automaticEmails.patch,
-  emailSendParams: R.compose(
-    convertEmailEdit,
-    R.prop("inputs")
-  ),
+  title:             "Edit Email Campaign",
+  editEmail:         actions.automaticEmails.patch,
+  emailSendParams:   R.compose(convertEmailEdit, R.prop("inputs")),
   supportBulkEmails: true,
 
   emailOpenParams: (emailOpenParams: AutomaticEmail) => ({
@@ -223,7 +228,7 @@ export const AUTOMATIC_EMAIL_ADMIN_CONFIG: EmailConfig = {
     filters: getFilters(emailOpenParams.query.original_query.post_filter)
   }),
 
-  renderRecipients: (filters?: Array<Filter>) => {
+  renderRecipients: (filters: ?Array<Filter>) => {
     if (!filters || filters.length <= 0) {
       return null
     }

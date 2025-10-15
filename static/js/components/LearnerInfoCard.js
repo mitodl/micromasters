@@ -19,9 +19,7 @@ import CardContent from "@material-ui/core/CardContent"
 
 const showLegalNameIfStaff = profile => {
   return hasAnyStaffRole(SETTINGS.roles) ? (
-    <div className="legal-name">{`(Legal name: ${profile.first_name} ${
-      profile.last_name
-    })`}</div>
+    <div className="legal-name">{`(Legal name: ${profile.first_name} ${profile.last_name})`}</div>
   ) : null
 }
 
@@ -113,11 +111,8 @@ export default class LearnerInfoCard extends React.Component {
   }
 
   render() {
-    const {
-      profile,
-      toggleShowPersonalDialog,
-      toggleShowAboutMeDialog
-    } = this.props
+    const { profile, toggleShowPersonalDialog, toggleShowAboutMeDialog } =
+      this.props
 
     let personalInfoEditContent
     if (this.isOwnProfilePage()) {

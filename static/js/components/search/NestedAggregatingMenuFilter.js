@@ -102,9 +102,8 @@ export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
    * Gets the appropriate terms bucket for this element's agg query.
    */
   getTermsBucket(query) {
-    const otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(
-      query
-    )
+    const otherAppliedFiltersOnPath =
+      this.createFilterForOtherElementsOnPath(query)
     const termsKey = otherAppliedFiltersOnPath ? INNER_TERMS_AGG_KEY : this.key
     const termsBucket = ReverseNestedTermsBucket(
       termsKey,

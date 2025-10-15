@@ -78,11 +78,7 @@ export const validateYear = ifNil(
  */
 export const validateNearFutureYear = ifNil(
   R.compose(
-    validYearInput(
-      moment()
-        .add(10, "years")
-        .year()
-    ),
+    validYearInput(moment().add(10, "years").year()),
     filterPositiveInt,
     sanitizeNumberString(4)
   )

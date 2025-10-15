@@ -288,8 +288,9 @@ export function getPreferredName(profile: Profile): string {
 }
 
 export const getRomanizedName = (profile: Profile): string =>
-  `${profile.romanized_first_name ||
-    profile.first_name} ${profile.romanized_last_name || profile.last_name}`
+  `${profile.romanized_first_name || profile.first_name} ${
+    profile.romanized_last_name || profile.last_name
+  }`
 
 /**
  * returns the users location
@@ -472,12 +473,7 @@ export const classify: (s: string) => string = R.compose(
   R.defaultTo("")
 )
 
-export const labelSort = R.sortBy(
-  R.compose(
-    R.toLower,
-    R.prop("label")
-  )
-)
+export const labelSort = R.sortBy(R.compose(R.toLower, R.prop("label")))
 
 export function highlight(text: string, highlightPhrase: ?string) {
   if (!highlightPhrase || !text) {
@@ -566,10 +562,7 @@ export const wrapWithProps = (
 
 export const isNilOrBlank = R.either(R.isNil, R.isEmpty)
 
-export const pickExistingProps = R.compose(
-  R.reject(R.isNil),
-  R.pick
-)
+export const pickExistingProps = R.compose(R.reject(R.isNil), R.pick)
 
 export function sortedCourseRuns(program: Program): Array<CourseRun> {
   const sortedCourses = R.sortBy(R.prop("position_in_program"), program.courses)
@@ -587,11 +580,7 @@ export function programBackendName(program: Program): string {
 // lets you edit both keys and values
 // just pass a function that expects and returns [key, value]
 export const mapObj = R.curry((fn, obj) =>
-  R.compose(
-    R.fromPairs,
-    R.map(fn),
-    R.toPairs
-  )(obj)
+  R.compose(R.fromPairs, R.map(fn), R.toPairs)(obj)
 )
 
 /**
@@ -607,9 +596,7 @@ export const findObjByName = (data: any, key: string) => {
   if (typeof data === "object" && _.has((data: Object), key)) {
     return [_.get(data, key)]
   }
-  return _.flatMap(
-    (data: Array<*>),
-    (value: Object | Array<*>): Array<*> =>
-      typeof value === "object" ? findObjByName(value, key) : []
+  return _.flatMap((data: Array<*>), (value: Object | Array<*>): Array<*> =>
+    typeof value === "object" ? findObjByName(value, key) : []
   )
 }

@@ -203,8 +203,7 @@ document.addEventListener("DOMContentLoaded", function() {
   $(".mailchimp").ajaxChimp({
     callback: mailchimpCallback,
     // Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
-    url:
-      "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
+    url:      "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
   })
 
   $("#mce-MMERGE4").hide()
@@ -266,9 +265,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .find(".accordion-toggle")
     .click(function() {
       // Expand or collapse this panel
-      $(this)
-        .next()
-        .slideToggle("fast")
+      $(this).next().slideToggle("fast")
       // Rotate the icon
       $(this)
         .find(".material-icons")
@@ -287,8 +284,6 @@ document.addEventListener("DOMContentLoaded", function() {
   $('a[href^="https://"], a[href^="http://"] ').attr("target", "_blank")
 
   if (window.location.hash !== "") {
-    $(`a[href="${window.location.hash}"]`)
-      .parent()
-      .trigger("click")
+    $(`a[href="${window.location.hash}"]`).parent().trigger("click")
   }
 })

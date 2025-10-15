@@ -1,6 +1,7 @@
+// @flow
 import { createAction } from "redux-actions"
 import type { Dispatcher } from "../flow/reduxTypes"
-import { Dispatch } from "redux"
+import type { Dispatch } from "redux"
 import { sendGradesRecordMail } from "../lib/api"
 
 export const SET_DIALOG_VISIBILITY = "SET_DIALOG_VISIBILITY"

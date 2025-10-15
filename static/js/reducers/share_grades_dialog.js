@@ -1,8 +1,10 @@
+// @flow
 import {
   SET_COPY_SUCCESS,
   SET_DIALOG_VISIBILITY,
   SET_RECORD_SHARE_LINK
 } from "../actions/share_grades_dialog"
+import type { Action } from "../flow/reduxTypes"
 
 export type ShareDialogState = {
   shareDialogVisibility: boolean,
@@ -18,7 +20,7 @@ export const INITIAL_SHARE_STATE = {
 
 export const shareDialog = (
   state: ShareDialogState = INITIAL_SHARE_STATE,
-  action
+  action: Action<ShareDialogState>
 ) => {
   switch (action.type) {
   case SET_DIALOG_VISIBILITY:

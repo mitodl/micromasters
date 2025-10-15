@@ -45,9 +45,7 @@ describe("dashboard course utilities", () => {
 
     it("should show start date, if >10 days away", () => {
       [10, 11, 15].forEach(days => {
-        const inTheFuture = moment()
-          .add(days, "days")
-          .add(10, "minutes")
+        const inTheFuture = moment().add(days, "days").add(10, "minutes")
         run.course_start_date = inTheFuture.format()
         assert.equal(
           courseStartDateMessage(run),
@@ -68,9 +66,7 @@ describe("dashboard course utilities", () => {
     })
 
     it('should say "started" if the course already started', () => {
-      run.course_start_date = moment()
-        .subtract(2, "days")
-        .format()
+      run.course_start_date = moment().subtract(2, "days").format()
       assert(courseStartDateMessage(run).startsWith("Course started"))
     })
 
@@ -125,47 +121,31 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if the start date passed and the end date is in the future", () => {
-      run.course_start_date = moment()
-        .subtract(5, "days")
-        .format()
-      run.course_end_date = moment()
-        .add(5, "days")
-        .format()
+      run.course_start_date = moment().subtract(5, "days").format()
+      run.course_end_date = moment().add(5, "days").format()
       assert.isTrue(courseCurrentlyInProgress(run))
     })
 
     it("should return true for a future course run", () => {
-      run.course_start_date = moment()
-        .add(5, "days")
-        .format()
-      run.course_end_date = moment()
-        .add(25, "days")
-        .format()
+      run.course_start_date = moment().add(5, "days").format()
+      run.course_end_date = moment().add(25, "days").format()
       assert.isFalse(courseCurrentlyInProgress(run))
     })
 
     it("should return false for a past course run", () => {
-      run.course_start_date = moment()
-        .add(5, "days")
-        .format()
-      run.course_end_date = moment()
-        .add(25, "days")
-        .format()
+      run.course_start_date = moment().add(5, "days").format()
+      run.course_end_date = moment().add(25, "days").format()
       assert.isFalse(courseCurrentlyInProgress(run))
     })
 
     it("should return true if the start date passed and end date is empty", () => {
-      run.course_start_date = moment()
-        .subtract(5, "days")
-        .format()
+      run.course_start_date = moment().subtract(5, "days").format()
       run.course_end_date = ""
       assert.isTrue(courseCurrentlyInProgress(run))
     })
 
     it("should return false for a future course run end date is empty", () => {
-      run.course_start_date = moment()
-        .add(5, "days")
-        .format()
+      run.course_start_date = moment().add(5, "days").format()
       run.course_end_date = ""
       assert.isFalse(courseCurrentlyInProgress(run))
     })
@@ -179,16 +159,12 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if the end date is after the current time", () => {
-      run.course_end_date = moment()
-        .add(5, "days")
-        .format()
+      run.course_end_date = moment().add(5, "days").format()
       assert.isTrue(courseUpcomingOrCurrent(run))
     })
 
     it("should return false otherwise", () => {
-      run.course_end_date = moment()
-        .subtract(5, "days")
-        .format()
+      run.course_end_date = moment().subtract(5, "days").format()
       assert.isFalse(courseUpcomingOrCurrent(run))
     })
 
@@ -198,9 +174,7 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if course ended but status currently-enrolled", () => {
-      run.course_end_date = moment()
-        .subtract(5, "days")
-        .format()
+      run.course_end_date = moment().subtract(5, "days").format()
       run.status = STATUS_CURRENTLY_ENROLLED
       assert.isTrue(courseUpcomingOrCurrent(run))
     })
@@ -404,18 +378,8 @@ describe("dashboard course utilities", () => {
     for (const data of [
       ["", false],
       [now.toISOString(), true],
-      [
-        moment()
-          .add(10, "days")
-          .toISOString(),
-        false
-      ],
-      [
-        moment()
-          .subtract(10, "days")
-          .toISOString(),
-        true
-      ]
+      [moment().add(10, "days").toISOString(), false],
+      [moment().subtract(10, "days").toISOString(), true]
     ]) {
       it(`should return ${
         data[1] ? "true" : "false"

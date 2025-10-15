@@ -70,12 +70,8 @@ type CampaignCardProps = {
 }
 
 const EmailCampaignsCard = (props: CampaignCardProps) => {
-  const {
-    getEmails,
-    toggleEmailActive,
-    emailsInFlight,
-    openEmailComposer
-  } = props
+  const { getEmails, toggleEmailActive, emailsInFlight, openEmailComposer } =
+    props
 
   return (
     <Card shadow={1} className="card email-campaigns-card">

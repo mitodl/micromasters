@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS: false */
 import PropTypes from "prop-types"
 import { assert } from "chai"
@@ -21,10 +22,12 @@ describe("LeaveProgramWizard", () => {
       dialogVisibility:           {
         unenrollProgramDialog: false
       }
-    }
+    },
+    dispatch: null
   }
 
   const getEl = (selector: string): HTMLElement => {
+    // $FlowFixMe
     return (document.querySelector(selector): HTMLElement)
   }
 

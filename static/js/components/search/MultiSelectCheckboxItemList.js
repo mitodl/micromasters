@@ -132,10 +132,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
     return (
       <div
         data-qa="options"
-        className={bemBlocks
-          .container()
-          .mix(className)
-          .state({ disabled })}
+        className={bemBlocks.container().mix(className).state({ disabled })}
       >
         {[this.allAction(this.allItemsSelected()), ...this.itemComponentList()]}
       </div>

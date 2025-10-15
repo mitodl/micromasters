@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS: false */
 /* eslint-disable quote-props, no-unused-vars */
 
@@ -88,7 +89,7 @@ describe("LearnerSearchPage", function() {
 
   it("calls the opensearch API", () => {
     assert.equal(replySpy.callCount, 0)
-    return renderSearch().then(() => {
+    return renderSearch({}).then(() => {
       assert.equal(replySpy.callCount, 1)
 
       const callArgs = replySpy.firstCall.args[0]
@@ -98,7 +99,7 @@ describe("LearnerSearchPage", function() {
   })
 
   it("filters by program id for current enrollment", () => {
-    return renderSearch().then(() => {
+    return renderSearch({}).then(() => {
       assert.equal(replySpy.callCount, 1)
 
       const callArgs = replySpy.firstCall.args[0]
@@ -108,12 +109,9 @@ describe("LearnerSearchPage", function() {
   })
 
   it("uses total_courses for num courses passed max", () => {
-    return renderSearch().then(([wrapper]) => {
+    return renderSearch({}).then(([wrapper]) => {
       assert.equal(
-        wrapper
-          .find("EnabledSelectionRangeFilter")
-          .at(0)
-          .props().max,
+        wrapper.find("EnabledSelectionRangeFilter").at(0).props().max,
         1
       )
     })
@@ -122,7 +120,7 @@ describe("LearnerSearchPage", function() {
   it("should set sendAutomaticEmails flag", () => {
     const EMAIL_DIALOG_ACTIONS = [START_EMAIL_EDIT, SHOW_DIALOG]
 
-    return renderSearch().then(([wrapper]) => {
+    return renderSearch({}).then(([wrapper]) => {
       const emailLink = wrapper.find(EMAIL_LINK_SELECTOR).at(0)
 
       return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
@@ -130,6 +128,7 @@ describe("LearnerSearchPage", function() {
       }).then(state => {
         assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
         return listenForActions([UPDATE_EMAIL_EDIT], () => {
+          // $FlowFixMe
           document.querySelector(".create-campaign input").click()
         }).then(state => {
           assert.isTrue(
@@ -151,12 +150,14 @@ describe("LearnerSearchPage", function() {
       }).then(state => {
         assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
 
+        // $FlowFixMe
         modifyTextField(document.querySelector(".email-subject"), "subject")
         // it is difficult to programmatically edit the draft-js field
         wrapper
           .find(EmailCompositionDialog)
           .props()
           .updateEmailFieldEdit("body", { target: { value: "body" } })
+        // $FlowFixMe
         document.querySelector(".create-campaign input").click()
 
         return listenForActions(
@@ -168,6 +169,7 @@ describe("LearnerSearchPage", function() {
             HIDE_DIALOG
           ],
           () => {
+            // $FlowFixMe
             document
               .querySelector(".email-composition-dialog .save-button")
               .click()
@@ -219,7 +221,7 @@ describe("LearnerSearchPage", function() {
   it("should show the new channel dialog", () => {
     const CHANNEL_DIALOG_ACTIONS = [START_CHANNEL_EDIT, SHOW_DIALOG]
 
-    return renderSearch().then(([wrapper]) => {
+    return renderSearch({}).then(([wrapper]) => {
       const channelLink = wrapper.find(CHANNEL_LINK_SELECTOR).at(0)
 
       return listenForActions(CHANNEL_DIALOG_ACTIONS, () => {
@@ -272,7 +274,7 @@ describe("LearnerSearchPage", function() {
   })
 
   it("sends a request to find users by name when text is entered into the search box", () => {
-    return renderSearch()
+    return renderSearch({})
       .then(([wrapper]) => {
         wrapper
           .find("CustomSearchBox")
@@ -309,7 +311,7 @@ describe("LearnerSearchPage", function() {
 
   describe("work history facet", () => {
     it("has the expected aggregations", () => {
-      return renderSearch().then(() => {
+      return renderSearch({}).then(() => {
         assert.equal(replySpy.callCount, 1)
         const callArgs = replySpy.firstCall.args[0]
         const body = JSON.parse(callArgs.data)
@@ -364,7 +366,7 @@ describe("LearnerSearchPage", function() {
     })
 
     it("displays the correct number in the UI", () => {
-      return renderSearch().then(([wrapper]) => {
+      return renderSearch({}).then(([wrapper]) => {
         const workHistoryItems = wrapper
           .find("ModifiedMultiSelect Select")
           .props().options
@@ -401,7 +403,7 @@ describe("LearnerSearchPage", function() {
 
   describe("education facet", () => {
     it("has the expected aggregations", () => {
-      return renderSearch().then(() => {
+      return renderSearch({}).then(() => {
         assert.equal(replySpy.callCount, 1)
         const callArgs = replySpy.firstCall.args[0]
         const body = JSON.parse(callArgs.data)
@@ -456,9 +458,10 @@ describe("LearnerSearchPage", function() {
     })
 
     it("displays the correct number in the UI", () => {
-      return renderSearch().then(([wrapper]) => {
-        const educationItems = wrapper.find("EducationFilter ItemList").props()
-          .items
+      return renderSearch({}).then(([wrapper]) => {
+        const educationItems = wrapper
+          .find("EducationFilter ItemList")
+          .props().items
 
         assert.deepEqual(educationItems, [
           { doc_count: 66, key: "$all", label: "All" },
@@ -475,7 +478,7 @@ describe("LearnerSearchPage", function() {
       const innerKey = "program.courses.course_title"
       const topLevelKey = `${innerKey}2`
 
-      return renderSearch().then(() => {
+      return renderSearch({}).then(() => {
         const callArgs = replySpy.firstCall.args[0]
         const body = JSON.parse(callArgs.data)
         assert.isDefined(body.aggs[topLevelKey])
@@ -490,7 +493,7 @@ describe("LearnerSearchPage", function() {
     })
 
     it("displays the correct options and counts in the UI", () => {
-      return renderSearch().then(([wrapper]) => {
+      return renderSearch({}).then(([wrapper]) => {
         const allEnrollmentItems = wrapper.find(
           "NestedAggregatingMenuFilter ItemList"
         )
@@ -542,7 +545,7 @@ describe("LearnerSearchPage", function() {
         education_level:      ["hs"],
         company_name:         ["Microsoft"]
       }
-      return renderSearch().then(([wrapper]) => {
+      return renderSearch({}).then(([wrapper]) => {
         const searchkit = wrapper.find("SearchkitProvider").props().searchkit
         searchkit.searchFromUrlQuery(qs.stringify(query))
         wrapper.update()
@@ -571,7 +574,7 @@ describe("LearnerSearchPage", function() {
         education_level: ["hs"],
         company_name:    ["US-ME"]
       }
-      return renderSearch().then(([wrapper]) => {
+      return renderSearch({}).then(([wrapper]) => {
         const searchkit = wrapper.find("SearchkitProvider").props().searchkit
         searchkit.searchFromUrlQuery(qs.stringify(query))
         wrapper.update()
@@ -611,7 +614,7 @@ describe("LearnerSearchPage", function() {
       }
     }
     replySpy.returns(Promise.resolve([200, noHitsResponse]))
-    return renderSearch().then(([wrapper]) => {
+    return renderSearch({}).then(([wrapper]) => {
       const searchkit = wrapper.find("SearchkitProvider").props().searchkit
       searchkit.searchFromUrlQuery(qs.stringify(query))
 
@@ -670,7 +673,7 @@ describe("LearnerSearchPage", function() {
   })
 
   it("navigates between the learner search page and the profile page without error", async () => {
-    await renderSearch()
+    await renderSearch({})
     await listenForActions(
       [REQUEST_DASHBOARD, RECEIVE_DASHBOARD_SUCCESS],
       () => {

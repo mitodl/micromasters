@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS: false */
 import React from "react"
 import { mount } from "enzyme"
@@ -31,12 +32,37 @@ import rootReducer from "../reducers"
 import DashboardRouter from "../DashboardRouter"
 import { testRoutes } from "./test_utils"
 import { configureMainTestStore } from "../store/configureStore"
-import type { Sandbox } from "../flow/sinonTypes"
+import type { SinonSandbox, SinonStub } from "../flow/sinonTypes"
+import type {
+  TestStore,
+  ListenForActionsFunc,
+  DispatchThenFunc
+} from "redux-asserts"
 
 export default class IntegrationTestHelper {
-  sandbox: Sandbox
+  sandbox: SinonSandbox
   store: TestStore
   browserHistory: History
+
+  listenForActions: ListenForActionsFunc
+  dispatchThen: DispatchThenFunc
+
+  fetchJSONWithCSRFStub: SinonStub
+  fetchJSONWithAuthStub: SinonStub
+  dashboardStub: SinonStub
+  coursePricesStub: SinonStub
+  programLearnersStub: SinonStub
+  discussionsFrontpageStub: SinonStub
+  couponsStub: SinonStub
+  profileGetStub: SinonStub
+  programsGetStub: SinonStub
+  attachCouponStub: SinonStub
+  skipFinancialAidStub: SinonStub
+  addFinancialAidStub: SinonStub
+  sendSearchResultMail: SinonStub
+  sendCourseTeamMail: SinonStub
+  sendLearnerMail: SinonStub
+  scrollIntoViewStub: SinonStub
 
   constructor() {
     this.sandbox = sinon.sandbox.create()
@@ -106,7 +132,8 @@ export default class IntegrationTestHelper {
     this.sendLearnerMail.returns(Promise.resolve())
     this.scrollIntoViewStub = this.sandbox.stub()
     window.HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub
-    window.HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub
+    window.HTMLFieldSetElement.prototype.scrollIntoView =
+      this.scrollIntoViewStub
   }
 
   cleanup() {
@@ -142,13 +169,14 @@ export default class IntegrationTestHelper {
       browserHistory.push(url)
       div = document.createElement("div")
       div.setAttribute("id", "integration_test_div")
+      // $FlowFixMe
       document.body.appendChild(div)
       wrapper = mount(
         <div>
           <DashboardRouter
             browserHistory={browserHistory}
             store={this.store}
-            onRouteUpdate={() => null}
+            onRouteUpdate={() => {}}
             routes={testRoutes}
           />
         </div>,

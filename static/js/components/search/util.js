@@ -1,3 +1,4 @@
+// @flow
 import _ from "lodash"
 import R from "ramda"
 import { NestedQuery, BoolMust } from "searchkit"
@@ -8,8 +9,9 @@ import { NestedQuery, BoolMust } from "searchkit"
  * is applied, or undefined if no filter is applied.
  */
 export const getAppliedFilterValue = (
+  // $FlowFixMe
   appliedFilterValue
-): string | Object | undefined => {
+): string | Object | void => {
   if (appliedFilterValue !== undefined) {
     if (_.isPlainObject(appliedFilterValue)) {
       // If the filter value is an object, it can be returned as it is.
@@ -33,6 +35,7 @@ export const getAppliedFilterValue = (
  *
  * @param {class} BaseSearchkitAccessorClass - A Searchkit accessor class (eg: FacetAccessor, RangeAccessor)
  */
+// $FlowFixMe
 export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
   class extends BaseSearchkitAccessorClass {
     /**
@@ -40,6 +43,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      * If a filter has been applied for this element, we need to build the shared query as normal, then alter the
      * values for some Searchkit internals in order to produce the correct query for ES.
      */
+    // $FlowFixMe
     buildSharedQuery(query) {
       if (!this.shouldApplyFilter()) {
         return query
@@ -78,6 +82,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      * documents as 'OR' filters, and the changes to 'query.index.filters' and 'query.index.filtersMap'
      * are being made in order to treat those filters as 'AND'.
      */
+    // $FlowFixMe
     amendSharedQueryForNestedDoc(query, filterToAdd) {
       const groupedNestedFilter = this.createGroupedNestedFilter(
         query,
@@ -101,15 +106,11 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
         filtersMap[nestedPath] = groupedNestedFilter
         // If it exists, delete the key for this specific filter (since all filters on this path are grouped together).
         const oldKey = this.getFilterMapKey()
+        // $FlowFixMe
         const matcher = matchFieldName(oldKey)
         filtersMap = R.compose(
           R.fromPairs,
-          R.reject(
-            R.compose(
-              matcher,
-              R.view(R.lensIndex(0))
-            )
-          ),
+          R.reject(R.compose(matcher, R.view(R.lensIndex(0)))),
           R.toPairs
         )(filtersMap)
 
@@ -133,6 +134,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      *   }
      * }
      */
+    // $FlowFixMe
     createGroupedNestedFilter(query, filterToAdd) {
       const nestedPath = this.getNestedPath()
       const appliedFiltersOnPath = query.getFiltersWithKeys([nestedPath])
@@ -157,6 +159,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      * to this element's nested path, and (b) filters on this element's nested path minus the filter for this specific
      * element.
      */
+    // $FlowFixMe
     createAggFilter(query) {
       const filters = []
       const nestedPath = this.getNestedPath()
@@ -164,9 +167,8 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
       if (unrelatedFilters) {
         filters.push(unrelatedFilters)
       }
-      const otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(
-        query
-      )
+      const otherAppliedFiltersOnPath =
+        this.createFilterForOtherElementsOnPath(query)
       if (otherAppliedFiltersOnPath) {
         filters.push(NestedQuery(nestedPath, otherAppliedFiltersOnPath))
       }
@@ -182,6 +184,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      *   {'term': {'program.courses.payment_status': 'Paid'}
      * ]
      */
+    // $FlowFixMe
     getAllFiltersOnPath(query) {
       const nestedPath = this.getNestedPath()
       const appliedNestedFilters = query.getFiltersWithKeys(nestedPath)
@@ -212,6 +215,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      *   }
      * }
      */
+    // $FlowFixMe
     createFilterForOtherElementsOnPath(query) {
       const allFilters = this.getAllFiltersOnPath(query)
       let otherFilters = []
@@ -233,11 +237,9 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
   }
 
 // Accept keys that start with the given prefix and end with numbers
-export const matchFieldName: (
-  resultIdPrefix: string,
-  key: string
-) => boolean = R.curry(
-  (resultIdPrefix: string, key: string) =>
-    key.startsWith(resultIdPrefix) &&
-    !isNaN(key.substring(resultIdPrefix.length))
-)
+export const matchFieldName: (resultIdPrefix: string, key: string) => boolean =
+  R.curry(
+    (resultIdPrefix: string, key: string) =>
+      key.startsWith(resultIdPrefix) &&
+      !isNaN(key.substring(resultIdPrefix.length))
+  )

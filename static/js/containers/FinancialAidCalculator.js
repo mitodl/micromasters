@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS:false */
 /* eslint-disable no-unused-vars */
 import React from "react"
@@ -140,15 +141,19 @@ const validationMessage = (key, errors) => {
   return <div className="validation-message">{errors[key]}</div>
 }
 
-const apiError = ({ message, code }: FetchError) => (
-  <div className="api-error">
-    {`There was an error (Error ${code}: ${message}). Please contact `}
-    <a href={`mailto:${SETTINGS.support_email}`}>
-      {`${SETTINGS.support_email}`}
-    </a>
-    {" if you continue to have problems."}
-  </div>
-)
+const apiError = ({ message, code }: FetchError) => {
+  // $FlowFixMe
+  const text = `There was an error (Error ${code}: ${message}). Please contact `
+  return (
+    <div className="api-error">
+      {text}
+      <a href={`mailto:${SETTINGS.support_email}`}>
+        {`${SETTINGS.support_email}`}
+      </a>
+      {" if you continue to have problems."}
+    </div>
+  )
+}
 
 type CalculatorProps = {
   calculatorDialogVisibility: boolean,
@@ -196,7 +201,8 @@ const FinancialAidCalculator = ({
     return null
   }
 
-  let minPossibleCost, maxPossibleCost
+  let minPossibleCost = "",
+    maxPossibleCost = ""
   if (program.financial_aid_availability) {
     minPossibleCost = formatPrice(
       program.financial_aid_user_info.min_possible_cost

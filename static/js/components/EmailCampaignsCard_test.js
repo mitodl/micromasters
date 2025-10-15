@@ -55,11 +55,7 @@ describe("EmailCampaignsCard", () => {
 
   it("should render a switch, and call toggleEmailActive on click", () => {
     const card = renderCard()
-    card
-      .find(Switch)
-      .first()
-      .props()
-      .onChange()
+    card.find(Switch).first().props().onChange()
     assert(
       emailCardProps.toggleEmailActive.calledWith(
         GET_AUTOMATIC_EMAILS_RESPONSE[0]
@@ -69,10 +65,7 @@ describe("EmailCampaignsCard", () => {
 
   it('should render an "edit" button, and call openEmailComposer with the AutomaticEmail on click', () => {
     const card = renderCard()
-    card
-      .find("a")
-      .first()
-      .simulate("click")
+    card.find("a").first().simulate("click")
     assert(
       emailCardProps.openEmailComposer.calledWith(
         GET_AUTOMATIC_EMAILS_RESPONSE[0]
