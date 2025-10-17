@@ -52,12 +52,14 @@ def fetch_course_from_mit_learn(course_id) -> Dict[str, Any]:
 
 
 
-def sync_mit_learn_courseruns_for_course(course, raw_courseruns: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Process and normalize raw course data from MIT Learn API, but only for courses that already exist in the database.
 
     Args:
         raw_courses (List[Dict[str, Any]]): Raw course data from the API.
+        course (Course): Course object to which the course runs belong.
+        enrollment_url (str): Enrollment URL to set for each course run.
 
     Returns:
         List[Dict[str, Any]]: List of dicts with course and course run info for existing courses only.
@@ -74,7 +76,7 @@ def sync_mit_learn_courseruns_for_course(course, raw_courseruns: List[Dict[str, 
             "end_date": parse_datetime(raw_courserun.get("end_date"))if raw_courserun.get("end_date") else None,
             "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get("upgrade_deadline") else None,
             "courseware_backend": raw_courserun.get("courseware_backend", ""),
-            "enrollment_url": raw_courserun.get("enrollment_url", ""),
+            "enrollment_url": enrollment_url,
         }
         course_run, created = CourseRun.objects.update_or_create(
             course=course, edx_course_key=raw_courserun["run_id"], defaults=run_defaults
