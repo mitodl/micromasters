@@ -6,7 +6,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import migrations
 
-from wagtail.core.rich_text import RichText
+from wagtail.rich_text import RichText
 
 
 def page_to_streamfield(page):

@@ -6,20 +6,21 @@ import logging
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from django.shortcuts import Http404, redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View, TemplateView
-from rolepermissions.permissions import available_perm_status
+from django.views.generic import TemplateView, View
 from rolepermissions.checkers import has_role
+from rolepermissions.permissions import available_perm_status
 
 from cms.util import get_coupon_code
-from courses.models import Program, Course
+from courses.models import Course, Program
 from ecommerce.models import Coupon
-from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
+from micromasters.utils import webpack_dev_server_host
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
 from ui.decorators import require_mandatory_urls
@@ -120,7 +121,7 @@ class UsersView(ReactView):
         """
         Handle GET requests
         """
-        user = kwargs.pop('user')
+        user = kwargs.pop('user', None)
         if user is not None:
             if not CanSeeIfNotPrivate().has_permission(request, self):
                 raise Http404
@@ -254,6 +255,12 @@ def oauth_maintenance(request, *args, **kwargs):  # pylint: disable=unused-argum
     Returns maintenance page during oauth downtime
     """
     return standard_error_page(request, 200, "oauth_maintenance.html")
+
+
+def logout_view(request):
+    """Log the user out and redirect to the site home."""
+    logout(request)
+    return redirect('/')
 
 
 class BackgroundImagesCSSView(TemplateView):

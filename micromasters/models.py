@@ -2,21 +2,17 @@
 Classes related to models for MicroMasters
 """
 
-from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
+from django.contrib.auth import get_user_model
+
 from django.db import transaction
-from django.db.models import (
-    DateTimeField,
-    ForeignKey,
-    Manager,
-    Model,
-    SET_NULL,
-)
+from django.db.models import (SET_NULL, DateTimeField, ForeignKey, JSONField,
+                              Manager, Model)
 from django.db.models.query import QuerySet
 
 from micromasters.utils import now_in_utc
 
 
+User = get_user_model()
 class TimestampedModelQuerySet(QuerySet):
     """
     Subclassed QuerySet for TimestampedModelManager
@@ -119,11 +115,11 @@ class AuditableModel(Model):
         if before_obj is not None:
             before_dict = before_obj.to_dict()
 
-        audit_kwargs = dict(
-            acting_user=acting_user,
-            data_before=before_dict,
-            data_after=self.to_dict(),
-        )
+        audit_kwargs = {
+            "acting_user": acting_user,
+            "data_before": before_dict,
+            "data_after": self.to_dict(),
+        }
         audit_class = self.get_audit_class()
         audit_kwargs[audit_class.get_related_field_name()] = self
         audit_class.objects.create(**audit_kwargs)

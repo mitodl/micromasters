@@ -3,26 +3,20 @@
 """Tests for search tasks"""
 from types import SimpleNamespace
 
-from ddt import (
-    data,
-    ddt,
-    unpack,
-)
+import pytest
+from ddt import data, ddt, unpack
 from django.conf import settings
 from django.test import override_settings
-import pytest
 
 from dashboard.factories import ProgramEnrollmentFactory
 from search.base import MockedESTestCase
 from search.exceptions import ReindexException
 from search.factories import PercolateQueryFactory
 from search.indexing_api import create_backing_indices
-from search.tasks import (
-    index_users,
-    index_program_enrolled_users, start_recreate_index, bulk_index_percolate_queries, bulk_index_program_enrollments,
-    finish_recreate_index,
-)
-
+from search.tasks import (bulk_index_percolate_queries,
+                          bulk_index_program_enrollments,
+                          finish_recreate_index, index_program_enrolled_users,
+                          index_users, start_recreate_index)
 
 FAKE_INDEX = 'fake'
 

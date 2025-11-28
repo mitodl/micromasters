@@ -1,13 +1,13 @@
 """Factories for making test data"""
 import random
 
+import factory
 import faker
 import pytz
-import factory
 from factory import fuzzy
 from factory.django import DjangoModelFactory
 
-from .models import Program, Course, CourseRun, Topic
+from .models import Course, CourseRun, Program, Topic
 
 FAKE = faker.Factory.create()
 
@@ -64,7 +64,7 @@ class CourseFactory(DjangoModelFactory):
     program = factory.SubFactory(ProgramFactory)
     position_in_program = factory.Sequence(lambda n: n)
 
-    edx_key = factory.Sequence(lambda number: "v{}".format(number))  # pylint: disable=unnecessary-lambda
+    edx_key = factory.Sequence(lambda number: f"v{number}")  # pylint: disable=unnecessary-lambda
 
     description = fuzzy.FuzzyText()
     prerequisites = fuzzy.FuzzyText(prefix="Course requires ")
@@ -76,12 +76,12 @@ class CourseFactory(DjangoModelFactory):
 class CourseRunFactory(DjangoModelFactory):
     """Factory for CourseRuns"""
     title = factory.LazyAttribute(
-        lambda x: "CourseRun " + FAKE.sentence()
+        lambda x: f"CourseRun {FAKE.sentence()}"
     )
     course = factory.SubFactory(CourseFactory)
     # Try to make sure we escape this correctly
     edx_course_key = factory.Sequence(
-        lambda number: "course:/v{}/{}".format(number, FAKE.slug())
+        lambda number: f"course:/v{number}/{FAKE.slug()}"
     )
     enrollment_start = factory.Faker(
         'date_time_this_month', before_now=True, after_now=False, tzinfo=pytz.utc
@@ -99,10 +99,10 @@ class CourseRunFactory(DjangoModelFactory):
         'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
     )
     fuzzy_start_date = factory.LazyAttribute(
-        lambda x: "Starting {}".format(FAKE.sentence())
+        lambda x: f"Starting {FAKE.sentence()}"
     )
     fuzzy_enrollment_start_date = factory.LazyAttribute(
-        lambda x: "Enrollment starting {}".format(FAKE.sentence())
+        lambda x: f"Enrollment starting {FAKE.sentence()}"
     )
     upgrade_deadline = factory.Faker(
         'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc

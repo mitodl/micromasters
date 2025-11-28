@@ -2,44 +2,27 @@
 # pylint: disable=redefined-outer-name,unused-argument
 import csv
 
+import pytest
 from django.conf import settings
 from django.db.models.signals import post_save
 from factory import Iterator
 from factory.django import mute_signals
-import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+from cms.factories import (FacultyFactory, InfoLinksFactory,
+                           ProgramCourseFactory, ProgramPageFactory,
+                           SemesterDateFactory)
+from courses.factories import CourseFactory, ProgramFactory
+from dashboard.models import ProgramEnrollment
+from ecommerce.factories import CouponFactory
+from ecommerce.models import Coupon, UserCoupon
+from financialaid.factories import FinancialAidFactory
+from financialaid.models import FinancialAid, FinancialAidStatus
+from profiles.models import Profile
+from roles.models import Role, Staff
 from search.base import reindex_test_es_data
 from selenium_tests.data_util import create_enrolled_user_batch
-from roles.models import (
-    Staff,
-    Role,
-)
-from dashboard.models import ProgramEnrollment
-from courses.factories import (
-    ProgramFactory,
-    CourseFactory
-)
-from cms.factories import (
-    FacultyFactory,
-    InfoLinksFactory,
-    ProgramCourseFactory,
-    ProgramPageFactory,
-    SemesterDateFactory,
-)
-from ecommerce.models import (
-    Coupon,
-    UserCoupon,
-)
-from ecommerce.factories import CouponFactory
-from financialaid.models import (
-    FinancialAid,
-    FinancialAidStatus
-)
-from financialaid.factories import FinancialAidFactory
-from profiles.models import Profile
-
 
 pytestmark = [
     pytest.mark.django_db,
@@ -94,7 +77,7 @@ def test_approve_docs(browser, base_test_data, logged_in_staff):
         status=FinancialAidStatus.DOCS_SENT,
     )
 
-    browser.get("/financial_aid/review/{}/{}".format(program.id, FinancialAidStatus.DOCS_SENT))
+    browser.get(f"/financial_aid/review/{program.id}/{FinancialAidStatus.DOCS_SENT}")
     browser.click_when_loaded(By.CLASS_NAME, "mark-docs-as-received")
     alert = browser.driver.switch_to.alert
     alert.accept()
@@ -220,7 +203,7 @@ class TestLearnerSearchPage:
         """
         There should be more than 20 countries in current country and birth country facets
         """
-        with open("profiles/data/countries.csv") as f:
+        with open("profiles/data/countries.csv", encoding='utf-8') as f:
             reader = csv.DictReader(f)
             country_codes = [row['code'] for row in reader]
         create_enrolled_user_batch(len(country_codes), program=base_test_data.program, is_staff=False)
@@ -241,6 +224,6 @@ class TestLearnerSearchPage:
         current_selector = '.filter--country .sk-hierarchical-menu-list__item'
 
         country_count = browser.driver.execute_script(
-            "return document.querySelectorAll('{}').length".format(current_selector)
+            f"return document.querySelectorAll('{current_selector}').length"
         )
         assert country_count == len(country_codes)

@@ -4,71 +4,42 @@ Tests for search API functions.
 import itertools
 from unittest.mock import patch
 
-from ddt import (
-    data,
-    ddt,
-    unpack,
-)
+from ddt import data, ddt, unpack
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.test import override_settings
-from opensearchpy.exceptions import NotFoundError
 from factory.django import mute_signals
+from opensearchpy.exceptions import NotFoundError
 
-from dashboard.factories import (
-    CachedCertificateFactory,
-    CachedEnrollmentFactory,
-    CachedCurrentGradeFactory,
-    ProgramEnrollmentFactory
-)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
+from dashboard.factories import (CachedCertificateFactory,
+                                 CachedCurrentGradeFactory,
+                                 CachedEnrollmentFactory,
+                                 ProgramEnrollmentFactory)
 from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSearchSerializer
-from courses.factories import (
-    ProgramFactory,
-    CourseFactory,
-    CourseRunFactory,
-)
-from profiles.factories import (
-    EducationFactory,
-    EmploymentFactory,
-    ProfileFactory,
-)
-from profiles.serializers import (
-    ProfileSerializer
-)
+from profiles.factories import (EducationFactory, EmploymentFactory,
+                                ProfileFactory)
+from profiles.serializers import ProfileSerializer
 from roles.models import Role
-from roles.roles import (
-    Instructor,
-    Staff
-)
+from roles.roles import Instructor, Staff
 from search.base import ESTestCase, reindex_test_es_data
-from search.connection import (
-    ALL_INDEX_TYPES,
-    get_aliases,
-    get_default_alias,
-    make_alias_name,
-    make_backing_index_name,
-    GLOBAL_DOC_TYPE,
-    PERCOLATE_INDEX_TYPE,
-    PUBLIC_ENROLLMENT_INDEX_TYPE,
-    PRIVATE_ENROLLMENT_INDEX_TYPE,
-)
-from search.exceptions import ReindexException
+from search.connection import (ALL_INDEX_TYPES, GLOBAL_DOC_TYPE,
+                               PERCOLATE_INDEX_TYPE,
+                               PRIVATE_ENROLLMENT_INDEX_TYPE,
+                               PUBLIC_ENROLLMENT_INDEX_TYPE, get_aliases,
+                               get_default_alias, make_alias_name,
+                               make_backing_index_name)
+from search.exceptions import IndexTypeException, ReindexException
 from search.factories import PercolateQueryFactory
-from search.indexing_api import (
-    clear_and_create_index,
-    delete_indices,
-    get_conn,
-    refresh_index,
-    index_program_enrolled_users,
-    remove_program_enrolled_user,
-    serialize_program_enrolled_user,
-    serialize_public_enrolled_user,
-    filter_current_work,
-    index_percolate_queries,
-    delete_percolate_query, create_backing_indices,
-)
-
+from search.indexing_api import (clear_and_create_index,
+                                 create_backing_indices, delete_indices,
+                                 delete_percolate_query, filter_current_work,
+                                 get_conn, index_percolate_queries,
+                                 index_program_enrolled_users, refresh_index,
+                                 remove_program_enrolled_user,
+                                 serialize_program_enrolled_user,
+                                 serialize_public_enrolled_user)
 from search.models import PercolateQuery
 from search.util import traverse_mapping
 
@@ -161,7 +132,7 @@ def assert_search(results, program_enrollments, *, index_type):
             for program_enrollment in sorted_program_enrollments
         ]
     else:
-        raise Exception("Unexpected index type")
+        raise IndexTypeException("Unexpected index type")
 
     assert serialized == sources_advanced
 
@@ -568,9 +539,9 @@ class SerializerTests(ESTestCase):
                 'preferred_name': profile.preferred_name,
                 'romanized_first_name': profile.romanized_first_name,
                 'romanized_last_name': profile.romanized_last_name,
-                'image': '/media/{}'.format(profile.image),
-                'image_small': '/media/{}'.format(profile.image_small),
-                'image_medium': '/media/{}'.format(profile.image_medium),
+                'image': f'/media/{profile.image}',
+                'image_small': f'/media/{profile.image_small}',
+                'image_medium': f'/media/{profile.image_medium}',
                 'username': profile.user.username,
                 'filled_out': profile.filled_out,
                 'account_privacy': profile.account_privacy,
@@ -639,7 +610,7 @@ class GetConnTests(ESTestCase):
 
         with self.assertRaises(ReindexException) as ex:
             get_conn(verify_indices=[other_index])
-        assert str(ex.exception) == "Unable to find index {}".format(other_index)
+        assert str(ex.exception) == f"Unable to find index {other_index}"
 
     @data(
         [False, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_private_enrollment_default',)],
@@ -713,7 +684,7 @@ class RecreateIndexTests(ESTestCase):
 
         if existing_temp_alias:
             # Create a temp alias to assert that it doesn't change anything
-            backing_index = "{}_backing".format(temp_alias)
+            backing_index = f"{temp_alias}_backing"
             conn.indices.create(backing_index)
             conn.indices.put_alias(name=temp_alias, index=backing_index)
 

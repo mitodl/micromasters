@@ -3,7 +3,7 @@
   <head>
     {% spaceless %}
     {% load static %}
-    {% load hijack_tags %}
+    {% load hijack %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,400i,500,700&display=swap" media="all" />
@@ -55,7 +55,6 @@
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
     {% endif %}
-    {% hijack_notification %}
     {% block content %}
     {% endblock %}
     <script type="text/javascript">

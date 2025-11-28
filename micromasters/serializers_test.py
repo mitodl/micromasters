@@ -1,12 +1,13 @@
 """
 Tests for serializing Django User objects
 """
-from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save
+from django.test import TestCase
 from factory.django import mute_signals
-from micromasters.serializers import UserSerializer, serialize_maybe_user
+
 from micromasters.factories import UserFactory
+from micromasters.serializers import UserSerializer, serialize_maybe_user
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
 

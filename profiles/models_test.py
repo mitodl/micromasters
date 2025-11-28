@@ -1,10 +1,10 @@
 """
 Model tests
 """
-from unittest.mock import patch
 from io import BytesIO
+from unittest.mock import patch
 
-from ddt import ddt, data, unpack
+from ddt import data, ddt, unpack
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.signals import post_save
 from factory.django import mute_signals
@@ -14,11 +14,9 @@ from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory, UserFactory
 from profiles.models import Profile
 from profiles.test_mixins import ProfileImageCleanupMixin
-from profiles.util import (
-    profile_image_upload_uri,
-    profile_image_upload_uri_small,
-    profile_image_upload_uri_medium,
-)
+from profiles.util import (profile_image_upload_uri,
+                           profile_image_upload_uri_medium,
+                           profile_image_upload_uri_small)
 from search.base import MockedESTestCase
 
 
@@ -54,7 +52,7 @@ class StudentIdTests(MockedESTestCase):
         """test pretty printing property method"""
         with mute_signals(post_save):
             profile = ProfileFactory()
-        assert profile.pretty_printed_student_id == "MMM{0:06}".format(profile.student_id)
+        assert profile.pretty_printed_student_id == f"MMM{profile.student_id:06}"
 
     def test_should_be_blank_if_not_yet_saved(self):
         """test student id when model instance not yet saved"""

@@ -3,9 +3,10 @@ Views for MicroMasters-generated certificates
 """
 
 
-from abc import ABC, abstractmethod
 import json
 import logging
+from abc import ABC, abstractmethod
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
@@ -13,16 +14,14 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
-from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories, ProgramLetterSignatory
+from cms.models import (CourseCertificateSignatories,
+                        ProgramCertificateSignatories, ProgramLetterSignatory)
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
-from dashboard.utils import get_mmtrack, convert_to_letter
-from grades.models import (
-    MicromastersCourseCertificate,
-    MicromastersProgramCertificate,
-    MicromastersProgramCommendation,
-    CombinedFinalGrade,
-)
+from dashboard.utils import convert_to_letter, get_mmtrack
+from grades.models import (CombinedFinalGrade, MicromastersCourseCertificate,
+                           MicromastersProgramCertificate,
+                           MicromastersProgramCommendation)
 from mail.models import PartnerSchool
 
 log = logging.getLogger(__name__)
@@ -219,10 +218,10 @@ class BaseGradeRecordView(ABC, TemplateView):
 
         authenticated = not user.is_anonymous
         share_hash_absolute_url = self.request.build_absolute_uri(
-            reverse("shared_grade_records", kwargs=dict(
-                    enrollment_id=enrollment.id,
-                    record_share_hash=enrollment.share_hash
-                )
+            reverse("shared_grade_records", kwargs={
+                    "enrollment_id": enrollment.id,
+                    "record_share_hash": enrollment.share_hash
+                }
             )
         )
         js_settings = {

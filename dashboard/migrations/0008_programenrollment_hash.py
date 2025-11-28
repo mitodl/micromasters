@@ -2,14 +2,14 @@
 
 from django.db import migrations, models
 
-from micromasters.utils import generate_md5
+from micromasters.utils import generate_hash_32
 
 
 def populate_enrollment_hash(apps, schema_editor):
     ProgramEnrollment = apps.get_model('dashboard', 'ProgramEnrollment')
     for enrollment in ProgramEnrollment.objects.all():
-        enrollment.hash = generate_md5(
-            '{}|{}'.format(enrollment.user_id, enrollment.program_id).encode('utf-8')
+        enrollment.hash = generate_hash_32(
+            f'{enrollment.user_id}|{enrollment.program_id}'.encode()
         )
         enrollment.save()
 

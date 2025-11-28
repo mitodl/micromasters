@@ -2,41 +2,33 @@
 Tests for HTTP email API views
 """
 from unittest.mock import Mock, patch
-import ddt
 
+import ddt
 from django.core.exceptions import ImproperlyConfigured
-from django.urls import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
 from django.test.client import RequestFactory
+from django.urls import reverse
+from factory.django import mute_signals
 from requests.exceptions import HTTPError
 from rest_framework import status
-from rest_framework.test import APITestCase
 from rest_framework.response import Response
-from factory.django import mute_signals
+from rest_framework.test import APITestCase
 
-from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
-from dashboard.factories import (
-    ProgramEnrollmentFactory,
-    CachedEnrollmentFactory,
-)
-from dashboard.models import ProgramEnrollment, CachedEnrollment
-from financialaid.api_test import (
-    FinancialAidBaseTestCase,
-    create_program,
-    create_enrolled_profile,
-)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
+from dashboard.factories import (CachedEnrollmentFactory,
+                                 ProgramEnrollmentFactory)
+from dashboard.models import CachedEnrollment, ProgramEnrollment
+from financialaid.api_test import (FinancialAidBaseTestCase,
+                                   create_enrolled_profile, create_program)
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from mail.exceptions import SendBatchException
 from mail.factories import AutomaticEmailFactory
-from mail.models import SentAutomaticEmail, AutomaticEmail
+from mail.models import AutomaticEmail, SentAutomaticEmail
 from mail.serializers import AutomaticEmailSerializer
 from mail.utils import get_email_footer
 from mail.views import MailWebhookView
-from profiles.factories import (
-    ProfileFactory,
-    UserFactory,
-)
+from profiles.factories import ProfileFactory, UserFactory
 from profiles.util import full_name
 from roles.models import Role
 from roles.roles import Staff

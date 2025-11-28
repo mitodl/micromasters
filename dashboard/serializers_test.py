@@ -57,7 +57,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         """
         fake = faker.Factory.create()
         course = CourseFactory.create(program=program)
-        course_run_params = dict(before_now=True, after_now=False, tzinfo=pytz.utc)
+        course_run_params = {"before_now": True, "after_now": False, "tzinfo": pytz.utc}
         course_runs = [
             CourseRunFactory.create(
                 course=course,
@@ -67,7 +67,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
                 end_date=fake.date_time_this_year(**course_run_params),
             ) for _ in range(num_course_runs)
         ]
-        factory_kwargs = dict(user=user)
+        factory_kwargs = {"user": user}
         if data is not None:
             factory_kwargs['data'] = data
         return [CachedEnrollmentFactory.create(course_run=course_run, **factory_kwargs) for course_run in course_runs]
@@ -296,7 +296,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
             serialized_enrollments (list): A list of serialized enrollments
             courses (iterable): An iterable of Course objects
         """
-        return all([cls.is_course_serialized(serialized_enrollments, course) for course in courses])
+        return all(cls.is_course_serialized(serialized_enrollments, course) for course in courses)
 
     @classmethod
     def verified_enroll(cls, user, course_run):
@@ -317,7 +317,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
         cls.non_fa_program = ProgramFactory.create()
         _, course_runs = cls.generate_course_with_runs(
             cls.non_fa_program,
-            course_params=dict(title='Non FA Course 1')
+            course_params={"title": 'Non FA Course 1'}
         )
         cls.non_fa_enrollments = [cls.verified_enroll(cls.user, course_runs[0])]
         cls.non_fa_program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=cls.non_fa_program)
@@ -325,7 +325,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
         cls.fa_program = ProgramFactory.create(financial_aid_availability=False)
         _, course_runs = cls.generate_course_with_runs(
             cls.fa_program,
-            course_params=dict(title='FA Course 1')
+            course_params={"title": 'FA Course 1'}
         )
         cls.fa_enrollments = [cls.verified_enroll(cls.user, course_runs[0])]
         cls.fa_program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=cls.fa_program)
@@ -352,7 +352,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
             # Generate a new course with only unverified course run enrollments
             unver_course, unver_course_runs = self.generate_course_with_runs(
                 program,
-                course_params=dict(title='Unverified Course'),
+                course_params={"title": 'Unverified Course'},
                 course_run_count=2
             )
             for course_run in unver_course_runs:

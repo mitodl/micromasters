@@ -1,14 +1,10 @@
 """Tests for the catalog serializers"""
 import pytest
 
-from cms.models import ProgramFaculty
 from cms.factories import ProgramPageFactory
+from cms.models import ProgramFaculty
 from courses.catalog_serializers import CatalogProgramSerializer
-from courses.factories import (
-    CourseFactory,
-    CourseRunFactory,
-    ProgramFactory,
-)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 
 
 @pytest.mark.django_db

@@ -5,8 +5,10 @@ from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from grades.models import MicromastersCourseCertificate, FinalGrade, MicromastersProgramCertificate
-from grades.api import generate_program_certificate, update_or_create_combined_final_grade, generate_program_letter
+from grades.api import (generate_program_certificate, generate_program_letter,
+                        update_or_create_combined_final_grade)
+from grades.models import (FinalGrade, MicromastersCourseCertificate,
+                           MicromastersProgramCertificate)
 
 
 @receiver(post_save, sender=MicromastersCourseCertificate, dispatch_uid="coursecertificate_post_save")

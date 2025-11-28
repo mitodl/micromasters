@@ -3,39 +3,27 @@ Pytest configuration file for the entire selenium test suite
 """
 # pylint: disable=redefined-outer-name,unused-argument
 import os
-from unittest.mock import patch
 from types import SimpleNamespace
+from unittest.mock import patch
+
 import pytest
-
-from django.db import connection
 from django.conf import settings
-from selenium.webdriver import (
-    DesiredCapabilities,
-    Remote,
-)
+from django.db import connection
+from selenium.webdriver import DesiredCapabilities, Remote
 
+from courses.factories import CourseRunFactory, ProgramFactory
+from dashboard.models import ProgramEnrollment
 from exams.factories import ExamRunFactory
-from selenium_tests.util import (
-    Browser,
-    DEFAULT_PASSWORD,
-    DatabaseLoader,
-    terminate_db_connections,
-    should_load_from_existing_db,
-)
+from financialaid.factories import TierProgramFactory
+from roles.models import Role
+from roles.roles import Staff
+from search.base import reindex_test_es_data
+from search.indexing_api import delete_indices
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.page import LoginPage
-from courses.factories import (
-    ProgramFactory,
-    CourseRunFactory,
-)
-from dashboard.models import ProgramEnrollment
-from financialaid.factories import TierProgramFactory
-from search.indexing_api import (
-    delete_indices,
-)
-from search.base import reindex_test_es_data
-from roles.roles import Staff
-from roles.models import Role
+from selenium_tests.util import (DEFAULT_PASSWORD, Browser, DatabaseLoader,
+                                 should_load_from_existing_db,
+                                 terminate_db_connections)
 
 
 def pytest_exception_interact(node, call, report):

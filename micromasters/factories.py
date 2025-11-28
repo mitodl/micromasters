@@ -1,19 +1,18 @@
 """
 Factory for Users
 """
-from django.contrib.auth.models import User
-from factory import (
-    Sequence,
-    SubFactory,
-    LazyAttribute,
-)
+from django.contrib.auth import get_user_model
+
+from factory import LazyAttribute, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
 from social_django.models import UserSocialAuth
+
 from backends.edxorg import EdxOrgOAuth2
 from micromasters.utils import pop_matching_keys_from_dict
 
 
+User = get_user_model()
 def extract_related_model_kwargs(orig_kwargs, related_model_prop_name):
     """
     Extracts a set of factory kwargs that refer to a related model, removes the model prefix from the keys,
@@ -30,7 +29,7 @@ def extract_related_model_kwargs(orig_kwargs, related_model_prop_name):
     Returns:
         dict: A dict of kwargs related to a specific model (without the model prefix)
     """
-    related_model_prefix = '{}__'.format(related_model_prop_name)
+    related_model_prefix = f'{related_model_prop_name}__'
     extracted_kwargs = pop_matching_keys_from_dict(
         orig_kwargs,
         lambda key: key.startswith(related_model_prefix)
@@ -52,7 +51,7 @@ class UserSocialAuthFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     provider = EdxOrgOAuth2.name
     extra_data = {"access_token": "fooooootoken"}
-    uid = LazyAttribute(lambda social_auth: '{}_edx'.format(social_auth.user.username))
+    uid = LazyAttribute(lambda social_auth: f'{social_auth.user.username}_edx')
 
     class Meta:
         model = UserSocialAuth

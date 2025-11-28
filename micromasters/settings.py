@@ -4,25 +4,21 @@ Django settings for MicroMasters.
 import logging
 import os
 import platform
-from urllib.parse import urljoin
 from pathlib import Path
-from django.core.exceptions import ImproperlyConfigured
+from urllib.parse import urljoin
 
 import dj_database_url
 from celery.schedules import crontab
-from micromasters.envs import (
-    get_any,
-    get_bool,
-    get_int,
-    get_list_of_str,
-    get_string,
-)
+from django.core.exceptions import ImproperlyConfigured
 
+from micromasters.envs import (get_any, get_bool, get_int, get_list_of_str,
+                               get_string)
 from micromasters.sentry import init_sentry
 
+VERSION = "0.0.0"  # Default version
 version_file = Path(os.getcwd()) / "VERSION"
-if version_file.is_file:
-    with open(version_file, mode="r", encoding="UTF-8") as file:
+if version_file.is_file():
+    with open(version_file, encoding="UTF-8") as file:
         VERSION = file.readline().strip()
 
 # initialize Sentry before doing anything else so we capture any config errors
@@ -68,10 +64,10 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
-        'IGNORE': [
-            r'.+\.hot-update\.+',
-            r'.+\.js\.map'
-        ]
+        # Disable ignore filtering for compatibility with our stats format (dict chunks).
+        # Support both legacy 'IGNORE' and newer 'ignores' keys.
+        'ignores': [],
+        'IGNORE': []
     }
 }
 
@@ -89,7 +85,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
-    'server_status',
     'social_django',
 
     # WAGTAIL
@@ -106,7 +101,7 @@ INSTALLED_APPS = (
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
     'modelcluster',
     'taggit',
 
@@ -115,8 +110,6 @@ INSTALLED_APPS = (
 
     # Hijack
     'hijack',
-    'compat',
-    'hijack_admin',
 
     # other third party APPS
     'rolepermissions',
@@ -230,7 +223,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR + '/templates/'
+            f"{BASE_DIR}/templates/"
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -259,7 +252,7 @@ WSGI_APPLICATION = 'micromasters.wsgi.application'
 DEFAULT_DATABASE_CONFIG = dj_database_url.parse(
     get_string(
         'DATABASE_URL',
-        'sqlite:///{0}'.format(os.path.join(BASE_DIR, 'db.sqlite3'))
+        f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}"
     )
 )
 DEFAULT_DATABASE_CONFIG['CONN_MAX_AGE'] = get_int('MICROMASTERS_DB_CONN_MAX_AGE', 0)
@@ -287,8 +280,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -299,9 +290,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 CLOUDFRONT_DIST = get_string('CLOUDFRONT_DIST', None)
 if CLOUDFRONT_DIST:
-    STATIC_URL = urljoin('https://{dist}.cloudfront.net'.format(dist=CLOUDFRONT_DIST), STATIC_URL)
+    STATIC_URL = urljoin(f'https://{CLOUDFRONT_DIST}.cloudfront.net', STATIC_URL)
     # Configure Django Storages to use Cloudfront distribution for S3 assets
-    AWS_S3_CUSTOM_DOMAIN = '{dist}.cloudfront.net'.format(dist=CLOUDFRONT_DIST)
+    AWS_S3_CUSTOM_DOMAIN = f'{CLOUDFRONT_DIST}.cloudfront.net'
 
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = (
@@ -460,6 +451,8 @@ HIJACK_LOGOUT_REDIRECT_URL = '/admin/auth/user'
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = get_int('WAGTAILIMAGES_MAX_UPLOAD_SIZE', 20971620)  # default 25 MB
+WAGTAILADMIN_BASE_URL = SITE_BASE_URL
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 MEDIA_ROOT = get_string('MEDIA_ROOT', '/var/media/')
 MEDIA_URL = '/media/'
 MICROMASTERS_USE_S3 = get_bool('MICROMASTERS_USE_S3', False)

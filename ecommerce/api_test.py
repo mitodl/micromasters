@@ -1,76 +1,43 @@
 """
 Test for ecommerce functions
 """
-from base64 import b64encode
-from decimal import Decimal
 import hashlib
 import hmac
-from unittest.mock import (
-    MagicMock,
-    patch,
-    PropertyMock,
-)
+from base64 import b64encode
+from decimal import Decimal
+from unittest.mock import MagicMock, PropertyMock, patch
 from urllib.parse import quote_plus
 
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.http.response import Http404
 from django.test import override_settings
-from rest_framework.exceptions import ValidationError
 from edx_api.enrollments import Enrollment, Enrollments
+from rest_framework.exceptions import ValidationError
 
 from backends.edxorg import EdxOrgOAuth2
-from courses.factories import (
-    CourseRunFactory,
-    FullProgramFactory,
-)
+from courses.factories import CourseRunFactory, FullProgramFactory
 from dashboard.factories import CachedEnrollmentFactory
-from dashboard.models import (
-    CachedEnrollment,
-    ProgramEnrollment,
-)
-from ecommerce.api import (
-    calculate_coupon_price,
-    calculate_run_price,
-    create_unfulfilled_order,
-    enroll_user_on_success,
-    generate_cybersource_sa_payload,
-    generate_cybersource_sa_signature,
-    get_purchasable_course_run,
-    get_new_order_by_reference_number,
-    is_coupon_redeemable,
-    is_coupon_redeemable_for_run,
-    ISO_8601_FORMAT,
-    make_reference_id,
-    pick_coupons,
-    validate_prices,
-)
-from ecommerce.exceptions import (
-    EcommerceEdxApiException,
-    EcommerceException,
-    ParseException,
-)
-from ecommerce.factories import (
-    CouponFactory,
-    LineFactory,
-    OrderFactory,
-)
-from ecommerce.models import (
-    Coupon,
-    Order,
-    OrderAudit,
-    RedeemedCoupon,
-    RedeemedCouponAudit,
-    UserCoupon,
-)
+from dashboard.models import CachedEnrollment, ProgramEnrollment
+from ecommerce.api import (ISO_8601_FORMAT, calculate_coupon_price,
+                           calculate_run_price, create_unfulfilled_order,
+                           enroll_user_on_success,
+                           generate_cybersource_sa_payload,
+                           generate_cybersource_sa_signature,
+                           get_new_order_by_reference_number,
+                           get_purchasable_course_run, is_coupon_redeemable,
+                           is_coupon_redeemable_for_run, make_reference_id,
+                           pick_coupons, validate_prices)
+from ecommerce.exceptions import (EcommerceEdxApiException, EcommerceException,
+                                  ParseException)
+from ecommerce.factories import CouponFactory, LineFactory, OrderFactory
+from ecommerce.models import (Coupon, Order, OrderAudit, RedeemedCoupon,
+                              RedeemedCouponAudit, UserCoupon)
 from financialaid.api import get_formatted_course_price
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from financialaid.models import FinancialAidStatus, TierProgram
 from micromasters.factories import UserFactory
-from micromasters.utils import (
-    now_in_utc,
-    serialize_model_object,
-)
+from micromasters.utils import now_in_utc, serialize_model_object
 from search.base import MockedESTestCase
 
 
@@ -134,9 +101,7 @@ class PurchasableTests(MockedESTestCase):
         with self.assertRaises(ValidationError) as ex:
             get_purchasable_course_run(course_run.edx_course_key, user)
         assert ex.exception.args[0] == (
-            "Course run {} does not have a current attached financial aid application".format(
-                course_run.edx_course_key
-            )
+            f"Course run {course_run.edx_course_key} does not have a current attached financial aid application"
         )
 
     def test_financial_aid_for_user(self):
@@ -153,9 +118,7 @@ class PurchasableTests(MockedESTestCase):
         with self.assertRaises(ValidationError) as ex:
             get_purchasable_course_run(course_run.edx_course_key, user)
         assert ex.exception.args[0] == (
-            "Course run {} does not have a current attached financial aid application".format(
-                course_run.edx_course_key
-            )
+            f"Course run {course_run.edx_course_key} does not have a current attached financial aid application"
         )
 
     def test_financial_aid_terminal_status(self):
@@ -173,9 +136,7 @@ class PurchasableTests(MockedESTestCase):
             with self.assertRaises(ValidationError) as ex:
                 get_purchasable_course_run(course_run.edx_course_key, user)
             assert ex.exception.args[0] == (
-                "Course run {} does not have a current attached financial aid application".format(
-                    course_run.edx_course_key
-                )
+                f"Course run {course_run.edx_course_key} does not have a current attached financial aid application"
             )
 
     def test_financial_aid_not_available(self):
@@ -216,7 +177,7 @@ class PurchasableTests(MockedESTestCase):
         with self.assertRaises(ValidationError) as ex:
             get_purchasable_course_run(course_run.edx_course_key, user)
 
-        assert ex.exception.args[0] == 'Course run {} is already purchased'.format(course_run.edx_course_key)
+        assert ex.exception.args[0] == f'Course run {course_run.edx_course_key} is already purchased'
         assert has_to_pay.call_count == 1
 
     @patch('ecommerce.api.has_to_pay_for_exam', return_value=True)
@@ -288,7 +249,7 @@ class PurchasableTests(MockedESTestCase):
         assert order.line_set.count() == 1
         line = order.line_set.first()
         assert line.course_key == course_run.edx_course_key
-        assert line.description == 'Seat for {}'.format(course_run.title)
+        assert line.description == f'Seat for {course_run.title}'
         assert line.price == discounted_price
 
         assert OrderAudit.objects.count() == 1
@@ -343,7 +304,7 @@ class CybersourceTests(MockedESTestCase):
         }
         signature = generate_cybersource_sa_signature(payload)
 
-        message = ','.join('{}={}'.format(key, payload[key]) for key in ['abc', 'x'])
+        message = ','.join(f'{key}={payload[key]}' for key in ['abc', 'x'])
 
         digest = hmac.new(
             CYBERSOURCE_SECURITY_KEY.encode('utf-8'),
@@ -379,15 +340,15 @@ class CybersourceTests(MockedESTestCase):
             'consumer_id': user.username,
             'currency': 'USD',
             'item_0_code': 'course',
-            'item_0_name': '{}'.format(course_run.title),
+            'item_0_name': f'{course_run.title}',
             'item_0_quantity': 1,
-            'item_0_sku': '{}'.format(course_run.edx_course_key),
+            'item_0_sku': f'{course_run.edx_course_key}',
             'item_0_tax_amount': '0',
             'item_0_unit_price': str(order.total_price_paid),
             'line_item_count': 1,
             'locale': 'en-us',
-            'override_custom_cancel_page': 'dashboard_url?status=cancel&course_key={}'.format(quoted_course_key),
-            'override_custom_receipt_page': "dashboard_url?status=receipt&course_key={}".format(quoted_course_key),
+            'override_custom_cancel_page': f'dashboard_url?status=cancel&course_key={quoted_course_key}',
+            'override_custom_receipt_page': f"dashboard_url?status=receipt&course_key={quoted_course_key}",
             'reference_number': make_reference_id(order),
             'profile_id': CYBERSOURCE_PROFILE_ID,
             'signed_date_time': now.strftime(ISO_8601_FORMAT),
@@ -396,8 +357,8 @@ class CybersourceTests(MockedESTestCase):
             'transaction_uuid': transaction_uuid,
             'unsigned_field_names': '',
             'merchant_defined_data1': 'course',
-            'merchant_defined_data2': '{}'.format(course_run.title),
-            'merchant_defined_data3': '{}'.format(course_run.edx_course_key),
+            'merchant_defined_data2': f'{course_run.title}',
+            'merchant_defined_data3': f'{course_run.edx_course_key}',
             "customer_ip_address": fake_user_ip if fake_user_ip else None,
         }
         assert now_mock.called
@@ -415,7 +376,7 @@ class ReferenceNumberTests(MockedESTestCase):
         """
         course_run, user = create_purchasable_course_run()
         order = create_unfulfilled_order(course_run.edx_course_key, user)
-        assert "MM-{}-{}".format(CYBERSOURCE_REFERENCE_PREFIX, order.id) == make_reference_id(order)
+        assert f"MM-{CYBERSOURCE_REFERENCE_PREFIX}-{order.id}" == make_reference_id(order)
 
     def test_get_new_order_by_reference_number(self):
         """
@@ -461,7 +422,7 @@ class ReferenceNumberTests(MockedESTestCase):
             order.id = 98765432
             assert not Order.objects.filter(id=order.id).exists()
             get_new_order_by_reference_number(make_reference_id(order))
-        assert ex.exception.args[0] == "Unable to find order {}".format(order.id)
+        assert ex.exception.args[0] == f"Unable to find order {order.id}"
 
 
 class EnrollUserTests(MockedESTestCase):
@@ -476,10 +437,11 @@ class EnrollUserTests(MockedESTestCase):
         cls.user = UserFactory()
         cls.user.social_auth.create(
             provider='not_edx',
+            uid=f"{cls.user.username}_not_edx",
         )
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
-            uid="{}_edx".format(cls.user.username),
+            uid=f"{cls.user.username}_edx",
         )
         cls.order = OrderFactory.create(status=Order.CREATED, user=cls.user)
         cls.line1 = LineFactory.create(order=cls.order)
@@ -561,7 +523,7 @@ class EnrollUserTests(MockedESTestCase):
         def create_audit(course_key):
             """Fail for first course key"""
             if course_key == self.line1.course_key:
-                raise Exception("fatal error {}".format(course_key))
+                raise ValueError(f"fatal error {course_key}")
             return Enrollment({"course_details": {"course_id": course_key}})
 
         def get_student_enrollments():
@@ -579,7 +541,7 @@ class EnrollUserTests(MockedESTestCase):
             with self.assertRaises(EcommerceEdxApiException) as ex:
                 enroll_user_on_success(self.order)
             assert len(ex.exception.args[0]) == 1
-            assert ex.exception.args[0][0].args[0] == 'fatal error {}'.format(self.line1.course_key)
+            assert ex.exception.args[0][0].args[0] == f'fatal error {self.line1.course_key}'
 
         assert len(create_audit_mock.call_args_list) == self.order.line_set.count()
         for i, line in enumerate(self.order.line_set.all()):
@@ -776,7 +738,7 @@ class PickCouponTests(MockedESTestCase):
         UserCoupon.objects.all().delete()
         UserCoupon.objects.create(user=UserFactory.create(), coupon=CouponFactory.create())
 
-        assert pick_coupons(self.user) == []
+        assert not pick_coupons(self.user)
 
     def test_not_redeemable(self):
         """
@@ -785,7 +747,7 @@ class PickCouponTests(MockedESTestCase):
 
         with patch('ecommerce.api.is_coupon_redeemable', autospec=True) as _is_coupon_redeemable:
             _is_coupon_redeemable.return_value = False
-            assert pick_coupons(self.user) == []
+            assert not pick_coupons(self.user)
         for coupon in Coupon.objects.all().exclude(id=self.not_auto_or_attached_coupon.id):
             _is_coupon_redeemable.assert_any_call(coupon, self.user)
 
@@ -967,14 +929,14 @@ class ValidatePricesTests(MockedESTestCase):
             income_threshold=1000
         )
         assert (
-            validate_prices()[0] == 'Discount is higher than course price for program {0}'.format(self.program.title)
+            validate_prices()[0] == f'Discount is higher than course price for program {self.program.title}'
         )
 
     def test_no_current_tier_program(self):
         """No current tier program"""
         TierProgram.objects.filter(program=self.program, current=True).update(current=False)
         assert (
-            validate_prices()[0] == 'Could not find current TierProgram for program {0}'.format(self.program.title)
+            validate_prices()[0] == f'Could not find current TierProgram for program {self.program.title}'
         )
 
     def test_no_0_income_threshold_tier_program(self):
@@ -982,7 +944,7 @@ class ValidatePricesTests(MockedESTestCase):
         TierProgram.objects.filter(program=self.program, current=True, income_threshold=0).update(current=False)
         assert (
             validate_prices()[0] ==
-            'Could not find 0 income_threshold TierProgram for program {0}'.format(self.program.title)
+            f'Could not find 0 income_threshold TierProgram for program {self.program.title}'
         )
 
     def test_no_0_discount_tier_program(self):
@@ -990,5 +952,5 @@ class ValidatePricesTests(MockedESTestCase):
         TierProgram.objects.filter(program=self.program, current=True, discount_amount=0).update(current=False)
         assert (
             validate_prices()[0] ==
-            'Could not find 0 discount TierProgram for program {0}'.format(self.program.title)
+            f'Could not find 0 discount TierProgram for program {self.program.title}'
         )

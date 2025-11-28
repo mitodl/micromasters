@@ -5,7 +5,8 @@ import requests
 
 from financialaid.api import update_currency_exchange_rate
 from financialaid.constants import get_currency_exchange_rate_api_request_url
-from financialaid.exceptions import ExceededAPICallsException, UnexpectedAPIErrorException
+from financialaid.exceptions import (ExceededAPICallsException,
+                                     UnexpectedAPIErrorException)
 from micromasters.celery import app
 
 
@@ -23,7 +24,7 @@ def sync_currency_exchange_rates():
             "and the OPEN_EXCHANGE_RATES_APP_ID setting are both set."
         )
         raise RuntimeError(msg)
-    resp = requests.get(CURRENCY_EXCHANGE_RATE_API_REQUEST_URL)
+    resp = requests.get(CURRENCY_EXCHANGE_RATE_API_REQUEST_URL, timeout=30)
     resp_json = resp.json()
     # check specifically if maximum number of api calls per month has been exceeded
     if resp.status_code == 429:

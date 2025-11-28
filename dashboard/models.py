@@ -3,32 +3,20 @@ Models for dashboard
 """
 import uuid
 
-from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
-from django.db.models import (
-    CASCADE,
-    DateTimeField,
-    ForeignKey,
-    Model,
-    OneToOneField,
-    CharField,
-    Manager,
-)
-from edx_api.certificates import (
-    Certificate,
-    Certificates,
-)
+from django.contrib.auth import get_user_model
+
+from django.db.models import (CASCADE, CharField, DateTimeField, ForeignKey,
+                              JSONField, Model, OneToOneField)
+from edx_api.certificates import Certificate, Certificates
 from edx_api.enrollments import Enrollments
-from edx_api.grades import (
-    CurrentGrade,
-    CurrentGradesByUser
-)
+from edx_api.grades import CurrentGrade, CurrentGradesByUser
 
 from courses.models import CourseRun, Program
 from mail.models import PartnerSchool
 from micromasters.models import TimestampedModel
 
 
+User = get_user_model()
 class CachedEdxInfoModel(Model):
     """
     Base class to define other cached models
@@ -132,10 +120,7 @@ class CachedEdxInfoModel(Model):
         """
         String representation of the model object
         """
-        return 'user "{0}", run "{1}"'.format(
-            self.user.username,
-            self.course_run.edx_course_key,
-        )
+        return f'user "{self.user.username}", run "{self.course_run.edx_course_key}"'
 
 
 class CachedEnrollment(CachedEdxInfoModel):
@@ -208,7 +193,7 @@ class UserCacheRefreshTime(Model):
         """
         String representation of the model object
         """
-        return 'user "{0}"'.format(self.user.username)
+        return f'user "{self.user.username}"'
 
 
 class ProgramEnrollment(Model):
@@ -249,10 +234,7 @@ class ProgramEnrollment(Model):
         """
         String representation of the model object
         """
-        return 'user "{0}" enrolled in program "{1}"'.format(
-            self.user.username,
-            self.program.title
-        )
+        return f'user "{self.user.username}" enrolled in program "{self.program.title}"'
 
 
 class MicromastersLearnerRecordShare(TimestampedModel):

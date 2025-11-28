@@ -1,52 +1,34 @@
 """
 Functions for ecommerce
 """
-from base64 import b64encode
 import hashlib
 import hmac
-from itertools import chain
 import logging
-from urllib.parse import quote_plus
 import uuid
+from base64 import b64encode
+from itertools import chain
+from urllib.parse import quote_plus
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
 from edx_api.client import EdxApi
+from rest_framework.exceptions import ValidationError
 
 from backends.constants import COURSEWARE_BACKEND_URL
-from courses.models import (
-    CourseRun,
-    Program,
-)
-from dashboard.api_edx_cache import (
-    CachedEdxDataApi,
-    CachedEdxUserData,
-)
+from courses.models import CourseRun, Program
+from dashboard.api import has_to_pay_for_exam
+from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import MMTrack, get_mmtrack
-from dashboard.api import has_to_pay_for_exam
 from ecommerce.constants import REFERENCE_NUMBER_PREFIX
-from ecommerce.exceptions import (
-    EcommerceEdxApiException,
-    EcommerceException,
-    ParseException,
-)
-from ecommerce.models import (
-    Coupon,
-    Line,
-    Order,
-    RedeemedCoupon,
-)
+from ecommerce.exceptions import (EcommerceEdxApiException, EcommerceException,
+                                  ParseException)
+from ecommerce.models import Coupon, Line, Order, RedeemedCoupon
 from financialaid.api import get_formatted_course_price
-from financialaid.models import (
-    FinancialAid,
-    FinancialAidStatus,
-    TierProgram
-)
+from financialaid.models import FinancialAid, FinancialAidStatus, TierProgram
 from micromasters.utils import now_in_utc
 from profiles.api import get_social_auth
 
@@ -88,7 +70,7 @@ def get_purchasable_course_run(course_key, user):
     ).exists():
         log.warning("Course run %s has no attached financial aid for user %s", course_key, user.username)
         raise ValidationError(
-            "Course run {} does not have a current attached financial aid application".format(course_key)
+            f"Course run {course_key} does not have a current attached financial aid application"
         )
 
     # Make sure it's not already purchased
@@ -100,7 +82,7 @@ def get_purchasable_course_run(course_key, user):
         mmtrack = get_mmtrack(user, course_run.course.program)
         if not has_to_pay_for_exam(mmtrack, course_run.course):
             log.warning("Course run %s is already purchased by user %s", course_key, user)
-            raise ValidationError("Course run {} is already purchased".format(course_key))
+            raise ValidationError(f"Course run {course_key} is already purchased")
 
     return course_run
 
@@ -138,7 +120,7 @@ def create_unfulfilled_order(course_key, user):
     Line.objects.create(
         order=order,
         course_key=course_key,
-        description='Seat for {}'.format(course_run.title),
+        description=f'Seat for {course_run.title}',
         price=price,
     )
     if coupon is not None:
@@ -160,7 +142,7 @@ def generate_cybersource_sa_signature(payload):
     # This is documented in certain CyberSource sample applications:
     # http://apps.cybersource.com/library/documentation/dev_guides/Secure_Acceptance_SOP/html/wwhelp/wwhimpl/js/html/wwhelp.htm#href=creating_profile.05.6.html
     keys = payload['signed_field_names'].split(',')
-    message = ','.join('{}={}'.format(key, payload[key]) for key in keys)
+    message = ','.join(f'{key}={payload[key]}' for key in keys)
 
     digest = hmac.new(
         settings.CYBERSOURCE_SECURITY_KEY.encode('utf-8'),
@@ -183,11 +165,7 @@ def make_dashboard_receipt_url(dashboard_url, course_key, status):
         str:
             The URL for the order receipt page
     """
-    return "{dashboard_url}?status={status}&course_key={course_key}".format(
-        dashboard_url=dashboard_url,
-        status=status,
-        course_key=quote_plus(course_key),
-    )
+    return f"{dashboard_url}?status={status}&course_key={quote_plus(course_key)}"
 
 
 def generate_cybersource_sa_payload(order, dashboard_url, ip_address=None):
@@ -222,9 +200,9 @@ def generate_cybersource_sa_payload(order, dashboard_url, ip_address=None):
         'currency': 'USD',
         'locale': 'en-us',
         'item_0_code': 'course',
-        'item_0_name': '{}'.format(course_run.title),
+        'item_0_name': f'{course_run.title}',
         'item_0_quantity': 1,
-        'item_0_sku': '{}'.format(course_key),
+        'item_0_sku': f'{course_key}',
         'item_0_tax_amount': '0',
         'item_0_unit_price': str(order.total_price_paid),
         'line_item_count': 1,
@@ -237,8 +215,8 @@ def generate_cybersource_sa_payload(order, dashboard_url, ip_address=None):
         'transaction_uuid': uuid.uuid4().hex,
         'unsigned_field_names': '',
         'merchant_defined_data1': 'course',
-        'merchant_defined_data2': '{}'.format(course_run.title),
-        'merchant_defined_data3': '{}'.format(course_key),
+        'merchant_defined_data2': f'{course_run.title}',
+        'merchant_defined_data3': f'{course_key}',
         "customer_ip_address": ip_address if ip_address else None,
     }
 
@@ -260,7 +238,7 @@ def make_reference_id(order):
         str:
             A reference number for use with CyberSource to keep track of orders
     """
-    return "{}{}-{}".format(REFERENCE_NUMBER_PREFIX, settings.CYBERSOURCE_REFERENCE_PREFIX, order.id)
+    return f"{REFERENCE_NUMBER_PREFIX}{settings.CYBERSOURCE_REFERENCE_PREFIX}-{order.id}"
 
 
 def get_new_order_by_reference_number(reference_number):
@@ -275,7 +253,7 @@ def get_new_order_by_reference_number(reference_number):
             An order
     """
     if not reference_number.startswith(REFERENCE_NUMBER_PREFIX):
-        raise ParseException("Reference number must start with {}".format(REFERENCE_NUMBER_PREFIX))
+        raise ParseException(f"Reference number must start with {REFERENCE_NUMBER_PREFIX}")
     reference_number = reference_number[len(REFERENCE_NUMBER_PREFIX):]
 
     try:
@@ -296,7 +274,7 @@ def get_new_order_by_reference_number(reference_number):
     try:
         return Order.objects.get(id=order_id)
     except Order.DoesNotExist:
-        raise EcommerceException("Unable to find order {}".format(order_id))
+        raise EcommerceException(f"Unable to find order {order_id}")
 
 
 def enroll_user_on_success(order):
@@ -398,7 +376,7 @@ def is_coupon_redeemable(coupon, user):
         )
 
         # For this coupon type the user must have already purchased a course run on edX
-        return any((mmtrack.has_verified_enrollment(run.edx_course_key) for run in course.courserun_set.not_discontinued()))
+        return any(mmtrack.has_verified_enrollment(run.edx_course_key) for run in course.courserun_set.not_discontinued())
 
     return True
 
@@ -508,14 +486,14 @@ def validate_prices():
             tier = TierProgram.objects.filter(program=program, current=True).order_by("-discount_amount").first()
             if tier:
                 if tier.discount_amount > program.price:
-                    errors.append('Discount is higher than course price for program {0}'.format(program.title))
+                    errors.append(f'Discount is higher than course price for program {program.title}')
                 if not TierProgram.objects.filter(discount_amount=0, program=program, current=True).exists():
-                    errors.append('Could not find 0 discount TierProgram for program {0}'.format(program.title))
+                    errors.append(f'Could not find 0 discount TierProgram for program {program.title}')
                 if not TierProgram.objects.filter(income_threshold=0, program=program, current=True).exists():
                     errors.append(
-                        'Could not find 0 income_threshold TierProgram for program {0}'.format(program.title)
+                        f'Could not find 0 income_threshold TierProgram for program {program.title}'
                     )
             else:
-                errors.append('Could not find current TierProgram for program {0}'.format(program.title))
+                errors.append(f'Could not find current TierProgram for program {program.title}')
 
     return errors

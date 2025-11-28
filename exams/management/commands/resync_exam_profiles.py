@@ -9,7 +9,7 @@ class Command(BaseCommand):
     """Updates ExamProfile records to force a resync"""
     help = 'Updates ExamProfile records so that they resync'
 
-    def add_arguments(self, parser):  # pylint: disable=no-self-use
+    def add_arguments(self, parser):
         """Configure command args"""
         parser.add_argument(
             '--ids',
@@ -32,4 +32,4 @@ class Command(BaseCommand):
             exam_profile.save()
             count += 1
 
-        self.stdout.write('Updated {} ExamProfile records'.format(count))
+        self.stdout.write(f'Updated {count} ExamProfile records')

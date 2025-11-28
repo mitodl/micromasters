@@ -7,7 +7,7 @@ from django.db import migrations
 from django.db.migrations.operations.special import RunPython
 from django.utils.text import slugify
 
-from wagtail.core.blocks import StreamValue
+from wagtail.blocks import StreamValue
 
 
 def _get_introduction_data():
@@ -181,6 +181,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("cms", "0051_resourcepage"),
+        ("wagtailcore", "0093_uploadedfile"),  # Wagtail 6.x migration ensuring modern schema
+        ("wagtailsearch", "0006_customise_indexentry"),  # Ensure search tables with all columns exist
     ]
 
     operations = [RunPython(populate_resource_page)]

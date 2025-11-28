@@ -6,14 +6,13 @@ import importlib
 import sys
 from unittest import mock
 
-from ddt import ddt, data
+import semantic_version
+from ddt import data, ddt
 from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
-import semantic_version
 
 from search.base import MockedESTestCase
-
 
 REQUIRED_SETTINGS = {
     'MAILGUN_URL': 'http://fake.mailgun.url',

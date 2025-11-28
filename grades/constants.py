@@ -2,6 +2,7 @@
 Constants for the grades app
 """
 import datetime
+
 import pytz
 
 COURSE_GRADE_WEIGHT = 0.4

@@ -2,7 +2,9 @@
 Models for exams
 """
 import datetime
-from django.contrib.auth.models import User
+
+from django.contrib.auth import get_user_model
+
 from django.db import models
 
 from courses.models import Course
@@ -10,6 +12,7 @@ from micromasters.models import TimestampedModel
 from micromasters.utils import now_in_utc
 
 
+User = get_user_model()
 class ExamRun(TimestampedModel):
     """Represents an individual run of an exam"""
     course = models.ForeignKey('courses.Course', related_name='exam_runs', on_delete=models.CASCADE)
@@ -66,10 +69,7 @@ class ExamRun(TimestampedModel):
         )
 
     def __str__(self):
-        return 'Exam run for course "{}" with exam series code "{}"'.format(
-            self.course.title,
-            self.exam_series_code
-        )
+        return f'Exam run for course "{self.course.title}" with exam series code "{self.exam_series_code}"'
 
     @classmethod
     def get_schedulable_in_past(cls, course):
@@ -174,7 +174,7 @@ class ExamProfile(TimestampedModel):
     )
 
     def __str__(self):
-        return 'Exam Profile "{0}" with status "{1}"'.format(self.id, self.status)
+        return f'Exam Profile "{self.id}" with status "{self.status}"'
 
 
 class ExamRunCoupon(TimestampedModel):
@@ -263,8 +263,4 @@ class ExamAuthorization(TimestampedModel):
         return cls.objects.filter(exam_taken=True)
 
     def __str__(self):
-        return 'Exam Authorization "{0}" with status "{1}" for user {2}'.format(
-            self.id,
-            self.status,
-            self.user_id
-        )
+        return f'Exam Authorization "{self.id}" with status "{self.status}" for user {self.user_id}'

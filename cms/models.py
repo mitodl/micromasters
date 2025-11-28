@@ -8,27 +8,20 @@ from django.db import models
 from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
 from rolepermissions.checkers import has_role
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    InlinePanel,
-    MultiFieldPanel,
-    StreamFieldPanel,
-)
-from wagtail.core.blocks import RichTextBlock
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page
-from wagtail.contrib.table_block.blocks import TableBlock
-from wagtail.images.models import Image
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.api import APIField
+from wagtail.blocks import RichTextBlock
+from wagtail.contrib.table_block.blocks import TableBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.images.models import Image
+from wagtail.models import Orderable, Page
 
+from cms.blocks import CourseTeamBlock, ImageWithLinkBlock, ResourceBlock
+from cms.util import get_coupon_code
 from courses.models import Program
 from micromasters.serializers import serialize_maybe_user
 from micromasters.utils import webpack_dev_server_host
 from roles.models import Instructor, Staff
-from cms.util import get_coupon_code
-from cms.blocks import CourseTeamBlock, ImageWithLinkBlock, ResourceBlock
-
 
 common_table_options = {
     'startRows': 3,
@@ -104,8 +97,8 @@ class ResourcePage(Page):
     )
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel("header_image"),
-        StreamFieldPanel("content"),
+        FieldPanel("header_image"),
+        FieldPanel("content"),
     ]
 
     def get_context(self, request, *args, **kwargs):
@@ -165,9 +158,9 @@ class BenefitsPage(Page):
     ], blank=True, help_text='The content of the benefits page')
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('description', classname="full"),
+        FieldPanel('description', classname="full"),
         FieldPanel('background_image'),
-        StreamFieldPanel('content'),
+        FieldPanel('content'),
     ]
 
     def get_context(self, request, *args, **kwargs):
@@ -246,7 +239,7 @@ class ProgramTabPage(ProgramChildPage):
     ], blank=True, help_text='The content of this tab on the program page')
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('content'),
+        FieldPanel('content'),
     ]
 
 
@@ -292,13 +285,13 @@ class CourseTeamTabPage(ProgramChildPage):
     content_panels = Page.content_panels + [
         FieldPanel('address'),
         FieldPanel('instructors_heading'),
-        StreamFieldPanel('instructors'),
+        FieldPanel('instructors'),
         FieldPanel('administrators_heading'),
-        StreamFieldPanel('administrators'),
+        FieldPanel('administrators'),
         FieldPanel('contributors_heading'),
-        StreamFieldPanel('contributors'),
+        FieldPanel('contributors'),
         FieldPanel('teaching_assistants_heading'),
-        StreamFieldPanel('teaching_assistants'),
+        FieldPanel('teaching_assistants'),
     ]
 
     def get_context(self, request, *args, **kwargs):
@@ -415,7 +408,7 @@ class ProgramPage(Page):
 
     subpage_types = ['FaqsPage', 'CourseTeamTabPage', 'ProgramTabPage']
     content_panels = Page.content_panels + [
-        StreamFieldPanel('description'),
+        FieldPanel('description'),
         FieldPanel('program'),
         FieldPanel('thumbnail_image'),
         FieldPanel('program_home_page_url'),
@@ -612,9 +605,7 @@ class FrequentlyAskedQuestion(Orderable):
             slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=orig_slug).exists()
             count = 1
             while not slug_is_unique:
-                slug = "{orig}-{count}".format(
-                    orig=orig_slug[:max_length - len(str(count)) - 1],
-                    count=count)
+                slug = f"{orig_slug[:max_length - len(str(count)) - 1]}-{count}"
                 slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
                 count += 1
             self.slug = slug

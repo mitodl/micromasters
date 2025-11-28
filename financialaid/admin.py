@@ -4,16 +4,12 @@ Admin views for Financial Aid app
 
 from django.contrib import admin
 
-from financialaid.models import (
-    CountryIncomeThreshold,
-    FinancialAid,
-    FinancialAidAudit,
-    Tier,
-    TierProgram
-)
+from financialaid.models import (CountryIncomeThreshold, FinancialAid,
+                                 FinancialAidAudit, Tier, TierProgram)
 from micromasters.utils import get_field_names
 
 
+@admin.register(CountryIncomeThreshold)
 class CountryIncomeThresholdAdmin(admin.ModelAdmin):
     """Admin for CountryIncomeThreshold"""
     model = CountryIncomeThreshold
@@ -21,6 +17,7 @@ class CountryIncomeThresholdAdmin(admin.ModelAdmin):
     ordering = ('country_code',)
 
 
+@admin.register(FinancialAid)
 class FinancialAidAdmin(admin.ModelAdmin):
     """Admin for FinancialAid"""
     model = FinancialAid
@@ -36,6 +33,7 @@ class FinancialAidAdmin(admin.ModelAdmin):
         obj.save_and_log(request.user)
 
 
+@admin.register(FinancialAidAudit)
 class FinancialAidAuditAdmin(admin.ModelAdmin):
     """Admin for FinancialAidAudit"""
     model = FinancialAidAudit
@@ -48,20 +46,15 @@ class FinancialAidAuditAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(Tier)
 class TierAdmin(admin.ModelAdmin):
     """Admin for Tier"""
     model = Tier
     list_display = ('name', 'description')
 
 
+@admin.register(TierProgram)
 class TierProgramAdmin(admin.ModelAdmin):
     """Admin for TierProgram"""
     model = TierProgram
     list_display = ('tier', 'program', 'discount_amount', 'income_threshold', 'current')
-
-
-admin.site.register(CountryIncomeThreshold, CountryIncomeThresholdAdmin)
-admin.site.register(FinancialAid, FinancialAidAdmin)
-admin.site.register(FinancialAidAudit, FinancialAidAuditAdmin)
-admin.site.register(Tier, TierAdmin)
-admin.site.register(TierProgram, TierProgramAdmin)

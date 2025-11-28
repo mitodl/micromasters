@@ -1,12 +1,12 @@
 """
 MIT Learn API integration module.
 """
+from typing import Any
 from urllib.parse import urlencode
 
-from typing import Any, Dict, List
 import requests
-
 from django.utils.dateparse import parse_datetime
+
 from courses.models import CourseRun
 
 
@@ -15,7 +15,7 @@ class MITLearnAPIError(Exception):
 
 LEARN_API_COURSES_LIST_URL = "https://api.learn.mit.edu/api/v1/courses/"
 
-def fetch_course_from_mit_learn(course_id) -> Dict[str, Any]:
+def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
     """
     Fetch course run data from the MIT Learn API.
 
@@ -53,7 +53,7 @@ def fetch_course_from_mit_learn(course_id) -> Dict[str, Any]:
 
 
 
-def sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     Process and normalize raw course data from MIT Learn API, but only for courses that already exist in the database.
 

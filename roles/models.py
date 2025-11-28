@@ -3,15 +3,17 @@ General models for the micromasters app
 """
 from collections import defaultdict
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from rolepermissions.roles import RolesManager
 
 from courses.models import Program
-from roles.roles import Staff, Instructor
+from roles.roles import Instructor, Staff
 
 
+User = get_user_model()
 def _construct_permission_to_roles(role_ids):
     """
     Create a mapping of role id
@@ -82,7 +84,7 @@ class Role(models.Model):
             existing_role_queryset = existing_role_queryset.exclude(pk=self.pk)
         if existing_role_queryset.exists():
             raise ValidationError(
-                'The user has the role "{0}" assigned at the moment and cannot have a second one. '
+                'The user has the role "{}" assigned at the moment and cannot have a second one. '
                 'This is a technical limitation planned to be solved in the future.'.format(
                     existing_role_queryset.first().role
                 )
@@ -90,8 +92,4 @@ class Role(models.Model):
         super().full_clean(*args, **kwargs)
 
     def __str__(self):
-        return "{user}: {role} in {program}".format(
-            user=self.user,
-            role=self.role,
-            program=self.program,
-        )
+        return f"{self.user}: {self.role} in {self.program}"

@@ -1,15 +1,12 @@
 """Tests for redis locks"""
-from datetime import timedelta
-from itertools import takewhile
 import time
 import uuid
+from datetime import timedelta
+from itertools import takewhile
 
 import pytest
 
-from micromasters.locks import (
-    Lock,
-    release_lock,
-)
+from micromasters.locks import Lock, release_lock
 from micromasters.utils import now_in_utc
 
 
@@ -50,7 +47,7 @@ def test_lock_contextmanager():
         assert lock.is_still_locked() is True
 
         time.sleep(0.2)
-        assert list(iterable) == []
+        assert not list(iterable)
         assert lock.is_still_locked() is False
 
 

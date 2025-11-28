@@ -2,38 +2,33 @@
 Tests for the utils module
 """
 from datetime import datetime, timedelta
-from unittest.mock import (
-    patch,
-    MagicMock,
-    PropertyMock
-)
+from unittest.mock import MagicMock, PropertyMock, patch
 
+import ddt
+import pytz
 from django.urls import reverse
 
-import pytz
-import ddt
-
-from cms.factories import ProgramCertificateSignatoriesFactory, ProgramLetterSignatoryFactory, ImageFactory
-from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
-from courses.models import ElectivesSet, ElectiveCourse
+from cms.factories import (ImageFactory, ProgramCertificateSignatoriesFactory,
+                           ProgramLetterSignatoryFactory)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
+from courses.models import ElectiveCourse, ElectivesSet
 from dashboard.api_edx_cache import CachedEdxUserData
-from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
-from dashboard.utils import get_mmtrack, MMTrack, convert_to_letter
+from dashboard.models import (CachedCertificate, CachedCurrentGrade,
+                              CachedEnrollment)
+from dashboard.utils import MMTrack, convert_to_letter, get_mmtrack
 from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order
-from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRunFactory
-from exams.models import ExamProfile, ExamAuthorization
+from exams.factories import (ExamAuthorizationFactory, ExamProfileFactory,
+                             ExamRunFactory)
+from exams.models import ExamAuthorization, ExamProfile
 from grades.constants import NEW_COMBINED_FINAL_GRADES_DATE
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
-from grades.models import FinalGrade, MicromastersProgramCertificate, CombinedFinalGrade, \
-    MicromastersProgramCommendation, CourseRunGradingStatus
+from grades.models import (CombinedFinalGrade, CourseRunGradingStatus,
+                           FinalGrade, MicromastersProgramCertificate,
+                           MicromastersProgramCommendation)
 from micromasters.factories import UserFactory
-from micromasters.utils import (
-    load_json_from_file,
-    now_in_utc,
-)
+from micromasters.utils import load_json_from_file, now_in_utc
 from search.base import MockedESTestCase
-
 
 # pylint: disable=too-many-arguments, too-many-lines
 
@@ -141,7 +136,7 @@ class MMTrackTest(MockedESTestCase):
             "course-v1:MITx+8.MechCX+2014_T1",
             "course-v1:odl+FOO102+CR-FALL16"
         }
-        assert mmtrack.paid_course_fa == {}
+        assert not mmtrack.paid_course_fa
 
     def test_init_financial_aid_track(self):
         """

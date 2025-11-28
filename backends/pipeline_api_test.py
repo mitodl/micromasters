@@ -3,22 +3,19 @@ Tests for the pipeline APIs
 """
 from unittest import mock
 from urllib.parse import urljoin
+
 import ddt
 import pytest
 from social_core.exceptions import AuthFailed
 
-from backends import pipeline_api, edxorg
+from backends import edxorg, pipeline_api
 from courses.factories import ProgramFactory
 from micromasters.factories import SocialUserFactory
 from profiles.api import get_social_username
-from profiles.models import Profile
 from profiles.factories import UserFactory
+from profiles.models import Profile
 from profiles.util import split_name
-from roles.models import (
-    Instructor,
-    Role,
-    Staff,
-)
+from roles.models import Instructor, Role, Staff
 from search.base import MockedESTestCase
 
 
@@ -76,10 +73,11 @@ class EdxPipelineApiTest(MockedESTestCase):
         self.user = UserFactory(username="user_1")
         self.user.social_auth.create(
             provider='not_edx',
+            uid=f"{self.user.username}_not_edx",
         )
         self.user.social_auth.create(
             provider=edxorg.EdxOrgOAuth2.name,
-            uid="{}_edx".format(self.user.username),
+            uid=f"{self.user.username}_edx",
         )
         self.user_profile = Profile.objects.get(user=self.user)
 
@@ -252,7 +250,7 @@ class EdxPipelineApiTest(MockedESTestCase):
         mocked_get_json.assert_called_once_with(
             urljoin(
                 edxorg.EdxOrgOAuth2.AUTH_BASE_URL,
-                '/api/user/v1/accounts/{0}'.format(get_social_username(self.user))
+                f'/api/user/v1/accounts/{get_social_username(self.user)}'
             ),
             headers={'Authorization': 'Bearer foo_token'}
         )
@@ -316,7 +314,7 @@ class EdxPipelineApiTest(MockedESTestCase):
 
 def test_limit_one_auth_per_backend_no_user():
     """limit_one_auth_per_backend should not error if the user doesn't exist"""
-    assert pipeline_api.limit_one_auth_per_backend(backend=None, user=None, strategy=None, uid=None) == {}
+    assert not pipeline_api.limit_one_auth_per_backend(backend=None, user=None, strategy=None, uid=None)
 
 
 @pytest.mark.django_db
@@ -345,11 +343,11 @@ def test_limit_one_auth_per_backend_same_auth():
     auths = user.social_auth.filter(provider=backend.name)
     assert auths.count() == 1
 
-    assert pipeline_api.limit_one_auth_per_backend(
+    assert not pipeline_api.limit_one_auth_per_backend(
         backend=backend,
         user=user,
         strategy=mock_strategy,
         uid=auths.first().uid
-    ) == {}
+    )
 
     mock_get_social_auth_for_user.assert_called_once_with(user, backend.name)

@@ -3,7 +3,6 @@ Tests for the mail serializers
 """
 from mail.factories import AutomaticEmailFactory
 from mail.serializers import AutomaticEmailSerializer, PercolateQuerySerializer
-
 from search.base import MockedESTestCase
 
 

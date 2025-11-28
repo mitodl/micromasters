@@ -2,8 +2,8 @@
 Specific permissions for the micromasters app
 """
 
-from rolepermissions.permissions import register_object_checker
 from rolepermissions.checkers import has_permission
+from rolepermissions.permissions import register_object_checker
 
 from roles.models import Role
 from roles.roles import Permissions

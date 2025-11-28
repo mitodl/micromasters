@@ -8,8 +8,8 @@ You can specify a course by its readable ID, e.g. `MITx+14.100x`.
 
 from django.core.management import BaseCommand
 
-from courses.mit_learn_api import sync_mit_learn_courseruns_for_course, \
-    fetch_course_from_mit_learn
+from courses.mit_learn_api import (fetch_course_from_mit_learn,
+                                   sync_mit_learn_courseruns_for_course)
 from courses.models import Course
 
 

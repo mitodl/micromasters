@@ -2,19 +2,21 @@
 Tests for financial aid serializers
 """
 from unittest.mock import MagicMock
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 from rest_framework.exceptions import ValidationError
 
 from courses.factories import ProgramFactory
-from financialaid.factories import TierProgramFactory, FinancialAidFactory
+from dashboard.factories import ProgramEnrollmentFactory
 from financialaid.constants import FinancialAidStatus
-from financialaid.serializers import FinancialAidDashboardSerializer, FinancialAidRequestSerializer
+from financialaid.factories import FinancialAidFactory, TierProgramFactory
+from financialaid.serializers import (FinancialAidDashboardSerializer,
+                                      FinancialAidRequestSerializer)
 from micromasters.factories import UserFactory
 from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
-from dashboard.factories import ProgramEnrollmentFactory
 from search.base import MockedESTestCase
 
 

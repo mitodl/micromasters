@@ -4,23 +4,14 @@ Admin views for ecommerce models
 
 from django.contrib import admin
 
-from ecommerce.models import (
-    Coupon,
-    CouponAudit,
-    CouponInvoice,
-    CouponInvoiceAudit,
-    Line,
-    Order,
-    OrderAudit,
-    Receipt,
-    RedeemedCoupon,
-    RedeemedCouponAudit,
-    UserCoupon,
-    UserCouponAudit,
-)
+from ecommerce.models import (Coupon, CouponAudit, CouponInvoice,
+                              CouponInvoiceAudit, Line, Order, OrderAudit,
+                              Receipt, RedeemedCoupon, RedeemedCouponAudit,
+                              UserCoupon, UserCouponAudit)
 from micromasters.utils import get_field_names
 
 
+@admin.register(Line)
 class LineAdmin(admin.ModelAdmin):
     """Admin for Line"""
     model = Line
@@ -34,6 +25,7 @@ class LineAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     """Admin for Order"""
     model = Order
@@ -66,6 +58,7 @@ class OrderAdmin(admin.ModelAdmin):
         obj.save_and_log(request.user)
 
 
+@admin.register(OrderAudit)
 class OrderAuditAdmin(admin.ModelAdmin):
     """Admin for OrderAudit"""
     model = OrderAudit
@@ -78,6 +71,7 @@ class OrderAuditAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(Receipt)
 class ReceiptAdmin(admin.ModelAdmin):
     """Admin for Receipt"""
     model = Receipt
@@ -90,6 +84,7 @@ class ReceiptAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(CouponInvoice)
 class CouponInvoiceAdmin(admin.ModelAdmin):
     """Admin for CouponInvoice"""
     model = CouponInvoice
@@ -101,6 +96,7 @@ class CouponInvoiceAdmin(admin.ModelAdmin):
         obj.save_and_log(request.user)
 
 
+@admin.register(CouponInvoiceAudit)
 class CouponInvoiceAuditAdmin(admin.ModelAdmin):
     """Admin for CouponInvoiceAudit"""
     model = CouponInvoiceAudit
@@ -113,6 +109,7 @@ class CouponInvoiceAuditAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(Coupon)
 class CouponAdmin(admin.ModelAdmin):
     """Admin for Coupon"""
     model = Coupon
@@ -135,6 +132,7 @@ class CouponAdmin(admin.ModelAdmin):
         obj.save_and_log(request.user)
 
 
+@admin.register(CouponAudit)
 class CouponAuditAdmin(admin.ModelAdmin):
     """Admin for CouponAudit"""
     model = CouponAudit
@@ -147,6 +145,7 @@ class CouponAuditAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(RedeemedCoupon)
 class RedeemedCouponAdmin(admin.ModelAdmin):
     """Admin for RedeemedCoupon"""
     model = RedeemedCoupon
@@ -159,6 +158,7 @@ class RedeemedCouponAdmin(admin.ModelAdmin):
         obj.save_and_log(request.user)
 
 
+@admin.register(RedeemedCouponAudit)
 class RedeemedCouponAuditAdmin(admin.ModelAdmin):
     """Admin for RedeemedCouponAudit"""
     model = RedeemedCouponAudit
@@ -171,6 +171,7 @@ class RedeemedCouponAuditAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(UserCoupon)
 class UserCouponAdmin(admin.ModelAdmin):
     """Admin for UserCoupon"""
     model = UserCoupon
@@ -183,6 +184,7 @@ class UserCouponAdmin(admin.ModelAdmin):
         obj.save_and_log(request.user)
 
 
+@admin.register(UserCouponAudit)
 class UserCouponAuditAdmin(admin.ModelAdmin):
     """Admin for UserCouponAudit"""
     model = UserCouponAudit
@@ -193,17 +195,3 @@ class UserCouponAuditAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-admin.site.register(CouponInvoice, CouponInvoiceAdmin)
-admin.site.register(CouponInvoiceAudit, CouponInvoiceAuditAdmin)
-admin.site.register(Coupon, CouponAdmin)
-admin.site.register(CouponAudit, CouponAuditAdmin)
-admin.site.register(Line, LineAdmin)
-admin.site.register(Order, OrderAdmin)
-admin.site.register(OrderAudit, OrderAuditAdmin)
-admin.site.register(RedeemedCoupon, RedeemedCouponAdmin)
-admin.site.register(RedeemedCouponAudit, RedeemedCouponAuditAdmin)
-admin.site.register(Receipt, ReceiptAdmin)
-admin.site.register(UserCoupon, UserCouponAdmin)
-admin.site.register(UserCouponAudit, UserCouponAuditAdmin)

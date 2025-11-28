@@ -3,7 +3,7 @@ Tests for grades API
 """
 import datetime
 from datetime import timedelta
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import ddt
 import pytz
@@ -13,34 +13,25 @@ from django_redis import get_redis_connection
 from factory.django import mute_signals
 
 from courses.factories import CourseRunFactory
-from courses.models import ElectivesSet, ElectiveCourse
+from courses.models import ElectiveCourse, ElectivesSet
 from dashboard.api_edx_cache import CachedEdxUserData, UserCachedRunData
-from dashboard.factories import (
-    CachedCertificateFactory,
-    CachedCurrentGradeFactory,
-    CachedEnrollmentFactory,
-)
+from dashboard.factories import (CachedCertificateFactory,
+                                 CachedCurrentGradeFactory,
+                                 CachedEnrollmentFactory)
 from exams.factories import ExamRunFactory
 from financialaid.constants import FinancialAidStatus
-from financialaid.factories import (
-    FinancialAidFactory,
-    TierProgramFactory
-)
+from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from grades import api
 from grades.exceptions import FreezeGradeFailedException
-from grades.models import (
-    FinalGrade,
-    FinalGradeStatus,
-    MicromastersCourseCertificate,
-    MicromastersProgramCertificate,
-    CourseRunGradingStatus,
-    CombinedFinalGrade,
-    MicromastersProgramCommendation)
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
+from grades.models import (CombinedFinalGrade, CourseRunGradingStatus,
+                           FinalGrade, FinalGradeStatus,
+                           MicromastersCourseCertificate,
+                           MicromastersProgramCertificate,
+                           MicromastersProgramCommendation)
 from micromasters.factories import SocialUserFactory, UserFactory
 from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
-
 
 # pylint: disable=protected-access
 

@@ -2,39 +2,33 @@
 Generates a set of realistic users/programs to help us test search functionality
 """
 from decimal import Decimal
+
+from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
 from backends.edxorg import EdxOrgOAuth2
-from courses.models import Program, Course, CourseRun, ElectivesSet, ElectiveCourse
+from courses.models import (Course, CourseRun, ElectiveCourse, ElectivesSet,
+                            Program)
 from dashboard.models import ProgramEnrollment
 from grades.models import FinalGrade, FinalGradeStatus
-from micromasters.utils import (
-    get_field_names,
-    load_json_from_file,
-    first_matching_item,
-)
+from micromasters.utils import (first_matching_item, get_field_names,
+                                load_json_from_file)
 from profiles.api import get_social_username
-from profiles.models import Employment, Education, Profile
+from profiles.models import Education, Employment, Profile
 from roles.models import Role
+
+User = get_user_model()
 from roles.roles import Staff
 from search.tasks import start_recreate_index
-from seed_data.utils import filter_dict_by_key_set
-from seed_data.lib import (
-    CachedEnrollmentHandler,
-    fake_programs_query,
-    ensure_cached_data_freshness,
-    add_paid_order_for_course
-)
+from seed_data.lib import (CachedEnrollmentHandler, add_paid_order_for_course,
+                           ensure_cached_data_freshness, fake_programs_query)
 from seed_data.management.commands import (  # pylint: disable=import-error
-    USER_DATA_PATH, PROGRAM_DATA_PATH,
-    FAKE_USER_USERNAME_PREFIX, FAKE_PROGRAM_DESC_PREFIX,
-    PASSING_GRADE
-)
+    FAKE_PROGRAM_DESC_PREFIX, FAKE_USER_USERNAME_PREFIX, PASSING_GRADE,
+    PROGRAM_DATA_PATH, USER_DATA_PATH)
 from seed_data.management.commands.create_tiers import create_tiers
-
+from seed_data.utils import filter_dict_by_key_set
 
 MODEL_DEFAULTS = {
     User: {
@@ -294,24 +288,14 @@ class Command(BaseCommand):
             )
 
             start_recreate_index.delay().get()
-            program_msg = (
-                "Created {num} new programs from '{path}'."
-            ).format(
-                num=len(fake_programs),
-                path=PROGRAM_DATA_PATH
-            )
+            program_msg = f"Created {len(fake_programs)} new programs from '{PROGRAM_DATA_PATH}'."
             if tiers_created:
                 program_msg = "{}\nCreated {} tiers for {} FA-enabled programs".format(
                     program_msg,
                     tiers_created,
                     tiered_program_count
                 )
-            user_msg = (
-                "Created {num} new users from '{path}'."
-            ).format(
-                num=fake_user_count,
-                path=USER_DATA_PATH,
-            )
+            user_msg = f"Created {fake_user_count} new users from '{USER_DATA_PATH}'."
             self.stdout.write(program_msg)
             self.stdout.write(user_msg)
 

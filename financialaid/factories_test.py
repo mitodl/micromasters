@@ -1,7 +1,8 @@
 """
 Tests for financialaid factories
 """
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.db.models.signals import post_save
 from django.test import TestCase
 from factory.django import mute_signals
@@ -12,6 +13,7 @@ from micromasters.factories import UserFactory
 from profiles.models import Profile
 
 
+User = get_user_model()
 class FinancialAidModelsTests(TestCase):
     """
     Tests for financialaid factories

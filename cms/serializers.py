@@ -1,11 +1,11 @@
 """
 Serializers for Wagtail-related models
 """
+from django.utils.text import slugify
 from rest_framework import serializers
 from wagtail.images.models import Image, Rendition
-from django.utils.text import slugify
 
-from cms.models import ProgramPage, ProgramFaculty
+from cms.models import ProgramFaculty, ProgramPage
 from courses.serializers import CourseSerializer, ElectivesSetSerializer
 
 

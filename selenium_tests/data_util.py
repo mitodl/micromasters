@@ -2,16 +2,14 @@
 Utility functions that produce test data for the selenium test suite
 """
 from datetime import timedelta
+
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
+from dashboard.models import ProgramEnrollment, UserCacheRefreshTime
 from micromasters.utils import now_in_utc
-from search.indexing_api import index_program_enrolled_users
-from dashboard.models import (
-    ProgramEnrollment,
-    UserCacheRefreshTime,
-)
 from profiles.factories import SocialProfileFactory
+from search.indexing_api import index_program_enrolled_users
 from selenium_tests.util import DEFAULT_PASSWORD
 
 

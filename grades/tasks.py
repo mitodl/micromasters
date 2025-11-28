@@ -5,25 +5,23 @@ import logging
 
 from celery import group
 from celery.result import GroupResult
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.core.cache import caches
 from django.db import IntegrityError
-from django.db.models import OuterRef, Exists
+from django.db.models import Exists, OuterRef
 from django_redis import get_redis_connection
 
-from courses.models import CourseRun, Course
+from courses.models import Course, CourseRun
 from grades import api
 from grades.constants import FinalGradeStatus
-from grades.models import (
-    FinalGrade,
-    ProctoredExamGrade,
-    MicromastersCourseCertificate,
-    CourseRunGradingStatus,
-    CombinedFinalGrade,
-)
+from grades.models import (CombinedFinalGrade, CourseRunGradingStatus,
+                           FinalGrade, MicromastersCourseCertificate,
+                           ProctoredExamGrade)
 from micromasters.celery import app
 from micromasters.utils import chunks, now_in_utc
 
+User = get_user_model()
 CACHE_ID_BASE_STR = "freeze_grade_{0}"
 
 log = logging.getLogger(__name__)

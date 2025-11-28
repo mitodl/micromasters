@@ -7,11 +7,9 @@ from django.db.models.signals import post_save
 from factory.django import mute_signals
 
 from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
-from grades.factories import (
-    MicromastersCourseCertificateFactory,
-    ProctoredExamGradeFactory,
-    FinalGradeFactory,
-)
+from grades.factories import (FinalGradeFactory,
+                              MicromastersCourseCertificateFactory,
+                              ProctoredExamGradeFactory)
 from grades.models import MicromastersProgramCertificate
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase

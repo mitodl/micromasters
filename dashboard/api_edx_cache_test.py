@@ -3,43 +3,29 @@ Tests for the dashboard APIs functions that deal with the edx cached data
 """
 
 from datetime import timedelta
-from unittest.mock import patch, MagicMock, ANY
+from unittest.mock import ANY, MagicMock, patch
 
 import ddt
-from requests.exceptions import HTTPError
 from edx_api.certificates.models import Certificate, Certificates
 from edx_api.enrollments.models import Enrollment, Enrollments
 from edx_api.grades.models import CurrentGrade, CurrentGradesByUser
+from requests.exceptions import HTTPError
 
 from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from backends.edxorg import EdxOrgOAuth2
 from backends.exceptions import InvalidCredentialStored
-from courses.factories import (
-    FullProgramFactory,
-    CourseFactory,
-    CourseRunFactory,
-)
+from courses.factories import (CourseFactory, CourseRunFactory,
+                               FullProgramFactory)
 from dashboard import models
-from dashboard.api_edx_cache import (
-    CachedEdxUserData,
-    CachedEdxDataApi,
-    UserCachedRunData,
-)
-from dashboard.factories import (
-    CachedEnrollmentFactory,
-    CachedCertificateFactory,
-    CachedCurrentGradeFactory,
-    UserCacheRefreshTimeFactory,
-)
-from dashboard.models import (
-    UserCacheRefreshTime,
-    CachedEnrollment,
-)
+from dashboard.api_edx_cache import (CachedEdxDataApi, CachedEdxUserData,
+                                     UserCachedRunData)
+from dashboard.factories import (CachedCertificateFactory,
+                                 CachedCurrentGradeFactory,
+                                 CachedEnrollmentFactory,
+                                 UserCacheRefreshTimeFactory)
+from dashboard.models import CachedEnrollment, UserCacheRefreshTime
 from micromasters.factories import UserFactory
-from micromasters.utils import (
-    load_json_from_file,
-    now_in_utc,
-)
+from micromasters.utils import load_json_from_file, now_in_utc
 from search.base import MockedESTestCase
 
 
@@ -122,7 +108,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         cls.user = UserFactory.create()
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
-            uid="{}_edx".format(cls.user.username),
+            uid=f"{cls.user.username}_edx",
             extra_data={"access_token": "fooooootoken"}
         )
 
@@ -164,7 +150,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         """
         self.user.social_auth.create(
             provider=BACKEND_MITX_ONLINE,
-            uid="{}_mitxonline".format(self.user.username),
+            uid=f"{self.user.username}_mitxonline",
             extra_data={"access_token": "fooooootoken"}
         )
 

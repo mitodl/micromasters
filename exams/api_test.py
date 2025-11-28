@@ -1,39 +1,26 @@
 """
 Tests for exams API
 """
+import datetime
 from unittest.mock import patch
 
-import datetime
 import ddt
 from django.db.models.signals import post_save
-from django.test import (
-    TestCase,
-)
+from django.test import TestCase
 from factory.django import mute_signals
 
-from dashboard.factories import (
-    CachedEnrollmentFactory,
-    ProgramEnrollmentFactory,
-)
-from dashboard.utils import get_mmtrack
-from dashboard.utils import ATTEMPTS_PER_PAID_RUN_OLD
+from dashboard.factories import (CachedEnrollmentFactory,
+                                 ProgramEnrollmentFactory)
+from dashboard.utils import ATTEMPTS_PER_PAID_RUN_OLD, get_mmtrack
 from ecommerce.factories import LineFactory
 from ecommerce.models import Order
-from exams.api import (
-    authorize_for_exam_run,
-    authorize_for_latest_passed_course,
-    MESSAGE_NOT_ELIGIBLE_TEMPLATE,
-    MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE,
-)
+from exams.api import (MESSAGE_NOT_ELIGIBLE_TEMPLATE,
+                       MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE,
+                       authorize_for_exam_run,
+                       authorize_for_latest_passed_course)
 from exams.exceptions import ExamAuthorizationException
-from exams.factories import (
-    ExamAuthorizationFactory,
-    ExamRunFactory,
-)
-from exams.models import (
-    ExamAuthorization,
-    ExamProfile,
-)
+from exams.factories import ExamAuthorizationFactory, ExamRunFactory
+from exams.models import ExamAuthorization, ExamProfile
 from financialaid.api_test import create_program
 from grades.constants import FinalGradeStatus
 from grades.factories import FinalGradeFactory

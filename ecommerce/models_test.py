@@ -6,35 +6,19 @@ from unittest.mock import patch
 
 import ddt
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import (
-    ImproperlyConfigured,
-    ValidationError,
-)
-from django.test import (
-    override_settings,
-)
+from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.test import override_settings
 
 from courses.factories import CourseRunFactory
 from ecommerce.api import make_reference_id
-from ecommerce.factories import (
-    CouponFactory,
-    LineFactory,
-    OrderFactory,
-    ReceiptFactory,
-)
-from ecommerce.models import (
-    Coupon,
-    CouponInvoice,
-    Order,
-    RedeemedCoupon,
-)
+from ecommerce.factories import (CouponFactory, LineFactory, OrderFactory,
+                                 ReceiptFactory)
+from ecommerce.models import Coupon, CouponInvoice, Order, RedeemedCoupon
 from micromasters.factories import UserFactory
-from micromasters.utils import (
-    now_in_utc,
-    serialize_model_object,
-)
+from micromasters.utils import now_in_utc, serialize_model_object
 from profiles.models import Profile
 from search.base import MockedESTestCase
+
 
 @ddt.ddt
 @override_settings(CYBERSOURCE_SECURITY_KEY='fake')
@@ -43,7 +27,7 @@ class OrderTests(MockedESTestCase):
     Tests for Order, Line, and Receipt
     """
 
-    @ddt.data([True, False])
+    @ddt.data(True, False)
     def test_order_reference_number(self, force_insert):
         """Test that Order creates a reference number and saves it to the db"""
         user = UserFactory.create()
@@ -56,21 +40,17 @@ class OrderTests(MockedESTestCase):
     def test_order_str(self):
         """Test Order.__str__"""
         order = LineFactory.create().order
-        assert str(order) == "Order {}, status={} for user={}".format(order.id, order.status, order.user)
+        assert str(order) == f"Order {order.id}, status={order.status} for user={order.user}"
 
     def test_line_str(self):
         """Test Line.__str__"""
         line = LineFactory.create()
-        assert str(line) == "Line for order {}, course_key={}, price={}".format(
-            line.order.id,
-            line.course_key,
-            line.price,
-        )
+        assert str(line) == f"Line for order {line.order.id}, course_key={line.course_key}, price={line.price}"
 
     def test_receipt_str_with_order(self):
         """Test Receipt.__str__ with an order"""
         receipt = ReceiptFactory.create()
-        assert str(receipt) == "Receipt for order {}".format(receipt.order.id if receipt.order else None)
+        assert str(receipt) == f"Receipt for order {receipt.order.id if receipt.order else None}"
 
     def test_receipt_str_no_order(self):
         """Test Receipt.__str__ with no order"""
@@ -133,7 +113,7 @@ class CouponTests(MockedESTestCase):
         with self.assertRaises(ValidationError) as ex:
             CouponFactory.create(coupon_type='xyz')
         assert ex.exception.args[0]['__all__'][0].args[0] == (
-            'coupon_type must be one of {}'.format(", ".join(Coupon.COUPON_TYPES))
+            f"coupon_type must be one of {', '.join(Coupon.COUPON_TYPES)}"
         )
 
     def test_validate_discount_prev_run_coupon_type(self):

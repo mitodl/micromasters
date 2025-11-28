@@ -2,40 +2,35 @@
 Tests for the dashboard views
 """
 from datetime import timedelta
-from unittest.mock import (
-    MagicMock,
-    patch,
-    call
-)
+from unittest.mock import MagicMock, call, patch
 from urllib.parse import urljoin
 
 import ddt
-from django.urls import reverse
 from django.test import override_settings
+from django.urls import reverse
+from edx_api.enrollments.models import Enrollment, Enrollments
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.test import APITestCase
-from edx_api.enrollments.models import Enrollments, Enrollment
 
-from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE, COURSEWARE_BACKEND_URL
+from backends.constants import (BACKEND_EDX_ORG, BACKEND_MITX_ONLINE,
+                                COURSEWARE_BACKEND_URL)
 from backends.utils import InvalidCredentialStored
-from courses.factories import ProgramFactory, CourseRunFactory
+from courses.factories import CourseRunFactory, ProgramFactory
 from courses.models import CourseRun
 from dashboard.api_edx_cache import CachedEdxDataApi
-from dashboard.factories import UserCacheRefreshTimeFactory, ProgramEnrollmentFactory
-from dashboard.models import ProgramEnrollment, CachedEnrollment
-from exams.factories import ExamRunFactory, ExamAuthorizationFactory
+from dashboard.factories import (ProgramEnrollmentFactory,
+                                 UserCacheRefreshTimeFactory)
+from dashboard.models import CachedEnrollment, ProgramEnrollment
+from exams.factories import ExamAuthorizationFactory, ExamRunFactory
 from exams.models import ExamAuthorization
 from micromasters.exceptions import PossiblyImproperlyConfigured
-from micromasters.factories import UserFactory, SocialUserFactory, UserSocialAuthFactory
+from micromasters.factories import (SocialUserFactory, UserFactory,
+                                    UserSocialAuthFactory)
 from micromasters.utils import now_in_utc
-from search.base import MockedESTestCase
 from roles.models import Role
-from roles.roles import (
-    Instructor,
-    Staff,
-)
-
+from roles.roles import Instructor, Staff
+from search.base import MockedESTestCase
 
 social_extra_data = {
     "access_token": "fooooootoken",
@@ -51,7 +46,7 @@ class DashboardTest(MockedESTestCase, APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(DashboardTest, cls).setUpTestData()
+        super().setUpTestData()
         # create a user
         cls.user = SocialUserFactory.create()
         UserCacheRefreshTimeFactory(user=cls.user, unexpired=True)
@@ -133,7 +128,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(DashboardTokensTest, cls).setUpTestData()
+        super().setUpTestData()
         # create a user
         cls.user = SocialUserFactory.create(social_auth__extra_data=social_extra_data)
         cls.social_auth = cls.user.social_auth.get(provider=BACKEND_EDX_ORG)
@@ -614,7 +609,7 @@ class UserExamEnrollmentTest(MockedESTestCase, APITestCase):
         mock_edx_enr.return_value = enrollment
         resp = self.get_with_mocked_enrollments()
         assert resp.status_code == status.HTTP_200_OK
-        assert resp.data == {'url': urljoin(COURSEWARE_BACKEND_URL[backend], '/courses/{}/'.format(self.exam_course_id))}
+        assert resp.data == {'url': urljoin(COURSEWARE_BACKEND_URL[backend], f'/courses/{self.exam_course_id}/')}
         mock_edx_api.assert_has_calls([
             call({'access_token': 'staff-access-token'}, COURSEWARE_BACKEND_URL['mitxonline']),
             call(user_social.extra_data, COURSEWARE_BACKEND_URL[backend])

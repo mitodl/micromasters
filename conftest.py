@@ -3,10 +3,9 @@ Pytest configuration file for the entire micromasters app
 """
 # pylint: disable=redefined-outer-name
 import warnings
-from unittest.mock import patch
 from types import SimpleNamespace
+from unittest.mock import patch
 
-from django.utils.deprecation import RemovedInDjango30Warning
 import pytest
 
 from search import tasks
@@ -21,6 +20,7 @@ def warnings_as_errors():
     try:
         warnings.resetwarnings()
         warnings.simplefilter('error')
+        warnings.filterwarnings("ignore", category=ResourceWarning)
         # For celery
         warnings.simplefilter('ignore', category=ImportWarning)
         warnings.filterwarnings(
@@ -44,6 +44,11 @@ def warnings_as_errors():
             ),
             category=DeprecationWarning
         )
+        warnings.filterwarnings(
+            "ignore",
+            message="Converter 'drf_format_suffix' is already registered",
+            category=DeprecationWarning,
+        )
         # For compatibility modules in various libraries
         warnings.filterwarnings(
             "ignore",
@@ -55,8 +60,6 @@ def warnings_as_errors():
             category=UserWarning,
             message='Failed to load HostKeys',
         )
-        # For Django 3.0 compatibility, which we don't care about yet
-        warnings.filterwarnings("ignore", category=RemovedInDjango30Warning)
 
         yield
     finally:
@@ -80,7 +83,7 @@ def mocked_opensearch_module_patcher(settings):
         # This looks for functions starting with _ because those are the functions which are imported
         # from indexing_api. The _ lets it prevent name collisions.
         if callable(val) and name.startswith("_"):
-            patchers.append(patch('search.tasks.{0}'.format(name), autospec=True))
+            patchers.append(patch(f'search.tasks.{name}', autospec=True))
     for patcher in patchers:
         mock = patcher.start()
         mock.name = patcher.attribute

@@ -3,48 +3,37 @@ Views for email REST APIs
 """
 import logging
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
-from rest_framework import (
-    authentication,
-    permissions,
-    status,
-)
+from rest_framework import authentication, permissions, status
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.mixins import UpdateModelMixin
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.response import Response
 
 from courses.models import Course
-from dashboard.models import ProgramEnrollment, MicromastersLearnerRecordShare
+from dashboard.models import MicromastersLearnerRecordShare, ProgramEnrollment
 from financialaid.models import FinancialAid
 from financialaid.permissions import UserCanEditFinancialAid
-from mail.api import (
-    add_automatic_email,
-    get_mail_vars,
-    MailgunClient,
-    mark_emails_as_sent,
-)
+from mail.api import (MailgunClient, add_automatic_email, get_mail_vars,
+                      mark_emails_as_sent)
 from mail.exceptions import SendBatchException
-from mail.permissions import (
-    UserCanMessageCourseTeamPermission,
-    UserCanMessageLearnersPermission,
-    UserCanMessageSpecificLearnerPermission,
-    MailGunWebHookPermission,
-)
-from mail.serializers import GenericMailSerializer, AutomaticEmailSerializer
-from mail.utils import generate_mailgun_response_json, get_email_footer
 from mail.models import AutomaticEmail, PartnerSchool
+from mail.permissions import (MailGunWebHookPermission,
+                              UserCanMessageCourseTeamPermission,
+                              UserCanMessageLearnersPermission,
+                              UserCanMessageSpecificLearnerPermission)
+from mail.serializers import AutomaticEmailSerializer, GenericMailSerializer
+from mail.utils import generate_mailgun_response_json, get_email_footer
 from profiles.models import Profile
 from profiles.util import full_name
-from search.api import (
-    create_search_obj,
-    get_all_query_matching_emails,
-)
+from search.api import create_search_obj, get_all_query_matching_emails
 
+User = get_user_model()
 log = logging.getLogger(__name__)
 
 
@@ -273,10 +262,10 @@ class GradesRecordMailView(GenericAPIView):
                     'pathway_name': school.name,
                     'program_name': enrollment.program.title,
                     'record_link': request.build_absolute_uri(
-                        reverse("shared_grade_records", kwargs=dict(
-                                enrollment_id=enrollment.id,
-                                record_share_hash=enrollment.share_hash
-                            )
+                        reverse("shared_grade_records", kwargs={
+                                "enrollment_id": enrollment.id,
+                                "record_share_hash": enrollment.share_hash
+                            }
                         )
                     ),
                 }),
@@ -313,12 +302,7 @@ class MailWebhookView(APIView):
         message_headers = request.POST.get("message-headers", None)
         log_error_on_bounce = request.POST.get("log_error_on_bounce", "")
         error_msg = (
-            "Webhook event {event} received by Mailgun for recipient {to}: {error} {header}".format(
-                to=recipient,
-                error=error,
-                event=event,
-                header=message_headers
-            )
+            f"Webhook event {event} received by Mailgun for recipient {recipient}: {error} {message_headers}"
         )
 
         if log_error_on_bounce.lower() == "true" and event == "bounced":

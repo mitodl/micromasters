@@ -3,17 +3,10 @@ Serializers for user profiles
 """
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import (
-    IntegerField,
-    ModelSerializer,
-    SerializerMethodField,
-)
+from rest_framework.serializers import (IntegerField, ModelSerializer,
+                                        SerializerMethodField)
 
-from profiles.models import (
-    Education,
-    Employment,
-    Profile,
-)
+from profiles.models import Education, Employment, Profile
 
 
 def update_work_history(work_history_list, profile_id):
@@ -34,7 +27,7 @@ def update_work_history(work_history_list, profile_id):
                     profile_id=profile_id, id=work_history_id
                 )
             except Employment.DoesNotExist:
-                raise ValidationError("Work history {} does not exist".format(work_history_id))
+                raise ValidationError(f"Work history {work_history_id} does not exist")
 
         work_history_serializer = EmploymentSerializer(instance=work_history_instance, data=work_history)
         work_history_serializer.is_valid(raise_exception=True)
@@ -59,7 +52,7 @@ def update_education(education_list, profile_id):
             try:
                 education_instance = Education.objects.get(profile_id=profile_id, id=education_id)
             except Education.DoesNotExist:
-                raise ValidationError("Education {} does not exist".format(education_id))
+                raise ValidationError(f"Education {education_id} does not exist")
         else:
             education_instance = None
         education_serializer = EducationSerializer(instance=education_instance, data=education)

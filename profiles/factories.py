@@ -1,30 +1,15 @@
 """Factories for making test data"""
-from datetime import date, datetime, timezone
 import uuid
-from django.db.models.signals import post_save
+from datetime import date, datetime, timezone
 
-from factory import (
-    SubFactory,
-    LazyFunction,
-    Faker,
-    lazy_attribute,
-    Trait,
-)
-from factory.django import (
-    DjangoModelFactory,
-    ImageField,
-    mute_signals
-)
-from factory.fuzzy import (
-    FuzzyChoice,
-    FuzzyDate,
-    FuzzyDateTime,
-    FuzzyText,
-)
 import faker
-from micromasters.factories import UserFactory, SocialUserFactory
-from profiles.models import Employment, Profile, Education
+from django.db.models.signals import post_save
+from factory import Faker, LazyFunction, SubFactory, Trait, lazy_attribute
+from factory.django import DjangoModelFactory, ImageField, mute_signals
+from factory.fuzzy import FuzzyChoice, FuzzyDate, FuzzyDateTime, FuzzyText
 
+from micromasters.factories import SocialUserFactory, UserFactory
+from profiles.models import Education, Employment, Profile
 
 FAKE = faker.Factory.create()
 
@@ -55,7 +40,7 @@ class ProfileFactory(DjangoModelFactory):
     romanized_first_name = Faker('first_name')
     romanized_last_name = Faker('last_name')
 
-    address = LazyFunction(lambda: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
+    address = LazyFunction(lambda: f'{FAKE.building_number()} {FAKE.street_name()}')
 
     city = Faker('city')
     country = Faker('country_code')

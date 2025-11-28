@@ -6,59 +6,42 @@ from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.db.models import F, Q
 from django.views.generic import ListView
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.authentication import (SessionAuthentication,
+                                           TokenAuthentication)
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import (
-    CreateAPIView,
-    get_object_or_404,
-    UpdateAPIView
-)
+from rest_framework.generics import (CreateAPIView, UpdateAPIView,
+                                     get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
-from rolepermissions.checkers import (
-    has_object_permission,
-    has_role,
-)
+from rolepermissions.checkers import has_object_permission, has_role
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
 from dashboard.permissions import CanReadIfStaffOrSelf
-from financialaid.api import (
-    get_formatted_course_price,
-    get_no_discount_tier_program,
-)
-from financialaid.constants import (
-    FinancialAidJustification,
-    FinancialAidStatus
-)
-from financialaid.models import (
-    FinancialAid,
-    TierProgram
-)
-from financialaid.permissions import (
-    UserCanEditFinancialAid,
-    FinancialAidUserMatchesLoggedInUser
-)
-from financialaid.serializers import (
-    FinancialAidActionSerializer,
-    FinancialAidRequestSerializer,
-    FinancialAidSerializer,
-    FormattedCoursePriceSerializer,
-)
+from financialaid.api import (get_formatted_course_price,
+                              get_no_discount_tier_program)
+from financialaid.constants import (FinancialAidJustification,
+                                    FinancialAidStatus)
+from financialaid.models import FinancialAid, TierProgram
+from financialaid.permissions import (FinancialAidUserMatchesLoggedInUser,
+                                      UserCanEditFinancialAid)
+from financialaid.serializers import (FinancialAidActionSerializer,
+                                      FinancialAidRequestSerializer,
+                                      FinancialAidSerializer,
+                                      FormattedCoursePriceSerializer)
 from mail.serializers import GenericMailSerializer
 from micromasters.utils import now_in_utc
-from roles.models import (
-    Instructor,
-    Staff,
-)
+from roles.models import Instructor, Staff
 from roles.roles import Permissions
 
 
+User = get_user_model()
 class FinancialAidRequestView(CreateAPIView):
     """
     View for financial aid request API. Takes income, currency, and program, then determines whether review
@@ -189,10 +172,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         context["statuses"] = FinancialAidStatus
         context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
         context["email_serializer"] = GenericMailSerializer()
-        context["current_sort_field"] = "{sort_direction}{sort_field}".format(
-            sort_direction=self.sort_direction,
-            sort_field=self.sort_field
-        )
+        context["current_sort_field"] = f"{self.sort_direction}{self.sort_field}"
         context["current_program_id"] = self.program.id
         context["tier_programs"] = TierProgram.objects.filter(
             program_id=context["current_program_id"],
@@ -291,10 +271,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             self.sort_field = self.default_sort_field
             self.sort_direction = ""
         financial_aids = financial_aids.order_by(
-            "{sort_direction}{sort_field}".format(
-                sort_direction=self.sort_direction,
-                sort_field=self.sort_field_mappings.get(self.sort_field, self.sort_field)
-            )
+            f"{self.sort_direction}{self.sort_field_mappings.get(self.sort_field, self.sort_field)}"
         )
 
         return financial_aids

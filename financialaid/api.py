@@ -5,15 +5,11 @@ import logging
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
+
 from financialaid.constants import DEFAULT_INCOME_THRESHOLD, FinancialAidStatus
 from financialaid.exceptions import NotSupportedException
-from financialaid.models import (
-    CountryIncomeThreshold,
-    CurrencyExchangeRate,
-    FinancialAid,
-    TierProgram
-)
-
+from financialaid.models import (CountryIncomeThreshold, CurrencyExchangeRate,
+                                 FinancialAid, TierProgram)
 
 log = logging.getLogger(__name__)
 
@@ -34,8 +30,7 @@ def determine_tier_program(program, income):
     tier_program = tier_programs_set.order_by("-income_threshold").first()
     if tier_program is None:
         message = (
-            "$0-income-threshold TierProgram has not yet been configured for Program "
-            "with id {program_id}.".format(program_id=program.id)
+            f"$0-income-threshold TierProgram has not yet been configured for Program with id {program.id}."
         )
         log.error(message)
         raise ImproperlyConfigured(message)
@@ -104,9 +99,7 @@ def get_no_discount_tier_program(program_id):
     try:
         return TierProgram.objects.get(program_id=program_id, current=True, discount_amount=0)
     except TierProgram.DoesNotExist:
-        message = "No-discount TierProgram has not yet been configured for Program with id {program_id}.".format(
-            program_id=program_id
-        )
+        message = f"No-discount TierProgram has not yet been configured for Program with id {program_id}."
         log.error(message)
         raise ImproperlyConfigured(message)
 

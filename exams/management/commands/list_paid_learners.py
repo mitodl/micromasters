@@ -1,19 +1,20 @@
 """
 List all users paid, have exam attempt, not enrolled
 """
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand
 from django.db import models
 
-
 from backends.constants import BACKEND_MITX_ONLINE
-from courses.models import CourseRun, Course
+from courses.models import Course, CourseRun
 from dashboard.api import has_to_pay_for_exam
 from dashboard.models import CachedEnrollment
 from dashboard.utils import get_mmtrack
-from ecommerce.models import Order, Line
+from ecommerce.models import Line, Order
 from profiles.api import get_social_username
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -54,8 +55,8 @@ class Command(BaseCommand):
                     final_list.append((username, user.email, next_course_run.edx_course_key))
 
         file_name = 'paid_users.csv'
-        path = '{}/{}'.format(settings.BASE_DIR, file_name)
-        with open(path, 'w') as f:
+        path = f'{settings.BASE_DIR}/{file_name}'
+        with open(path, 'w', encoding='utf-8') as f:
             for username, email, course_id in final_list:
                 f.write(f'{username},{email},{course_id}\n')
 
@@ -64,7 +65,3 @@ class Command(BaseCommand):
                 f'Successfully created {file_name}'
             )
         )
-
-
-
-

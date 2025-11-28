@@ -1,23 +1,18 @@
 """
 Models for the Financial Aid App
 """
-from django.contrib.auth.models import User
-from django.db import (
-    models,
-    transaction,
-)
+from django.contrib.auth import get_user_model
+
+from django.db import models, transaction
 from rest_framework.exceptions import ValidationError
 
 from courses.models import Program
 from financialaid.constants import FinancialAidStatus
-from micromasters.models import (
-    AuditableModel,
-    AuditModel,
-    TimestampedModel,
-)
+from micromasters.models import AuditableModel, AuditModel, TimestampedModel
 from micromasters.utils import serialize_model_object
 
 
+User = get_user_model()
 class Tier(TimestampedModel):
     """
     The possible tiers to be used
@@ -43,7 +38,7 @@ class TierProgram(TimestampedModel):
         unique_together = ('program', 'tier')
 
     def __str__(self):
-        return 'tier "{0}" for program "{1}"'.format(self.tier.name, self.program.title)
+        return f'tier "{self.tier.name}" for program "{self.program.title}"'
 
     @transaction.atomic
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
@@ -101,10 +96,7 @@ class FinancialAid(TimestampedModel, AuditableModel):
         return serialize_model_object(self)
 
     def __str__(self):
-        return 'FA for user "{user}" in status "{status}"'.format(
-            user=self.user.username,
-            status=self.status
-        )
+        return f'FA for user "{self.user.username}" in status "{self.status}"'
 
 
 class FinancialAidAudit(AuditModel):

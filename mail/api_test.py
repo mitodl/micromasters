@@ -5,45 +5,31 @@ import json
 import string
 from unittest.mock import Mock, patch
 
-from ddt import ddt, data
+from ddt import data, ddt
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import override_settings
-from opensearch_dsl import Search
 from factory.django import mute_signals
+from opensearch_dsl import Search
 from requests import Response
 from requests.exceptions import HTTPError
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-    HTTP_401_UNAUTHORIZED,
-)
+from rest_framework.status import (HTTP_200_OK, HTTP_400_BAD_REQUEST,
+                                   HTTP_401_UNAUTHORIZED)
 
-from dashboard.models import ProgramEnrollment
+from courses.factories import CourseFactory, CourseRunFactory
 from dashboard.factories import ProgramEnrollmentFactory
-from courses.factories import (
-    CourseFactory,
-    CourseRunFactory,
-)
+from dashboard.models import ProgramEnrollment
 from financialaid.factories import FinancialAidFactory
+from mail.api import (MailgunClient, add_automatic_email, get_mail_vars,
+                      mark_emails_as_sent, send_automatic_emails)
 from mail.exceptions import SendBatchException
-from mail.api import (
-    MailgunClient,
-    add_automatic_email,
-    get_mail_vars,
-    mark_emails_as_sent,
-    send_automatic_emails,
-)
-from mail.models import (
-    AutomaticEmail,
-    FinancialAidEmailAudit,
-    SentAutomaticEmail,
-)
 from mail.factories import AutomaticEmailFactory
+from mail.models import (AutomaticEmail, FinancialAidEmailAudit,
+                         SentAutomaticEmail)
 from mail.views_test import mocked_json
-from profiles.factories import ProfileFactory
 from micromasters.factories import UserFactory
+from profiles.factories import ProfileFactory
 from search.api import adjust_search_for_percolator
 from search.base import MockedESTestCase
 from search.models import PercolateQuery
@@ -73,7 +59,7 @@ class MailAPITests(MockedESTestCase):
         MailgunClient.send_batch('email subject', email_body, self.batch_recipient_arg, sender_name=sender_name)
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
-        assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+        assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
         assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
         assert called_kwargs['data']['text'] == "A title and some text www.google.com"
         assert called_kwargs['data']['html'] == email_body
@@ -88,7 +74,7 @@ class MailAPITests(MockedESTestCase):
         if sender_name is not None:
             self.assertEqual(
                 called_kwargs['data']['from'],
-                "{sender_name} <{email}>".format(sender_name=sender_name, email=settings.EMAIL_SUPPORT)
+                f"{sender_name} <{settings.EMAIL_SUPPORT}>"
             )
         else:
             self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
@@ -101,7 +87,7 @@ class MailAPITests(MockedESTestCase):
         MailgunClient.send_batch('subject', 'body', self.batch_recipient_arg, sender_name='sender')
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
-        assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+        assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
         assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
         assert called_kwargs['data']['text'] == """body
 
@@ -123,7 +109,7 @@ b@example.com: {"name": "B"}"""
         Test that MailgunClient.send_batch chunks recipients
         """
         chunk_size = 10
-        recipient_tuples = [("{0}@example.com".format(letter), None) for letter in string.ascii_letters]
+        recipient_tuples = [(f"{letter}@example.com", None) for letter in string.ascii_letters]
         chunked_emails_to = [recipient_tuples[i:i + chunk_size] for i in range(0, len(recipient_tuples), chunk_size)]
         assert len(recipient_tuples) == 52
         responses = MailgunClient.send_batch('email subject', 'email body', recipient_tuples, chunk_size=chunk_size)
@@ -131,7 +117,7 @@ b@example.com: {"name": "B"}"""
         assert mock_post.call_count == 6
         for call_num, args in enumerate(mock_post.call_args_list):
             called_args, called_kwargs = args
-            assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+            assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
             assert sorted(called_kwargs['data']['to']) == sorted([email for email, _ in chunked_emails_to[call_num]])
@@ -151,7 +137,7 @@ b@example.com: {"name": "B"}"""
         mock_post.return_value.status_code = HTTP_400_BAD_REQUEST
 
         chunk_size = 10
-        recipient_tuples = [("{0}@example.com".format(letter), {"letter": letter}) for letter in string.ascii_letters]
+        recipient_tuples = [(f"{letter}@example.com", {"letter": letter}) for letter in string.ascii_letters]
         chunked_emails_to = [recipient_tuples[i:i + chunk_size] for i in range(0, len(recipient_tuples), chunk_size)]
         assert len(recipient_tuples) == 52
         with override_settings(
@@ -167,7 +153,7 @@ b@example.com: {"name": "B"}"""
 
         for call_num, args in enumerate(mock_post.call_args_list):
             called_args, called_kwargs = args
-            assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+            assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
             assert sorted(called_kwargs['data']['to']) == sorted([email for email, _ in chunked_emails_to[call_num]])
@@ -197,7 +183,7 @@ b@example.com: {"name": "B"}"""
         )
 
         chunk_size = 10
-        recipient_tuples = [("{0}@example.com".format(letter), None) for letter in string.ascii_letters]
+        recipient_tuples = [(f"{letter}@example.com", None) for letter in string.ascii_letters]
         assert len(recipient_tuples) == 52
         with override_settings(
             MAILGUN_RECIPIENT_OVERRIDE=None,
@@ -220,7 +206,7 @@ b@example.com: {"name": "B"}"""
         mock_post.side_effect = KeyError
 
         chunk_size = 10
-        recipient_tuples = [("{0}@example.com".format(letter), None) for letter in string.ascii_letters]
+        recipient_tuples = [(f"{letter}@example.com", None) for letter in string.ascii_letters]
         chunked_emails_to = [recipient_tuples[i:i + chunk_size] for i in range(0, len(recipient_tuples), chunk_size)]
         assert len(recipient_tuples) == 52
         with self.assertRaises(SendBatchException) as send_batch_exception:
@@ -229,7 +215,7 @@ b@example.com: {"name": "B"}"""
         assert mock_post.call_count == 6
         for call_num, args in enumerate(mock_post.call_args_list):
             called_args, called_kwargs = args
-            assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+            assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
             assert sorted(called_kwargs['data']['to']) == sorted([email for email, _ in chunked_emails_to[call_num]])
@@ -254,7 +240,7 @@ b@example.com: {"name": "B"}"""
         )
 
         chunk_size = 10
-        recipient_pairs = [("{0}@example.com".format(letter), None) for letter in string.ascii_letters]
+        recipient_pairs = [(f"{letter}@example.com", None) for letter in string.ascii_letters]
         with self.assertRaises(ImproperlyConfigured) as ex:
             MailgunClient.send_batch('email subject', 'email body', recipient_pairs, chunk_size=chunk_size)
         assert ex.exception.args[0] == "Mailgun API keys not properly configured."
@@ -262,7 +248,7 @@ b@example.com: {"name": "B"}"""
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     def test_send_batch_empty(self, mock_post):
         """If the recipient list is empty there should be no attempt to mail users"""
-        assert MailgunClient.send_batch('subject', 'body', []) == []
+        assert not MailgunClient.send_batch('subject', 'body', [])
         assert mock_post.called is False
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
@@ -282,7 +268,7 @@ b@example.com: {"name": "B"}"""
         assert response.status_code == HTTP_200_OK
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
-        assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+        assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
         assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
         assert called_kwargs['data']['text'].startswith('email body')
         assert called_kwargs['data']['subject'] == 'email subject'
@@ -291,7 +277,7 @@ b@example.com: {"name": "B"}"""
         if sender_name is not None:
             self.assertEqual(
                 called_kwargs['data']['from'],
-                "{sender_name} <{email}>".format(sender_name=sender_name, email=settings.EMAIL_SUPPORT)
+                f"{sender_name} <{settings.EMAIL_SUPPORT}>"
             )
         else:
             self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
@@ -316,7 +302,7 @@ b@example.com: {"name": "B"}"""
 
         assert response.raise_for_status.called is raise_for_status
         assert response.status_code == HTTP_400_BAD_REQUEST
-        assert response.json() == {}
+        assert not response.json()
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     def test_send_with_sender_address(self, mock_post):
@@ -382,7 +368,7 @@ class FinancialAidMailAPITests(MockedESTestCase):
         # Check method call
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
-        assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+        assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
         assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
         assert called_kwargs['data']['text'] == 'email body'
         assert called_kwargs['data']['subject'] == 'email subject'
@@ -423,7 +409,7 @@ class FinancialAidMailAPITests(MockedESTestCase):
 
         assert response.raise_for_status.called is raise_for_status
         assert response.status_code == HTTP_400_BAD_REQUEST
-        assert response.json() == {}
+        assert not response.json()
 
     @override_settings(
         EMAIL_SUPPORT='mailgun_from_email@example.com',
@@ -444,7 +430,7 @@ class FinancialAidMailAPITests(MockedESTestCase):
         # Check method call
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
-        assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+        assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
         assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
         assert called_kwargs['data']['text'] == ''
         assert called_kwargs['data']['subject'] == ''
@@ -497,7 +483,7 @@ class CourseTeamMailAPITests(MockedESTestCase):
         assert called_kwargs['data']['to'] == [course_with_email.contact_email]
         self.assertEqual(
             called_kwargs['data']['from'],
-            '{} <{}>'.format(self.user_profile.display_name, self.user.email)
+            f'{self.user_profile.display_name} <{self.user.email}>'
         )
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
@@ -538,7 +524,7 @@ class CourseTeamMailAPITests(MockedESTestCase):
         )
         assert response.raise_for_status.called is raise_for_status
         assert response.status_code == HTTP_400_BAD_REQUEST
-        assert response.json() == {}
+        assert not response.json()
 
 
 @ddt
@@ -686,7 +672,7 @@ class RecipientVariablesTests(MockedESTestCase):
 
     def test_missing_email(self):
         """get_mail_vars should skip missing emails without erroring"""
-        assert list(get_mail_vars(['missing@email.com'])) == []
+        assert not list(get_mail_vars(['missing@email.com']))
 
     def test_missing_profile(self):
         """get_mail_vars should skip User objects without a Profile"""
@@ -695,4 +681,4 @@ class RecipientVariablesTests(MockedESTestCase):
         user = profile.user
         profile.delete()
 
-        assert list(get_mail_vars([user.email])) == []
+        assert not list(get_mail_vars([user.email]))

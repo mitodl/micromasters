@@ -35,11 +35,11 @@ class Command(BaseCommand):
                 )
             except TierProgram.MultipleObjectsReturned:
                 raise CommandError(
-                    'There are multiple tier programs with threshold "{}"'.format(threshold)
+                    f'There are multiple tier programs with threshold "{threshold}"'
                 )
 
             financial_aid.tier_program = tier_program
             financial_aid.save_and_log(None)
             updated_count += 1
 
-        self.stdout.write(self.style.SUCCESS('Updated {} financial aid instances'.format(updated_count)))
+        self.stdout.write(self.style.SUCCESS(f'Updated {updated_count} financial aid instances'))

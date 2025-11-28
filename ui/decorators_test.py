@@ -8,10 +8,7 @@ from factory.django import mute_signals
 from backends.edxorg import EdxOrgOAuth2
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
-from ui.url_utils import (
-    DASHBOARD_URL,
-    PROFILE_URL,
-)
+from ui.url_utils import DASHBOARD_URL, PROFILE_URL
 
 
 class DecoratorTests(MockedESTestCase):
@@ -30,7 +27,7 @@ class DecoratorTests(MockedESTestCase):
             )
             profile.user.social_auth.create(
                 provider=EdxOrgOAuth2.name,
-                uid="{}_edx".format(profile.user.username)
+                uid=f"{profile.user.username}_edx"
             )
         self.client.force_login(profile.user)
 

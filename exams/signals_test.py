@@ -3,38 +3,24 @@ Tests for exam signals
 """
 from datetime import timedelta
 
+import ddt
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-import ddt
 
-from courses.factories import (
-    CourseFactory,
-    CourseRunFactory
-)
-from dashboard.factories import (
-    CachedCertificateFactory,
-    CachedCurrentGradeFactory,
-    CachedEnrollmentFactory,
-)
-from ecommerce.factories import (
-    LineFactory,
-    OrderFactory,
-)
+from courses.factories import CourseFactory, CourseRunFactory
+from dashboard.factories import (CachedCertificateFactory,
+                                 CachedCurrentGradeFactory,
+                                 CachedEnrollmentFactory)
+from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order
-from exams.factories import ExamRunFactory
 from exams.api_test import create_order
-from exams.models import (
-    ExamProfile,
-    ExamAuthorization
-)
+from exams.factories import ExamRunFactory
+from exams.models import ExamAuthorization, ExamProfile
 from financialaid.api_test import create_program
 from grades.factories import FinalGradeFactory
 from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
-
-
-# pylint: disable=no-self-use
 
 @ddt.ddt
 class ExamSignalsTest(MockedESTestCase):

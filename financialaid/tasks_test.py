@@ -5,7 +5,8 @@ from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 
-from financialaid.exceptions import ExceededAPICallsException, UnexpectedAPIErrorException
+from financialaid.exceptions import (ExceededAPICallsException,
+                                     UnexpectedAPIErrorException)
 from financialaid.models import CurrencyExchangeRate
 from financialaid.tasks import sync_currency_exchange_rates
 
@@ -40,7 +41,7 @@ class TasksTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(TasksTest, cls).setUpTestData()
+        super().setUpTestData()
         CurrencyExchangeRate.objects.create(
             currency_code="DEF",
             exchange_rate=1.8

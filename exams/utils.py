@@ -1,6 +1,6 @@
 """Exam related helpers"""
-import re
 import datetime
+import re
 
 from courses.models import CourseRun
 
@@ -51,7 +51,7 @@ def validate_profile(profile):
     if profile.country in ('US', 'CA'):
         fields.append('postal_code')
 
-    return all([_match_field(profile, field) for field in fields])
+    return all(_match_field(profile, field) for field in fields)
 
 
 def get_corresponding_course_run(exam_run):

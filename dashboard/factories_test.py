@@ -4,12 +4,12 @@ Tests for dashboard factories
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import ProgramFactory, FullProgramFactory
+from courses.factories import FullProgramFactory, ProgramFactory
 from dashboard.factories import CachedEnrollmentFactory
 from ecommerce.models import Line, Order
 from micromasters.factories import UserFactory
-from search.base import MockedESTestCase
 from profiles.factories import ProfileFactory
+from search.base import MockedESTestCase
 
 
 class DashboardFactoryTests(MockedESTestCase):
