@@ -554,8 +554,7 @@ class AutomaticEmailTests(MockedESTestCase):
         cls.program_enrollment_sent = ProgramEnrollmentFactory.create()
         cls.automatic_email = AutomaticEmailFactory.create(enabled=True)
         cls.percolate_query = cls.automatic_email.query
-        cls.other_query = PercolateQueryFactory.create(source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE)
-        cls.percolate_queries = [cls.percolate_query, cls.other_query]
+        cls.percolate_queries = [cls.percolate_query]
         cls.automatic_email_disabled = AutomaticEmailFactory.create(enabled=False)
         cls.percolate_query_disabled = cls.automatic_email_disabled.query
         SentAutomaticEmail.objects.create(

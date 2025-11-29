@@ -68,7 +68,7 @@ def settings_defaults(settings):
     """
     Sets default settings to safe defaults
     """
-    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
+    pass
 
 
 @pytest.fixture(scope='function')
@@ -104,18 +104,6 @@ def mocked_opensearch(mocked_opensearch_module_patcher):
     for mock in mocked_opensearch_module_patcher.patcher_mocks:
         mock.reset_mock()
     return mocked_opensearch_module_patcher
-
-
-@pytest.fixture()
-def discussion_settings(settings):
-    """Set discussion-specific settings"""
-    settings.OPEN_DISCUSSIONS_JWT_SECRET = 'secret'
-    settings.OPEN_DISCUSSIONS_COOKIE_NAME = 'jwt_cookie'
-    settings.OPEN_DISCUSSIONS_COOKIE_DOMAIN = 'localhost'
-    settings.OPEN_DISCUSSIONS_REDIRECT_URL = 'http://localhost/'
-    settings.OPEN_DISCUSSIONS_BASE_URL = 'http://localhost/'
-    settings.OPEN_DISCUSSIONS_API_USERNAME = 'mitodl'
-    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = True
 
 
 @pytest.fixture()

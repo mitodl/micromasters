@@ -33,7 +33,6 @@ import {
   DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
 } from "../containers/test_util"
 import ErrorMessage from "./ErrorMessage"
-import { actions } from "../lib/redux_rest"
 
 describe("ErrorMessage", () => {
   let errorString = `Sorry, we were unable to load the data necessary
