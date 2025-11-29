@@ -287,13 +287,6 @@ class PercolateTests(ESTestCase):
             source_type=PercolateQuery.AUTOMATIC_EMAIL_TYPE,
         )
 
-        # Another query which matches but has a different source_type
-        PercolateQuery.objects.create(
-            query=matching_query,
-            original_query={},
-            source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
-        )
-
         # Another query that doesn't match
         PercolateQuery.objects.create(query={
             "query": {
@@ -417,7 +410,7 @@ class PercolateTests(ESTestCase):
             search_percolate_queries(program_enrollment_id, "doesnt_matter")
 
     @ddt.data(*product(
-        [PercolateQuery.AUTOMATIC_EMAIL_TYPE, PercolateQuery.DISCUSSION_CHANNEL_TYPE],
+        [PercolateQuery.AUTOMATIC_EMAIL_TYPE],
         [True, False],
         [True, False]
     ))
@@ -449,7 +442,7 @@ class PercolateTests(ESTestCase):
         assert membership.needs_update is (is_member is not query_matches)
 
     @ddt.data(*product(
-        [PercolateQuery.AUTOMATIC_EMAIL_TYPE, PercolateQuery.DISCUSSION_CHANNEL_TYPE],
+        [PercolateQuery.AUTOMATIC_EMAIL_TYPE],
         [True, False],
         [True, False]
     ))
@@ -490,7 +483,7 @@ class PercolateTests(ESTestCase):
         Tests that memberships are handled correctly for users who are inactive or have no profiles
         """
         with mute_signals(post_save):
-            query = PercolateQueryFactory.create(source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE)
+            query = PercolateQueryFactory.create(source_type=PercolateQuery.AUTOMATIC_EMAIL_TYPE)
             user = UserFactory.create(is_active=is_active)
             if has_profile:
                 ProfileFactory.create(user=user, filled_out=True)

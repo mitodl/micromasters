@@ -96,7 +96,6 @@ import type { Program } from "../flow/programTypes"
 import { findCourse, modifyTextField } from "../util/test_utils"
 import {
   DASHBOARD_SUCCESS_ACTIONS,
-  DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS,
   DASHBOARD_ERROR_ACTIONS,
   DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
 } from "./test_util"
@@ -107,10 +106,7 @@ import Grades, {
   gradeDetailPopupKey
 } from "../components/dashboard/courses/Grades"
 import { COURSE_GRADE } from "./DashboardPage"
-import DiscussionCard from "../components/DiscussionCard"
-import { makeFrontPageList } from "../factories/posts"
 import * as api from "../lib/api"
-import { postURL } from "../lib/discussions"
 import FinancialAidCard from "../components/dashboard/FinancialAidCard"
 
 describe("DashboardPage", function() {
@@ -159,54 +155,6 @@ describe("DashboardPage", function() {
     )
   })
 
-  it("should not load the discussions frontpage if the feature flag is false", async () => {
-    SETTINGS.FEATURES.DISCUSSIONS_POST_UI = false
-    await renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS)
-  })
-
-  it("should not load the discussions frontpage if the OD URL is not set", async () => {
-    SETTINGS.open_discussions_redirect_url = undefined
-    await renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS)
-  })
-  ;[true, false].forEach(showCard => {
-    it(`should ${
-      showCard ? "show" : "not show"
-    } discussions card when feature flag is ${showCard}`, () => {
-      SETTINGS.FEATURES.DISCUSSIONS_POST_UI = showCard
-      return renderComponent(
-        "/dashboard",
-        showCard
-          ? DASHBOARD_SUCCESS_ACTIONS
-          : DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS
-      ).then(([wrapper]) => {
-        if (showCard) {
-          assert.lengthOf(wrapper.find(DiscussionCard), 1)
-        } else {
-          assert.lengthOf(wrapper.find(DiscussionCard), 0)
-        }
-      })
-    })
-  })
-
-  it("should show the frontpage with data", async () => {
-    const posts = makeFrontPageList()
-    helper.discussionsFrontpageStub.returns(Promise.resolve({ posts }))
-    const [wrapper] = await renderComponent(
-      "/dashboard",
-      DASHBOARD_SUCCESS_ACTIONS
-    )
-    const card = wrapper.find(DiscussionCard)
-
-    card.find(".post").forEach((renderedPost, idx) => {
-      const link = renderedPost.find(".post-title")
-      assert.equal(link.text(), posts[idx].title)
-      assert.equal(
-        link.props().href,
-        postURL(posts[idx].id, posts[idx].channel_name)
-      )
-    })
-  })
-
   it("doesnt show LearnersCard if no learners", () => {
     helper.programLearnersStub.returns(
       Promise.resolve({
@@ -225,15 +173,7 @@ describe("DashboardPage", function() {
   it("should show no program enrolled view", () => {
     helper.dashboardStub.returns(Promise.resolve({ programs: [] }))
 
-    const actionsNoFrontpage = R.filter(
-      R.compose(
-        R.not,
-        R.contains(R.__, [actions.discussionsFrontpage.get.successType])
-      ),
-      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
-    )
-
-    return renderComponent("/dashboard", actionsNoFrontpage).then(
+    return renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
       ([wrapper]) => {
         const text = wrapper
           .find(".no-program-card")
@@ -253,15 +193,8 @@ describe("DashboardPage", function() {
     const availablePrograms = makeAvailablePrograms(dashboard, false)
     helper.programsGetStub.returns(Promise.resolve(availablePrograms))
     addProgramEnrollmentStub.returns(Promise.resolve(availablePrograms[0]))
-    const actionsNoFrontpage = R.filter(
-      R.compose(
-        R.not,
-        R.contains(R.__, [actions.discussionsFrontpage.get.successType])
-      ),
-      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
-    )
 
-    return renderComponent("/dashboard", actionsNoFrontpage).then(
+    return renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
       ([wrapper]) => {
         const link = wrapper.find(".enroll-wizard-button")
         assert.equal(link.text(), "Enroll in a MicroMasters Program")

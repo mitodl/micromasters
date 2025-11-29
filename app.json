@@ -112,10 +112,6 @@
       "description": "URL for connecting to Opensearch cluster",
       "required": false
     },
-    "FEATURE_OPEN_DISCUSSIONS_USER_SYNC": {
-      "description": "Enables creation and syncing of open-discussions user data",
-      "required": false
-    },
     "GOOGLE_API_KEY": {
       "description": "API key for accessing Google services",
       "required": true
@@ -224,36 +220,6 @@
       "description": "If true, on login redirects to a static page with message",
       "value": "False",
       "required": false
-    },
-    "OPEN_DISCUSSIONS_API_USERNAME": {
-      "description": "The username to use for authentication Open Discussions",
-      "required": false
-    },
-    "OPEN_DISCUSSIONS_BASE_URL": {
-      "description": "The base url for Open Discussions",
-      "required": false
-    },
-    "OPEN_DISCUSSIONS_COOKIE_NAME": {
-      "description": "The name of the cookie to set the JWT token on"
-    },
-    "OPEN_DISCUSSIONS_COOKIE_DOMAIN": {
-      "description": "The domain to set the JWT token cookie on",
-      "required": false
-    },
-    "OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA": {
-      "description": "How long the JWT cookie should live before expiration",
-      "required": false
-    },
-    "OPEN_DISCUSSIONS_JWT_SECRET": {
-      "description": "The JWT secret to be shared between MicroMasters and Open Discussions",
-      "required": false
-    },
-    "OPEN_DISCUSSIONS_REDIRECT_URL": {
-      "description": "The URL to redirect the uer to for the discussions site",
-      "required": false
-    },
-    "OPEN_DISCUSSIONS_SITE_KEY": {
-      "description": "The site key to use for discussions JWT tokens"
     },
     "OPEN_EXCHANGE_RATES_APP_ID": {
       "description": "The app ID for the open exchange rates API"

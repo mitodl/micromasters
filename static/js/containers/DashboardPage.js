@@ -72,7 +72,6 @@ import DashboardUserCard from "../components/dashboard/DashboardUserCard"
 import ErrorMessage from "../components/ErrorMessage"
 import LearnersInProgramCard from "../components/LearnersInProgramCard"
 import ProgressWidget from "../components/ProgressWidget"
-import DiscussionCard from "../components/DiscussionCard"
 import { clearCoupons, fetchCoupons } from "../actions/coupons"
 import {
   setDocumentSentDate,
@@ -121,7 +120,6 @@ import type { ProfileGetResult } from "../flow/profileTypes"
 import type { Course, CourseRun, Program } from "../flow/programTypes"
 import type { Coupon } from "../flow/couponTypes"
 import type { RestState } from "../flow/restTypes"
-import type { Post } from "../flow/discussionTypes"
 import type { ExamEnrollmentResponse } from "../flow/enrollmentTypes"
 import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
@@ -152,8 +150,7 @@ class DashboardPage extends React.Component {
     orderReceipt: OrderReceiptState,
     financialAid: FinancialAidState,
     location: Object,
-    openEmailComposer: (emailType: string, emailOpenParams: any) => void,
-    discussionsFrontpage: RestState<Array<Post>>
+    openEmailComposer: (emailType: string, emailOpenParams: any) => void
   }
 
   componentDidMount() {
@@ -279,7 +276,6 @@ class DashboardPage extends React.Component {
     this.handleCoupon()
     this.fetchCoupons()
     this.handleOrderStatus()
-    this.fetchDiscussionsFrontpage()
     this.checkFinancialAidError()
   }
 
@@ -375,20 +371,6 @@ class DashboardPage extends React.Component {
       }
     } else if (query.status === "cancel") {
       this.handleOrderCancellation()
-    }
-  }
-
-  fetchDiscussionsFrontpage() {
-    const { dispatch, discussionsFrontpage } = this.props
-    if (
-      SETTINGS.FEATURES.DISCUSSIONS_POST_UI &&
-      SETTINGS.open_discussions_redirect_url &&
-      !discussionsFrontpage.loaded &&
-      !discussionsFrontpage.processing
-    ) {
-      dispatch(actions.discussionsFrontpage.get()).catch(() => {
-        /* Promise rejected */
-      })
     }
   }
 
@@ -908,8 +890,7 @@ class DashboardPage extends React.Component {
       prices,
       profile: { profile },
       ui,
-      coupons,
-      discussionsFrontpage
+      coupons
     } = this.props
     const program = this.getCurrentlyEnrolledProgram()
 
@@ -970,14 +951,6 @@ class DashboardPage extends React.Component {
           </div>
           <div className="second-column">
             <ProgressWidget program={program} />
-            {SETTINGS.FEATURES.DISCUSSIONS_POST_UI &&
-            SETTINGS.open_discussions_redirect_url ? (
-                <DiscussionCard
-                  program={program}
-                  frontpage={discussionsFrontpage.data || []}
-                  loaded={discussionsFrontpage.loaded}
-                />
-              ) : null}
             {this.renderLearnersInProgramCard(program.id)}
           </div>
         </div>
@@ -1039,8 +1012,7 @@ const mapStateToProps = state => {
     documents:                state.documents,
     orderReceipt:             state.orderReceipt,
     financialAid:             state.financialAid,
-    coupons:                  state.coupons,
-    discussionsFrontpage:     state.discussionsFrontpage
+    coupons:                  state.coupons
   }
 }
 

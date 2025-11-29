@@ -20,7 +20,6 @@ import {
   LEARNER_EMAIL_CONFIG
 } from "../components/email/lib"
 import { withEmailDialog } from "../components/email/hoc"
-import { withChannelCreateDialog } from "../components/channels/withChannelCreateDialog"
 import type { AllEmailsState } from "../flow/emailTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
 import { SEARCH_FILTER_DEFAULT_VISIBILITY } from "../constants"
@@ -31,8 +30,7 @@ class LearnerSearchPage extends React.Component {
     dispatch: Dispatch,
     email: AllEmailsState,
     ui: UIState,
-    openEmailComposer: (emailType: string, emailOpenParams: any) => void,
-    openChannelCreateDialog: (searchkit: Object) => void
+    openEmailComposer: (emailType: string, emailOpenParams: any) => void
   }
 
   checkFilterVisibility = (filterName: string): boolean => {
@@ -58,8 +56,7 @@ class LearnerSearchPage extends React.Component {
   render() {
     const {
       currentProgramEnrollment,
-      openEmailComposer,
-      openChannelCreateDialog
+      openEmailComposer
     } = this.props
 
     if (_.isNil(currentProgramEnrollment)) {
@@ -73,7 +70,6 @@ class LearnerSearchPage extends React.Component {
           setFilterVisibility={this.setFilterVisibility}
           openSearchResultEmailComposer={openEmailComposer(SEARCH_EMAIL_TYPE)}
           openLearnerEmailComposer={openEmailComposer(LEARNER_EMAIL_TYPE)}
-          openChannelCreateDialog={openChannelCreateDialog}
           currentProgramEnrollment={currentProgramEnrollment}
         />
       </DocumentTitle>
@@ -85,9 +81,7 @@ const mapStateToProps = state => {
   return {
     ui:                       state.ui,
     email:                    state.email,
-    currentProgramEnrollment: state.currentProgramEnrollment,
-    channelDialog:            state.channelDialog,
-    channels:                 state.channels
+    currentProgramEnrollment: state.currentProgramEnrollment
   }
 }
 
@@ -98,6 +92,5 @@ export default R.compose(
   withEmailDialog({
     [SEARCH_EMAIL_TYPE]:  SEARCH_RESULT_EMAIL_CONFIG,
     [LEARNER_EMAIL_TYPE]: LEARNER_EMAIL_CONFIG
-  }),
-  withChannelCreateDialog
+  })
 )(LearnerSearchPage)

@@ -21,7 +21,6 @@ declare var SETTINGS: {
   es_page_size: number,
   search_url: string,
   roles: Array<{ role: string }>,
-  open_discussions_redirect_url: string,
   partner_schools: Array<[number, string]>,
   hash: string,
 };

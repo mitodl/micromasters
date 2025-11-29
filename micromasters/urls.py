@@ -32,7 +32,6 @@ urlpatterns += [
     url('', include('search.urls')),
     url('', include('mail.urls')),
     url('', include('profiles.urls')),
-    url('', include('discussions.urls')),
     url(r'^status/', include('server_status.urls')),
     url('', include('ui.urls')),
 

@@ -128,7 +128,6 @@ INSTALLED_APPS = (
     'cms',
     'courses',
     'dashboard',
-    'discussions',
     'ecommerce',
     'exams',
     'financialaid',
@@ -497,7 +496,6 @@ CELERY_RESULT_BACKEND = get_string(
 CELERY_TASK_ALWAYS_EAGER = get_bool("CELERY_TASK_ALWAYS_EAGER", False) or get_bool("CELERY_ALWAYS_EAGER", False)
 CELERY_TASK_EAGER_PROPAGATES = (get_bool("CELERY_TASK_EAGER_PROPAGATES", True) or
                                 get_bool("CELERY_EAGER_PROPAGATES_EXCEPTIONS", True))
-CRONTAB_DISCUSSIONS_SYNC = get_string("CRONTAB_DISCUSSIONS_SYNC", None)
 CELERY_BEAT_SCHEDULE = {
     'batch-update-user-data-every-friday-every-6-hrs': {
         'task': 'dashboard.tasks.batch_update_user_data',
@@ -514,10 +512,6 @@ CELERY_BEAT_SCHEDULE = {
     'generate-mm-course-certificates-every-1-hrs': {
         'task': 'grades.tasks.generate_course_certificates_for_fa_students',
         'schedule': crontab(minute=0, hour='*')
-    },
-    'discussions-sync-memberships-every-minute': {
-        'task': 'discussions.tasks.sync_channel_memberships',
-        'schedule': crontab(*CRONTAB_DISCUSSIONS_SYNC.split()) if CRONTAB_DISCUSSIONS_SYNC else crontab(minute='*', hour='*')
     },
     'freeze-final-grades-every-24-hrs-few-times': {
         'task': 'grades.tasks.find_course_runs_and_freeze_grades',
@@ -593,20 +587,6 @@ CYBERSOURCE_REFERENCE_PREFIX = get_string("CYBERSOURCE_REFERENCE_PREFIX", None)
 # Open Exchange Rates
 OPEN_EXCHANGE_RATES_URL = get_string("OPEN_EXCHANGE_RATES_URL", "https://openexchangerates.org/api/")
 OPEN_EXCHANGE_RATES_APP_ID = get_string("OPEN_EXCHANGE_RATES_APP_ID", "")
-
-# Open Discussions
-OPEN_DISCUSSIONS_API_USERNAME = get_string('OPEN_DISCUSSIONS_API_USERNAME', None)
-OPEN_DISCUSSIONS_BASE_URL = get_string('OPEN_DISCUSSIONS_BASE_URL', None)
-OPEN_DISCUSSIONS_COOKIE_DOMAIN = get_string('OPEN_DISCUSSIONS_COOKIE_DOMAIN', None)
-OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA = get_int('OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA', 60*60)
-OPEN_DISCUSSIONS_COOKIE_NAME = get_string('OPEN_DISCUSSIONS_COOKIE_NAME', None)
-OPEN_DISCUSSIONS_JWT_SECRET = get_string('OPEN_DISCUSSIONS_JWT_SECRET', None)
-OPEN_DISCUSSIONS_REDIRECT_URL = get_string('OPEN_DISCUSSIONS_REDIRECT_URL', None)
-OPEN_DISCUSSIONS_REDIRECT_COMPLETE_URL = get_string('OPEN_DISCUSSIONS_REDIRECT_COMPLETE_URL', '/')
-OPEN_DISCUSSIONS_SITE_KEY = get_string('OPEN_DISCUSSIONS_SITE_KEY', None)
-
-if not OPEN_DISCUSSIONS_SITE_KEY:
-    raise ImproperlyConfigured("OPEN_DISCUSSIONS_SITE_KEY must be specified")
 
 
 # features flags
