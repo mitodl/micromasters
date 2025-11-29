@@ -155,7 +155,6 @@ describe("ErrorMessage", () => {
 
       it("shows enrollment card if there are no programs", () => {
         helper.dashboardStub.returns(Promise.resolve([]))
-
         return renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
           ([wrapper]) => {
             const message = wrapper.find(".page-content").text()
@@ -169,7 +168,6 @@ describe("ErrorMessage", () => {
 
       it("shows enrollment card if there is no matching current program enrollment", () => {
         helper.programsGetStub.returns(Promise.resolve([]))
-
         return renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
           ([wrapper]) => {
             const message = wrapper.find(".page-content").text()

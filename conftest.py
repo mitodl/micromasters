@@ -64,11 +64,8 @@ def warnings_as_errors():
 
 
 @pytest.fixture(autouse=True)
-def settings_defaults(settings):
-    """
-    Sets default settings to safe defaults
-    """
-    pass
+def settings_defaults(settings):  # pylint: disable=unused-argument
+    """No-op fixture for settings defaults, kept for consistency"""
 
 
 @pytest.fixture(scope='function')
