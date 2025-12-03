@@ -2,6 +2,9 @@ astroid==2.4.2
 bpython
 ddt
 django-debug-toolbar
+factory-boy==2.8.1
+faker==0.9.1
+flaky==3.8.1
 ipdb
 nplusone>=0.8.1
 pdbpp
@@ -9,9 +12,9 @@ pip-tools
 pylint==2.6.0
 pylint-django==2.1.0
 pylint-plugin-utils==0.6
-pytest==5.3.5
+pytest==8.4.2
 pytest-cov
-pytest-django==3.8.0
+pytest-django==4.11.1
 pytest-mock
 semantic-version
 selenium==3.141.0

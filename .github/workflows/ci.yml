@@ -2,7 +2,7 @@ name: CI
 on: [push]
 jobs:
   python-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     services:
       # Label used to access the service container
@@ -50,7 +50,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.9.1"
+          python-version: "3.10.17"
 
       - id: cache
         uses: actions/cache@v4
@@ -75,7 +75,8 @@ jobs:
           sudo sysctl -w vm.max_map_count=262144
 
       - name: Runs Opensearch
-        uses: ankane/setup-opensearch@v1
+        # pinned because versions after this drop support for opensearch 1.x
+        uses: ankane/setup-opensearch@06d8ca27e5805f1d0ad93062c0e947eab2594d64
         with:
           opensearch-version: ${{ matrix.opensearch-version }}
 
