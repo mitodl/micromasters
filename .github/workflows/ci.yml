@@ -50,7 +50,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9.23"
+          python-version: "3.9"
 
       - name: Install dependencies
         run: pip install -r requirements.txt -r test_requirements.txt
@@ -99,6 +99,7 @@ jobs:
           CELERY_TASK_ALWAYS_EAGER: 'True'
           BROKER_URL: redis://localhost:6379/4
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@v4
