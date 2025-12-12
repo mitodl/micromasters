@@ -17,7 +17,6 @@ from search.base import MockedESTestCase
 from search.exceptions import ReindexException
 from search.factories import PercolateQueryFactory
 from search.indexing_api import create_backing_indices
-from search.models import PercolateQuery
 from search.tasks import (
     index_users,
     index_program_enrolled_users, start_recreate_index, bulk_index_percolate_queries, bulk_index_program_enrollments,

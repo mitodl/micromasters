@@ -13,10 +13,7 @@ from mail.api import send_automatic_emails as _send_automatic_emails
 from micromasters.celery import app
 from micromasters.utils import merge_strings, chunks
 from search import api
-from search.api import (
-    document_needs_updating as _document_needs_updating,
-    update_percolate_memberships as _update_percolate_memberships,
-)
+from search.api import document_needs_updating as _document_needs_updating
 from search.connection import get_conn, make_alias_name
 from search.exceptions import ReindexException, RetryException
 from search.indexing_api import (

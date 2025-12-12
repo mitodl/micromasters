@@ -46,7 +46,6 @@ from profiles.factories import ProfileFactory
 from micromasters.factories import UserFactory
 from search.api import adjust_search_for_percolator
 from search.base import MockedESTestCase
-from search.factories import PercolateQueryFactory
 from search.models import PercolateQuery
 
 
