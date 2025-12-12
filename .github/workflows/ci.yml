@@ -99,7 +99,7 @@ jobs:
           CELERY_TASK_ALWAYS_EAGER: 'True'
           BROKER_URL: redis://localhost:6379/4
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
-          PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+          DJANGO_SETTINGS_MODULE: micromasters.settings
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@v4
