@@ -5,7 +5,7 @@ from unittest.mock import patch
 from io import BytesIO
 
 from ddt import ddt, data, unpack
-from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.uploadedfile import UploadedFile
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 from PIL import Image
@@ -215,30 +215,8 @@ class ProfileImageTests(MockedESTestCase):
         image.save(image_file, 'png')
         image_file.seek(0)
 
-        # Use SimpleUploadedFile to avoid unmanaged OS-level file handles
-        upload = SimpleUploadedFile(
-            "filename.png", image_file.getvalue(), content_type="image/png"
-        )
-        self.profile.image = upload
+        self.profile.image = UploadedFile(image_file, "filename.png", "image/png", len(image_file.getvalue()))
         self.profile.save(update_image=True)
-
-    def tearDown(self):
-        # Ensure any opened files are closed and remove created files from storage
-        for field_name in ["image", "image_small", "image_medium"]:
-            f = getattr(self.profile, field_name, None)
-            if not f:
-                continue
-            try:
-                # Close any open file handles
-                f.close()
-            except Exception:
-                pass
-            try:
-                # Delete files without triggering additional saves
-                f.delete(save=False)
-            except Exception:
-                pass
-        super().tearDown()
 
     def test_resized_images_created(self):
         """
@@ -269,25 +247,11 @@ class ProfileImageTests(MockedESTestCase):
         image.save(image_file, 'png')
         image_file.seek(0)
 
-        upload = SimpleUploadedFile(
-            "filename.png", image_file.getvalue(), content_type="image/png"
-        )
-        self.profile.image = upload
+        self.profile.image = UploadedFile(image_file, "filename.png", "image/png", len(image_file.getvalue()))
         self.profile.save(update_image=True)
-        image_file_bytes = image_file.getvalue()
-        # Open and read generated thumbnails in a managed way to avoid unclosed file warnings
-        self.profile.image_small.open('rb')
-        try:
-            small_bytes = self.profile.image_small.read()
-        finally:
-            self.profile.image_small.close()
-        self.profile.image_medium.open('rb')
-        try:
-            medium_bytes = self.profile.image_medium.read()
-        finally:
-            self.profile.image_medium.close()
-        assert small_bytes != image_file_bytes
-        assert medium_bytes != image_file_bytes
+        image_file_bytes = image_file.read()
+        assert self.profile.image_small.file.read() != image_file_bytes
+        assert self.profile.image_medium.file.read() != image_file_bytes
 
     def test_resized_images_not_changed(self):
         """
