@@ -74,13 +74,17 @@ jobs:
             -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" \
             -e "DISABLE_SECURITY_PLUGIN=true" \
             -e "cluster.name=github-actions-cluster" \
-            -e "network.host=127.0.0.1" \
+            -e "network.host=0.0.0.0" \
             opensearchproject/opensearch:1.2.4
           echo "Waiting for OpenSearch to be ready on port 9200..."
-          for i in {1..30}; do
+          for i in {1..90}; do
             if curl -s http://localhost:9200 >/dev/null; then
               echo "OpenSearch is ready"
               break
+            fi
+            if [ $i -eq 90 ]; then
+              echo "OpenSearch failed to start. Printing logs:" 
+              docker logs --tail 200 opensearch-run-step || true
             fi
             sleep 2
           done
