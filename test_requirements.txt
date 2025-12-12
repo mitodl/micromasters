@@ -9,7 +9,7 @@ pip-tools
 pylint==2.6.0
 pylint-django==2.1.0
 pylint-plugin-utils==0.6
-pytest==5.3.5
+pytest>=7.0,<8.0
 pytest-cov==2.11.1
 pytest-django==3.8.0
 pytest-mock==3.6.1
