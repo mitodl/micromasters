@@ -34,7 +34,7 @@ jobs:
           http.cors.enabled: "true"
           http.cors.allow-origin: "*"
           rest.action.multi.allow_explicit_index: "false"
-          ES_JAVA_OPTS: -Xms512m -Xmx512m"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
         ports:
           - 9200:9200
   
@@ -69,14 +69,14 @@ jobs:
       - name: Run OpenSearch
         run: |
           docker run -d --name opensearch-run-step \
-            -p 9201:9200 -p 9601:9600 \
+            -p 9200:9200 -p 9601:9600 \
             -e "discovery.type=single-node" \
             -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" \
             -e "DISABLE_SECURITY_PLUGIN=true" \
             opensearchproject/opensearch:1.2.4
           echo "Waiting for OpenSearch to be ready..."
           for i in {1..30}; do
-            if curl -s http://localhost:9201 >/dev/null; then
+            if curl -s http://localhost:9200 >/dev/null; then
               echo "OpenSearch is ready"
               break
             fi
