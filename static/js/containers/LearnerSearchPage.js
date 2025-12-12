@@ -54,10 +54,7 @@ class LearnerSearchPage extends React.Component {
   }
 
   render() {
-    const {
-      currentProgramEnrollment,
-      openEmailComposer
-    } = this.props
+    const { currentProgramEnrollment, openEmailComposer } = this.props
 
     if (_.isNil(currentProgramEnrollment)) {
       return null

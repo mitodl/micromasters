@@ -45,10 +45,7 @@ import type { Option } from "../flow/generalTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
 import type { SearchSortItem } from "../flow/searchTypes"
 import type { Profile } from "../flow/profileTypes"
-import {
-  canMessageLearnersProgram,
-  hasStaffForProgram
-} from "../lib/roles"
+import { canMessageLearnersProgram, hasStaffForProgram } from "../lib/roles"
 import CustomRefinementListFilter from "./search/CustomRefinementListFilter"
 
 export const makeTranslations: () => Object = () => {

@@ -23,9 +23,9 @@ const _createSettings = () => ({
   support_email:       "a_real_email@example.com",
   es_page_size:        40,
   FEATURES:            {
-    PROGRAM_LEARNERS:              true,
-    PROGRAM_RECORD_LINK:           true,
-    ENABLE_PROGRAM_LETTER:         true
+    PROGRAM_LEARNERS:      true,
+    PROGRAM_RECORD_LINK:   true,
+    ENABLE_PROGRAM_LETTER: true
   },
   get username() {
     throw new Error("username was removed")

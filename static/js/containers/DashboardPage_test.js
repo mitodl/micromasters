@@ -173,18 +173,19 @@ describe("DashboardPage", function() {
   it("should show no program enrolled view", () => {
     helper.dashboardStub.returns(Promise.resolve({ programs: [] }))
 
-    return renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
-      ([wrapper]) => {
-        const text = wrapper
-          .find(".no-program-card")
-          .hostNodes()
-          .text()
-        assert.equal(
-          text,
-          "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
-        )
-      }
-    )
+    return renderComponent(
+      "/dashboard",
+      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
+    ).then(([wrapper]) => {
+      const text = wrapper
+        .find(".no-program-card")
+        .hostNodes()
+        .text()
+      assert.equal(
+        text,
+        "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
+      )
+    })
   })
 
   it("should enroll user in program", () => {
@@ -194,45 +195,46 @@ describe("DashboardPage", function() {
     helper.programsGetStub.returns(Promise.resolve(availablePrograms))
     addProgramEnrollmentStub.returns(Promise.resolve(availablePrograms[0]))
 
-    return renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
-      ([wrapper]) => {
-        const link = wrapper.find(".enroll-wizard-button")
-        assert.equal(link.text(), "Enroll in a MicroMasters Program")
-        return helper
-          .listenForActions([SET_ENROLL_PROGRAM_DIALOG_VISIBILITY], () => {
-            link.simulate("click")
-          })
-          .then(() => {
-            assert.isFalse(addProgramEnrollmentStub.called)
-            const enrollBtn = document.querySelector(".enroll-button")
-            return helper
-              .listenForActions([SET_ENROLL_PROGRAM_DIALOG_ERROR], () => {
-                enrollBtn.click()
-              })
-              .then(() => {
-                return helper
-                  .listenForActions(
-                    [
-                      REQUEST_ADD_PROGRAM_ENROLLMENT,
-                      RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-                      SET_ENROLL_SELECTED_PROGRAM
-                    ],
-                    () => {
-                      const props = wrapper
-                        .find(ProgramEnrollmentDialog)
-                        .at(2)
-                        .props()
-                      props.setSelectedProgram(availablePrograms[0].id)
-                      enrollBtn.click()
-                    }
-                  )
-                  .then(() => {
-                    assert.isTrue(addProgramEnrollmentStub.called)
-                  })
-              })
-          })
-      }
-    )
+    return renderComponent(
+      "/dashboard",
+      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
+    ).then(([wrapper]) => {
+      const link = wrapper.find(".enroll-wizard-button")
+      assert.equal(link.text(), "Enroll in a MicroMasters Program")
+      return helper
+        .listenForActions([SET_ENROLL_PROGRAM_DIALOG_VISIBILITY], () => {
+          link.simulate("click")
+        })
+        .then(() => {
+          assert.isFalse(addProgramEnrollmentStub.called)
+          const enrollBtn = document.querySelector(".enroll-button")
+          return helper
+            .listenForActions([SET_ENROLL_PROGRAM_DIALOG_ERROR], () => {
+              enrollBtn.click()
+            })
+            .then(() => {
+              return helper
+                .listenForActions(
+                  [
+                    REQUEST_ADD_PROGRAM_ENROLLMENT,
+                    RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
+                    SET_ENROLL_SELECTED_PROGRAM
+                  ],
+                  () => {
+                    const props = wrapper
+                      .find(ProgramEnrollmentDialog)
+                      .at(2)
+                      .props()
+                    props.setSelectedProgram(availablePrograms[0].id)
+                    enrollBtn.click()
+                  }
+                )
+                .then(() => {
+                  assert.isTrue(addProgramEnrollmentStub.called)
+                })
+            })
+        })
+    })
   })
 
   it("should show a <Grades /> component, and open the dialog when clicked", () => {
