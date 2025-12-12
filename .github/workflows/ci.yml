@@ -66,6 +66,23 @@ jobs:
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
 
+      - name: Run OpenSearch
+        run: |
+          docker run -d --name opensearch-run-step \
+            -p 9201:9200 -p 9601:9600 \
+            -e "discovery.type=single-node" \
+            -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" \
+            -e "DISABLE_SECURITY_PLUGIN=true" \
+            opensearchproject/opensearch:1.2.4
+          echo "Waiting for OpenSearch to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:9201 >/dev/null; then
+              echo "OpenSearch is ready"
+              break
+            fi
+            sleep 2
+          done
+
       - name: Tests
         run: |
           export MEDIA_ROOT="$(mktemp -d)"
