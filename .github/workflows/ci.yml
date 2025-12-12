@@ -2,7 +2,7 @@ name: CI
 on: [push]
 jobs:
   python-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     services:
       # Label used to access the service container
@@ -38,27 +38,19 @@ jobs:
         ports:
           - 9200:9200
   
-    strategy:
-      matrix:
-        opensearch-version: [1.2]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Apt update
+        run: sudo apt-get update -y
 
       - name: Apt install
         run: cat Aptfile | sudo xargs apt-get install
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Install Python 3.9.23
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.9.1"
-
-      - id: cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/test_reqirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: "3.9.23"
 
       - name: Install dependencies
         run: pip install -r requirements.txt -r test_requirements.txt
@@ -74,10 +66,25 @@ jobs:
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
 
-      - name: Runs Opensearch
-        uses: ankane/setup-opensearch@v1
-        with:
-          opensearch-version: ${{ matrix.opensearch-version }}
+      - name: Install and Run OpenSearch 1.2.0
+        run: |
+          curl -L -O https://artifacts.opensearch.org/releases/bundle/opensearch/1.2.0/opensearch-1.2.0-linux-x64.tar.gz
+          tar -xzf opensearch-1.2.0-linux-x64.tar.gz
+          cd opensearch-1.2.0
+
+          echo "plugins.security.disabled: true" >> config/opensearch.yml
+          echo "network.host: 127.0.0.1" >> config/opensearch.yml
+          echo "cluster.name: github-actions-cluster" >> config/opensearch.yml
+          echo "discovery.type: single-node" >> config/opensearch.yml
+
+          ./bin/opensearch > opensearch.log 2>&1 &
+
+          echo "Waiting for OpenSearch to boot on port 9200..."
+          until curl -s http://localhost:9200 >/dev/null 2>&1; do
+            echo "Still waiting..."
+            sleep 5
+          done
+          echo "OpenSearch is up!"
 
       - name: Tests
         run: |
@@ -97,34 +104,23 @@ jobs:
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
   
   javascript-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up NodeJS
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v5
         with:
           node-version: "14.18.2"
+          cache: 'yarn'
 
       - name: Set up environment
         run: sudo apt-get install libelf1
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v4
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -151,6 +147,6 @@ jobs:
         run: node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --bail
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: coverage/lcov.info

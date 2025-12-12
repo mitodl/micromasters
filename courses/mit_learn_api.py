@@ -1,16 +1,17 @@
+"""
+MIT Learn API integration module.
+"""
 from urllib.parse import urlencode
 
+from typing import Any, Dict, List
 import requests
-import re
-from typing import Any, Dict, List, Optional
 
-from courses.models import Course, CourseRun
 from django.utils.dateparse import parse_datetime
+from courses.models import CourseRun
 
 
 class MITLearnAPIError(Exception):
     """Custom exception for MIT Learn API errors."""
-    pass
 
 LEARN_API_COURSES_LIST_URL = "https://api.learn.mit.edu/api/v1/courses/"
 
@@ -85,4 +86,3 @@ def sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns:
             num_created += 1
             print(f"Created course run: {course_run.edx_course_key} for course {course.title}")
     return num_created
-
