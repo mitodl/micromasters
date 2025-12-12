@@ -47,10 +47,10 @@ jobs:
       - name: Apt install
         run: cat Aptfile | sudo xargs apt-get install
 
-      - name: Install Python 3.9.23
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9.23"
+          python-version: "3.9"
 
       - name: Install dependencies
         run: pip install -r requirements.txt -r test_requirements.txt
@@ -65,26 +65,6 @@ jobs:
           sudo sysctl -w vm.swappiness=1
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
-
-      - name: Install and Run OpenSearch 1.2.0
-        run: |
-          curl -L -O https://artifacts.opensearch.org/releases/bundle/opensearch/1.2.0/opensearch-1.2.0-linux-x64.tar.gz
-          tar -xzf opensearch-1.2.0-linux-x64.tar.gz
-          cd opensearch-1.2.0
-
-          echo "plugins.security.disabled: true" >> config/opensearch.yml
-          echo "network.host: 127.0.0.1" >> config/opensearch.yml
-          echo "cluster.name: github-actions-cluster" >> config/opensearch.yml
-          echo "discovery.type: single-node" >> config/opensearch.yml
-
-          ./bin/opensearch > opensearch.log 2>&1 &
-
-          echo "Waiting for OpenSearch to boot on port 9200..."
-          until curl -s http://localhost:9200 >/dev/null 2>&1; do
-            echo "Still waiting..."
-            sleep 5
-          done
-          echo "OpenSearch is up!"
 
       - name: Tests
         run: |
