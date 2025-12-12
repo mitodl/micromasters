@@ -68,20 +68,20 @@ jobs:
 
       - name: Run OpenSearch (Docker)
         run: |
-          docker run -d --name opensearch-run-step \
-            -p 9200:9200 -p 9601:9600 \
-            -e "discovery.type=single-node" \
-            -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" \
-            -e "DISABLE_SECURITY_PLUGIN=true" \
-            opensearchproject/opensearch:1.2.4
-          echo "Waiting for OpenSearch to be ready..."
-          for i in {1..30}; do
-            if curl -s http://localhost:9200 >/dev/null; then
-              echo "OpenSearch is ready"
-              break
-            fi
-            sleep 2
+          curl -L -O https://artifacts.opensearch.org/releases/bundle/opensearch/1.2.0/opensearch-1.2.0-linux-x64.tar.gz
+          tar -xzf opensearch-1.2.0-linux-x64.tar.gz
+          cd opensearch-1.2.0
+          echo "plugins.security.disabled: true" >> config/opensearch.yml
+          echo "network.host: 127.0.0.1" >> config/opensearch.yml
+          echo "cluster.name: github-actions-cluster" >> config/opensearch.yml
+          echo "discovery.type: single-node" >> config/opensearch.yml
+          ./bin/opensearch > opensearch.log 2>&1 &
+          echo "Waiting for OpenSearch to boot on port 9200..."
+          until curl -s http://localhost:9200 >/dev/null 2>&1; do
+            echo "Still waiting..."
+            sleep 5
           done
+          echo "OpenSearch is up!"
 
       - name: Tests
         run: |
