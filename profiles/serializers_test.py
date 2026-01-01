@@ -32,6 +32,7 @@ from profiles.serializers import (
     ProfileSerializer,
     ProfileFilledOutSerializer,
 )
+from profiles.test_mixins import ProfileImageCleanupMixin
 from search.base import MockedESTestCase
 
 
@@ -312,7 +313,7 @@ class ProfileTests(MockedESTestCase):
         assert employment3.profile.work_history.count() == 1
 
 
-class ProfileFilledOutTests(MockedESTestCase):
+class ProfileFilledOutTests(ProfileImageCleanupMixin, MockedESTestCase):
     """Tests for validating filled out profiles"""
 
     @classmethod
@@ -340,20 +341,6 @@ class ProfileFilledOutTests(MockedESTestCase):
         serializer = ProfileFilledOutSerializer(self.profile)
         self.data = serializer.data
         self.profile.refresh_from_db()
-
-    def tearDown(self):
-        """
-        Close any open file handles from image fields
-        """
-        # Close profile image files to prevent ResourceWarning
-        for field_name in ["image", "image_small", "image_medium"]:
-            field = getattr(self.profile, field_name, None)
-            if field:
-                try:
-                    field.close()
-                except (ValueError, OSError, AttributeError):
-                    pass
-        super().tearDown()
 
     def assert_required_fields(self, field_names, parent_getter, field_parent_getter):
         """

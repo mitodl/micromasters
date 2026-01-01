@@ -13,6 +13,7 @@ from PIL import Image
 from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory, UserFactory
 from profiles.models import Profile
+from profiles.test_mixins import ProfileImageCleanupMixin
 from profiles.util import (
     profile_image_upload_uri,
     profile_image_upload_uri_small,
@@ -193,7 +194,7 @@ class ProfileDisplayNameTests(MockedESTestCase):
         assert profile.full_name == expected_full_name
 
 
-class ProfileImageTests(MockedESTestCase):
+class ProfileImageTests(ProfileImageCleanupMixin, MockedESTestCase):
     """Tests for the profile image and thumbnails"""
 
     @classmethod
@@ -221,24 +222,6 @@ class ProfileImageTests(MockedESTestCase):
         )
         self.profile.image = upload
         self.profile.save(update_image=True)
-
-    def tearDown(self):
-        # Ensure any opened files are closed and remove created files from storage
-        for field_name in ["image", "image_small", "image_medium"]:
-            field = getattr(self.profile, field_name, None)
-            if not field:
-                continue
-            try:
-                # Close any open file handles
-                field.close()
-            except (ValueError, OSError, AttributeError):
-                pass
-            try:
-                # Delete files without triggering additional saves
-                field.delete(save=False)
-            except (ValueError, OSError, AttributeError):
-                pass
-        super().tearDown()
 
     def test_resized_images_created(self):
         """

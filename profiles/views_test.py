@@ -43,6 +43,7 @@ from profiles.serializers import (
     ProfileLimitedSerializer,
     ProfileSerializer,
 )
+from profiles.test_mixins import ProfileImageCleanupMixin
 from profiles.util import make_temp_image_file
 from profiles.views import ProfileViewSet
 from roles.models import Role
@@ -290,34 +291,11 @@ class ProfileGETTests(ProfileBaseTests):
 
 
 @ddt.ddt
-class ProfilePATCHTests(ProfileBaseTests):
+class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
     """
     Tests for profile PATCH
     """
     client_class = APIClient
-
-    def tearDown(self):
-        """
-        Clean up any profile images created during tests to prevent ResourceWarning
-        """
-        # Close and clean up images for both test users
-        for user in [self.user1, self.user2]:
-            try:
-                profile = Profile.objects.get(user=user)
-                for field_name in ["image", "image_small", "image_medium"]:
-                    field = getattr(profile, field_name, None)
-                    if field:
-                        try:
-                            field.close()
-                        except (ValueError, OSError, AttributeError):
-                            pass
-                        try:
-                            field.delete(save=False)
-                        except (ValueError, OSError, AttributeError):
-                            pass
-            except Profile.DoesNotExist:
-                pass
-        super().tearDown()
 
     def test_patch_own_profile(self):
         """
