@@ -65,11 +65,11 @@ class ExamRunFactory(DjangoModelFactory):
 
     class Params:
         eligibility_past = factory.Trait(
+            date_last_eligible=factory.LazyFunction(
+                lambda: (FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc) - timedelta(days=1)).date()
+            ),
             date_first_eligible=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_last_eligible - timedelta(days=20)
-            ),
-            date_last_eligible=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc).date()
             )
         )
         eligibility_future = factory.Trait(
@@ -81,11 +81,11 @@ class ExamRunFactory(DjangoModelFactory):
             )
         )
         scheduling_past = factory.Trait(
+            date_last_schedulable=factory.LazyFunction(
+                lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc) - timedelta(hours=1)
+            ),
             date_first_schedulable=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_last_schedulable - timedelta(days=10)
-            ),
-            date_last_schedulable=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc)
             )
         )
         scheduling_future = factory.Trait(
