@@ -23,6 +23,11 @@ from profiles.factories import ProfileFactory
 FAKE = faker.Factory.create()
 
 
+def _get_past_eligibility_date():
+    """Generate a date that is truly in the past for eligibility_past trait"""
+    return (FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc) - timedelta(days=1)).date()
+
+
 class ExamProfileFactory(DjangoModelFactory):
     """
     Factory for ExamProfile
@@ -65,9 +70,7 @@ class ExamRunFactory(DjangoModelFactory):
 
     class Params:
         eligibility_past = factory.Trait(
-            date_last_eligible=factory.LazyFunction(
-                lambda: (FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc) - timedelta(days=1)).date()
-            ),
+            date_last_eligible=factory.LazyFunction(_get_past_eligibility_date),
             date_first_eligible=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_last_eligible - timedelta(days=20)
             )

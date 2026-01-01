@@ -231,12 +231,12 @@ class ProfileImageTests(MockedESTestCase):
             try:
                 # Close any open file handles
                 field.close()
-            except Exception:
+            except (ValueError, OSError, AttributeError):
                 pass
             try:
                 # Delete files without triggering additional saves
                 field.delete(save=False)
-            except Exception:
+            except (ValueError, OSError, AttributeError):
                 pass
         super().tearDown()
 

@@ -309,11 +309,11 @@ class ProfilePATCHTests(ProfileBaseTests):
                     if field:
                         try:
                             field.close()
-                        except Exception:
+                        except (ValueError, OSError, AttributeError):
                             pass
                         try:
                             field.delete(save=False)
-                        except Exception:
+                        except (ValueError, OSError, AttributeError):
                             pass
             except Profile.DoesNotExist:
                 pass

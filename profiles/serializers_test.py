@@ -351,7 +351,7 @@ class ProfileFilledOutTests(MockedESTestCase):
             if field:
                 try:
                     field.close()
-                except Exception:
+                except (ValueError, OSError, AttributeError):
                     pass
         super().tearDown()
 
