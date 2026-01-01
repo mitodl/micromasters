@@ -296,6 +296,29 @@ class ProfilePATCHTests(ProfileBaseTests):
     """
     client_class = APIClient
 
+    def tearDown(self):
+        """
+        Clean up any profile images created during tests to prevent ResourceWarning
+        """
+        # Close and clean up images for both test users
+        for user in [self.user1, self.user2]:
+            try:
+                profile = Profile.objects.get(user=user)
+                for field_name in ["image", "image_small", "image_medium"]:
+                    field = getattr(profile, field_name, None)
+                    if field:
+                        try:
+                            field.close()
+                        except Exception:
+                            pass
+                        try:
+                            field.delete(save=False)
+                        except Exception:
+                            pass
+            except Profile.DoesNotExist:
+                pass
+        super().tearDown()
+
     def test_patch_own_profile(self):
         """
         A user PATCHes their own profile
@@ -477,10 +500,13 @@ class ProfilePATCHTests(ProfileBaseTests):
         # create a dummy image file in memory for upload
         with make_temp_image_file() as image_file:
 
-            # save old thumbnail
-            resized_image_file = getattr(profile, image_key).file
-            backup_thumb_bytes = resized_image_file.read()
-            resized_image_file.seek(0)
+            # save old thumbnail - use proper file opening
+            resized_field = getattr(profile, image_key)
+            resized_field.open('rb')
+            try:
+                backup_thumb_bytes = resized_field.read()
+            finally:
+                resized_field.close()
 
             # format patch using multipart upload
             resp = self.client.patch(self.url1, data={
@@ -489,6 +515,11 @@ class ProfilePATCHTests(ProfileBaseTests):
         assert resp.status_code == 200, resp.content.decode('utf-8')
 
         profile.refresh_from_db()
-        # resized image should not have changed
-        thumb_bytes = getattr(profile, image_key).file.read()
+        # resized image should not have changed - use proper file opening
+        new_resized_field = getattr(profile, image_key)
+        new_resized_field.open('rb')
+        try:
+            thumb_bytes = new_resized_field.read()
+        finally:
+            new_resized_field.close()
         assert thumb_bytes == backup_thumb_bytes

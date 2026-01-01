@@ -341,6 +341,20 @@ class ProfileFilledOutTests(MockedESTestCase):
         self.data = serializer.data
         self.profile.refresh_from_db()
 
+    def tearDown(self):
+        """
+        Close any open file handles from image fields
+        """
+        # Close profile image files to prevent ResourceWarning
+        for field_name in ["image", "image_small", "image_medium"]:
+            field = getattr(self.profile, field_name, None)
+            if field:
+                try:
+                    field.close()
+                except Exception:
+                    pass
+        super().tearDown()
+
     def assert_required_fields(self, field_names, parent_getter, field_parent_getter):
         """
         Helper function to assert required fields
