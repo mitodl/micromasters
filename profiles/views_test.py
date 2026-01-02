@@ -43,6 +43,7 @@ from profiles.serializers import (
     ProfileLimitedSerializer,
     ProfileSerializer,
 )
+from profiles.test_mixins import ProfileImageCleanupMixin
 from profiles.util import make_temp_image_file
 from profiles.views import ProfileViewSet
 from roles.models import Role
@@ -290,7 +291,7 @@ class ProfileGETTests(ProfileBaseTests):
 
 
 @ddt.ddt
-class ProfilePATCHTests(ProfileBaseTests):
+class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
     """
     Tests for profile PATCH
     """
@@ -477,10 +478,13 @@ class ProfilePATCHTests(ProfileBaseTests):
         # create a dummy image file in memory for upload
         with make_temp_image_file() as image_file:
 
-            # save old thumbnail
-            resized_image_file = getattr(profile, image_key).file
-            backup_thumb_bytes = resized_image_file.read()
-            resized_image_file.seek(0)
+            # save old thumbnail - use proper file opening
+            resized_field = getattr(profile, image_key)
+            resized_field.open('rb')
+            try:
+                backup_thumb_bytes = resized_field.read()
+            finally:
+                resized_field.close()
 
             # format patch using multipart upload
             resp = self.client.patch(self.url1, data={
@@ -489,6 +493,11 @@ class ProfilePATCHTests(ProfileBaseTests):
         assert resp.status_code == 200, resp.content.decode('utf-8')
 
         profile.refresh_from_db()
-        # resized image should not have changed
-        thumb_bytes = getattr(profile, image_key).file.read()
+        # resized image should not have changed - use proper file opening
+        new_resized_field = getattr(profile, image_key)
+        new_resized_field.open('rb')
+        try:
+            thumb_bytes = new_resized_field.read()
+        finally:
+            new_resized_field.close()
         assert thumb_bytes == backup_thumb_bytes

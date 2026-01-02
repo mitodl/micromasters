@@ -32,6 +32,7 @@ from profiles.serializers import (
     ProfileSerializer,
     ProfileFilledOutSerializer,
 )
+from profiles.test_mixins import ProfileImageCleanupMixin
 from search.base import MockedESTestCase
 
 
@@ -312,7 +313,7 @@ class ProfileTests(MockedESTestCase):
         assert employment3.profile.work_history.count() == 1
 
 
-class ProfileFilledOutTests(MockedESTestCase):
+class ProfileFilledOutTests(ProfileImageCleanupMixin, MockedESTestCase):
     """Tests for validating filled out profiles"""
 
     @classmethod

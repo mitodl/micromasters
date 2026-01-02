@@ -2,7 +2,7 @@ name: CI
 on: [push]
 jobs:
   python-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     services:
       # Label used to access the service container
@@ -38,27 +38,19 @@ jobs:
         ports:
           - 9200:9200
   
-    strategy:
-      matrix:
-        opensearch-version: [1.2]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Apt update
+        run: sudo apt-get update -y
 
       - name: Apt install
         run: cat Aptfile | sudo xargs apt-get install
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.9.1"
-
-      - id: cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/test_reqirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: "3.9"
 
       - name: Install dependencies
         run: pip install -r requirements.txt -r test_requirements.txt
@@ -74,10 +66,22 @@ jobs:
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
 
-      - name: Runs Opensearch
-        uses: ankane/setup-opensearch@v1
-        with:
-          opensearch-version: ${{ matrix.opensearch-version }}
+      - name: Run OpenSearch (Docker)
+        run: |
+          docker run -d --name opensearch-run-step \
+            -p 9200:9200 -p 9601:9600 \
+            -e "discovery.type=single-node" \
+            -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" \
+            -e "DISABLE_SECURITY_PLUGIN=true" \
+            opensearchproject/opensearch:1.2.4
+          echo "Waiting for OpenSearch to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:9200 >/dev/null; then
+              echo "OpenSearch is ready"
+              break
+            fi
+            sleep 2
+          done
 
       - name: Tests
         run: |
@@ -95,36 +99,26 @@ jobs:
           CELERY_TASK_ALWAYS_EAGER: 'True'
           BROKER_URL: redis://localhost:6379/4
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
+          DJANGO_SETTINGS_MODULE: micromasters.settings
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
   
   javascript-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up NodeJS
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v5
         with:
           node-version: "14.18.2"
+          cache: 'yarn'
 
       - name: Set up environment
         run: sudo apt-get install libelf1
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v4
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -151,6 +145,6 @@ jobs:
         run: node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --bail
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: coverage/lcov.info
