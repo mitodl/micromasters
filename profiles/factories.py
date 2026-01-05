@@ -116,6 +116,21 @@ class ProfileFactory(DjangoModelFactory):
         with mute_signals(post_save):
             return super().create_batch(*args, **kwargs)
 
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        """
+        Override _create to properly close image file handles after creation
+        """
+        instance = super()._create(model_class, *args, **kwargs)
+        # Close image file handles to prevent ResourceWarning
+        if instance.image:
+            instance.image.close()
+        if instance.image_small:
+            instance.image_small.close()
+        if instance.image_medium:
+            instance.image_medium.close()
+        return instance
+
 
 class SocialProfileFactory(ProfileFactory):
     """Factory for Profiles which should also have a social_auth object created for them"""

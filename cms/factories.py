@@ -45,6 +45,10 @@ class ImageFactory(DjangoModelFactory):
             f.seek(0)
             image.file.save(name, f)
 
+        # Close the file handle to prevent ResourceWarning
+        if image.file:
+            image.file.close()
+
         return image
 
 
