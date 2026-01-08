@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('search', '0005_percolatequery_is_deleted'),
+        ('search', '0006_remove_discussion_channel_type'),
     ]
 
     operations = [

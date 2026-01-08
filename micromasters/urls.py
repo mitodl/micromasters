@@ -31,7 +31,6 @@ urlpatterns += [
     path('', include('search.urls')),
     path('', include('mail.urls')),
     path('', include('profiles.urls')),
-    path('', include('discussions.urls')),
     path('', include('ui.urls')),
 
     # Django Robots
