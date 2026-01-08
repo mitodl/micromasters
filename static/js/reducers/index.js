@@ -18,13 +18,11 @@ import {
   UPDATE_PROFILE_VALIDATION,
   UPDATE_VALIDATION_VISIBILITY
 } from "../actions/profile"
+import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
 import {
   REQUEST_CHECKOUT,
   RECEIVE_CHECKOUT_SUCCESS,
-  RECEIVE_CHECKOUT_FAILURE,
-  FETCH_FAILURE,
-  FETCH_PROCESSING,
-  FETCH_SUCCESS
+  RECEIVE_CHECKOUT_FAILURE
 } from "../actions"
 import { ui } from "./ui"
 import { email } from "./email"
@@ -32,9 +30,6 @@ import { currentProgramEnrollment, programs } from "./programs"
 import type { Action } from "../flow/reduxTypes"
 import type { ProfileGetResult, Profiles } from "../flow/profileTypes"
 import { imageUpload } from "./image_upload"
-import { financialAid } from "./financial_aid"
-import { documents } from "./documents"
-import { orderReceipt } from "./order_receipt"
 import { coupons } from "./coupons"
 import { dashboard } from "./dashboard"
 import { ALL_ERRORS_VISIBLE } from "../constants"
@@ -170,6 +165,8 @@ export const profiles = (
   }
 }
 
+// Checkout reducer - PAYMENTS DISCONTINUED IN 2021
+// This is a stub to maintain compatibility
 export type CheckoutState = {
   fetchStatus?: string
 }
@@ -204,16 +201,13 @@ export default combineReducers({
   dashboard,
   ui,
   email,
-  checkout,
   programs,
   currentProgramEnrollment,
   shareDialog,
   sendDialog,
   revokeShareDialog,
   imageUpload,
-  financialAid,
-  documents,
-  orderReceipt,
   coupons,
+  checkout,
   ...reducers
 })

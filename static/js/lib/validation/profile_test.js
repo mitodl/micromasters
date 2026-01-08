@@ -13,7 +13,6 @@ import {
   validateProfileComplete,
   combineValidators,
   emailValidation,
-  validateFinancialAid,
   profileImageValidation,
   checkProp,
   checkLatin
@@ -783,51 +782,5 @@ describe("Email validation", () => {
         )
       })
     ]
-  })
-})
-
-describe("Financial aid validation", () => {
-  let financialAid
-
-  beforeEach(() => {
-    financialAid = {
-      income:   "1000000",
-      currency: "JPY",
-      checkBox: true
-    }
-  })
-
-  it("should complain if income is empty", () => {
-    financialAid.income = undefined
-    const errors = validateFinancialAid(financialAid)
-    assert.deepEqual(errors, {
-      income: "Income is required"
-    })
-  })
-
-  for (const income of ["2000.00", "2000.50", "2Adb", "two thousand"]) {
-    it(`should complain if income='${income}' is invalid`, () => {
-      financialAid.income = income
-      const errors = validateFinancialAid(financialAid)
-      assert.deepEqual(errors, {
-        income: "Please only use whole numbers."
-      })
-    })
-  }
-
-  it("should complain if currency is empty", () => {
-    financialAid.currency = undefined
-    const errors = validateFinancialAid(financialAid)
-    assert.deepEqual(errors, {
-      currency: "Please select a currency"
-    })
-  })
-
-  it("should complain if the checkBox is false", () => {
-    financialAid.checkBox = false
-    const errors = validateFinancialAid(financialAid)
-    assert.deepEqual(errors, {
-      checkBox: "You must agree to these terms"
-    })
   })
 })

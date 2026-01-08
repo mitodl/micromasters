@@ -121,9 +121,7 @@ INSTALLED_APPS = (
     'cms',
     'courses',
     'dashboard',
-    'ecommerce',
     'exams',
-    'financialaid',
     'grades',
     'mail',
     'profiles',
@@ -324,7 +322,6 @@ EMAIL_HOST_PASSWORD = get_string('MICROMASTERS_EMAIL_PASSWORD', '')
 EMAIL_USE_TLS = get_bool('MICROMASTERS_EMAIL_TLS', False)
 EMAIL_SUPPORT = get_string('MICROMASTERS_SUPPORT_EMAIL', 'support@example.com')
 DEFAULT_FROM_EMAIL = get_string('MICROMASTERS_FROM_EMAIL', 'webmaster@localhost')
-ECOMMERCE_EMAIL = get_string('MICROMASTERS_ECOMMERCE_EMAIL', 'support@example.com')
 MAILGUN_URL = get_string('MAILGUN_URL', None)
 if not MAILGUN_URL:
     raise ImproperlyConfigured("MAILGUN_URL not set")
@@ -529,10 +526,6 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'dashboard.tasks.batch_update_user_data',
         'schedule': crontab(minute=0, hour='*/6', day_of_week=5)
     },
-    'update-currency-exchange-rates-every-24-hrs': {
-        'task': 'financialaid.tasks.sync_currency_exchange_rates',
-        'schedule': crontab(minute=0, hour='3')
-    },
     'authorize_exam_runs-every-1-hrs': {
         'task': 'exams.tasks.authorize_exam_runs',
         'schedule': crontab(minute=0, hour='*')
@@ -604,13 +597,6 @@ ROLEPERMISSIONS_MODULE = 'roles.roles'
 # edx
 EDX_BATCH_UPDATES_ENABLED = get_bool("EDX_BATCH_UPDATES_ENABLED", True)
 UPDATE_EDX_DATA_FOR_DEDP_PROGRAM_USERS = get_bool("UPDATE_EDX_DATA_FOR_DEDP_PROGRAM_USERS", False)
-
-# Cybersource
-CYBERSOURCE_ACCESS_KEY = get_string("CYBERSOURCE_ACCESS_KEY", None)
-CYBERSOURCE_SECURITY_KEY = get_string("CYBERSOURCE_SECURITY_KEY", None)
-CYBERSOURCE_SECURE_ACCEPTANCE_URL = get_string("CYBERSOURCE_SECURE_ACCEPTANCE_URL", None)
-CYBERSOURCE_PROFILE_ID = get_string("CYBERSOURCE_PROFILE_ID", None)
-CYBERSOURCE_REFERENCE_PREFIX = get_string("CYBERSOURCE_REFERENCE_PREFIX", None)
 
 # Open Exchange Rates
 OPEN_EXCHANGE_RATES_URL = get_string("OPEN_EXCHANGE_RATES_URL", "https://openexchangerates.org/api/")

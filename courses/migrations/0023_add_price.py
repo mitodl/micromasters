@@ -43,22 +43,10 @@ def copy_prices(apps, schema_editor):
         program.save()
 
 
-def reverse_copy_prices(apps, schema_editor):
-    """
-    Create CoursePrice objects for all course runs and populate from Program.price
-    """
-    CoursePrice = apps.get_model('ecommerce', 'CoursePrice')
-    CourseRun = apps.get_model('courses', 'CourseRun')
-
-    for run in CourseRun.objects.all():
-        CoursePrice.objects.create(price=run.course.program.price, is_valid=True, course_run=run)
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
         ('courses', '0022_course_contact_email'),
-        ('ecommerce', '0016_invoice'),
     ]
 
     operations = [
@@ -68,7 +56,7 @@ class Migration(migrations.Migration):
             field=models.DecimalField(decimal_places=2, default=None, max_digits=20, null=True),
             preserve_default=False,
         ),
-        migrations.RunPython(copy_prices, reverse_code=reverse_copy_prices),
+        migrations.RunPython(copy_prices, reverse_code=migrations.RunPython.noop),
         migrations.AlterField(
             model_name='program',
             name='price',

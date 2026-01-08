@@ -22,13 +22,15 @@ from roles.models import Role
 User = get_user_model()
 from roles.roles import Staff
 from search.tasks import start_recreate_index
-from seed_data.lib import (CachedEnrollmentHandler, add_paid_order_for_course,
+from seed_data.lib import (CachedEnrollmentHandler,
                            ensure_cached_data_freshness, fake_programs_query)
-from seed_data.management.commands import (  # pylint: disable=import-error
-    FAKE_PROGRAM_DESC_PREFIX, FAKE_USER_USERNAME_PREFIX, PASSING_GRADE,
-    PROGRAM_DATA_PATH, USER_DATA_PATH)
-from seed_data.management.commands.create_tiers import create_tiers
 from seed_data.utils import filter_dict_by_key_set
+from seed_data.management.commands import (  # pylint: disable=import-error
+    USER_DATA_PATH, PROGRAM_DATA_PATH,
+    FAKE_USER_USERNAME_PREFIX, FAKE_PROGRAM_DESC_PREFIX,
+    PASSING_GRADE
+)
+
 
 MODEL_DEFAULTS = {
     User: {
@@ -125,8 +127,6 @@ def deserialize_enrollment_data(user, social_username, course_runs, enrollment_d
         )
         enrollment_handler.set_or_create(course_run)
         enrolled_programs.add(course_run.course.program)
-        if course_run.course.program.financial_aid_availability:
-            add_paid_order_for_course(user, course_run)
     # Add ProgramEnrollments for any Program that has an associated CachedEnrollment
     for enrolled_program in enrolled_programs:
         ProgramEnrollment.objects.get_or_create(user=user, program=enrolled_program)
@@ -215,7 +215,8 @@ def deserialize_program_data(program_data):
         deserialize_course_data(program, course_data)
     elective_data_list = program_data.get('elective_sets')
     if elective_data_list:
-        [deserialize_elective_data(program, elective_data) for elective_data in elective_data_list]
+        for elective_data in elective_data_list:
+            deserialize_elective_data(program, elective_data)
     return program
 
 
@@ -238,13 +239,6 @@ class Command(BaseCommand):
     help = "Seed the database with a set of realistic data, for development purposes."
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            "--tiers",
-            dest="tiers",
-            default=4,
-            help="Number of TierPrograms to generate per Program.",
-            type=int
-        )
         parser.add_argument(
             '--staff-user',
             action='store',
@@ -281,21 +275,19 @@ class Command(BaseCommand):
                 fake_programs = deserialize_program_data_list(program_data_list)
                 fake_user_count = deserialize_user_data_list(user_data_list, fake_programs)
 
-            # Handle FA programs
-            fake_financial_aid_programs = filter(lambda program: program.financial_aid_availability, fake_programs)
-            tiered_program_count, tiers_created = (
-                create_tiers(fake_financial_aid_programs, int(options["tiers"]))
-            )
-
             start_recreate_index.delay().get()
-            program_msg = f"Created {len(fake_programs)} new programs from '{PROGRAM_DATA_PATH}'."
-            if tiers_created:
-                program_msg = "{}\nCreated {} tiers for {} FA-enabled programs".format(
-                    program_msg,
-                    tiers_created,
-                    tiered_program_count
-                )
-            user_msg = f"Created {fake_user_count} new users from '{USER_DATA_PATH}'."
+            program_msg = (
+                "Created {num} new programs from '{path}'."
+            ).format(
+                num=len(fake_programs),
+                path=PROGRAM_DATA_PATH
+            )
+            user_msg = (
+                "Created {num} new users from '{path}'."
+            ).format(
+                num=fake_user_count,
+                path=USER_DATA_PATH,
+            )
             self.stdout.write(program_msg)
             self.stdout.write(user_msg)
 

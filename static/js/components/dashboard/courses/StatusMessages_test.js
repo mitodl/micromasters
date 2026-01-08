@@ -2,7 +2,6 @@
 /* global SETTINGS: false */
 /* eslint-disable no-unused-vars */
 import _ from "lodash"
-import Decimal from "decimal.js-light"
 import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
@@ -18,9 +17,7 @@ import {
 } from "./StatusMessages"
 import {
   makeCourse,
-  makeProctoredExamResult,
-  makeProgram,
-  makeCoupon
+  makeProctoredExamResult
 } from "../../../factories/dashboard"
 import {
   makeRunCurrent,
@@ -38,19 +35,13 @@ import {
 import { assertIsJust } from "../../../lib/test_utils"
 import {
   COURSE_ACTION_PAY,
-  COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_REENROLL,
-  COUPON_CONTENT_TYPE_COURSE,
-  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
   STATUS_PAID_BUT_NOT_ENROLLED,
-  FA_STATUS_PENDING_DOCS,
   STATUS_MISSED_DEADLINE,
   COURSE_ACTION_ENROLL
 } from "../../../constants"
-import * as libCoupon from "../../../lib/coupon"
-import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
 
 describe("Course Status Messages", () => {
   let message
@@ -90,17 +81,14 @@ describe("Course Status Messages", () => {
   })
 
   describe("calculateMessages", () => {
-    let course, sandbox, financialAid, calculateMessagesProps
+    let course, sandbox, calculateMessagesProps
 
     beforeEach(() => {
       course = makeCourse(0)
       sandbox = sinon.sandbox.create()
-      financialAid = _.cloneDeep(FINANCIAL_AID_PARTIAL_RESPONSE)
 
       calculateMessagesProps = {
         courseAction:                      sandbox.stub(),
-        financialAid:                      financialAid,
-        hasFinancialAid:                   false,
         firstRun:                          course.runs[0],
         course:                            course,
         expandedStatuses:                  new Set(),
@@ -116,35 +104,32 @@ describe("Course Status Messages", () => {
       sandbox.restore()
     })
 
-    it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED for FA", () => {
-      [true, false].forEach(finAid => {
-        course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
-        course.runs[0].has_paid = true
-        calculateMessagesProps["hasFinancialAid"] = finAid
-        course.runs[1].has_paid = true
-        makeRunCurrent(course.runs[0])
-        makeRunFuture(course.runs[1])
-        const [{ message, action }] = calculateMessages(
-          calculateMessagesProps
-        ).value
-        const mounted = shallow(message)
-        assert.equal(
-          mounted.text(),
-          "You paid for this course but are not enrolled. You can enroll now, or if you" +
-            " think there is a problem, contact us for help."
+    it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED", () => {
+      course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
+      course.runs[0].has_paid = true
+      course.runs[1].has_paid = true
+      makeRunCurrent(course.runs[0])
+      makeRunFuture(course.runs[1])
+      const [{ message, action }] = calculateMessages(
+        calculateMessagesProps
+      ).value
+      const mounted = shallow(message)
+      assert.equal(
+        mounted.text(),
+        "You paid for this course but are not enrolled. You can enroll now, or if you" +
+          " think there is a problem, contact us for help."
+      )
+      assert.equal(
+        mounted.find("a").props().href,
+        `mailto:${SETTINGS.support_email}`
+      )
+      assert.equal(action, "course action was called")
+      assert(
+        calculateMessagesProps.courseAction.calledWith(
+          course.runs[0],
+          COURSE_ACTION_ENROLL
         )
-        assert.equal(
-          mounted.find("a").props().href,
-          `mailto:${SETTINGS.support_email}`
-        )
-        assert.equal(action, "course action was called")
-        assert(
-          calculateMessagesProps.courseAction.calledWith(
-            course.runs[0],
-            COURSE_ACTION_ENROLL
-          )
-        )
-      })
+      )
     })
 
     it("should show next promised course", () => {
@@ -197,80 +182,6 @@ describe("Course Status Messages", () => {
           "You are re-taking this course. To get a new grade, you need to pay again."
       })
 
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
-    })
-
-    it("should tell auditors to calculate price and pay for course", () => {
-      makeRunCurrent(course.runs[0])
-      makeRunCanUpgrade(course.runs[0])
-      course.runs[0].course_upgrade_deadline = moment().format()
-      const dueDate = moment(course.runs[0].course_upgrade_deadline)
-        .tz(moment.tz.guess())
-        .format(COURSE_DEADLINE_FORMAT)
-      calculateMessagesProps["hasFinancialAid"] = true
-
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          action:  "course action was called",
-          message: `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`
-        }
-      ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_CALCULATE_PRICE
-        )
-      )
-    })
-
-    it("should tell auditors to wait while FA application is pending", () => {
-      makeRunCurrent(course.runs[0])
-      makeRunCanUpgrade(course.runs[0])
-      course.runs[0].course_upgrade_deadline = moment().format()
-      const dueDate = moment(course.runs[0].course_upgrade_deadline)
-        .tz(moment.tz.guess())
-        .format(COURSE_DEADLINE_FORMAT)
-      calculateMessagesProps["financialAid"][
-        "application_status"
-      ] = FA_STATUS_PENDING_DOCS
-      calculateMessagesProps["hasFinancialAid"] = true
-
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          action:  "course action was called",
-          message:
-            "You are auditing. Your personal course price is pending, " +
-            `and needs to be approved before you can pay for courses. (Payment due on ${dueDate})`
-        }
-      ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
-    })
-
-    it("should tell auditors to wait while FA is pending without due date", () => {
-      makeRunCurrent(course.runs[0])
-      makeRunCanUpgrade(course.runs[0])
-      calculateMessagesProps["financialAid"]["application_status"] =
-        "pending-docs"
-      calculateMessagesProps["hasFinancialAid"] = true
-
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          action:  "course action was called",
-          message:
-            "You are auditing. Your personal course price is pending, " +
-            "and needs to be approved before you can pay for courses."
-        }
-      ])
       assert(
         calculateMessagesProps.courseAction.calledWith(
           course.runs[0],

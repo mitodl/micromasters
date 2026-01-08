@@ -22,8 +22,8 @@ class AlterDataCommandTests(MockedESTestCase):
     def setUpTestData(cls):
         cls.user = UserFactory.create(username='username1', email='email1@example.com')
         cls.course_runs = {
-            'fa': CourseRunFactory.create(course__program__financial_aid_availability=True),
-            'non_fa': CourseRunFactory.create(course__program__financial_aid_availability=False)
+            'fa': CourseRunFactory.create(),
+            'non_fa': CourseRunFactory.create()
         }
         for course_run in cls.course_runs.values():
             ProgramEnrollmentFactory.create(user=cls.user, program=course_run.course.program)

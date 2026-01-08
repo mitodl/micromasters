@@ -4,12 +4,16 @@ Library functions for interacting with test data
 import re
 from datetime import timedelta
 
+<<<<<<< HEAD
 from django.contrib.auth import get_user_model
 from django.db import transaction
+=======
+>>>>>>> 33730056 (Initial plan)
 from django.db.utils import IntegrityError
 
 from courses.models import Course, CourseRun, Program
 from dashboard.api_edx_cache import CachedEdxDataApi
+<<<<<<< HEAD
 from dashboard.models import (CachedCertificate, CachedCurrentGrade,
                               CachedEnrollment, UserCacheRefreshTime)
 from ecommerce.models import Line, Order
@@ -24,6 +28,25 @@ from seed_data.utils import (accepts_or_calculates_now,
                              future_date)
 
 User = get_user_model()
+=======
+from dashboard.models import CachedCertificate, CachedEnrollment, CachedCurrentGrade, UserCacheRefreshTime
+from grades.models import FinalGrade, FinalGradeStatus
+from micromasters.utils import (
+    now_in_utc,
+)
+from seed_data.management.commands import (
+    DEFAULT_GRADE,
+    FAKE_PROGRAM_DESC_PREFIX,
+    PASSING_GRADE,
+)
+from seed_data.utils import (
+    create_active_date_range,
+    create_future_date_range,
+    create_past_date_range,
+    future_date,
+    accepts_or_calculates_now,
+)
+>>>>>>> 33730056 (Initial plan)
 
 
 def fake_programs_query():
@@ -378,53 +401,34 @@ def set_course_run_to_past_graded(user, course_run, grade, upgradeable=False, no
 
 def clear_course_payment_data(user, course=None, course_run=None):
     """
-    Clears all course payment data (Order/Line) for a given User and an associated Course or CourseRun.
-    This will be a no-op with any Course/CourseRun that is not part of an FA-enabled program.
+    Clears all course payment data for a given User and an associated Course or CourseRun.
+    Note: Payments were discontinued in 2021. This function now only handles non-payment verification.
     """
-    program = None
     course_run_params = {}
     final_grade_params = {}
     if course:
-        program = course.program
         course_run_params['course'] = course
         final_grade_params['course_run__course'] = course
     elif course_run:
-        program = course_run.course.program
         course_run_params['id'] = course_run.id
         final_grade_params['course_run'] = course_run
-    if program.financial_aid_availability:
-        course_keys = CourseRun.objects.filter(**course_run_params).values_list("edx_course_key", flat=True)
-        Order.objects.filter(
-            user=user,
-            line__course_key__in=remove_falsey_values(course_keys)
-        ).delete()
-    else:
-        if course_run:
-            CachedEnrollmentHandler(user).set_or_create(course_run, verified=False)
-        FinalGrade.objects.filter(user=user, **final_grade_params).update(course_run_paid_on_edx=False)
+
+    if course_run:
+        CachedEnrollmentHandler(user).set_or_create(course_run, verified=False)
+    FinalGrade.objects.filter(user=user, **final_grade_params).update(course_run_paid_on_edx=False)
 
 
-def add_paid_order_for_course(user, course_run, price=None):
+def add_paid_order_for_course(user, course_run, price=None):  # pylint: disable=unused-argument
     """
-    Adds an Order and Line for a FA-enabled CourseRun and a User
+    Previously added an Order and Line for a FA-enabled CourseRun and a User.
+    Now a no-op as payments were discontinued in 2021.
     """
-    course_price_value = price or course_run.course.program.price
-    order = Order.objects.create(user=user, status=Order.FULFILLED, total_price_paid=course_price_value)
-    Line.objects.create(order=order, course_key=course_run.edx_course_key, price=course_price_value)
 
 
 def set_course_run_to_paid(user, course_run):
     """Ensures that a User will be considered as having paid for a CourseRun"""
-    if course_run.course.program.financial_aid_availability:
-        with transaction.atomic():
-            is_already_paid = Line.objects.filter(
-                course_key=course_run.edx_course_key, order__user=user, order__status=Order.FULFILLED
-            ).exists()
-            if not is_already_paid:
-                add_paid_order_for_course(user, course_run, price=DEFAULT_PRICE)
-    else:
-        CachedEnrollmentHandler(user).set_or_create(course_run, verified=True)
-        FinalGrade.objects.filter(user=user, course_run=course_run).update(course_run_paid_on_edx=True)
+    CachedEnrollmentHandler(user).set_or_create(course_run, verified=True)
+    FinalGrade.objects.filter(user=user, course_run=course_run).update(course_run_paid_on_edx=True)
     return course_run
 
 

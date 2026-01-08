@@ -24,6 +24,17 @@ from selenium_tests.page import LoginPage
 from selenium_tests.util import (DEFAULT_PASSWORD, Browser, DatabaseLoader,
                                  should_load_from_existing_db,
                                  terminate_db_connections)
+from courses.factories import (
+    ProgramFactory,
+    CourseRunFactory,
+)
+from dashboard.models import ProgramEnrollment
+from search.indexing_api import (
+    delete_indices,
+)
+from search.base import reindex_test_es_data
+from roles.roles import Staff
+from roles.models import Role
 
 
 def pytest_exception_interact(node, call, report):
@@ -164,15 +175,13 @@ def base_test_data():
     """
     Fixture for test data that should be available to any test case in the suite
     """
-    # Create a live program with valid prices and financial aid
+    # Create a live program
     program = ProgramFactory.create(
         live=True,
-        financial_aid_availability=True,
         price=1000,
     )
     course_run = CourseRunFactory.create(course__program=program)
     ExamRunFactory.create(course=course_run.course)
-    TierProgramFactory.create_properly_configured_batch(2, program=program)
     # Create users
     staff_user, student_user = (create_user_for_login(is_staff=True), create_user_for_login(is_staff=False))
     ProgramEnrollment.objects.create(program=program, user=staff_user)

@@ -42,7 +42,7 @@ def handle_create_final_grade(sender, instance, created, **kwargs):  # pylint: d
         user = instance.user
         course = instance.course_run.course
         update_or_create_combined_final_grade(user, course)
-        if created and not course.program.financial_aid_availability:
+        if created:
             generate_program_letter(instance.user, course.program)
 
     transaction.on_commit(_on_transaction_commit)

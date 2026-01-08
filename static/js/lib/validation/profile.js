@@ -13,10 +13,6 @@ import type {
 } from "../../flow/profileTypes"
 import type { UIState } from "../../reducers/ui"
 import type { EmailInputs } from "../../flow/emailTypes"
-import type {
-  FinancialAidState,
-  FinancialAidValidation
-} from "../../reducers/financial_aid"
 import {
   HIGH_SCHOOL,
   PERSONAL_STEP,
@@ -490,28 +486,4 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
 export function combineValidators(...validators: Array<Function>): Function {
   return (...args) =>
     _.merge({}, ...validators.map(validator => validator(...args)))
-}
-
-const financialAidMessages: ErrorMessages = {
-  income:   "Income is required",
-  currency: "Please select a currency"
-}
-
-export const validateFinancialAid = (
-  edit: FinancialAidState
-): FinancialAidValidation => {
-  const errors: FinancialAidValidation = findErrors(
-    edit,
-    R.keys(financialAidMessages),
-    financialAidMessages
-  )
-  if (!edit.checkBox) {
-    errors["checkBox"] = "You must agree to these terms"
-  }
-
-  if (edit.income && /\D+/.test(edit.income)) {
-    errors["income"] = "Please only use whole numbers."
-  }
-
-  return errors
 }

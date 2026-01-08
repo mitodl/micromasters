@@ -17,8 +17,8 @@ from rolepermissions.checkers import has_role
 from rolepermissions.permissions import available_perm_status
 
 from cms.util import get_coupon_code
-from courses.models import Course, Program
-from ecommerce.models import Coupon
+from courses.models import Program
+from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
 from micromasters.utils import webpack_dev_server_host
 from profiles.permissions import CanSeeIfNotPrivate
@@ -173,24 +173,8 @@ class SignInView(ReactView):
             and coupon_code
             and context["program"] is None
         ):
-            program = None
-
-            coupon = Coupon.objects.filter(coupon_code=coupon_code).first()
-
-            if coupon is not None:
-                if isinstance(coupon.content_object, Program):
-                    program = coupon.content_object
-                elif isinstance(coupon.content_object, Course):
-                    program = coupon.content_object.program
-
-
-            if program:
-                params = request.GET.copy()
-                params["program"] = program.id
-
-                return redirect(
-                    f"{reverse('signin')}?{params.urlencode()}",
-                )
+            # Coupon functionality is disabled as payments were discontinued in 2021
+            pass
 
         return render(
             request,

@@ -10,7 +10,6 @@ import type {
   ProgramLearners
 } from "./flow/dashboardTypes"
 import type { AvailablePrograms } from "./flow/enrollmentTypes"
-import type { FinancialAidUserInfo } from "./flow/programTypes"
 import {
   HIGH_SCHOOL,
   BACHELORS,
@@ -997,8 +996,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      financial_aid_availability: false,
-      id:                         3
+      id: 3
     },
     {
       courses: [
@@ -1259,18 +1257,16 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      title:                      "Master Program",
-      description:                null,
-      financial_aid_availability: false,
-      id:                         4,
-      number_courses_passed:      1
+      title:                 "Master Program",
+      description:           null,
+      id:                    4,
+      number_courses_passed: 1
     },
     {
-      financial_aid_availability: false,
-      title:                      "Missed deadline program",
-      description:                "Missed deadline program",
-      number_courses_passed:      1,
-      courses:                    [
+      title:                 "Missed deadline program",
+      description:           "Missed deadline program",
+      number_courses_passed: 1,
+      courses:               [
         {
           id:                  9,
           position_in_program: 0,
@@ -1295,12 +1291,11 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
       id: 5
     },
     {
-      financial_aid_availability: false,
-      title:                      "Empty program",
-      description:                "The empty program",
-      number_courses_passed:      0,
-      courses:                    [],
-      id:                         2
+      title:                 "Empty program",
+      description:           "The empty program",
+      number_courses_passed: 0,
+      courses:               [],
+      id:                    2
     },
     {
       title:                 "Last program",
@@ -1331,8 +1326,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      financial_aid_availability: false,
-      id:                         6
+      id: 6
     },
     {
       title:                 "Paid but not enrolled",
@@ -1363,8 +1357,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      financial_aid_availability: true,
-      id:                         7
+      id: 7
     }
   ]
 })
@@ -1379,19 +1372,10 @@ export const PROGRAMS: AvailablePrograms = deepFreeze(
   }))
 )
 
-export const FINANCIAL_AID_PARTIAL_RESPONSE: FinancialAidUserInfo = deepFreeze({
-  application_status: null,
-  has_user_applied:   false,
-  max_possible_cost:  1000,
-  min_possible_cost:  1000
-})
-
 export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(
   DASHBOARD_RESPONSE.programs.map(program => ({
-    program_id:                 program.id,
-    price:                      Decimal(program.id * 1000),
-    financial_aid_availability: false,
-    has_financial_aid_request:  false
+    program_id: program.id,
+    price:      Decimal(program.id * 1000)
   }))
 )
 

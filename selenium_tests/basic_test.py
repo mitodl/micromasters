@@ -15,82 +15,32 @@ from cms.factories import (FacultyFactory, InfoLinksFactory,
                            SemesterDateFactory)
 from courses.factories import CourseFactory, ProgramFactory
 from dashboard.models import ProgramEnrollment
-from ecommerce.factories import CouponFactory
-from ecommerce.models import Coupon, UserCoupon
-from financialaid.factories import FinancialAidFactory
-from financialaid.models import FinancialAid, FinancialAidStatus
 from profiles.models import Profile
 from roles.models import Role, Staff
 from search.base import reindex_test_es_data
 from selenium_tests.data_util import create_enrolled_user_batch
+from roles.models import (
+    Staff,
+    Role,
+)
+from dashboard.models import ProgramEnrollment
+from courses.factories import (
+    ProgramFactory,
+    CourseFactory
+)
+from cms.factories import (
+    FacultyFactory,
+    InfoLinksFactory,
+    ProgramCourseFactory,
+    ProgramPageFactory,
+    SemesterDateFactory,
+)
+from profiles.models import Profile
+
 
 pytestmark = [
     pytest.mark.django_db,
 ]
-
-
-def test_zero_price_purchase(browser, base_test_data, logged_in_student, mocker):
-    """
-    Test that a course can be purchased with a 100%-off coupon
-    """
-    mocker.patch('ecommerce.views.enroll_user_on_success')
-    # Make a 100% off coupon. By setting the price to $0 we can avoid dealing with Cybersource
-    coupon = CouponFactory.create(
-        amount=1,
-        amount_type=Coupon.PERCENT_DISCOUNT,
-        coupon_type=Coupon.STANDARD,
-        content_object=base_test_data.program
-    )
-    UserCoupon.objects.create(coupon=coupon, user=logged_in_student)
-
-    browser.get("/")
-    # Click the dashboard link on the upper right of the homepage
-    browser.click_when_loaded(By.CLASS_NAME, "header-dashboard-link")
-    browser.assert_no_console_errors()
-
-    browser.click_when_loaded(By.CLASS_NAME, "enroll-button")
-    browser.wait_until_loaded(By.CLASS_NAME, "continue-payment")
-
-    # Click back then click the enroll now button again to assert back button behavior
-    browser.driver.back()
-    browser.click_when_loaded(By.CLASS_NAME, "enroll-button")
-    browser.assert_no_console_errors()
-
-    # Click 'Continue' on the order summary page
-    browser.click_when_loaded(By.CLASS_NAME, "continue-payment")
-    browser.assert_no_console_errors()
-    browser.wait_until_loaded(By.CLASS_NAME, "toast-message")
-
-    # No status message is shown here since this is FA program
-    browser.assert_no_console_errors()
-
-
-def test_approve_docs(browser, base_test_data, logged_in_staff):
-    """
-    Test the financial aid review page
-    """
-    program = base_test_data.program
-    tier_program = program.tier_programs.get(discount_amount=0)
-    FinancialAidFactory.create(
-        user=base_test_data.student_user,
-        tier_program=tier_program,
-        status=FinancialAidStatus.DOCS_SENT,
-    )
-
-    browser.get(f"/financial_aid/review/{program.id}/{FinancialAidStatus.DOCS_SENT}")
-    browser.click_when_loaded(By.CLASS_NAME, "mark-docs-as-received")
-    alert = browser.driver.switch_to.alert
-    alert.accept()
-    browser.wait_until_loaded(By.CLASS_NAME, "alert-success")
-    browser.assert_no_console_errors()
-
-    def is_now_pending(driver):  # pylint: disable=unused-argument
-        """Wait until the change to the financial aid takes effect"""
-        assert FinancialAid.objects.count() == 1
-        financial_aid = FinancialAid.objects.first()
-        return financial_aid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
-
-    browser.wait().until(is_now_pending)
 
 
 def test_program_page(browser, base_test_data, logged_in_student):

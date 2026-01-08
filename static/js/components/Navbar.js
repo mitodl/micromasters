@@ -6,7 +6,6 @@ import Icon from "@material-ui/core/Icon"
 import IconButton from "@material-ui/core/IconButton"
 import { ReactPageClick } from "react-page-click"
 import Swipeable from "react-swipeable"
-import R from "ramda"
 
 import type {
   AvailableProgram,
@@ -16,11 +15,7 @@ import ProgramSelector from "./ProgramSelector"
 import ProfileImage from "../containers/ProfileImage"
 import { getPreferredName } from "../util/util"
 import type { Profile } from "../flow/profileTypes"
-import {
-  hasAnyStaffRole,
-  firstFinancialAidProgram,
-  hasEditAbility
-} from "../lib/roles"
+import { hasAnyStaffRole } from "../lib/roles"
 
 const PROFILE_SETTINGS_REGEX = /^\/profile\/?|settings\/?|learner\/[a-z]?/
 const PROFILE_REGEX = /^\/profile\/?/
@@ -59,9 +54,6 @@ const adminLink = (...args) =>
 
 const learnerLink = (...args) =>
   hasAnyStaffRole(SETTINGS.roles) ? null : navLink(...args)
-
-const financialAidLink = (...args) =>
-  R.find(hasEditAbility, SETTINGS.roles) ? navLink(...args) : null
 
 export default class Navbar extends React.Component {
   props: {
@@ -179,16 +171,6 @@ export default class Navbar extends React.Component {
                 true
               )}
               {adminLink(closeDrawer, "/cms", "CMS", "description", true, true)}
-              {financialAidLink(
-                closeDrawer,
-                `/financial_aid/review/${firstFinancialAidProgram(
-                  SETTINGS.roles
-                )}`,
-                "Personal Price Admin",
-                "attach_money",
-                true,
-                true
-              )}
               {adminLink(
                 closeDrawer,
                 "/automaticemails",

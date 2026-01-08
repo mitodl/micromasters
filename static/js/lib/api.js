@@ -10,7 +10,6 @@ import type {
   ProfileGetResult,
   ProfilePatchResult
 } from "../flow/profileTypes"
-import type { CheckoutResponse } from "../flow/checkoutTypes"
 import type { Coupons, AttachCouponResponse } from "../flow/couponTypes"
 import type {
   Dashboard,
@@ -61,15 +60,6 @@ export async function getDashboard(username: string): Promise<Dashboard> {
     logoutOnError(response)
     return Promise.reject(response)
   }
-}
-
-export function checkout(courseId: string): Promise<CheckoutResponse> {
-  return fetchJSONWithCSRF("/api/v0/checkout/", {
-    method: "POST",
-    body:   JSON.stringify({
-      course_id: courseId
-    })
-  })
 }
 
 export function sendSearchResultMail(
@@ -177,21 +167,6 @@ export function getPearsonSSO(): Promise<PearsonSSOParameters> {
   return fetchJSONWithCSRF("/api/v0/pearson/sso/")
 }
 
-export function addFinancialAid(
-  income: number,
-  currency: string,
-  programId: number
-): Promise<*> {
-  return fetchJSONWithCSRF("/api/v0/financial_aid_request/", {
-    method: "POST",
-    body:   JSON.stringify({
-      original_income:   income,
-      original_currency: currency,
-      program_id:        programId
-    })
-  })
-}
-
 export function getCoursePrices(username: string): Promise<CoursePrices> {
   return fetchJSONWithCSRF(`/api/v0/course_prices/${username}/`).then(
     coursePrices => {
@@ -201,20 +176,12 @@ export function getCoursePrices(username: string): Promise<CoursePrices> {
   )
 }
 
-export function skipFinancialAid(programId: number): Promise<*> {
-  return fetchWithCSRF(`/api/v0/financial_aid_skip/${programId}/`, {
-    method: "PATCH"
-  })
-}
-export function updateDocumentSentDate(
-  financialAidId: number,
-  sentDate: string
-): Promise<*> {
-  return fetchJSONWithCSRF(`/api/v0/financial_aid/${financialAidId}/`, {
-    method: "PATCH",
-    body:   JSON.stringify({
-      date_documents_sent: sentDate
-    })
+// Checkout stub - payments discontinued in 2021
+// Keeps API call for test compatibility but should fail
+export function checkout(courseId: string): Promise<*> {
+  return fetchJSONWithCSRF("/api/v0/checkout/", {
+    method: "POST",
+    body:   JSON.stringify({ course_id: courseId })
   })
 }
 

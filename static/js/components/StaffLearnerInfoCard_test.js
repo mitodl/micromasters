@@ -32,10 +32,8 @@ describe("StaffLearnerInfoCard", () => {
             [program],
             [
               {
-                program_id:                 program.id,
-                price:                      price,
-                financial_aid_availability: false,
-                has_financial_aid_request:  false
+                program_id: program.id,
+                price:      price
               }
             ],
             []

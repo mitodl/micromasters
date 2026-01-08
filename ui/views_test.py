@@ -2,8 +2,7 @@
 Test end to end django views.
 """
 import json
-from unittest.mock import Mock, patch
-from urllib.parse import urlencode
+from unittest.mock import patch, Mock
 
 import ddt
 from django.db.models.signals import post_save
@@ -21,8 +20,8 @@ from cms.factories import (FacultyFactory, InfoLinksFactory,
                            ProgramCourseFactory, SemesterDateFactory)
 from cms.models import HomePage, ProgramPage
 from cms.serializers import ProgramPageSerializer
-from courses.factories import CourseFactory, ProgramFactory
-from ecommerce.factories import CouponFactory
+from courses.factories import ProgramFactory, CourseFactory
+from micromasters.serializers import serialize_maybe_user
 from micromasters.factories import UserSocialAuthFactory
 from micromasters.serializers import serialize_maybe_user
 from profiles.factories import ProfileFactory, SocialProfileFactory
@@ -854,37 +853,3 @@ class TestUsersPage(ViewsTests):
         """
         resp = self.client.get(reverse('ui-users'))
         assert resp.status_code == 404
-
-
-class TestSignIn(ViewsTests):
-    """ Tests for the sign in page """
-
-    def test_login_program_coupon_redirect(self):
-        """ Test that the login page redirects if the next url has a coupon for a program """
-        with self.settings(FEATURES={
-            "MITXONLINE_LOGIN": True
-        }):
-            coupon = CouponFactory.create(program=True)
-            next_url = f"/dashboard/?coupon={coupon.coupon_code}"
-            response = self.client.get(f"{reverse('signin')}?{urlencode({'next': next_url})}")
-            redirect_params = urlencode({
-                'next': next_url,
-                'program': coupon.content_object.id
-            })
-            assert response.status_code == 302
-            assert response.url == f"{reverse('signin')}?{redirect_params}"
-
-    def test_login_course_coupon_redirect(self):
-        """ Test that the login page redirects if the next url has a coupon for a course """
-        with self.settings(FEATURES={
-            "MITXONLINE_LOGIN": True
-        }):
-            coupon = CouponFactory.create(course=True)
-            next_url = f"/dashboard/?coupon={coupon.coupon_code}"
-            response = self.client.get(f"{reverse('signin')}?{urlencode({'next': next_url})}")
-            redirect_params = urlencode({
-                'next': next_url,
-                'program': coupon.content_object.program.id
-            })
-            assert response.status_code == 302
-            assert response.url == f"{reverse('signin')}?{redirect_params}"

@@ -3,7 +3,6 @@
         "title": "Digital Learning",
         "price": 1000,
         "description": "Learn stuff about digital learning.",
-        "financial_aid_availability": true,
         "num_required_courses": 3,
         "elective_sets": [
             {

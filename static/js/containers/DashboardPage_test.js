@@ -61,10 +61,6 @@ import {
 } from "../actions/programs"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import {
-  REQUEST_SKIP_FINANCIAL_AID,
-  RECEIVE_SKIP_FINANCIAL_AID_SUCCESS
-} from "../actions/financial_aid"
-import {
   REQUEST_ATTACH_COUPON,
   RECEIVE_ATTACH_COUPON_SUCCESS,
   RECEIVE_ATTACH_COUPON_FAILURE,
@@ -81,9 +77,6 @@ import {
   EDX_CHECKOUT_RESPONSE
 } from "../test_constants"
 import {
-  FA_ALL_STATUSES,
-  FA_TERMINAL_STATUSES,
-  FA_PENDING_STATUSES,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
   STATUS_OFFERED,
@@ -107,7 +100,6 @@ import Grades, {
 } from "../components/dashboard/courses/Grades"
 import { COURSE_GRADE } from "./DashboardPage"
 import * as api from "../lib/api"
-import FinancialAidCard from "../components/dashboard/FinancialAidCard"
 
 describe("DashboardPage", function() {
   this.timeout(10000)
@@ -390,26 +382,6 @@ describe("DashboardPage", function() {
       })
     })
 
-    it("sets the course run to have a pending status", () => {
-      const course = findCourse(
-        course =>
-          course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
-      )
-      const run = course.runs[0]
-      const encodedKey = encodeURIComponent(run.course_id)
-      return renderComponent(
-        `/dashboard?status=receipt&course_key=${encodedKey}`,
-        SUCCESS_WITH_TIMEOUT_ACTIONS
-      ).then(() => {
-        const [courseRun] = findCourseRun(
-          helper.store.getState().dashboard[SETTINGS.user.username].programs,
-          _run => _run.course_id === run.course_id
-        )
-        assert.equal(run.course_id, courseRun.course_id)
-        assert.equal(courseRun.status, STATUS_PENDING_ENROLLMENT)
-      })
-    })
-
     it("doesn't error if the course run couldn't be found", () => {
       return renderComponent(
         `/dashboard?status=receipt&course_key=missing`,
@@ -447,123 +419,6 @@ describe("DashboardPage", function() {
         coupon.amount_type = "percent-discount"
         coupon.amount = Decimal(".05")
         helper.couponsStub.returns(Promise.resolve([coupon]))
-        program.financial_aid_user_info = {
-          has_user_applied: false
-        }
-      })
-
-      describe("100% program coupon", () => {
-        const expectedActions = DASHBOARD_SUCCESS_ACTIONS.concat([
-          REQUEST_SKIP_FINANCIAL_AID,
-          RECEIVE_SKIP_FINANCIAL_AID_SUCCESS
-        ])
-
-        beforeEach(() => {
-          coupon.amount = Decimal("1")
-        })
-
-        describe("should issue a request to skip if there is a 100% coupon for the program", () => {
-          for (const status of FA_ALL_STATUSES) {
-            it(`only if status is ${status}`, () => {
-              program.financial_aid_user_info.application_status = status
-              const expectedSkip = !FA_TERMINAL_STATUSES.includes(status)
-              // Extra actions dispatched to refresh the dashboard
-              const expectedActionsWithDashboardRequest = expectedActions.concat(
-                [
-                  REQUEST_DASHBOARD,
-                  RECEIVE_DASHBOARD_SUCCESS,
-                  actions.prices.get.requestType,
-                  actions.prices.get.successType,
-                  SET_CONFIRM_SKIP_DIALOG_VISIBILITY
-                ]
-              )
-              const _actions = expectedSkip
-                ? expectedActionsWithDashboardRequest
-                : DASHBOARD_SUCCESS_ACTIONS
-              return renderComponent("/dashboard", _actions).then(() => {
-                const aid = helper.store.getState().financialAid
-                if (expectedSkip) {
-                  assert.equal(aid.fetchSkipStatus, storeActions.FETCH_SUCCESS)
-                  sinon.assert.calledWith(
-                    helper.skipFinancialAidStub,
-                    program.id
-                  )
-                  assert.isFalse(
-                    helper.store.getState().ui.skipDialogVisibility
-                  )
-                } else {
-                  assert.isUndefined(aid.fetchSkipStatus)
-                }
-              })
-            })
-          }
-        })
-
-        it("should hide the financial aid card if there is a 100% coupon for the program", () => {
-          return renderComponent("/dashboard", expectedActions).then(
-            ([wrapper]) => {
-              assert.equal(wrapper.find(".financial-aid-card").length, 0)
-            }
-          )
-        })
-      })
-    })
-
-    describe("fake timer tests", function() {
-      it("refetches the dashboard after 3 seconds if 2 minutes has not passed", () => {
-        const course = findCourse(
-          course =>
-            course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
-        )
-        const run = course.runs[0]
-        const encodedKey = encodeURIComponent(run.course_id)
-        return renderComponent(
-          `/dashboard?status=receipt&course_key=${encodedKey}`,
-          SUCCESS_WITH_TIMEOUT_ACTIONS
-        ).then(() => {
-          const fetchDashboardStub = helper.sandbox
-            .stub(dashboardActions, "fetchDashboard")
-            .returns(() => ({
-              type: "fake"
-            }))
-          assert.equal(fetchDashboardStub.callCount, 0)
-
-          sinon.assert.calledWith(waitStub, 3000)
-          waitResolve()
-          return waitPromise.then(() => {
-            sinon.assert.calledWith(
-              fetchDashboardStub,
-              SETTINGS.user.username,
-              true
-            )
-          })
-        })
-      })
-
-      it("shows an error message if more than 30 seconds have passed", () => {
-        const course = findCourse(
-          course =>
-            course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
-        )
-        const run = course.runs[0]
-        const encodedKey = encodeURIComponent(run.course_id)
-        return renderComponent(
-          `/dashboard?status=receipt&course_key=${encodedKey}`,
-          SUCCESS_WITH_TIMEOUT_ACTIONS
-        ).then(() => {
-          const past = moment()
-            .add(-125, "seconds")
-            .toISOString()
-          helper.store.dispatch(setInitialTime(past))
-          sinon.assert.calledWith(waitStub, 3000)
-          waitResolve()
-          return waitPromise.then(() => {
-            assert.deepEqual(helper.store.getState().ui.toastMessage, {
-              message: `Order was not processed`,
-              icon:    TOAST_FAILURE
-            })
-          })
-        })
       })
     })
   })
@@ -589,86 +444,87 @@ describe("DashboardPage", function() {
     )
   })
 
-  describe("handles redeeming coupons", () => {
-    const COUPON_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
-      REQUEST_ATTACH_COUPON,
-      RECEIVE_ATTACH_COUPON_SUCCESS,
-      SET_RECENTLY_ATTACHED_COUPON,
-      SET_COUPON_NOTIFICATION_VISIBILITY,
-      REQUEST_FETCH_COUPONS,
-      RECEIVE_FETCH_COUPONS_SUCCESS
-    ])
-    const COUPON_FAILURE_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
-      REQUEST_ATTACH_COUPON,
-      RECEIVE_ATTACH_COUPON_FAILURE,
-      SET_TOAST_MESSAGE
-    ])
-
-    it("with a successful fetch", () => {
-      helper.couponsStub.returns(Promise.resolve([COUPON]))
-
-      return renderComponent(
-        "/dashboard?coupon=success-coupon",
-        COUPON_SUCCESS_ACTIONS
-      ).then(() => {
-        const state = helper.store.getState()
-        assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON)
-        assert.isTrue(state.ui.couponNotificationVisibility)
-        assert.deepEqual(state.coupons.coupons, [COUPON])
-      })
-    })
-
-    it("with a failed fetch", () => {
-      helper.attachCouponStub.returns(Promise.reject())
-
-      return renderComponent(
-        "/dashboard?coupon=failure-coupon",
-        COUPON_FAILURE_ACTIONS
-      ).then(() => {
-        const state = helper.store.getState()
-        assert.isNull(state.coupons.recentlyAttachedCoupon)
-        assert.isFalse(state.ui.couponNotificationVisibility)
-        assert.deepEqual(state.ui.toastMessage, {
-          title:   "Coupon failed",
-          message: "This coupon code is invalid or does not exist.",
-          icon:    TOAST_FAILURE
-        })
-      })
-    })
-
-    it("without a race condition", () => {
-      // eslint-disable-line mocha/no-skipped-tests
-      const program = DASHBOARD_RESPONSE.programs[1]
-      const coupon1 = makeCoupon(program)
-      const coupon2 = makeCoupon(program)
-      coupon2.coupon_code = "second-coupon"
-      const slowPromise = wait(200).then(() => [coupon1])
-
-      // Make sure we wait for the first call to complete before resolving the second promise
-      helper.couponsStub.onCall(0).returns(slowPromise)
-      helper.couponsStub.onCall(1).returns(Promise.resolve([coupon2]))
-
-      return renderComponent(
-        "/dashboard?coupon=success-coupon",
-        COUPON_SUCCESS_ACTIONS
-      ).then(() => {
-        const state = helper.store.getState()
-        assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON)
-        // must be the second call result
-        assert.deepEqual(state.coupons.coupons, [coupon2])
-        assert.isTrue(state.ui.couponNotificationVisibility)
-        sinon.assert.calledTwice(helper.couponsStub)
-      })
-    })
-  })
+  // Tests disabled - coupon payment functionality has been removed
+  // describe("handles redeeming coupons", () => {
+  //   const COUPON_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
+  //     REQUEST_ATTACH_COUPON,
+  //     RECEIVE_ATTACH_COUPON_SUCCESS,
+  //     SET_RECENTLY_ATTACHED_COUPON,
+  //     SET_COUPON_NOTIFICATION_VISIBILITY,
+  //     REQUEST_FETCH_COUPONS,
+  //     RECEIVE_FETCH_COUPONS_SUCCESS
+  //   ])
+  //   const COUPON_FAILURE_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
+  //     REQUEST_ATTACH_COUPON,
+  //     RECEIVE_ATTACH_COUPON_FAILURE,
+  //     SET_TOAST_MESSAGE
+  //   ])
+  //
+  //   it("with a successful fetch", () => {
+  //     helper.couponsStub.returns(Promise.resolve([COUPON]))
+  //
+  //     return renderComponent(
+  //       "/dashboard?coupon=success-coupon",
+  //       COUPON_SUCCESS_ACTIONS
+  //     ).then(() => {
+  //       const state = helper.store.getState()
+  //       assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON)
+  //       assert.isTrue(state.ui.couponNotificationVisibility)
+  //       assert.deepEqual(state.coupons.coupons, [COUPON])
+  //     })
+  //   })
+  //
+  //   it("with a failed fetch", () => {
+  //     helper.attachCouponStub.returns(Promise.reject())
+  //
+  //     return renderComponent(
+  //       "/dashboard?coupon=failure-coupon",
+  //       COUPON_FAILURE_ACTIONS
+  //     ).then(() => {
+  //       const state = helper.store.getState()
+  //       assert.isNull(state.coupons.recentlyAttachedCoupon)
+  //       assert.isFalse(state.ui.couponNotificationVisibility)
+  //       assert.deepEqual(state.ui.toastMessage, {
+  //         title:   "Coupon failed",
+  //         message: "This coupon code is invalid or does not exist.",
+  //         icon:    TOAST_FAILURE
+  //       })
+  //     })
+  //   })
+  //
+  //   it("without a race condition", () => {
+  //     // eslint-disable-line mocha/no-skipped-tests
+  //     const program = DASHBOARD_RESPONSE.programs[1]
+  //     const coupon1 = makeCoupon(program)
+  //     const coupon2 = makeCoupon(program)
+  //     coupon2.coupon_code = "second-coupon"
+  //     const slowPromise = wait(200).then(() => [coupon1])
+  //
+  //     // Make sure we wait for the first call to complete before resolving the second promise
+  //     helper.couponsStub.onCall(0).returns(slowPromise)
+  //     helper.couponsStub.onCall(1).returns(Promise.resolve([coupon2]))
+  //
+  //     return renderComponent(
+  //       "/dashboard?coupon=success-coupon",
+  //       COUPON_SUCCESS_ACTIONS
+  //     ).then(() => {
+  //       const state = helper.store.getState()
+  //       assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON)
+  //       // must be the second call result
+  //       assert.deepEqual(state.coupons.coupons, [coupon2])
+  //       assert.isTrue(state.ui.couponNotificationVisibility)
+  //       sinon.assert.calledTwice(helper.couponsStub)
+  //     })
+  //   })
+  // })
 
   describe("course contact UI behavior", () => {
     let dashboardResponse
+    // Since financial aid is removed, all messages show "verified learners"
     const faExpectedStateList = [
       {
         hasFA:           true,
-        expectedMessage:
-          "This is a premium feature for learners who have paid for the course."
+        expectedMessage: "This is a premium feature for verified learners."
       },
       {
         hasFA:           false,
@@ -740,49 +596,6 @@ describe("DashboardPage", function() {
         }
       )
     })
-
-    for (const faExpectedObj of faExpectedStateList) {
-      it(`shows the payment teaser dialog when a user lacks permission
-        to contact a course team with financial aid status: ${
-  faExpectedObj.hasFA
-}`, () => {
-        const course = makeCourse()
-        course.has_contact_email = true
-        // Set all course runs to unpaid
-        course.runs = R.chain(R.set(R.lensProp("has_paid"), false), course.runs)
-        makeRunEnrolled(course.runs[0])
-        dashboardResponse.programs[0].courses = [course]
-        dashboardResponse.programs[0].financial_aid_availability =
-          faExpectedObj.hasFA
-        if (faExpectedObj.hasFA) {
-          dashboardResponse.programs[0].financial_aid_user_info = {
-            max_possible_cost: 100,
-            min_possible_cost: 50,
-            has_user_applied:  false
-          }
-        }
-        helper.dashboardStub.returns(Promise.resolve(dashboardResponse))
-
-        return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
-          ([wrapper]) => {
-            const contactLink = wrapper.find(CONTACT_LINK_SELECTOR).at(0)
-
-            return listenForActions(PAYMENT_DIALOG_ACTIONS, () => {
-              contactLink.simulate("click")
-            }).then(state => {
-              assert.equal(
-                document.querySelector(".inner-content > p").textContent,
-                faExpectedObj.expectedMessage
-              )
-              assert.isTrue(state.ui.paymentTeaserDialogVisibility)
-              assert.isFalse(
-                state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]
-              )
-            })
-          }
-        )
-      })
-    }
   })
 
   describe("course enrollment dialog", () => {
@@ -819,39 +632,6 @@ describe("DashboardPage", function() {
         }
       )
     })
-    R.forEach(faStatus => {
-      const expectedDisabled = FA_PENDING_STATUSES.includes(faStatus)
-      it(`${faStatus} status ${
-        expectedDisabled ? "disables" : "does not disable"
-      } pay now button`, () => {
-        const course = makeCourse()
-        course.runs[0].enrollment_start_date = moment().subtract(2, "days")
-        dashboardResponse.programs[0].courses = [course]
-        dashboardResponse.programs[0].financial_aid_availability = true
-        dashboardResponse.programs[0].financial_aid_user_info = {
-          application_status:  faStatus,
-          date_documents_sent: "2016-01-01",
-          has_user_applied:    true
-        }
-
-        helper.dashboardStub.returns(Promise.resolve(dashboardResponse))
-        return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
-          ([wrapper]) => {
-            const enrollButton = wrapper.find(ENROLL_BUTTON_SELECTOR).at(0)
-
-            return listenForActions(COURSE_ENROLL_DIALOG_ACTIONS, () => {
-              enrollButton.simulate("click")
-            }).then(state => {
-              assert.isTrue(state.ui.enrollCourseDialogVisibility)
-              assert.equal(
-                document.querySelector(".pay-button").disabled,
-                expectedDisabled
-              )
-            })
-          }
-        )
-      })
-    }, FA_ALL_STATUSES)
   })
 
   describe("edx cache refresh error message", () => {
@@ -886,62 +666,6 @@ describe("DashboardPage", function() {
       return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(
         ([wrapper]) => {
           assert.lengthOf(wrapper.find(ERROR_MESSAGE_SELECTOR), 0)
-        }
-      )
-    })
-  })
-
-  describe("checkout for non financial aid courses", () => {
-    it("redirects to edX when the checkout API tells us to", () => {
-      const program = makeProgram()
-      const promise = Promise.resolve(EDX_CHECKOUT_RESPONSE)
-      const checkoutStub = helper.sandbox
-        .stub(storeActions, "checkout")
-        .returns(() => promise)
-
-      program.financial_aid_availability = false
-      program.description = "Not passed program"
-      program.courses[0].runs = [
-        {
-          ...program.courses[0].runs[0],
-          course_start_date:       "2016-09-22T11:48:27Z",
-          fuzzy_start_date:        "Fall 2016",
-          position:                1,
-          has_paid:                false,
-          status:                  STATUS_CAN_UPGRADE,
-          course_end_date:         moment().add(1, "months"),
-          course_upgrade_deadline: moment().add(1, "months"),
-          final_grade:             75
-        }
-      ]
-
-      const dashboardResponse = { programs: [program] }
-      const coursePrices = makeCoursePrices(dashboardResponse)
-      const availablePrograms = makeAvailablePrograms(dashboardResponse)
-      const programLearners = makeProgramLearners()
-      helper.dashboardStub.returns(Promise.resolve(dashboardResponse))
-      helper.programsGetStub.returns(Promise.resolve(availablePrograms))
-      helper.coursePricesStub.returns(Promise.resolve(coursePrices))
-      helper.programLearnersStub = helper.fetchJSONWithCSRFStub.withArgs(
-        `/api/v0/programlearners/${program.id}/`
-      )
-      helper.programLearnersStub.returns(Promise.resolve(programLearners))
-
-      return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
-        ([wrapper]) => {
-          wrapper
-            .find(".pay-button")
-            .props()
-            .onClick()
-
-          assert.equal(checkoutStub.callCount, 1)
-          assert.deepEqual(checkoutStub.args[0], [
-            program.courses[0].runs[0].course_id
-          ])
-
-          return promise.then(() => {
-            assert.equal(window.location.toString(), EDX_CHECKOUT_RESPONSE.url)
-          })
         }
       )
     })

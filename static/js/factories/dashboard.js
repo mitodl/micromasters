@@ -8,7 +8,6 @@ import {
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   STATUS_OFFERED,
-  FA_STATUS_APPROVED,
   PEARSON_PROFILE_ABSENT,
   PEARSON_PROFILE_SUCCESS,
   PEARSON_PROFILE_IN_PROGRESS,
@@ -47,7 +46,6 @@ const makeCounter = (): (() => number) => {
 const newCourseId = makeCounter()
 const newProgramId = makeCounter()
 const newRunId = makeCounter()
-const newFinancialAidId = makeCounter()
 
 export const makeDashboard = (): Dashboard => {
   const programs = R.range(1, 3).map(makeProgram)
@@ -142,19 +140,10 @@ export const makeProgram = (): Program => {
   const programId = newProgramId()
   const courses = R.reverse(R.range(1, 3)).map(makeCourse)
   return {
-    title:                      `Title for course ${programId}`,
-    courses:                    courses,
-    id:                         programId,
-    financial_aid_availability: true,
-    has_exams:                  true,
-    financial_aid_user_info:    {
-      application_status:  FA_STATUS_APPROVED,
-      date_documents_sent: "2016-01-01",
-      has_user_applied:    true,
-      max_possible_cost:   50,
-      min_possible_cost:   1000,
-      id:                  newFinancialAidId()
-    },
+    title:            `Title for course ${programId}`,
+    courses:          courses,
+    id:               programId,
+    has_exams:        true,
     exam_card_status:
       PEARSON_STATUSES[Math.floor(Math.random() * PEARSON_STATUSES.length)],
     grade_average:              Math.floor(Math.random() * 100),
@@ -189,10 +178,8 @@ export const makeCourseCoupon = (course: Course, program: Program): Coupon => ({
 })
 
 export const makeCoursePrice = (program: Program): CoursePrice => ({
-  program_id:                 program.id,
-  price:                      Decimal(program.id * 100),
-  financial_aid_availability: true,
-  has_financial_aid_request:  true
+  program_id: program.id,
+  price:      Decimal(program.id * 100)
 })
 
 export const makeCoursePrices = (dashboard: Dashboard): CoursePrices =>

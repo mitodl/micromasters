@@ -17,13 +17,22 @@ from requests.exceptions import HTTPError
 from rest_framework.status import (HTTP_200_OK, HTTP_400_BAD_REQUEST,
                                    HTTP_401_UNAUTHORIZED)
 
-from courses.factories import CourseFactory, CourseRunFactory
 from dashboard.factories import ProgramEnrollmentFactory
-from dashboard.models import ProgramEnrollment
-from financialaid.factories import FinancialAidFactory
-from mail.api import (MailgunClient, add_automatic_email, get_mail_vars,
-                      mark_emails_as_sent, send_automatic_emails)
+from courses.factories import (
+    CourseFactory,
+)
 from mail.exceptions import SendBatchException
+from mail.api import (
+    MailgunClient,
+    add_automatic_email,
+    get_mail_vars,
+    mark_emails_as_sent,
+    send_automatic_emails,
+)
+from mail.models import (
+    AutomaticEmail,
+    SentAutomaticEmail,
+)
 from mail.factories import AutomaticEmailFactory
 from mail.models import (AutomaticEmail, FinancialAidEmailAudit,
                          SentAutomaticEmail)
@@ -320,131 +329,6 @@ b@example.com: {"name": "B"}"""
         for args in mock_post.call_args_list:
             _, called_kwargs = args
             assert called_kwargs['data']['from'] == sender_address
-
-
-@ddt
-@patch('requests.post', autospec=True, return_value=Mock(
-    spec=Response,
-    status_code=HTTP_200_OK,
-    json=mocked_json()
-))
-class FinancialAidMailAPITests(MockedESTestCase):
-    """
-    Tests for the Mailgun client class for financial aid
-    """
-    @classmethod
-    def setUpTestData(cls):
-        with mute_signals(post_save):
-            cls.staff_user_profile = ProfileFactory.create()
-        course_run = CourseRunFactory.create()
-        cls.financial_aid = FinancialAidFactory.create()
-        cls.tier_program = cls.financial_aid.tier_program
-        cls.tier_program.program = course_run.course.program
-        cls.tier_program.save()
-        cls.program_enrollment = ProgramEnrollment.objects.create(
-            user=cls.financial_aid.user,
-            program=cls.tier_program.program
-        )
-
-    def setUp(self):
-        self.financial_aid.refresh_from_db()
-
-    @override_settings(
-        EMAIL_SUPPORT='mailgun_from_email@example.com',
-        MAILGUN_RECIPIENT_OVERRIDE=None
-    )
-    def test_financial_aid_email(self, mock_post):
-        """
-        Test that MailgunClient.send_financial_aid_email() sends an individual message
-        """
-        assert FinancialAidEmailAudit.objects.count() == 0
-        response = MailgunClient.send_financial_aid_email(
-            self.staff_user_profile.user,
-            self.financial_aid,
-            'email subject',
-            'email body'
-        )
-        assert response.status_code == HTTP_200_OK
-        # Check method call
-        assert mock_post.called
-        called_args, called_kwargs = mock_post.call_args
-        assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
-        assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
-        assert called_kwargs['data']['text'] == 'email body'
-        assert called_kwargs['data']['subject'] == 'email subject'
-        assert called_kwargs['data']['to'] == [self.financial_aid.user.email]
-        assert called_kwargs['data']['from'] == settings.EMAIL_SUPPORT
-        # Check audit creation
-        assert FinancialAidEmailAudit.objects.count() == 1
-        audit = FinancialAidEmailAudit.objects.first()
-        assert audit.acting_user == self.staff_user_profile.user
-        assert audit.financial_aid == self.financial_aid
-        assert audit.to_email == self.financial_aid.user.email
-        assert audit.from_email == settings.EMAIL_SUPPORT
-        assert audit.email_subject == 'email subject'
-        assert audit.email_body == 'email body'
-
-    @override_settings(
-        EMAIL_SUPPORT='mailgun_from_email@example.com',
-        MAILGUN_RECIPIENT_OVERRIDE=None
-    )
-    @data(True, False)
-    def test_financial_aid_email_error(self, raise_for_status, mock_post):
-        """
-        Test that send_financial_aid_email handles errors correctly
-        """
-        mock_post.return_value = Mock(
-            spec=Response,
-            status_code=HTTP_400_BAD_REQUEST,
-            json=mocked_json(),
-        )
-
-        response = MailgunClient.send_financial_aid_email(
-            self.staff_user_profile.user,
-            self.financial_aid,
-            'email subject',
-            'email body',
-            raise_for_status=raise_for_status,
-        )
-
-        assert response.raise_for_status.called is raise_for_status
-        assert response.status_code == HTTP_400_BAD_REQUEST
-        assert not response.json()
-
-    @override_settings(
-        EMAIL_SUPPORT='mailgun_from_email@example.com',
-        MAILGUN_RECIPIENT_OVERRIDE=None
-    )
-    def test_financial_aid_email_with_blank_subject_and_body(self, mock_post):
-        """
-        Test that MailgunClient.send_financial_aid_email() sends an individual message
-        with blank subject and blank email, and that the audit record saves correctly
-        """
-        assert FinancialAidEmailAudit.objects.count() == 0
-        MailgunClient.send_financial_aid_email(
-            self.staff_user_profile.user,
-            self.financial_aid,
-            '',
-            ''
-        )
-        # Check method call
-        assert mock_post.called
-        called_args, called_kwargs = mock_post.call_args
-        assert list(called_args)[0] == f'{settings.MAILGUN_URL}/messages'
-        assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
-        assert called_kwargs['data']['text'] == ''
-        assert called_kwargs['data']['subject'] == ''
-        assert called_kwargs['data']['to'] == [self.financial_aid.user.email]
-        assert called_kwargs['data']['from'] == settings.EMAIL_SUPPORT
-        # Check audit creation
-        assert FinancialAidEmailAudit.objects.count() == 1
-        audit = FinancialAidEmailAudit.objects.first()
-        assert audit.acting_user == self.staff_user_profile.user
-        assert audit.financial_aid == self.financial_aid
-        assert audit.to_email == self.financial_aid.user.email
-        assert audit.from_email == settings.EMAIL_SUPPORT
-        assert audit.email_subject == ''
-        assert audit.email_body == ''
 
 
 @ddt

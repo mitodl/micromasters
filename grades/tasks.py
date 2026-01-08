@@ -8,96 +8,19 @@ from celery.result import GroupResult
 from django.contrib.auth import get_user_model
 
 from django.core.cache import caches
-from django.db import IntegrityError
-from django.db.models import Exists, OuterRef
 from django_redis import get_redis_connection
 
-from courses.models import Course, CourseRun
+from courses.models import CourseRun
 from grades import api
-from grades.constants import FinalGradeStatus
-from grades.models import (CombinedFinalGrade, CourseRunGradingStatus,
-                           FinalGrade, MicromastersCourseCertificate,
-                           ProctoredExamGrade)
+from grades.models import CourseRunGradingStatus
 from micromasters.celery import app
-from micromasters.utils import chunks, now_in_utc
+from micromasters.utils import chunks
 
 User = get_user_model()
 CACHE_ID_BASE_STR = "freeze_grade_{0}"
 
 log = logging.getLogger(__name__)
 cache_redis = caches['redis']
-
-
-@app.task
-def generate_course_certificates_for_fa_students():
-    """
-    Creates any missing unique course-user FACourseCertificates
-    """
-    courses = Course.objects.filter(
-        program__live=True,
-        program__financial_aid_availability=True
-    )
-    for course in courses:
-        if not course.has_frozen_runs():
-            continue
-
-        course_certificates = MicromastersCourseCertificate.objects.filter(
-            course=course,
-            user=OuterRef('user')
-        )
-        # Find users that passed the course but don't have a certificate yet
-        users_need_cert = FinalGrade.objects.annotate(
-            course_certificate=Exists(course_certificates)
-        ).filter(
-            course_run__course=course,
-            status=FinalGradeStatus.COMPLETE,
-            passed=True,
-            course_certificate=False
-        ).values_list('user', flat=True)
-
-        if course.has_exam:
-            # need also to pass exam
-            users_need_cert = ProctoredExamGrade.objects.filter(
-                course=course,
-                passed=True,
-                exam_run__date_grades_available__lte=now_in_utc(),
-                user__in=users_need_cert
-            ).values_list('user', flat=True)
-
-        for user in users_need_cert:
-            try:
-                MicromastersCourseCertificate.objects.get_or_create(
-                    user_id=user,
-                    course=course
-                )
-            except (IntegrityError, MicromastersCourseCertificate.DoesNotExist):
-                log.exception(
-                    "Unable to fetch or create certificate for user id: %d and course: %s",
-                    user,
-                    course.title
-                )
-
-
-@app.task
-def create_combined_final_grades():
-    """
-    Creates any missing CombinedFinalGrades
-    """
-    courses = Course.objects.filter(
-        program__live=True,
-        program__financial_aid_availability=True
-    )
-    for course in courses:
-        if course.has_frozen_runs() and course.has_exam:
-            exam_grades = ProctoredExamGrade.objects.filter(
-                course=course,
-                passed=True,
-                exam_run__date_grades_available__lte=now_in_utc()
-            )
-            users_with_grade = set(CombinedFinalGrade.objects.filter(course=course).values_list('user', flat=True))
-            for exam_grade in exam_grades:
-                if exam_grade.user.id not in users_with_grade:
-                    api.update_or_create_combined_final_grade(exam_grade.user, course)
 
 
 @app.task

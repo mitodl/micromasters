@@ -51,21 +51,6 @@ describe("Navbar", () => {
     }
   })
 
-  it("should show a link to the financial aid review page, if the user has that permission", () => {
-    SETTINGS.roles = [
-      {
-        role:        "staff",
-        permissions: ["can_edit_financial_aid"],
-        program:     1
-      }
-    ]
-    const wrapper = renderNavbar()
-    assert.equal(
-      wrapper.find("a[href='/financial_aid/review/1']").text(),
-      "Personal Price Admin"
-    )
-  })
-
   it("has a logout link", () => {
     const wrapper = renderNavbar()
     assert.equal(wrapper.find("a[href='/logout']").text(), "Logout")

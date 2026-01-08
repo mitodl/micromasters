@@ -16,11 +16,13 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from courses.models import Course
-from dashboard.models import MicromastersLearnerRecordShare, ProgramEnrollment
-from financialaid.models import FinancialAid
-from financialaid.permissions import UserCanEditFinancialAid
-from mail.api import (MailgunClient, add_automatic_email, get_mail_vars,
-                      mark_emails_as_sent)
+from dashboard.models import ProgramEnrollment, MicromastersLearnerRecordShare
+from mail.api import (
+    add_automatic_email,
+    get_mail_vars,
+    MailgunClient,
+    mark_emails_as_sent,
+)
 from mail.exceptions import SendBatchException
 from mail.models import AutomaticEmail, PartnerSchool
 from mail.permissions import (MailGunWebHookPermission,
@@ -193,39 +195,6 @@ class CourseTeamMailView(GenericAPIView):
             course=course,
             subject=serializer.data['email_subject'],
             body=serializer.data['email_body']
-        )
-        return Response(
-            status=mailgun_response.status_code,
-            data=generate_mailgun_response_json(mailgun_response)
-        )
-
-
-class FinancialAidMailView(GenericAPIView):
-    """
-    View for sending financial aid emails to individual learners
-    """
-    serializer_class = GenericMailSerializer
-    authentication_classes = (
-        authentication.SessionAuthentication,
-        authentication.TokenAuthentication,
-    )
-    permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, UserCanEditFinancialAid)
-    lookup_field = "id"
-    lookup_url_kwarg = "financial_aid_id"
-    queryset = FinancialAid.objects.all()
-
-    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
-        """
-        Post request to send emails to an individual learner
-        """
-        financial_aid = self.get_object()
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        mailgun_response = MailgunClient.send_financial_aid_email(
-            body=serializer.data['email_body'],
-            acting_user=request.user,
-            subject=serializer.data['email_subject'],
-            financial_aid=financial_aid
         )
         return Response(
             status=mailgun_response.status_code,
