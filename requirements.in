@@ -34,7 +34,7 @@ psycopg2==2.8.6
 pycountry==16.11.27.1
 python-dateutil
 sentry-sdk==1.1.0
-redis==3.5.3
+redis==4.4.4
 requests>=2.20.0
 setuptools==67.6.1
 six>=1.11.0

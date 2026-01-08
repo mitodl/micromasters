@@ -10,6 +10,8 @@ anyascii==0.2.0
     # via wagtail
 asttokens==2.2.1
     # via stack-data
+async-timeout==4.0.2
+    # via redis
 backcall==0.1.0
     # via ipython
 beautifulsoup4==4.8.2
@@ -226,7 +228,7 @@ pytz==2023.3
     #   django
     #   django-modelcluster
     #   l18n
-redis==3.5.3
+redis==4.4.4
     # via
     #   -r requirements.in
     #   django-redis
