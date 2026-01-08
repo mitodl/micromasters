@@ -9,11 +9,9 @@ from micromasters.models import TimestampedModel
 class PercolateQuery(TimestampedModel):
     """An opensearch query used in percolate"""
     AUTOMATIC_EMAIL_TYPE = 'automatic_email_type'
-    DISCUSSION_CHANNEL_TYPE = 'discussion_channel_type'
 
     SOURCE_TYPES = [
         AUTOMATIC_EMAIL_TYPE,
-        DISCUSSION_CHANNEL_TYPE,
     ]
 
     original_query = JSONField()

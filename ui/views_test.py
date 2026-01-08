@@ -244,7 +244,6 @@ class DashboardTests(ViewsTests):
         mitxonline_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
-        open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -256,7 +255,6 @@ class DashboardTests(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             OPENSEARCH_DEFAULT_PAGE_SIZE=10,
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url,
         ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             resp = self.client.get(DASHBOARD_URL)
 
@@ -294,13 +292,10 @@ class DashboardTests(ViewsTests):
                 'public_path': '/static/bundles/',
                 'FEATURES': {
                     'PROGRAM_LEARNERS': False,
-                    'DISCUSSIONS_POST_UI': False,
-                    'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                     'PROGRAM_RECORD_LINK': False,
                     'ENABLE_PROGRAM_LETTER': False,
 
                 },
-                'open_discussions_redirect_url': open_discussions_redirect_url
             }
             assert resp.context['is_public'] is False
             assert resp.context['has_zendesk_widget'] is True
@@ -704,7 +699,6 @@ class TestUsersPage(ViewsTests):
         mitxonline_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
-        open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -716,7 +710,6 @@ class TestUsersPage(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             OPENSEARCH_DEFAULT_PAGE_SIZE=10,
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -755,12 +748,9 @@ class TestUsersPage(ViewsTests):
                     'public_path': '/static/bundles/',
                     'FEATURES': {
                         'PROGRAM_LEARNERS': False,
-                        'DISCUSSIONS_POST_UI': False,
-                        'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                         'PROGRAM_RECORD_LINK': False,
                         'ENABLE_PROGRAM_LETTER': False,
                     },
-                    'open_discussions_redirect_url': open_discussions_redirect_url
                 }
                 assert has_permission.called
 
@@ -788,7 +778,6 @@ class TestUsersPage(ViewsTests):
         mitxonline_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
-        open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -800,7 +789,6 @@ class TestUsersPage(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             OPENSEARCH_DEFAULT_PAGE_SIZE=10,
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -832,12 +820,9 @@ class TestUsersPage(ViewsTests):
                     'public_path': '/static/bundles/',
                     'FEATURES': {
                         'PROGRAM_LEARNERS': False,
-                        'DISCUSSIONS_POST_UI': False,
-                        'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                         'PROGRAM_RECORD_LINK': False,
                         'ENABLE_PROGRAM_LETTER': False,
                     },
-                    'open_discussions_redirect_url': open_discussions_redirect_url
                 }
                 assert has_permission.called
 

@@ -46,7 +46,6 @@ from profiles.factories import ProfileFactory
 from micromasters.factories import UserFactory
 from search.api import adjust_search_for_percolator
 from search.base import MockedESTestCase
-from search.factories import PercolateQueryFactory
 from search.models import PercolateQuery
 
 
@@ -554,8 +553,7 @@ class AutomaticEmailTests(MockedESTestCase):
         cls.program_enrollment_sent = ProgramEnrollmentFactory.create()
         cls.automatic_email = AutomaticEmailFactory.create(enabled=True)
         cls.percolate_query = cls.automatic_email.query
-        cls.other_query = PercolateQueryFactory.create(source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE)
-        cls.percolate_queries = [cls.percolate_query, cls.other_query]
+        cls.percolate_queries = [cls.percolate_query]
         cls.automatic_email_disabled = AutomaticEmailFactory.create(enabled=False)
         cls.percolate_query_disabled = cls.automatic_email_disabled.query
         SentAutomaticEmail.objects.create(

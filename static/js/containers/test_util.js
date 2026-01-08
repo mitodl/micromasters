@@ -1,6 +1,4 @@
 // @flow
-import R from "ramda"
-
 import {
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
@@ -34,9 +32,7 @@ export const DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS = SUCCESS_ACTIONS.concat([
   actions.prices.get.requestType,
   actions.prices.get.successType,
   REQUEST_FETCH_COUPONS,
-  RECEIVE_FETCH_COUPONS_SUCCESS,
-  actions.discussionsFrontpage.get.requestType,
-  actions.discussionsFrontpage.get.successType
+  RECEIVE_FETCH_COUPONS_SUCCESS
 ])
 
 export const DASHBOARD_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.concat(
@@ -46,34 +42,11 @@ export const DASHBOARD_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.c
   ]
 )
 
-export const DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS = R.filter(
-  R.compose(
-    R.not,
-    R.contains(R.__, [
-      actions.discussionsFrontpage.get.requestType,
-      actions.discussionsFrontpage.get.successType
-    ])
-  ),
-  DASHBOARD_SUCCESS_ACTIONS
-)
-
-export const DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS = R.filter(
-  R.compose(
-    R.not,
-    R.contains(R.__, [
-      actions.discussionsFrontpage.get.requestType,
-      actions.discussionsFrontpage.get.successType
-    ])
-  ),
-  DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
-)
-
 export const DASHBOARD_ERROR_ACTIONS = SUCCESS_ACTIONS.concat([
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_FAILURE,
   actions.prices.get.requestType,
   actions.prices.get.successType,
-  actions.discussionsFrontpage.get.requestType,
   REQUEST_FETCH_COUPONS,
   RECEIVE_FETCH_COUPONS_SUCCESS
 ])

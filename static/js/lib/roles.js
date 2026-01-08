@@ -28,7 +28,6 @@ export const canAdvanceSearchProgram = hasPermForProgram("can_advance_search")
 export const canMessageLearnersProgram = hasPermForProgram(
   "can_message_learners"
 )
-export const canCreateChannelProgram = hasPermForProgram("can_create_forums")
 
 export const hasEditAbility = hasRolePerm("can_edit_financial_aid")
 

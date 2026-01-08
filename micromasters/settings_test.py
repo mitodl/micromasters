@@ -14,7 +14,6 @@ REQUIRED_SETTINGS = {
     "MAILGUN_URL": "mailgun.fake.url",
     "MAILGUN_KEY": "fake_mailgun_key",
     "OPENSEARCH_INDEX": "fake_esindex",
-    "OPEN_DISCUSSIONS_SITE_KEY": "fake.key",
 }
 
 

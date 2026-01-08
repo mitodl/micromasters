@@ -10,7 +10,7 @@ import {
   CYBERSOURCE_CHECKOUT_RESPONSE,
   EDX_CHECKOUT_RESPONSE
 } from "../test_constants"
-import { DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS } from "./test_util"
+import { DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS } from "./test_util"
 import { findCourse } from "../util/test_utils"
 
 describe("OrderSummaryPage", () => {
@@ -32,22 +32,21 @@ describe("OrderSummaryPage", () => {
   })
 
   it("shows a spinner when dashboard get is processing", () => {
-    return renderComponent(
-      url,
-      DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS
-    ).then(([, div]) => {
-      assert.notOk(
-        div.querySelector(".loader"),
-        "Found spinner but no fetch in progress"
-      )
-      helper.store.dispatch({
-        type:    REQUEST_DASHBOARD,
-        payload: false,
-        meta:    SETTINGS.user.username
-      })
+    return renderComponent(url, DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
+      ([, div]) => {
+        assert.notOk(
+          div.querySelector(".loader"),
+          "Found spinner but no fetch in progress"
+        )
+        helper.store.dispatch({
+          type:    REQUEST_DASHBOARD,
+          payload: false,
+          meta:    SETTINGS.user.username
+        })
 
-      assert(div.querySelector(".loader"), "Unable to find spinner")
-    })
+        assert(div.querySelector(".loader"), "Unable to find spinner")
+      }
+    )
   })
 
   describe("checkout", () => {
@@ -57,23 +56,22 @@ describe("OrderSummaryPage", () => {
         .stub(actions, "checkout")
         .returns(() => promise)
 
-      return renderComponent(
-        url,
-        DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS
-      ).then(([wrapper]) => {
-        wrapper.update()
-        wrapper
-          .find("SpinnerButton")
-          .props()
-          .onClick()
+      return renderComponent(url, DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
+        ([wrapper]) => {
+          wrapper.update()
+          wrapper
+            .find("SpinnerButton")
+            .props()
+            .onClick()
 
-        assert.equal(checkoutStub.callCount, 1)
-        assert.deepEqual(checkoutStub.args[0], [run.course_id])
+          assert.equal(checkoutStub.callCount, 1)
+          assert.deepEqual(checkoutStub.args[0], [run.course_id])
 
-        return promise.then(() => {
-          assert.equal(window.location.toString(), EDX_CHECKOUT_RESPONSE.url)
-        })
-      })
+          return promise.then(() => {
+            assert.equal(window.location.toString(), EDX_CHECKOUT_RESPONSE.url)
+          })
+        }
+      )
     })
 
     it("constructs a form to be sent to Cybersource and submits it", () => {
@@ -89,32 +87,31 @@ describe("OrderSummaryPage", () => {
         .stub(util, "createForm")
         .returns(fakeForm)
 
-      return renderComponent(
-        url,
-        DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS
-      ).then(([wrapper]) => {
-        wrapper.update()
-        wrapper
-          .find("SpinnerButton")
-          .props()
-          .onClick()
+      return renderComponent(url, DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS).then(
+        ([wrapper]) => {
+          wrapper.update()
+          wrapper
+            .find("SpinnerButton")
+            .props()
+            .onClick()
 
-        assert.equal(checkoutStub.callCount, 1)
-        assert.deepEqual(checkoutStub.args[0], [run.course_id])
+          assert.equal(checkoutStub.callCount, 1)
+          assert.deepEqual(checkoutStub.args[0], [run.course_id])
 
-        return promise.then(() => {
-          const { url, payload } = CYBERSOURCE_CHECKOUT_RESPONSE
-          assert.equal(createFormStub.callCount, 1)
-          assert.deepEqual(createFormStub.args[0], [url, payload])
+          return promise.then(() => {
+            const { url, payload } = CYBERSOURCE_CHECKOUT_RESPONSE
+            assert.equal(createFormStub.callCount, 1)
+            assert.deepEqual(createFormStub.args[0], [url, payload])
 
-          assert(
-            document.body.querySelector(".fake-form"),
-            "fake form not found in body"
-          )
-          assert.equal(submitStub.callCount, 1)
-          assert.deepEqual(submitStub.args[0], [])
-        })
-      })
+            assert(
+              document.body.querySelector(".fake-form"),
+              "fake form not found in body"
+            )
+            assert.equal(submitStub.callCount, 1)
+            assert.deepEqual(submitStub.args[0], [])
+          })
+        }
+      )
     })
   })
 })

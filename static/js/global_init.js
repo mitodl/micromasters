@@ -23,13 +23,10 @@ const _createSettings = () => ({
   support_email:       "a_real_email@example.com",
   es_page_size:        40,
   FEATURES:            {
-    PROGRAM_LEARNERS:              true,
-    DISCUSSIONS_POST_UI:           true,
-    DISCUSSIONS_CREATE_CHANNEL_UI: true,
-    PROGRAM_RECORD_LINK:           true,
-    ENABLE_PROGRAM_LETTER:         true
+    PROGRAM_LEARNERS:      true,
+    PROGRAM_RECORD_LINK:   true,
+    ENABLE_PROGRAM_LETTER: true
   },
-  open_discussions_redirect_url: "http://open.discussions",
   get username() {
     throw new Error("username was removed")
   }

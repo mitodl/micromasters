@@ -17,7 +17,6 @@ from search.base import MockedESTestCase
 from search.exceptions import ReindexException
 from search.factories import PercolateQueryFactory
 from search.indexing_api import create_backing_indices
-from search.models import PercolateQuery
 from search.tasks import (
     index_users,
     index_program_enrolled_users, start_recreate_index, bulk_index_percolate_queries, bulk_index_program_enrollments,
@@ -64,9 +63,6 @@ def fail_first():
 @ddt
 @override_settings(
     OPENSEARCH_INDEX=FAKE_INDEX,
-    OPEN_DISCUSSIONS_JWT_SECRET='secret',
-    OPEN_DISCUSSIONS_BASE_URL='http://fake',
-    OPEN_DISCUSSIONS_API_USERNAME='mitodl',
 )
 class SearchTasksTests(MockedESTestCase):
     """
@@ -85,8 +81,6 @@ class SearchTasksTests(MockedESTestCase):
                 self.send_automatic_emails_mock = mock
             elif mock.name == "_refresh_all_default_indices":
                 self.refresh_index_mock = mock
-            elif mock.name == "_update_percolate_memberships":
-                self.update_percolate_memberships_mock = mock
 
     def test_index_users(self):
         """
@@ -105,8 +99,6 @@ class SearchTasksTests(MockedESTestCase):
         )
         for enrollment in [enrollment1, enrollment2]:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
-            self.update_percolate_memberships_mock.assert_any_call(
-                enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
         self.refresh_index_mock.assert_called_with()
 
     @data(*[
@@ -148,8 +140,6 @@ class SearchTasksTests(MockedESTestCase):
             self.index_program_enrolled_users_mock.assert_called_once_with(needs_update_list)
             for enrollment in needs_update_list:
                 self.send_automatic_emails_mock.assert_any_call(enrollment)
-                self.update_percolate_memberships_mock.assert_any_call(
-                    enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
         else:
             assert self.index_program_enrolled_users_mock.called is False
             assert self.send_automatic_emails_mock.called is False
@@ -167,8 +157,6 @@ class SearchTasksTests(MockedESTestCase):
         ) == enrollment_ids
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
-            self.update_percolate_memberships_mock.assert_any_call(
-                enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
         self.refresh_index_mock.assert_called_with()
 
     def test_failed_automatic_email(self):
@@ -186,34 +174,7 @@ class SearchTasksTests(MockedESTestCase):
         ) == enrollment_ids
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
-            self.update_percolate_memberships_mock.assert_any_call(
-                enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE
-            )
         assert self.send_automatic_emails_mock.call_count == len(enrollments)
-        assert self.update_percolate_memberships_mock.call_count == len(enrollments)
-        self.refresh_index_mock.assert_called_with()
-
-    def test_failed_update_percolate_memberships(self):
-        """
-        If we fail to update percolate memberships for one enrollment we should still update it for other enrollments
-        """
-        enrollments = [ProgramEnrollmentFactory.create() for _ in range(2)]
-        enrollment_ids = [enrollment.id for enrollment in enrollments]
-
-        self.update_percolate_memberships_mock.side_effect = fail_first()
-
-        index_program_enrolled_users(enrollment_ids)
-        assert list(
-            self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)
-        ) == enrollment_ids
-
-        for enrollment in enrollments:
-            self.send_automatic_emails_mock.assert_any_call(enrollment)
-            self.update_percolate_memberships_mock.assert_any_call(
-                enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE
-            )
-        assert self.send_automatic_emails_mock.call_count == len(enrollments)
-        assert self.update_percolate_memberships_mock.call_count == len(enrollments)
         self.refresh_index_mock.assert_called_with()
 
 

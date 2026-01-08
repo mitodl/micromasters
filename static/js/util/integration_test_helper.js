@@ -9,7 +9,6 @@ import fetchMock from "fetch-mock"
 
 import * as api from "../lib/api"
 import * as djangoFetch from "redux-hammock/django_csrf_fetch"
-import * as authFetch from "../lib/auth"
 import {
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
@@ -56,11 +55,6 @@ export default class IntegrationTestHelper {
       "fetchJSONWithCSRF"
     )
 
-    this.fetchJSONWithAuthStub = this.sandbox.stub(
-      authFetch,
-      "fetchJSONWithAuthToken"
-    )
-
     this.listenForActions = this.store.createListenForActions()
     this.dispatchThen = this.store.createDispatchThen()
 
@@ -78,11 +72,6 @@ export default class IntegrationTestHelper {
       `/api/v0/programlearners/${PROGRAMS[0].id}/`
     )
     this.programLearnersStub.returns(Promise.resolve(PROGRAM_LEARNERS_RESPONSE))
-
-    this.discussionsFrontpageStub = this.fetchJSONWithAuthStub.withArgs(
-      "http://open.discussions/api/v0/frontpage/"
-    )
-    this.discussionsFrontpageStub.returns(Promise.resolve([]))
 
     this.couponsStub = this.sandbox.stub(api, "getCoupons")
     this.couponsStub.returns(Promise.resolve([]))
