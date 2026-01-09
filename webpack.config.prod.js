@@ -19,6 +19,10 @@ const SENTRY_RELEASE = fs.readFileSync(
   filePath, "utf8").split("\r?\n/")[0].trim();
 
 const prodConfig = Object.assign({}, config);
+
+const sentryCliPath = path.resolve('./node_modules/@sentry/cli/sentry-cli');
+const sentryCliAvailable = fs.existsSync(sentryCliPath);
+
 prodConfig.module.rules = [
   prodBabelConfig,
   ...config.module.rules,
@@ -60,7 +64,7 @@ module.exports = Object.assign(prodConfig, {
     new MiniCssExtractPlugin({
       filename: "styles-[name]-[contenthash].css"
     }),
-    ...process.env.MICROMASTERS_ENVIRONMENT ? [new SentryWebpackPlugin({
+    ...process.env.MICROMASTERS_ENVIRONMENT && sentryCliAvailable ? [new SentryWebpackPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org : process.env.SENTRY_ORG_NAME,
       project : process.env.SENTRY_PROJECT_NAME,
