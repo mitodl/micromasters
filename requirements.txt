@@ -205,7 +205,7 @@ pycparser==2.21
     # via cffi
 pygments==2.15.0
     # via ipython
-pyjwt==1.5.2
+pyjwt==2.4.0
     # via social-auth-core
 pymongo==3.7.1
     # via edx-opaque-keys
