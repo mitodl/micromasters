@@ -285,7 +285,7 @@ tablib[xls,xlsx]==3.0.0
     # via wagtail
 text-unidecode==1.2
     # via faker
-tornado==5.1.1
+tornado==6.3.3
     # via robohash
 traitlets==5.9.0
     # via
