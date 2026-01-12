@@ -45,8 +45,9 @@ class TestSettings(MockedESTestCase):
             'MICROMASTERS_USE_S3': 'False'
         }, clear=True):
             settings_vars = self.reload_settings()
+            storages = settings_vars.get('STORAGES', {})
             self.assertNotEqual(
-                settings_vars.get('DEFAULT_FILE_STORAGE'),
+                storages.get('default', {}).get('BACKEND'),
                 'storages.backends.s3boto3.S3Boto3Storage'
             )
 
@@ -66,8 +67,9 @@ class TestSettings(MockedESTestCase):
             'AWS_STORAGE_BUCKET_NAME': '3',
         }, clear=True):
             settings_vars = self.reload_settings()
+            storages = settings_vars.get('STORAGES', {})
             self.assertEqual(
-                settings_vars.get('DEFAULT_FILE_STORAGE'),
+                storages.get('default', {}).get('BACKEND'),
                 'storages.backends.s3boto3.S3Boto3Storage'
             )
 
