@@ -26,13 +26,11 @@ ipython
 jsonfield>=3.1.0
 jsonpatch==1.16
 newrelic
-# Install from a specific commit of the fork
-open-discussions-client @ git+https://github.com/Anas12091101/open-discussions-client.git@584fc5262b75d8cd06bcc94fb72e9bd22887dc03
 PyJWT==2.8.0
 phonenumbers>=8.12.0
 psycopg2>=2.9
 pycountry
-python-dateutil
+python-dateutil>=2.8.2
 sentry-sdk==1.1.0
 redis>=4.0
 requests>=2.20.0

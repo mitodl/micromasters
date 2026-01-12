@@ -456,11 +456,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 MEDIA_ROOT = get_string('MEDIA_ROOT', '/var/media/')
 MEDIA_URL = '/media/'
 MICROMASTERS_USE_S3 = get_bool('MICROMASTERS_USE_S3', False)
-AWS_ACCESS_KEY_ID = get_string('AWS_ACCESS_KEY_ID', False)
-AWS_SECRET_ACCESS_KEY = get_string('AWS_SECRET_ACCESS_KEY', False)
-AWS_STORAGE_BUCKET_NAME = get_string('AWS_STORAGE_BUCKET_NAME', False)
+AWS_ACCESS_KEY_ID = get_string('AWS_ACCESS_KEY_ID', None)
+AWS_SECRET_ACCESS_KEY = get_string('AWS_SECRET_ACCESS_KEY', None)
+AWS_STORAGE_BUCKET_NAME = get_string('AWS_STORAGE_BUCKET_NAME', None)
 AWS_S3_FILE_OVERWRITE = get_bool('AWS_S3_FILE_OVERWRITE', False)
-AWS_QUERYSTRING_AUTH = get_string('AWS_QUERYSTRING_AUTH', False)
+AWS_QUERYSTRING_AUTH = get_bool('AWS_QUERYSTRING_AUTH', False)
+# Additional S3 settings for django-storages
+AWS_DEFAULT_ACL = get_string('AWS_DEFAULT_ACL', None)  # None means use bucket's default ACL
+AWS_S3_REGION_NAME = get_string('AWS_S3_REGION_NAME', None)  # e.g., 'us-east-1'
 # Provide nice validation of the configuration
 if (
         MICROMASTERS_USE_S3 and
@@ -473,8 +476,39 @@ if (
         'AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, or '
         'AWS_STORAGE_BUCKET_NAME'
     )
+
+# Configure Django Storages for S3
 if MICROMASTERS_USE_S3:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "file_overwrite": AWS_S3_FILE_OVERWRITE,
+                "querystring_auth": AWS_QUERYSTRING_AUTH,
+                "default_acl": AWS_DEFAULT_ACL,
+                "custom_domain": AWS_S3_CUSTOM_DOMAIN if CLOUDFRONT_DIST else None,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "static",  # Store static files in a 'static' folder in the bucket
+                "file_overwrite": True,  # Overwrite static files on each collectstatic
+                "querystring_auth": False,  # Don't add auth query params to static file URLs
+                "default_acl": "public-read",  # Make static files publicly readable
+                "custom_domain": AWS_S3_CUSTOM_DOMAIN if CLOUDFRONT_DIST else None,
+            },
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 # Celery
 USE_CELERY = True
