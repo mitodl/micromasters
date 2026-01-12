@@ -289,6 +289,7 @@ USE_TZ = True
 # Serve static files with dj-static
 STATIC_URL = '/static/'
 CLOUDFRONT_DIST = get_string('CLOUDFRONT_DIST', None)
+AWS_S3_CUSTOM_DOMAIN = None
 if CLOUDFRONT_DIST:
     STATIC_URL = urljoin(f'https://{CLOUDFRONT_DIST}.cloudfront.net', STATIC_URL)
     # Configure Django Storages to use Cloudfront distribution for S3 assets
