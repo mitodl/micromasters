@@ -4,22 +4,17 @@ Library functions for interacting with test data
 import re
 from datetime import timedelta
 
-<<<<<<< HEAD
 from django.contrib.auth import get_user_model
 from django.db import transaction
-=======
->>>>>>> 33730056 (Initial plan)
 from django.db.utils import IntegrityError
 
 from courses.models import Course, CourseRun, Program
 from dashboard.api_edx_cache import CachedEdxDataApi
-<<<<<<< HEAD
 from dashboard.models import (CachedCertificate, CachedCurrentGrade,
                               CachedEnrollment, UserCacheRefreshTime)
-from ecommerce.models import Line, Order
 from grades.models import FinalGrade, FinalGradeStatus
-from micromasters.utils import now_in_utc, remove_falsey_values
-from seed_data.management.commands import (DEFAULT_GRADE, DEFAULT_PRICE,
+from micromasters.utils import now_in_utc
+from seed_data.management.commands import (DEFAULT_GRADE,
                                            FAKE_PROGRAM_DESC_PREFIX,
                                            PASSING_GRADE)
 from seed_data.utils import (accepts_or_calculates_now,
@@ -28,25 +23,6 @@ from seed_data.utils import (accepts_or_calculates_now,
                              future_date)
 
 User = get_user_model()
-=======
-from dashboard.models import CachedCertificate, CachedEnrollment, CachedCurrentGrade, UserCacheRefreshTime
-from grades.models import FinalGrade, FinalGradeStatus
-from micromasters.utils import (
-    now_in_utc,
-)
-from seed_data.management.commands import (
-    DEFAULT_GRADE,
-    FAKE_PROGRAM_DESC_PREFIX,
-    PASSING_GRADE,
-)
-from seed_data.utils import (
-    create_active_date_range,
-    create_future_date_range,
-    create_past_date_range,
-    future_date,
-    accepts_or_calculates_now,
-)
->>>>>>> 33730056 (Initial plan)
 
 
 def fake_programs_query():

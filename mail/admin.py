@@ -13,5 +13,3 @@ class PartnerSchoolAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', )
     ordering = ('name', 'email', )
 
-
-admin.site.register(PartnerSchool, PartnerSchoolAdmin)
