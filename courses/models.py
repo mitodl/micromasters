@@ -9,14 +9,11 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.functional import cached_property
 
+from backends.constants import (BACKEND_EDX_ORG, BACKEND_MITX_ONLINE,
+                                COURSEWARE_BACKENDS)
 from grades.constants import FinalGradeStatus
 from micromasters.models import TimestampedModel
-from micromasters.utils import (
-    first_matching_item,
-    now_in_utc,
-)
-
-from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE, COURSEWARE_BACKENDS
+from micromasters.utils import first_matching_item, now_in_utc
 
 log = logging.getLogger(__name__)
 
@@ -52,7 +49,7 @@ class Program(TimestampedModel):
         """
         Return true if has frozen grades for all courses in the program
         """
-        return all([course.has_frozen_runs() for course in self.course_set.all()])
+        return all(course.has_frozen_runs() for course in self.course_set.all())
 
     @cached_property
     def enrollable_course_runs(self):
@@ -124,7 +121,7 @@ class Course(models.Model):
             return ""
         return urllib.parse.urljoin(
             settings.EDXORG_CALLBACK_URL,
-            'courses/{key}/about'.format(key=course_run.edx_course_key)
+            f'courses/{course_run.edx_course_key}/about'
         )
 
     @property
@@ -150,25 +147,18 @@ class Course(models.Model):
 
         if course_run.is_current:
             if course_run.enrollment_end:
-                end_text = 'Enrollment Ends {:%b %-d, %Y}'.format(
-                    course_run.enrollment_end
-                )
+                end_text = f'Enrollment Ends {course_run.enrollment_end:%b %-d, %Y}'
             else:
                 end_text = 'Enrollment Open'
-            return "Ongoing - {end}".format(end=end_text)
+            return f"Ongoing - {end_text}"
         elif course_run.is_future:
             if course_run.is_future_enrollment_open:
                 end_text = ' - Enrollment Open'
             elif course_run.enrollment_start:
-                end_text = ' - Enrollment {:%m/%Y}'.format(
-                    course_run.enrollment_start
-                )
+                end_text = f' - Enrollment {course_run.enrollment_start:%m/%Y}'
             else:
                 end_text = ''
-            return "Starts {start:%b %-d, %Y}{end}".format(
-                start=course_run.start_date,
-                end=end_text,
-            )
+            return f"Starts {course_run.start_date:%b %-d, %Y}{end_text}"
         else:
             return "Not available"
 
@@ -176,7 +166,7 @@ class Course(models.Model):
         """
         Return true if has any frozen runs
         """
-        return any([run.has_frozen_grades for run in self.courserun_set.not_discontinued()])
+        return any(run.has_frozen_grades for run in self.courserun_set.not_discontinued())
 
     def first_unexpired_run(self):
         """
@@ -397,10 +387,7 @@ class ElectivesSet(models.Model):
     title = models.CharField(max_length=255)
 
     def __str__(self):
-        return 'An electives set "{title}" for program "{program_title}"'.format(
-            title=self.title,
-            program_title=self.program.title
-        )
+        return f'An electives set "{self.title}" for program "{self.program.title}"'
 
 
 class ElectiveCourse(models.Model):
@@ -414,7 +401,4 @@ class ElectiveCourse(models.Model):
         unique_together = ('course', 'electives_set',)
 
     def __str__(self):
-        return 'Elective course "{course_title}" in electives set "{electives_set}"'.format(
-            course_title=self.course.title,
-            electives_set=self.electives_set.title
-        )
+        return f'Elective course "{self.course.title}" in electives set "{self.electives_set.title}"'

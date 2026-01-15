@@ -3,6 +3,7 @@ Tests for mail utils
 """
 
 from unittest.mock import Mock
+
 from django.core.exceptions import ValidationError
 from requests import Response
 from rest_framework import status
@@ -10,23 +11,18 @@ from rest_framework import status
 from courses.factories import CourseRunFactory
 from dashboard.models import ProgramEnrollment
 from financialaid.api import get_formatted_course_price
-from financialaid.constants import (
-    FINANCIAL_AID_APPROVAL_MESSAGE,
-    FINANCIAL_AID_APPROVAL_SUBJECT,
-    FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT,
-    FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
-    FINANCIAL_AID_DOCUMENTS_RESET_MESSAGE,
-    FINANCIAL_AID_RESET_SUBJECT,
-    FINANCIAL_AID_EMAIL_BODY,
-    FinancialAidStatus
-)
+from financialaid.constants import (FINANCIAL_AID_APPROVAL_MESSAGE,
+                                    FINANCIAL_AID_APPROVAL_SUBJECT,
+                                    FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
+                                    FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT,
+                                    FINANCIAL_AID_DOCUMENTS_RESET_MESSAGE,
+                                    FINANCIAL_AID_EMAIL_BODY,
+                                    FINANCIAL_AID_RESET_SUBJECT,
+                                    FinancialAidStatus)
 from financialaid.factories import FinancialAidFactory
-from mail.utils import (
-    generate_financial_aid_email,
-    generate_mailgun_response_json,
-    filter_recipient_variables,
-    RECIPIENT_VARIABLE_NAMES,
-)
+from mail.utils import (RECIPIENT_VARIABLE_NAMES, filter_recipient_variables,
+                        generate_financial_aid_email,
+                        generate_mailgun_response_json)
 from mail.views_test import mocked_json
 from search.base import MockedESTestCase
 

@@ -3,44 +3,32 @@ Tests for search API functionality
 """
 from itertools import product
 from unittest.mock import Mock, patch
+
 import ddt
-from opensearch_dsl import Search, Q
-from factory.django import mute_signals
-from django.test import (
-    override_settings,
-)
 from django.db.models.signals import post_save
+from django.test import override_settings
+from factory.django import mute_signals
+from opensearch_dsl import Q, Search
 
 from courses.factories import ProgramFactory
-from dashboard.models import ProgramEnrollment
 from dashboard.factories import ProgramEnrollmentFactory
+from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff
-from search.api import (
-    adjust_search_for_percolator,
-    create_search_obj,
-    document_needs_updating,
-    execute_search,
-    get_all_query_matching_emails,
-    prepare_and_execute_search,
-    search_for_field,
-    search_percolate_queries,
-    update_percolate_memberships,
-    populate_query_memberships,
-)
+from search.api import (adjust_search_for_percolator, create_search_obj,
+                        document_needs_updating, execute_search,
+                        get_all_query_matching_emails,
+                        populate_query_memberships, prepare_and_execute_search,
+                        search_for_field, search_percolate_queries,
+                        update_percolate_memberships)
 from search.base import ESTestCase
-from search.connection import (
-    get_default_alias,
-    PRIVATE_ENROLLMENT_INDEX_TYPE,
-    PUBLIC_ENROLLMENT_INDEX_TYPE,
-)
-from search.exceptions import (
-    NoProgramAccessException,
-    PercolateException,
-)
-from search.factories import PercolateQueryFactory, PercolateQueryMembershipFactory
+from search.connection import (PRIVATE_ENROLLMENT_INDEX_TYPE,
+                               PUBLIC_ENROLLMENT_INDEX_TYPE, get_default_alias)
+from search.exceptions import NoProgramAccessException, PercolateException
+from search.factories import (PercolateQueryFactory,
+                              PercolateQueryMembershipFactory)
 from search.models import PercolateQuery, PercolateQueryMembership
 
 
@@ -309,7 +297,7 @@ class PercolateTests(ESTestCase):
         with mute_signals(post_save):
             profile = ProfileFactory.create(filled_out=True)
         program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
-        assert list(search_percolate_queries(program_enrollment.id, PercolateQuery.AUTOMATIC_EMAIL_TYPE)) == []
+        assert not list(search_percolate_queries(program_enrollment.id, PercolateQuery.AUTOMATIC_EMAIL_TYPE))
 
     def test_adjust_search_for_percolator(self, mock_on_commit):
         """adjust_search_for_percolator should move post_filter into the query itself and remove all other pieces"""
@@ -394,7 +382,7 @@ class PercolateTests(ESTestCase):
             'search.api.get_conn', return_value=Mock(search=Mock(return_value=failure_payload))
         ):
             search_percolate_queries(program_enrollment.id, "doesnt_matter")
-        assert ex.exception.args[0] == "Failed to percolate: {}".format(failures)
+        assert ex.exception.args[0] == f"Failed to percolate: {failures}"
 
     def test_percolate_failure_user_unenroll_program(self, mock_on_commit):
         """

@@ -1,6 +1,6 @@
 """Functions reading and parsing environment variables"""
-from ast import literal_eval
 import os
+from ast import literal_eval
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -46,10 +46,7 @@ def get_bool(name, default):
     elif parsed_value == 'false':
         return False
 
-    raise EnvironmentVariableParseException("Expected value in {name}={value} to be a boolean".format(
-        name=name,
-        value=value,
-    ))
+    raise EnvironmentVariableParseException(f"Expected value in {name}={value} to be a boolean")
 
 
 def get_int(name, default):
@@ -71,10 +68,7 @@ def get_int(name, default):
     try:
         parsed_value = int(value)
     except ValueError as ex:
-        raise EnvironmentVariableParseException("Expected value in {name}={value} to be an int".format(
-            name=name,
-            value=value,
-        )) from ex
+        raise EnvironmentVariableParseException(f"Expected value in {name}={value} to be an int") from ex
 
     return parsed_value
 
@@ -95,10 +89,7 @@ def get_list_of_str(name, default):
     if value is None:
         return default
 
-    parse_exception = EnvironmentVariableParseException("Expected value in {name}={value} to be a list of str".format(
-        name=name,
-        value=value,
-    ))
+    parse_exception = EnvironmentVariableParseException(f"Expected value in {name}={value} to be a list of str")
 
     try:
         parsed_value = literal_eval(value)

@@ -3,12 +3,11 @@ Tests for ecommerce admin interface
 """
 from unittest.mock import Mock
 
-from search.base import MockedESTestCase
-
 from ecommerce.admin import OrderAdmin
 from ecommerce.factories import OrderFactory
 from ecommerce.models import OrderAudit
 from profiles.factories import UserFactory
+from search.base import MockedESTestCase
 
 
 class AdminTest(MockedESTestCase):

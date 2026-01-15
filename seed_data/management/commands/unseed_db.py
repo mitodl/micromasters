@@ -2,23 +2,26 @@
 Deletes a set of realistic users/programs that were added to help us test search functionality
 """
 from contextlib import contextmanager
-from factory.django import mute_signals
+
+from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand
 from django.db import connection
 from django.db.models import Q
 from django.db.models.signals import post_delete
-from django.contrib.auth.models import User
+from factory.django import mute_signals
 
 from courses.models import Program
-from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
-from financialaid.models import FinancialAid, FinancialAidAudit, Tier, TierProgram
+from dashboard.models import (CachedCertificate, CachedCurrentGrade,
+                              CachedEnrollment)
+from financialaid.models import (FinancialAid, FinancialAidAudit, Tier,
+                                 TierProgram)
 from grades.models import FinalGrade
 from mail.models import FinancialAidEmailAudit
 from search.tasks import start_recreate_index
+
+User = get_user_model()
 from seed_data.management.commands import (  # pylint: disable=import-error
-    FAKE_USER_USERNAME_PREFIX,
-    FAKE_PROGRAM_DESC_PREFIX,
-)
+    FAKE_PROGRAM_DESC_PREFIX, FAKE_USER_USERNAME_PREFIX)
 
 
 @contextmanager
@@ -32,12 +35,12 @@ def remove_delete_protection(*models):
     table_names = [model._meta.db_table for model in models]
     with connection.cursor() as cursor:
         for table_name in table_names:
-            cursor.execute("DROP RULE delete_protect ON {}".format(table_name))
+            cursor.execute(f"DROP RULE delete_protect ON {table_name}")
         try:
             yield
         finally:
             for table_name in reversed(table_names):
-                cursor.execute("CREATE RULE delete_protect AS ON DELETE TO {} DO INSTEAD NOTHING".format(table_name))
+                cursor.execute(f"CREATE RULE delete_protect AS ON DELETE TO {table_name} DO INSTEAD NOTHING")
 
 
 def unseed_db():

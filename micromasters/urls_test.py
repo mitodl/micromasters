@@ -1,6 +1,7 @@
 """Tests for URLs"""
 
 from unittest import TestCase
+
 from django.urls import reverse
 
 

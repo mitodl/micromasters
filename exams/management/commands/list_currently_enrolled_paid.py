@@ -2,16 +2,17 @@
 List all users that enrolled in current or future run and paid for course and have an exam attempt
 """
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand, CommandError
 from django.db import models
-
 
 from courses.models import CourseRun
 from dashboard.api import has_to_pay_for_exam
 from dashboard.models import CachedEnrollment
 from dashboard.utils import get_mmtrack
-from ecommerce.models import Order, Line
+from ecommerce.models import Line, Order
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -50,8 +51,8 @@ class Command(BaseCommand):
                     user_for_upgrade.append((user.email, course_run.edx_course_key))
 
         file_name = 'users_eligible_for_upgrade.csv'
-        path = '{}/{}'.format(settings.BASE_DIR, file_name)
-        with open(path, 'w') as f:
+        path = f'{settings.BASE_DIR}/{file_name}'
+        with open(path, 'w', encoding='utf-8') as f:
             for email, run_key in user_for_upgrade:
                 f.write(f'{email},{run_key}\n')
 

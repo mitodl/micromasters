@@ -1,21 +1,26 @@
-"""Templatetags for rendering script tags"""
+"""Templatetags for rendering script tags
+
+Adds a fallback path to read our legacy webpack-stats.json directly when
+django-webpack-loader cannot parse it (KeyError/TypeError due to format differences).
+"""
+
+import json
+from pathlib import Path
 
 from django import template
 from django.conf import settings
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
-
 from webpack_loader.utils import get_loader
 
 from micromasters.utils import webpack_dev_server_url
-
 
 register = template.Library()
 
 
 def ensure_trailing_slash(url):
     """ensure a url has a trailing slash"""
-    return url if url.endswith("/") else url + "/"
+    return url if url.endswith("/") else f"{url}/"
 
 
 def public_path(request):
@@ -41,14 +46,37 @@ def _get_bundle(request, bundle_name):
             The chunks of the bundle. Usually there's only one but I suppose you could have
             CSS and JS chunks for one bundle for example
     """
-    if not settings.DISABLE_WEBPACK_LOADER_STATS:
+    if settings.DISABLE_WEBPACK_LOADER_STATS:
+        return  # feature explicitly disabled
+
+    # Primary: use webpack_loader. Fallback: direct stats parsing.
+    try:
         for chunk in get_loader('DEFAULT').get_bundle(bundle_name):
             chunk_copy = dict(chunk)
-            chunk_copy['url'] = "{host_url}/{bundle}".format(
-                host_url=public_path(request).rstrip("/"),
-                bundle=chunk['name']
-            )
+            chunk_copy['url'] = f"{public_path(request).rstrip('/')}/{chunk['name']}"
             yield chunk_copy
+        return
+    except (KeyError, TypeError):
+        pass  # fall through to manual parsing
+    except Exception:  # pylint: disable=broad-exception-caught  # broad safety net; don't block page render
+        return
+
+    # Fallback: parse stats file directly (legacy format with top-level 'chunks').
+    stats_path = Path(settings.WEBPACK_LOADER['DEFAULT']['STATS_FILE'])
+    if not stats_path.exists():
+        return
+    try:
+        with stats_path.open(encoding='utf-8') as fp:
+            stats = json.load(fp)
+    except (OSError, json.JSONDecodeError):
+        return
+    chunks = stats.get('chunks', {})
+    for chunk in chunks.get(bundle_name, []):
+        if 'name' not in chunk:
+            continue
+        chunk_copy = dict(chunk)
+        chunk_copy['url'] = f"{public_path(request).rstrip('/')}/{chunk['name']}"
+        yield chunk_copy
 
 
 @register.simple_tag(takes_context=True)
@@ -92,11 +120,7 @@ def _render_tags(bundle, added_attrs=""):
     tags = []
     for chunk in bundle:
         if chunk['name'].endswith(('.js', '.js.gz')):
-            tags.append((
-                '<script type="text/javascript" src="{}" {} ></script>'
-            ).format(chunk['url'], added_attrs))
+            tags.append(f"<script type=\"text/javascript\" src=\"{chunk['url']}\" {added_attrs} ></script>")
         elif chunk['name'].endswith(('.css', '.css.gz')):
-            tags.append((
-                '<link type="text/css" href="{}" rel="stylesheet" {} />'
-            ).format(chunk['url'], added_attrs ))
+            tags.append(f"<link type=\"text/css\" href=\"{chunk['url']}\" rel=\"stylesheet\" {added_attrs} />")
     return mark_safe('\n'.join(tags))

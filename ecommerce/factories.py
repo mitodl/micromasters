@@ -1,36 +1,15 @@
 """
 Factories for ecommerce models
 """
-from factory import (
-    LazyAttribute,
-    SelfAttribute,
-    SubFactory,
-    Trait,
-)
-from factory.django import DjangoModelFactory
-from factory.fuzzy import (
-    FuzzyChoice,
-    FuzzyDecimal,
-    FuzzyText,
-)
 import faker
+from factory import LazyAttribute, SelfAttribute, SubFactory, Trait
+from factory.django import DjangoModelFactory
+from factory.fuzzy import FuzzyChoice, FuzzyDecimal, FuzzyText
 
-from courses.factories import (
-    CourseFactory,
-    ProgramFactory,
-)
-from ecommerce.api import (
-    make_reference_id,
-    generate_cybersource_sa_signature,
-)
-from ecommerce.models import (
-    Coupon,
-    Line,
-    Order,
-    Receipt,
-)
+from courses.factories import CourseFactory, ProgramFactory
+from ecommerce.api import generate_cybersource_sa_signature, make_reference_id
+from ecommerce.models import Coupon, Line, Order, Receipt
 from micromasters.factories import UserFactory
-
 
 FAKE = faker.Factory.create()
 

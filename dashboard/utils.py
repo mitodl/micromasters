@@ -6,26 +6,19 @@ from decimal import Decimal
 from math import floor
 
 from django.db import transaction
-from django.db.models import Q, Count
+from django.db.models import Count, Q
 from django.urls import reverse
 
-from courses.models import CourseRun, Course
+from courses.models import Course, CourseRun
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import ProgramEnrollment
-from ecommerce.models import Order, Line
-from grades.constants import FinalGradeStatus, NEW_COMBINED_FINAL_GRADES_DATE
-from grades.models import (
-    FinalGrade,
-    ProctoredExamGrade,
-    MicromastersProgramCertificate,
-    CombinedFinalGrade,
-    MicromastersCourseCertificate,
-    MicromastersProgramCommendation)
-from exams.models import (
-    ExamProfile,
-    ExamAuthorization,
-    ExamRun,
-)
+from ecommerce.models import Line, Order
+from exams.models import ExamAuthorization, ExamProfile, ExamRun
+from grades.constants import NEW_COMBINED_FINAL_GRADES_DATE, FinalGradeStatus
+from grades.models import (CombinedFinalGrade, FinalGrade,
+                           MicromastersCourseCertificate,
+                           MicromastersProgramCertificate,
+                           MicromastersProgramCommendation, ProctoredExamGrade)
 from micromasters.utils import now_in_utc
 
 # maximum number of exam attempts per payment
@@ -89,10 +82,7 @@ class MMTrack:
                     self.paid_course_fa[course.id] = self.get_payments_count_for_course(course) > 0
 
     def __str__(self):
-        return 'MMTrack for user {0} on program "{1}"'.format(
-            self.user.username,
-            self.program.title
-        )
+        return f'MMTrack for user {self.user.username} on program "{self.program.title}"'
 
     def _is_course_in_program(self, edx_course_key):
         """

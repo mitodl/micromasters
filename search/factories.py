@@ -1,7 +1,7 @@
 """Factories for search models"""
 import factory
-from factory.fuzzy import FuzzyChoice
 from factory.django import DjangoModelFactory
+from factory.fuzzy import FuzzyChoice
 
 from micromasters.factories import UserFactory
 from search.models import PercolateQuery, PercolateQueryMembership

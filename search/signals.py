@@ -8,18 +8,11 @@ from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from profiles.models import (
-    Education,
-    Employment,
-    Profile,
-)
-from search.models import PercolateQuery
-from search.tasks import (
-    index_users,
-    index_percolate_queries,
-    delete_percolate_query,
-)
+from profiles.models import Education, Employment, Profile
 from roles.models import Role
+from search.models import PercolateQuery
+from search.tasks import (delete_percolate_query, index_percolate_queries,
+                          index_users)
 
 log = logging.getLogger(__name__)
 

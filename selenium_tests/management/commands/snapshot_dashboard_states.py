@@ -5,50 +5,41 @@ import os
 import sys
 from urllib.parse import quote_plus
 
-from selenium.webdriver.common.by import By
-from faker.generator import random
 import pytest
-
-from django.core.management import (
-    BaseCommand,
-    call_command,
-)
+from django.contrib.auth import get_user_model
+from django.core.management import BaseCommand, call_command
 from django.db import connection
 from django.test import override_settings
-from django.contrib.auth.models import User
+from faker.generator import random
+from selenium.webdriver.common.by import By
 
 from cms.factories import CourseCertificateSignatoriesFactory
 from courses.factories import CourseRunFactory
-from courses.models import (
-    Course,
-    CourseRun,
-    Program,
-)
+from courses.models import Course, CourseRun, Program
 from dashboard.models import ProgramEnrollment
 from ecommerce.factories import LineFactory
-from ecommerce.models import (
-    Coupon,
-    UserCoupon,
-    Order,
-)
-from exams.factories import ExamRunFactory, ExamProfileFactory, ExamAuthorizationFactory
+from ecommerce.models import Coupon, Order, UserCoupon
+from exams.factories import (ExamAuthorizationFactory, ExamProfileFactory,
+                             ExamRunFactory)
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
-from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertificateFactory, FinalGradeFactory
-from grades.models import FinalGrade, CourseRunGradingStatus, MicromastersCourseCertificate
+from grades.factories import (FinalGradeFactory,
+                              MicromastersCourseCertificateFactory,
+                              ProctoredExamGradeFactory)
+from grades.models import (CourseRunGradingStatus, FinalGrade,
+                           MicromastersCourseCertificate)
 from roles.models import Role, Staff
-from seed_data.lib import set_course_run_current, CachedEnrollmentHandler, add_paid_order_for_course, \
-    set_course_run_past, set_course_run_future
+from seed_data.lib import (CachedEnrollmentHandler, add_paid_order_for_course,
+                           set_course_run_current, set_course_run_future,
+                           set_course_run_past)
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.data_util import create_user_for_login
-from selenium_tests.util import (
-    DEFAULT_PASSWORD,
-    DatabaseLoader,
-    terminate_db_connections,
-    should_load_from_existing_db,
-)
 from selenium_tests.page import LoginPage
+from selenium_tests.util import (DEFAULT_PASSWORD, DatabaseLoader,
+                                 should_load_from_existing_db,
+                                 terminate_db_connections)
 
+User = get_user_model()
 
 # We need to have pytest skip DashboardStates when collecting tests to run, but we also want to run it as a test
 # when invoked by this command so we can take advantage of Selenium and the test database infrastructure. This
@@ -182,7 +173,7 @@ class DashboardStates:  # pylint: disable=too-many-locals, too-many-public-metho
             '--course-run-title', 'Analog Learning 100 - August 2015',
         )
         run.refresh_from_db()
-        return "/dashboard?status=receipt&course_key={}".format(quote_plus(run.edx_course_key))
+        return f"/dashboard?status=receipt&course_key={quote_plus(run.edx_course_key)}"
 
     def contact_course(self):
         """Show a contact course team link"""
@@ -628,10 +619,7 @@ class DashboardStates:  # pylint: disable=too-many-locals, too-many-public-metho
             for is_enrolled in (True, False):
                 yield (
                     bind_args(self.with_financial_aid, status, is_enrolled),
-                    'finaid_{status}{enrolled}'.format(
-                        status=status,
-                        enrolled="_needs_upgrade" if is_enrolled else "_offered",
-                    )
+                    f"finaid_{status}{'_needs_upgrade' if is_enrolled else '_offered'}"
                 )
 
 
@@ -639,11 +627,7 @@ def make_filename(num, name, output_directory='', use_mobile=False):
     """Format the filename without extension for dashboard states"""
     return os.path.join(
         output_directory,
-        "dashboard_state_{num:03d}_{command}{mobile}".format(
-            num=num,
-            command=name,
-            mobile="_mobile" if use_mobile else "",
-        )
+        f"dashboard_state_{num:03d}_{name}{'_mobile' if use_mobile else ''}"
     )
 
 
@@ -685,7 +669,7 @@ def test_data(django_db_blocker, seeded_database_loader, pytestconfig):
             terminate_db_connections()
         seeded_database_loader.load_backup()
         user = User.objects.get(username='staff')
-    yield dict(user=user)
+    yield {"user": user}
 
 
 # pylint: disable=too-many-locals
@@ -799,16 +783,16 @@ class Command(BaseCommand):
         if options.get('list_scenarios'):
             self.stdout.write('Scenarios:\n')
             for num, (_, name) in enumerate(DashboardStates()):
-                self.stdout.write("  {:03}_{}\n".format(num, name))
+                self.stdout.write(f"  {num:03}_{name}\n")
             return
 
         if not os.environ.get('WEBPACK_DEV_SERVER_HOST'):
             # This should only happen if the user is running in an environment without Docker, which isn't allowed
             # for this command.
-            raise Exception('Missing environment variable WEBPACK_DEV_SERVER_HOST.')
+            raise Exception('Missing environment variable WEBPACK_DEV_SERVER_HOST.')  # pylint: disable=broad-exception-raised
 
         if os.environ.get('RUNNING_SELENIUM') != 'true':
-            raise Exception(
+            raise Exception(  # pylint: disable=broad-exception-raised
                 "This management command must be run with ./scripts/test/run_snapshot_dashboard_states.sh"
             )
 
@@ -822,7 +806,7 @@ class Command(BaseCommand):
         with override_settings(
             OPENSEARCH_INDEX='testindex',
         ):
-            pytest_args = ["{}::test_dashboard_states".format(__file__), "-s"]
+            pytest_args = [f"{__file__}::test_dashboard_states", "-s"]
             if options.get('create_db'):
                 pytest_args.append('--create-db')
             sys.exit(pytest.main(args=pytest_args))

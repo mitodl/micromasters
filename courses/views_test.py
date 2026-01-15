@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from courses.catalog_serializers import CatalogProgramSerializer
-from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
-from courses.serializers import ProgramSerializer, CourseRunSerializer
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
+from courses.serializers import CourseRunSerializer, ProgramSerializer
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
@@ -63,7 +63,7 @@ class ProgramLearnersTests(MockedESTestCase, APITestCase):
     @classmethod
     def setUpTestData(cls):
 
-        super(ProgramLearnersTests, cls).setUpTestData()
+        super().setUpTestData()
 
         cls.program = ProgramFactory.create(live=True)
         cls.url = reverse('learners_in_program', kwargs={"program_id": cls.program.id})
@@ -118,7 +118,7 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(ProgramEnrollmentTests, cls).setUpTestData()
+        super().setUpTestData()
 
         cls.user1 = UserFactory.create()
         cls.user2 = UserFactory.create()

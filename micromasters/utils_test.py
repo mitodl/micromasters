@@ -35,6 +35,7 @@ from micromasters.utils import (
     custom_exception_handler,
     dict_with_keys,
     first_matching_item,
+    generate_hash_32,
     get_field_names,
     is_near_now,
     is_subset_dict,
@@ -44,7 +45,7 @@ from micromasters.utils import (
     serialize_model_object,
     pop_keys_from_dict,
     pop_matching_keys_from_dict,
-    generate_md5, merge_strings,
+    merge_strings,
 )
 from search.base import MockedESTestCase
 
@@ -84,7 +85,7 @@ class ExceptionHandlerTest(MockedESTestCase):
         exp = exception_to_raise('improperly configured')
         resp = custom_exception_handler(exp, self.context)
         assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert resp.data == ['{0}: improperly configured'.format(exception_to_raise.__name__)]
+        assert resp.data == [f'{exception_to_raise.__name__}: improperly configured']
         mock_sentry.assert_called_once_with()
 
     @patch('sentry_sdk.capture_exception', autospec=True)
@@ -320,13 +321,13 @@ def test_now_in_utc():
 
 def test_pop_keys_from_dict():
     """pop_keys_from_dict should remove keys from a source dict and return a dict of removed key-values"""
-    orig_dict = dict(a=1, b=2, c=3, d=4)
+    orig_dict = {"a": 1, "b": 2, "c": 3, "d": 4}
     new_dict = pop_keys_from_dict(orig_dict, ['a', 'd'])
-    assert new_dict == dict(a=1, d=4)
-    assert orig_dict == dict(b=2, c=3)
+    assert new_dict == {"a": 1, "d": 4}
+    assert orig_dict == {"b": 2, "c": 3}
     new_dict = pop_keys_from_dict(orig_dict, ['non-existent key'])
     assert new_dict == {}
-    assert orig_dict == dict(b=2, c=3)
+    assert orig_dict == {"b": 2, "c": 3}
 
 
 def test_pop_matching_keys_from_dict():
@@ -334,23 +335,23 @@ def test_pop_matching_keys_from_dict():
     test_pop_matching_keys_from_dict should remove matching keys from a source dict and return a dict
     of removed key-values
     """
-    orig_dict = dict(a=1, b=2, c=3, d=4)
+    orig_dict = {"a": 1, "b": 2, "c": 3, "d": 4}
     new_dict = pop_matching_keys_from_dict(orig_dict, lambda k: k in ['a', 'd'])
-    assert new_dict == dict(a=1, d=4)
-    assert orig_dict == dict(b=2, c=3)
+    assert new_dict == {"a": 1, "d": 4}
+    assert orig_dict == {"b": 2, "c": 3}
     new_dict = pop_matching_keys_from_dict(orig_dict, lambda k: k == 'non-existent key')
     assert new_dict == {}
-    assert orig_dict == dict(b=2, c=3)
+    assert orig_dict == {"b": 2, "c": 3}
 
 
-def test_generate_md5():
-    """Test that generate_md5 generates an MD5 hash"""
-    bytes_to_hash = 'abc'.encode('utf-8')
-    md5_hash = generate_md5(bytes_to_hash)
-    assert isinstance(md5_hash, str)
-    assert len(md5_hash) == 32
-    repeat_md5_hash = generate_md5(bytes_to_hash)
-    assert md5_hash == repeat_md5_hash
+def test_generate_hash_32():
+    """Test that generate_hash_32 returns a stable 32-char hash"""
+    bytes_to_hash = b'abc'
+    digest = generate_hash_32(bytes_to_hash)
+    assert isinstance(digest, str)
+    assert len(digest) == 32
+    repeat_digest = generate_hash_32(bytes_to_hash)
+    assert digest == repeat_digest
 
 
 @pytest.mark.parametrize(

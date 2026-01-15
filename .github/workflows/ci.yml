@@ -8,7 +8,7 @@ jobs:
       # Label used to access the service container
       db:
         # Docker Hub image
-        image: postgres:12.7
+        image: postgres:16
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -50,13 +50,28 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: pip install -r requirements.txt -r test_requirements.txt
 
       - name: Lint
         run: pylint ./**/*.py
+        env:
+          DEBUG: 'False'
+          NODE_ENV: 'production'
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+          MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
+          MICROMASTERS_DB_DISABLE_SSL: 'True'
+          OPENSEARCH_URL: localhost:9200
+          OPENSEARCH_INDEX: testindex
+          CELERY_TASK_ALWAYS_EAGER: 'True'
+          BROKER_URL: redis://localhost:6379/4
+          CELERY_RESULT_BACKEND: redis://localhost:6379/4
+          MAILGUN_URL: https://api.mailgun.net/v3/fake.mailgun.org
+          MAILGUN_KEY: fake_mailgun_key
+          OPEN_DISCUSSIONS_SITE_KEY: fake_discussions_key
+          DJANGO_SETTINGS_MODULE: micromasters.settings
 
       # You must also add the Configure sysctl limits step, otherwise Opensearch will not be able to boot.
       - name: Configure sysctl limits

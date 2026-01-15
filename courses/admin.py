@@ -4,7 +4,8 @@ Admin views for Courses & Programs
 
 from django.contrib import admin
 
-from courses.models import Course, CourseRun, Program, ElectivesSet, ElectiveCourse, Topic
+from courses.models import (Course, CourseRun, ElectiveCourse, ElectivesSet,
+                            Program, Topic)
 
 
 class CourseInline(admin.StackedInline):
@@ -21,6 +22,7 @@ class CourseRunInline(admin.StackedInline):
     show_change_link = True
 
 
+@admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
     """ModelAdmin for Programs"""
     list_display = ('title', 'live',)
@@ -28,6 +30,7 @@ class ProgramAdmin(admin.ModelAdmin):
     inlines = [CourseInline]
 
 
+@admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
     """ModelAdmin for Courses"""
     list_display = ('title', 'course_number', 'program_title', 'position_in_program',)
@@ -40,6 +43,7 @@ class CourseAdmin(admin.ModelAdmin):
         return course.program.title
 
 
+@admin.register(CourseRun)
 class CourseRunAdmin(admin.ModelAdmin):
     """ModelAdmin for Courses"""
     list_display = ('title', 'course_number', 'edx_course_key', 'enrollment_start', 'start_date', 'enrollment_end',
@@ -63,25 +67,20 @@ class CourseRunAdmin(admin.ModelAdmin):
         return run.course.course_number
 
 
+@admin.register(ElectivesSet)
 class ElectivesSetAdmin(admin.ModelAdmin):
     """ModelAdmin for ElectivesSet"""
     list_display = ('program', 'required_number', 'title',)
     list_filter = ('program',)
 
 
+@admin.register(ElectiveCourse)
 class ElectiveCourseAdmin(admin.ModelAdmin):
     """ModelAdmin for ElectiveCourse"""
     list_display = ('course', 'electives_set',)
 
 
+@admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
     """ModelAdmin for Programs"""
     list_display = ('name',)
-
-
-admin.site.register(CourseRun, CourseRunAdmin)
-admin.site.register(Course, CourseAdmin)
-admin.site.register(Program, ProgramAdmin)
-admin.site.register(ElectivesSet, ElectivesSetAdmin)
-admin.site.register(ElectiveCourse, ElectiveCourseAdmin)
-admin.site.register(Topic, TopicAdmin)

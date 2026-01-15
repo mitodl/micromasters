@@ -2,21 +2,20 @@
 General micromasters utility functions
 """
 import datetime
-from itertools import islice
+import hashlib
 import json
 import logging
 import os
-import hashlib
+from itertools import islice
 
 import pytz
+import sentry_sdk as client
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.serializers import serialize
-import sentry_sdk as client
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
-
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ def webpack_dev_server_url(request):
     """
     Get the full URL where the webpack dev server should be running
     """
-    return 'http://{}:{}'.format(webpack_dev_server_host(request), settings.WEBPACK_DEV_SERVER_PORT)
+    return f'http://{webpack_dev_server_host(request)}:{settings.WEBPACK_DEV_SERVER_PORT}'
 
 
 def dict_with_keys(dictionary, keys):
@@ -87,8 +86,8 @@ def load_json_from_file(project_rel_filepath):
     """
     Loads JSON data from a file
     """
-    path = '{}/{}'.format(settings.BASE_DIR, project_rel_filepath)
-    with open(path, 'r') as f:
+    path = f'{settings.BASE_DIR}/{project_rel_filepath}'
+    with open(path, encoding='utf-8') as f:
         return json.load(f)
 
 
@@ -110,7 +109,7 @@ def custom_exception_handler(exc, context):
         # send the exception to Sentry anyway
         client.capture_exception()
 
-        formatted_exception_string = "{0}: {1}".format(type(exc).__name__, str(exc))
+        formatted_exception_string = f"{type(exc).__name__}: {str(exc)}"
         return Response(
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             data=[formatted_exception_string]
@@ -268,19 +267,17 @@ def now_in_utc():
     return datetime.datetime.now(tz=pytz.UTC)
 
 
-def generate_md5(unicode):
+def generate_hash_32(data: bytes) -> str:
     """
-    Generate an MD5 hash
+    Generate a deterministic 32‑character hex digest using SHA256 (truncated).
 
     Args:
-        unicode (bytes): Unicode bytes representing the string you want to be hashed
+        data (bytes): Bytes to hash
 
     Returns:
-        str: An MD5 hash (hex characters)
+        str: 32 hex characters
     """
-    hasher = hashlib.md5()
-    hasher.update(unicode)
-    return hasher.hexdigest()
+    return hashlib.sha256(data).hexdigest()[:32]
 
 
 def merge_strings(list_or_str):

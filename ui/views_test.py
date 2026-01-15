@@ -2,13 +2,13 @@
 Test end to end django views.
 """
 import json
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 from urllib.parse import urlencode
 
 import ddt
 from django.db.models.signals import post_save
-from django.urls import reverse
 from django.test import override_settings
+from django.urls import reverse
 from factory import Iterator
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
@@ -17,18 +17,14 @@ from rolepermissions.permissions import available_perm_status
 from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
 
-from cms.factories import (
-    FacultyFactory,
-    InfoLinksFactory,
-    ProgramCourseFactory,
-    SemesterDateFactory,
-)
+from cms.factories import (FacultyFactory, InfoLinksFactory,
+                           ProgramCourseFactory, SemesterDateFactory)
 from cms.models import HomePage, ProgramPage
 from cms.serializers import ProgramPageSerializer
-from courses.factories import ProgramFactory, CourseFactory
+from courses.factories import CourseFactory, ProgramFactory
 from ecommerce.factories import CouponFactory
-from micromasters.serializers import serialize_maybe_user
 from micromasters.factories import UserSocialAuthFactory
+from micromasters.serializers import serialize_maybe_user
 from profiles.factories import ProfileFactory, SocialProfileFactory
 from roles.models import Role
 from search.base import MockedESTestCase
@@ -218,10 +214,10 @@ class TestHomePage(ViewsTests):
         Assert that programs are output in id order
         """
         for i in range(10):
-            ProgramFactory.create(live=True, title="Program {}".format(i + 1))
+            ProgramFactory.create(live=True, title=f"Program {i + 1}")
         response = self.client.get("/")
         content = response.content.decode('utf-8')
-        indexes = [content.find("Program {}".format(i + 1)) for i in range(10)]
+        indexes = [content.find(f"Program {i + 1}") for i in range(10)]
         assert indexes == sorted(indexes)
 
 
@@ -329,7 +325,7 @@ class DashboardTests(ViewsTests):
         response = self.client.get(DASHBOARD_URL)
         self.assertRedirects(
             response,
-            "/signin/?next={}".format(DASHBOARD_URL)
+            f"/signin/?next={DASHBOARD_URL}"
         )
 
     def test_authenticated_user_doesnt_redirect(self):

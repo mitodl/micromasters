@@ -1,41 +1,29 @@
 """
 Tests for ecommerce views
 """
-from urllib.parse import quote_plus
 from unittest.mock import patch
+from urllib.parse import quote_plus
 
 import ddt
-from django.urls import reverse
+import faker
 from django.db.models.signals import post_save
 from django.test import override_settings
+from django.urls import reverse
 from factory.django import mute_signals
-import faker
 from rest_framework import status
 
 from courses.factories import CourseRunFactory
-from ecommerce.api import (
-    create_unfulfilled_order,
-    make_reference_id,
-)
+from ecommerce.api import create_unfulfilled_order, make_reference_id
 from ecommerce.api_test import create_purchasable_course_run
 from ecommerce.exceptions import EcommerceException
-from ecommerce.factories import (
-    CouponFactory,
-    LineFactory,
-)
-from ecommerce.models import (
-    Order,
-    OrderAudit,
-    Receipt,
-    UserCoupon,
-    UserCouponAudit,
-)
+from ecommerce.factories import CouponFactory, LineFactory
+from ecommerce.models import (Order, OrderAudit, Receipt, UserCoupon,
+                              UserCouponAudit)
 from ecommerce.serializers import CouponSerializer
 from micromasters.factories import UserFactory, UserSocialAuthFactory
 from micromasters.utils import serialize_model_object
 from profiles.factories import ProfileFactory, SocialProfileFactory
 from search.base import MockedESTestCase
-
 
 CYBERSOURCE_SECURE_ACCEPTANCE_URL = 'http://fake'
 CYBERSOURCE_REFERENCE_PREFIX = 'fake'
@@ -147,7 +135,7 @@ class CheckoutViewTests(MockedESTestCase):
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == {
             'payload': {},
-            'url': 'http://edx_base/course_modes/choose/{}/'.format(course_run.edx_course_key),
+            'url': f'http://edx_base/course_modes/choose/{course_run.edx_course_key}/',
             'method': 'GET',
         }
 
@@ -238,10 +226,7 @@ class CheckoutViewTests(MockedESTestCase):
         assert send_email.call_count == 1
         assert send_email.call_args[0][0] == 'Error occurred when enrolling user during $0 checkout'
         assert send_email.call_args[0][1].startswith(
-            'Error occurred when enrolling user during $0 checkout for {order}. '
-            'Exception: '.format(
-                order=order,
-            )
+            f'Error occurred when enrolling user during $0 checkout for {order}. Exception: '
         )
         assert send_email.call_args[0][2] == 'ecommerce@example.com'
 
@@ -352,10 +337,7 @@ class OrderFulfillmentViewTests(MockedESTestCase):
         assert send_email.call_count == 1
         assert send_email.call_args[0][0] == 'Error occurred when enrolling user during order fulfillment'
         assert send_email.call_args[0][1].startswith(
-            'Error occurred when enrolling user during order fulfillment for {order}. '
-            'Exception: '.format(
-                order=order,
-            )
+            f'Error occurred when enrolling user during order fulfillment for {order}. Exception: '
         )
         assert send_email.call_args[0][2] == 'ecommerce@example.com'
 
@@ -391,8 +373,8 @@ class OrderFulfillmentViewTests(MockedESTestCase):
         if should_send_email:
             assert send_email.call_count == 1
             assert send_email.call_args[0] == (
-                'Order fulfillment failed, decision={decision}'.format(decision='something else'),
-                'Order fulfillment failed for order {order}'.format(order=order),
+                'Order fulfillment failed, decision=something else',
+                f'Order fulfillment failed for order {order}',
                 'ecommerce@example.com',
             )
         else:
@@ -447,9 +429,7 @@ class OrderFulfillmentViewTests(MockedESTestCase):
         assert Order.objects.count() == 1
         assert Order.objects.get(id=order.id).status == order_status
 
-        assert ex.exception.args[0] == "Order {id} is expected to have status 'created'".format(
-            id=order.id,
-        )
+        assert ex.exception.args[0] == f"Order {order.id} is expected to have status 'created'"
 
     def test_no_permission(self):
         """

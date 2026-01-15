@@ -2,64 +2,57 @@
 Tests for the dashboard api functions
 """
 from datetime import timedelta
-from unittest.mock import (
-    MagicMock,
-    Mock,
-    PropertyMock,
-    patch,
-)
-
+from unittest.mock import MagicMock, Mock, PropertyMock, patch
 from urllib.parse import urljoin
+
 import ddt
-from django.core.exceptions import ImproperlyConfigured
+import pytest
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse
 from django_redis import get_redis_connection
-import pytest
 from edx_api.client import EdxApi
 from edx_api.enrollments import Enrollments
 
-from backends.constants import BACKEND_EDX_ORG, COURSEWARE_BACKENDS, COURSEWARE_BACKEND_URL, BACKEND_MITX_ONLINE
+from backends.constants import (BACKEND_EDX_ORG, BACKEND_MITX_ONLINE,
+                                COURSEWARE_BACKEND_URL, COURSEWARE_BACKENDS)
 from backends.exceptions import InvalidCredentialStored
 from cms.factories import CourseCertificateSignatoriesFactory
-from courses.factories import (
-    CourseFactory,
-    CourseRunFactory,
-    ProgramFactory,
-    FullProgramFactory,
-)
-from courses.models import ElectivesSet, ElectiveCourse
+from courses.factories import (CourseFactory, CourseRunFactory,
+                               FullProgramFactory, ProgramFactory)
+from courses.models import ElectiveCourse, ElectivesSet
 from courses.utils import format_season_year_for_course_run
-from dashboard import (
-    api,
-    models,
-)
-from dashboard.api import save_cache_update_failure, FIELD_USER_ID_BASE_STR
+from dashboard import api, models
+from dashboard.api import FIELD_USER_ID_BASE_STR, save_cache_update_failure
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.constants import DEDP_PROGRAM_TITLE
-from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory, \
-    ProgramEnrollmentFactory
+from dashboard.factories import (CachedCurrentGradeFactory,
+                                 CachedEnrollmentFactory,
+                                 ProgramEnrollmentFactory,
+                                 UserCacheRefreshTimeFactory)
 from dashboard.models import CachedCertificate
 from dashboard.utils import MMTrack, get_mmtrack
-from exams.models import ExamAuthorization, ExamProfile
-from exams.factories import ExamRunFactory, ExamAuthorizationFactory, ExamRunCouponFactory
 from ecommerce.factories import LineFactory, OrderFactory
-from ecommerce.models import Order, Line
+from ecommerce.models import Line, Order
+from exams.factories import (ExamAuthorizationFactory, ExamRunCouponFactory,
+                             ExamRunFactory)
+from exams.models import ExamAuthorization, ExamProfile
 from grades.constants import FinalGradeStatus
 from grades.exceptions import FreezeGradeFailedException
-from grades.factories import ProctoredExamGradeFactory, FinalGradeFactory, MicromastersCourseCertificateFactory, \
-    MicromastersProgramCommendationFactory
-from grades.models import FinalGrade, CourseRunGradingStatus, ProctoredExamGrade
+from grades.factories import (FinalGradeFactory,
+                              MicromastersCourseCertificateFactory,
+                              MicromastersProgramCommendationFactory,
+                              ProctoredExamGradeFactory)
+from grades.models import (CourseRunGradingStatus, FinalGrade,
+                           ProctoredExamGrade)
 from grades.serializers import ProctoredExamGradeSerializer
-from micromasters.factories import UserFactory, SocialUserFactory, UserSocialAuthFactory
-from micromasters.utils import (
-    is_subset_dict,
-    now_in_utc,
-)
+from micromasters.factories import (SocialUserFactory, UserFactory,
+                                    UserSocialAuthFactory)
+from micromasters.utils import is_subset_dict, now_in_utc
 from profiles.api import get_social_auth
 from profiles.factories import SocialProfileFactory
 from search.base import MockedESTestCase
-from seed_data.lib import set_course_run_current, add_paid_order_for_course
+from seed_data.lib import add_paid_order_for_course, set_course_run_current
 
 TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE = "test_users_not_to_update"
 TEST_CACHE_KEY_FAILURES_BY_USER = "test_failure_nums_by_user"
@@ -110,10 +103,7 @@ class StatusTest(MockedESTestCase):
             status='status',
             course_run=mock_run,
         )
-        reps_str_start = '<CourseRunUserStatus for course {course} status {status} at '.format(
-            course=ustat.course_run.title,
-            status=ustat.status
-        )
+        reps_str_start = f'<CourseRunUserStatus for course {ustat.course_run.title} status {ustat.status} at '
         obj_repr = repr(ustat)
         assert obj_repr.startswith(reps_str_start)
 
@@ -123,10 +113,10 @@ class StatusTest(MockedESTestCase):
         checking the association has the right structure and key/value pairs
         """
         assert isinstance(api.CourseFormatConditionalFields.ASSOCIATED_FIELDS, dict)
-        for key in api.CourseFormatConditionalFields.ASSOCIATED_FIELDS:
+        for key, value in api.CourseFormatConditionalFields.ASSOCIATED_FIELDS.items():
             assert key in api.CourseStatus.all_statuses()
-            assert isinstance(api.CourseFormatConditionalFields.ASSOCIATED_FIELDS[key], list)
-            for assoc in api.CourseFormatConditionalFields.ASSOCIATED_FIELDS[key]:
+            assert isinstance(value, list)
+            for assoc in value:
                 assert isinstance(assoc, dict)
                 assert 'course_run_field' in assoc
                 assert 'format_field' in assoc
@@ -145,7 +135,7 @@ class CourseTests(MockedESTestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(CourseTests, cls).setUpTestData()
+        super().setUpTestData()
         cls.course = CourseFactory.create(title="Title")
         cls.user = UserFactory.create()
 
@@ -410,7 +400,7 @@ class CourseRunTest(CourseTests):
 
     @classmethod
     def setUpTestData(cls):
-        super(CourseRunTest, cls).setUpTestData()
+        super().setUpTestData()
         cls.now = now_in_utc()
 
     def test_status_for_run_not_enrolled(self):
@@ -848,7 +838,7 @@ class InfoCourseTest(CourseTests):
 
     @classmethod
     def setUpTestData(cls):
-        super(InfoCourseTest, cls).setUpTestData()
+        super().setUpTestData()
         cls.user = UserFactory()
         cls.course_noruns = CourseFactory.create(title="Title no runs")
 
@@ -984,7 +974,7 @@ class InfoCourseTest(CourseTests):
     @patch('dashboard.api.is_exam_schedulable', return_value=False)
     def test_info_with_contact_email(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay, mock_exam_course_key
-    ):  # pylint: disable=no-self-use
+    ):
         """test that get_info_for_course indicates that a course has a contact_email """
         course = CourseFactory.create(contact_email="abc@example.com")
         course_info = api.get_info_for_course(course, self.mmtrack)
@@ -1021,9 +1011,7 @@ class InfoCourseTest(CourseTests):
             api.get_info_for_course(course, self.mmtrack)
         )
         exam_run = ExamRunFactory.create(course=course)
-        exam_register_end_date = '{}'.format(
-            exam_run.date_last_schedulable.strftime("%B %-d, %I:%M %p %Z")
-        )
+        exam_register_end_date = f"{exam_run.date_last_schedulable.strftime('%B %-d, %I:%M %p %Z')}"
         current_exam_dates = '{} and {}'.format(
             exam_run.date_first_eligible.strftime('%b %-d'),
             exam_run.date_last_eligible.strftime('%b %-d, %Y')
@@ -1045,7 +1033,7 @@ class InfoCourseTest(CourseTests):
     @patch('dashboard.api.is_exam_schedulable', return_value=False)
     def test_info_without_contact_email(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay, mock_exam_course_key
-    ):  # pylint: disable=no-self-use
+    ):
         """test that get_info_for_course indicates that a course has no contact_email """
         course = CourseFactory.create(contact_email=None)
         course_info = api.get_info_for_course(course, self.mmtrack)
@@ -1541,7 +1529,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
     """Integration tests for get_user_program_info"""
     @classmethod
     def setUpTestData(cls):
-        super(UserProgramInfoIntegrationTest, cls).setUpTestData()
+        super().setUpTestData()
         cls.user = SocialUserFactory.create(social_auth__extra_data=social_extra_data)
         cls.social_auth = cls.user.social_auth.get(provider=BACKEND_EDX_ORG)
         # create the programs
@@ -1579,7 +1567,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
                 "financial_aid_availability": self.expected_programs[i].financial_aid_availability,
             }
             assert is_subset_dict(expected, result['programs'][i])
-        assert result["invalid_backend_credentials"] == []
+        assert not result["invalid_backend_credentials"]
 
     @patch('dashboard.api.update_cache_for_backend', autospec=True, return_value=True)
     def test_past_course_runs(self, mock_refresh):  # pylint: disable=unused-argument
@@ -1644,9 +1632,9 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         assert len(result['programs'][0]['courses']) > 0
         assert len(result['programs'][0]['courses'][0]['runs']) == 2
         assert all(
-            [run['status'] == api.CourseStatus.NOT_PASSED for run in result['programs'][0]['courses'][0]['runs']]
+            run['status'] == api.CourseStatus.NOT_PASSED for run in result['programs'][0]['courses'][0]['runs']
         )
-        assert result["invalid_backend_credentials"] == []
+        assert not result["invalid_backend_credentials"]
 
     @patch('dashboard.api.update_cache_for_backend', autospec=True, return_value=True)
     def test_current_run_first(self, _mock_update):  # pylint: disable=unused-argument
@@ -1705,7 +1693,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         assert len(result['programs'][0]['courses'][0]['runs']) == 2
         # assert that current run is first on run list
         assert result['programs'][0]['courses'][0]['runs'][0]['status'] == api.CourseRunStatus.CURRENTLY_ENROLLED
-        assert result["invalid_backend_credentials"] == []
+        assert not result["invalid_backend_credentials"]
 
     @patch('dashboard.api.update_cache_for_backend', autospec=True, return_value=True)
     def test_when_enroll_in_only_future_run(self, _mock_update):  # pylint: disable=unused-argument
@@ -1755,7 +1743,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         assert len(result['programs'][0]['courses'][0]['runs']) == 1
         # assert that future run is first on run list
         assert result['programs'][0]['courses'][0]['runs'][0]['status'] == api.CourseRunStatus.WILL_ATTEND
-        assert result["invalid_backend_credentials"] == []
+        assert not result["invalid_backend_credentials"]
 
     @patch('dashboard.api.update_cache_for_backend', autospec=True, return_value=True)
     def test_exception_in_refresh_cache(self, mock_cache_refresh):
@@ -1768,7 +1756,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         assert result['is_edx_data_fresh'] is False
         assert 'programs' in result
         assert len(result['programs']) == 2
-        assert result["invalid_backend_credentials"] == []
+        assert not result["invalid_backend_credentials"]
 
 
     @patch('dashboard.api.update_cache_for_backend', autospec=True, return_value=True)
@@ -1799,7 +1787,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         for program_result in result['programs']:
             assert program_result is not None
             assert len(program_result['courses'][0]['runs']) == 1
-        assert result["invalid_backend_credentials"] == []
+        assert not result["invalid_backend_credentials"]
 
     @patch('dashboard.api.update_cache_for_backend', autospec=True, return_value=True)
     @ddt.data(
@@ -1847,7 +1835,7 @@ class InfoProgramTest(MockedESTestCase):
     """Tests for get_info_for_program"""
     @classmethod
     def setUpTestData(cls):
-        super(InfoProgramTest, cls).setUpTestData()
+        super().setUpTestData()
         cls.user = UserFactory()
         # create the programs
         cls.program = ProgramFactory.create()
@@ -1859,7 +1847,7 @@ class InfoProgramTest(MockedESTestCase):
         for num in range(2):
             cls.courses.append(
                 CourseFactory.create(
-                    title="title course prog1 {}".format(num),
+                    title=f"title course prog1 {num}",
                     program=cls.program
                 )
             )
@@ -1922,7 +1910,7 @@ class InfoProgramTest(MockedESTestCase):
         electives_set = ElectivesSet.objects.create(program=self.program, required_number=2)
         for num in range(3):
             course = CourseFactory.create(
-                title="title course prog1 {}".format(num),
+                title=f"title course prog1 {num}",
                 program=self.program
             )
             ElectiveCourse.objects.create(course=course, electives_set=electives_set)
@@ -2392,7 +2380,7 @@ class GetCertificateForCourseTests(CourseTests):
         cert = MicromastersCourseCertificateFactory.create(course=self.course, user=self.user)
         self.mmtrack.get_course_certificate.return_value = cert
         CourseCertificateSignatoriesFactory.create(course=self.course)
-        assert api.get_certificate_url(self.mmtrack, self.course) == '/certificate/course/{}'.format(cert.hash)
+        assert api.get_certificate_url(self.mmtrack, self.course) == f'/certificate/course/{cert.hash}'
 
     def test_no_signatories(self):
         """Test get_certificate_url for course with no signatories"""
@@ -2759,4 +2747,4 @@ def test_save_cache_update_failures(db, patched_redis_keys):
 
     save_cache_update_failure(user.id)
     assert int(con.hget(TEST_CACHE_KEY_FAILURES_BY_USER, user_key)) == 3
-    assert con.sismember(TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE, user.id) is True
+    assert bool(con.sismember(TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE, user.id)) is True

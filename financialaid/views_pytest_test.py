@@ -63,11 +63,11 @@ class TestReviewViews():
         url = reverse("review_financial_aid", kwargs=url_kwargs)
         qs_dict = {}
         if sort_param:
-            qs_dict.update(dict(sort_by=sort_param))
+            qs_dict.update({"sort_by": sort_param})
         if search_param:
-            qs_dict.update(dict(search_query=search_param))
+            qs_dict.update({"search_query": search_param})
         if qs_dict:
-            url = '{}?{}'.format(url, urlencode(qs_dict))
+            url = f'{url}?{urlencode(qs_dict)}'
         return url
 
     @pytest.fixture()
@@ -239,12 +239,10 @@ class TestFinancialAidDetailViews():
             kwargs={"financial_aid_id": pending_fa.id}
         )
         docs_sent_date = now_in_utc().date()
-        docs_sent_request_params = dict(
-            content_type="application/json",
-            data=json.dumps({
+        docs_sent_request_params = {"content_type": "application/json", "data": json.dumps({
                 "date_documents_sent": docs_sent_date.strftime("%Y-%m-%d")
             })
-        )
+        }
         return SimpleNamespace(
             user=user,
             pending_fa=pending_fa,

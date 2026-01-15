@@ -1,44 +1,29 @@
 """
 Serializers from financial aid
 """
-import logging
 import copy
+import logging
 
-from django.db.models import Max, Min, Q
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import Max, Min, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import (
-    CharField,
-    ChoiceField,
-    FloatField,
-    IntegerField,
-    DecimalField,
-    BooleanField,
-)
+from rest_framework.fields import (BooleanField, CharField, ChoiceField,
+                                   DecimalField, FloatField, IntegerField)
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from financialaid.api import (
-    determine_auto_approval,
-    determine_tier_program,
-    determine_income_usd,
-)
-from financialaid.constants import (
-    FinancialAidJustification,
-    FinancialAidStatus
-)
+from financialaid.api import (determine_auto_approval, determine_income_usd,
+                              determine_tier_program)
+from financialaid.constants import (FinancialAidJustification,
+                                    FinancialAidStatus)
 from financialaid.exceptions import NotSupportedException
-from financialaid.models import (
-    FinancialAid,
-    TierProgram
-)
+from financialaid.models import FinancialAid, TierProgram
 from mail.api import MailgunClient
 from mail.utils import generate_financial_aid_email
 from micromasters.utils import now_in_utc
 from profiles.util import is_profile_filled_out
-
 
 log = logging.getLogger(__name__)
 
@@ -267,7 +252,7 @@ class FinancialAidDashboardSerializer:
         if not program_tiers_qset.exists():
             log.error('The program "%s" needs at least one tier configured', program.title)
             raise ImproperlyConfigured(
-                'The program "{}" needs at least one tier configured'.format(program.title))
+                f'The program "{program.title}" needs at least one tier configured')
         min_discount = program_tiers_qset.aggregate(
             Min('discount_amount')).get('discount_amount__min', 0)
         max_discount = program_tiers_qset.aggregate(

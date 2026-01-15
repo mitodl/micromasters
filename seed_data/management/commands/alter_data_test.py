@@ -2,17 +2,17 @@
 Tests for alter_data commands
 """
 from decimal import Decimal
+
 import ddt
-from search.base import MockedESTestCase
-from seed_data.management.commands.alter_data import (
-    set_to_passed,
-    set_to_failed,
-    set_to_enrolled
-)
-from micromasters.factories import UserFactory
+
 from courses.factories import CourseRunFactory
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.utils import get_mmtrack
+from micromasters.factories import UserFactory
+from search.base import MockedESTestCase
+from seed_data.management.commands.alter_data import (set_to_enrolled,
+                                                      set_to_failed,
+                                                      set_to_passed)
 
 
 @ddt.ddt

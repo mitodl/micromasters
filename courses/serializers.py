@@ -3,7 +3,8 @@ Serializers for courses
 """
 from rest_framework import serializers
 
-from courses.models import Course, Program, CourseRun, ElectiveCourse, Topic, ElectivesSet
+from courses.models import (Course, CourseRun, ElectiveCourse, ElectivesSet,
+                            Program, Topic)
 from dashboard.models import ProgramEnrollment
 
 

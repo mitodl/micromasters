@@ -16,12 +16,9 @@ class GenerateExchangeRatesTest(TestCase):
     """
     Tests for generate_exchange_rates management command
     """
-    @classmethod
-    def setUpTestData(cls):
-        cls.command = update_exchange_rates.Command()
-
     def setUp(self):
-        super(GenerateExchangeRatesTest, self).setUp()
+        super().setUp()
+        self.command = update_exchange_rates.Command()
         self.data = {
             "extraneous information": "blah blah blah",
             "rates": {

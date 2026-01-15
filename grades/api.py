@@ -4,22 +4,20 @@ APIs for the grades app
 import logging
 from collections import namedtuple
 
-from django.contrib.auth.models import User
-
+from django.contrib.auth import get_user_model
 from django_redis import get_redis_connection
 
 from courses.models import ElectivesSet
-from dashboard.api_edx_cache import CachedEdxUserData, CachedEdxDataApi
-from dashboard.models import CachedEnrollment, CachedCurrentGrade
+from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
+from dashboard.models import CachedCurrentGrade, CachedEnrollment
 from dashboard.utils import get_mmtrack
-from grades.constants import EXAM_GRADE_WEIGHT, COURSE_GRADE_WEIGHT
+from grades.constants import COURSE_GRADE_WEIGHT, EXAM_GRADE_WEIGHT
 from grades.exceptions import FreezeGradeFailedException
-from grades.models import (
-    FinalGrade,
-    FinalGradeStatus,
-    MicromastersProgramCertificate,
-    CombinedFinalGrade,
-    ProctoredExamGrade, MicromastersProgramCommendation)
+from grades.models import (CombinedFinalGrade, FinalGrade, FinalGradeStatus,
+                           MicromastersProgramCertificate,
+                           MicromastersProgramCommendation, ProctoredExamGrade)
+
+User = get_user_model()
 
 CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
 
@@ -156,10 +154,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
             return None
         else:
             raise FreezeGradeFailedException(
-                'The grade for user "{0}" course "{1}" cannot be frozen yet'.format(
-                    user.username,
-                    course_run.edx_course_key,
-                )
+                f'The grade for user "{user.username}" course "{course_run.edx_course_key}" cannot be frozen yet'
             )
     # update one last time the user's certificates and current grades
     try:
@@ -176,10 +171,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
             return None
         else:
             raise FreezeGradeFailedException(
-                'Impossible to refresh the edX cache for user "{0}" in course {1}'.format(
-                    user.username,
-                    course_run.edx_course_key
-                )
+                f'Impossible to refresh the edX cache for user "{user.username}" in course {course_run.edx_course_key}'
             ) from ex
     # get the final grade for the user in the program
     try:
@@ -194,10 +186,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
             return None
         else:
             raise FreezeGradeFailedException(
-                'Impossible to get final grade for user "{0}" in course {1}'.format(
-                    user.username,
-                    course_run.edx_course_key
-                )
+                f'Impossible to get final grade for user "{user.username}" in course {course_run.edx_course_key}'
             ) from ex
     # the final grade at this point should not exists, but putting a `get_or_create`
     # should solve the problem when the function is called synchronously from the dashboard REST API multiple times

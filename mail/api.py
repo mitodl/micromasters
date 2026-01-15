@@ -1,35 +1,29 @@
 """
 Provides functions for sending and retrieving data about in-app email
 """
-from contextlib import contextmanager
-import logging
 import json
-import requests
+import logging
+from contextlib import contextmanager
 
+import requests
+from bs4 import BeautifulSoup
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from rest_framework import status
 
-from bs4 import BeautifulSoup
-
 from mail.exceptions import SendBatchException
-from mail.models import (
-    AutomaticEmail,
-    FinancialAidEmailAudit,
-    SentAutomaticEmail,
-)
+from mail.models import (AutomaticEmail, FinancialAidEmailAudit,
+                         SentAutomaticEmail)
 from mail.utils import filter_recipient_variables
 from micromasters.utils import chunks
 from profiles.models import Profile
-from search.api import (
-    adjust_search_for_percolator,
-    search_percolate_queries,
-)
+from search.api import adjust_search_for_percolator, search_percolate_queries
 from search.models import PercolateQuery
 
-
+User = get_user_model()
 log = logging.getLogger(__name__)
 
 
@@ -65,15 +59,12 @@ class MailgunClient:
         Returns:
             requests.Response: HTTP response
         """
-        mailgun_url = '{}/{}'.format(settings.MAILGUN_URL, endpoint)
+        mailgun_url = f'{settings.MAILGUN_URL}/{endpoint}'
         email_params = cls.default_params()
         email_params.update(params)
         # Update 'from' address if sender_name was specified
         if sender_name is not None:
-            email_params['from'] = "{sender_name} <{email}>".format(
-                sender_name=sender_name,
-                email=email_params['from']
-            )
+            email_params['from'] = f"{sender_name} <{email_params['from']}>"
         response = request_func(
             mailgun_url,
             auth=cls._basic_auth_credentials,
@@ -126,7 +117,7 @@ class MailgunClient:
             body = '{body}\n\n[overridden recipient]\n{recipient_data}'.format(
                 body=body,
                 recipient_data='\n'.join(
-                    ["{}: {}".format(recipient, json.dumps(context)) for recipient, context in recipients]
+                    [f"{recipient}: {json.dumps(context)}" for recipient, context in recipients]
                 ),
             )
             recipients = [(settings.MAILGUN_RECIPIENT_OVERRIDE, {})]

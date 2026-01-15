@@ -1,9 +1,10 @@
 """
 Freezes final grades for a course
 """
-import csv
 import argparse
+import csv
 from collections import namedtuple
+
 from django.core.management import BaseCommand, CommandError
 
 from grades.models import ProctoredExamGrade
@@ -11,16 +12,15 @@ from grades.models import ProctoredExamGrade
 
 class ParsingError(CommandError):
     """Custom class for parsing exceptions"""
-    pass
 
 
 class GradeRowParser:
     """Parser for rows of grade adjustment information in a CSV"""
     RowProps = namedtuple('RowProps', ['exam_grade_id', 'score'])
-    default_col_names = dict(
-        exam_grade_id='proctoredexam_id',
-        score='score',
-    )
+    default_col_names = {
+        'exam_grade_id': 'proctoredexam_id',
+        'score': 'score',
+    }
 
     def __init__(self, col_names=None):
         """
@@ -38,13 +38,13 @@ class GradeRowParser:
                 score=float(row[self.col_names.score]),
             )
         except KeyError as e:
-            raise ParsingError('Row is missing a required column: {}'.format(str(e)))
+            raise ParsingError(f'Row is missing a required column: {str(e)}')
         except ValueError as e:
-            raise ParsingError('Row has an invalid value: {}'.format(str(e)))
+            raise ParsingError(f'Row has an invalid value: {str(e)}')
 
         if parsed_row.score < 0.0 or parsed_row.score > 100.0:
-            row_identifier = '{}: {}'.format(self.col_names.exam_grade_id, parsed_row.exam_grade_id)
-            raise ParsingError('[{}] "score" value must be between 0 and 100'.format(row_identifier))
+            row_identifier = f'{self.col_names.exam_grade_id}: {parsed_row.exam_grade_id}'
+            raise ParsingError(f'[{row_identifier}] "score" value must be between 0 and 100')
         return parsed_row
 
     def parse_exam_grade_adjustments(self, csv_reader):
@@ -67,7 +67,7 @@ class GradeRowParser:
         if exam_grade_query.count() < len(parsed_row_dict):
             bad_exam_grade_ids = set(parsed_row_dict.keys()) - set(exam_grade_query.values_list('id', flat=True))
             raise ParsingError(
-                'Some exam grade IDs do not match any ProctoredExamGrade records: {}'.format(bad_exam_grade_ids)
+                f'Some exam grade IDs do not match any ProctoredExamGrade records: {bad_exam_grade_ids}'
             )
         for exam_grade in exam_grade_query.all():
             yield exam_grade, parsed_row_dict[exam_grade.id]
@@ -90,10 +90,10 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument,too-many-locals
-        col_names = dict(
-            exam_grade_id=kwargs.get('grade_id_col_name'),
-            score=kwargs.get('score_col_name'),
-        )
+        col_names = {
+            'exam_grade_id': kwargs.get('grade_id_col_name'),
+            'score': kwargs.get('score_col_name'),
+        }
         csvfile = kwargs.get('csvfile')
         reader = csv.DictReader(csvfile.read().splitlines())
         grade_row_parser = GradeRowParser(col_names=col_names)
@@ -111,9 +111,9 @@ class Command(BaseCommand):
                 grades_unchanged = grades_unchanged + 1
             total_rows = total_rows + 1
 
-        result_messages = ['Total rows: {}'.format(total_rows)]
+        result_messages = [f'Total rows: {total_rows}']
         if grades_changed:
-            result_messages.append('Grades changed: {}'.format(grades_changed))
+            result_messages.append(f'Grades changed: {grades_changed}')
         if grades_unchanged:
-            result_messages.append('Grades found with no change in score: {}'.format(grades_unchanged))
+            result_messages.append(f'Grades found with no change in score: {grades_unchanged}')
         self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))

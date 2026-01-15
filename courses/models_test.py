@@ -4,22 +4,17 @@ Model tests
 from datetime import timedelta
 from urllib.parse import urljoin
 
-from ddt import ddt, data, unpack
+from ddt import data, ddt, unpack
 from django.core.exceptions import ImproperlyConfigured
 from django.test import override_settings
 
-from courses.factories import (
-    ProgramFactory,
-    CourseFactory,
-    CourseRunFactory,
-)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 from courses.models import CourseRun
 from exams.factories import ExamRunFactory
-from grades.models import CourseRunGradingStatus
 from grades.constants import FinalGradeStatus
+from grades.models import CourseRunGradingStatus
 from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
-
 
 BASE_URL = "http://base.url/"
 
@@ -31,7 +26,7 @@ class ProgramTests(MockedESTestCase):
     def test_to_string(self):
         """Test for __str__ method"""
         prog = ProgramFactory.build(title="Title")
-        assert "{}".format(prog) == "Title"
+        assert f"{prog}" == "Title"
 
     def create_frozen_run(self, course):
         """helper function to create frozen course runs"""
@@ -96,7 +91,7 @@ class CourseModelTests(MockedESTestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(CourseModelTests, cls).setUpTestData()
+        super().setUpTestData()
         cls.course = CourseFactory.create(title="Title")
 
     def setUp(self):
@@ -294,19 +289,19 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
 
     def test_to_string(self):
         """Test for __str__ method"""
-        assert "{}".format(self.course) == "Title"
+        assert f"{self.course}" == "Title"
 
     @data(
         # course starts in future, enrollment future
-        [1, 10, 1, 2, 'Starts {:%b %-d, %Y} - Enrollment {:%m/%Y}'.format(from_weeks(1), from_weeks(1))],
+        [1, 10, 1, 2, f'Starts {from_weeks(1):%b %-d, %Y} - Enrollment {from_weeks(1):%m/%Y}'],
         # course starts in future, enrollment open
-        [1, 10, -1, 10, 'Starts {:%b %-d, %Y} - Enrollment Open'.format(from_weeks(1))],
+        [1, 10, -1, 10, f'Starts {from_weeks(1):%b %-d, %Y} - Enrollment Open'],
         # course starts in future, enrollment open with no end
-        [1, 10, -1, None, 'Starts {:%b %-d, %Y} - Enrollment Open'.format(from_weeks(1))],
+        [1, 10, -1, None, f'Starts {from_weeks(1):%b %-d, %Y} - Enrollment Open'],
         # course starts in future, no enrollment dates
-        [1, 10, None, None, 'Starts {:%b %-d, %Y}'.format(from_weeks(1))],
+        [1, 10, None, None, f'Starts {from_weeks(1):%b %-d, %Y}'],
         # course is currently running, enrollment is open, ending soon
-        [-1, 10, -1, 10, 'Ongoing - Enrollment Ends {:%b %-d, %Y}'.format(from_weeks(10))],
+        [-1, 10, -1, 10, f'Ongoing - Enrollment Ends {from_weeks(10):%b %-d, %Y}'],
         # course is currently running without end, enrollment is open, no end
         [-1, None, -1, None, 'Ongoing - Enrollment Open'],
         # course is currently running, enrollment is closed
@@ -380,7 +375,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
         )
         expected = urljoin(
             BASE_URL,
-            'courses/{key}/about'.format(key=course_run.edx_course_key)
+            f'courses/{course_run.edx_course_key}/about'
         )
         assert course_run.course.url == expected
 
@@ -398,7 +393,7 @@ class CourseRunTests(CourseModelTests):
     def test_to_string(self):
         """Test for __str__ method"""
         course_run = self.create_run()
-        assert "{}".format(course_run) == "Title Run"
+        assert f"{course_run}" == "Title Run"
 
     def test_save(self):
         """

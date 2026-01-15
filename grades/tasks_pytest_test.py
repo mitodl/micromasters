@@ -4,16 +4,15 @@ Tests for grades tasks
 from datetime import timedelta
 from unittest.mock import call
 
-import pytest
 import factory
+import pytest
+
 from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 from exams.factories import ExamRunFactory
 from grades import tasks
-from grades.factories import (
-    FinalGradeFactory,
-    ProctoredExamGradeFactory,
-)
-from grades.models import MicromastersCourseCertificate, CombinedFinalGrade, CourseRunGradingStatus, FinalGrade
+from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
+from grades.models import (CombinedFinalGrade, CourseRunGradingStatus,
+                           FinalGrade, MicromastersCourseCertificate)
 from micromasters.utils import now_in_utc
 
 pytestmark = [

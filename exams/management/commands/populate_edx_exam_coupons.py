@@ -1,11 +1,12 @@
 """
 Populates ExamAuthorizations with edx coupon urls for taking exam-course
 """
-import csv
 import argparse
-import pytz
+import csv
 import re
 from datetime import datetime
+
+import pytz
 from django.core.management import BaseCommand, CommandError
 from django.core.validators import URLValidator
 
@@ -45,11 +46,11 @@ class Command(BaseCommand):
             course = Course.objects.get(course_number__startswith=f'{course_number}x')
         except Course.DoesNotExist:
             raise CommandError(
-                'Could not find a course with number "{}"'.format(course_number)
+                f'Could not find a course with number "{course_number}"'
             )
         except Course.MultipleObjectsReturned:
             raise CommandError(
-                'There are multiple courses with given number "{}"'.format(course_number)
+                f'There are multiple courses with given number "{course_number}"'
             )
         without_timezone = datetime.strptime(first_row['Coupon Expiry Date'], '%b %d, %y')
         timezone = pytz.timezone("UTC")
@@ -67,8 +68,8 @@ class Command(BaseCommand):
                 coupons_created += 1
 
         result_messages = [
-            'Total coupons in the file: {}'.format(len(validated_urls)),
-            'ExamRunCoupons created: {}'.format(coupons_created),
+            f'Total coupons in the file: {len(validated_urls)}',
+            f'ExamRunCoupons created: {coupons_created}',
         ]
 
         self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))

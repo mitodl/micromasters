@@ -6,14 +6,8 @@ from factory.django import mute_signals
 from rest_framework.exceptions import ValidationError
 
 from financialaid.constants import FinancialAidStatus
-from financialaid.factories import (
-    TierFactory,
-    FinancialAidFactory
-)
-from financialaid.models import (
-    Tier,
-    FinancialAidAudit,
-)
+from financialaid.factories import FinancialAidFactory, TierFactory
+from financialaid.models import FinancialAidAudit, Tier
 from micromasters.utils import serialize_model_object
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase

@@ -3,15 +3,12 @@
 import os
 import sys
 
-from django.core.management import (
-    BaseCommand,
-    call_command,
-)
+import pytest
+from django.contrib.auth import get_user_model
+from django.core.management import BaseCommand, call_command
 from django.db import connection
 from django.test import override_settings
-from django.contrib.auth.models import User
 from faker.generator import random
-import pytest
 from selenium.common.exceptions import ElementNotVisibleException
 from selenium.webdriver.common.by import By
 
@@ -20,14 +17,12 @@ from dashboard.models import ProgramEnrollment
 from roles.models import Role, Staff
 from search.base import reindex_test_es_data
 from selenium_tests.data_util import create_user_for_login
-from selenium_tests.util import (
-    DEFAULT_PASSWORD,
-    DatabaseLoader,
-    terminate_db_connections,
-    should_load_from_existing_db,
-)
 from selenium_tests.page import LoginPage
+from selenium_tests.util import (DEFAULT_PASSWORD, DatabaseLoader,
+                                 should_load_from_existing_db,
+                                 terminate_db_connections)
 
+User = get_user_model()
 
 # We need to have pytest skip this file when collecting tests to run, but we also want to run it as a test
 # when invoked by this command so we can take advantage of Selenium and the test database infrastructure. This
@@ -47,11 +42,7 @@ def make_filename(num, name, output_directory='', use_mobile=False):
     """Format the filename without extension for dashboard states"""
     return os.path.join(
         output_directory,
-        "learners_state_{num:03d}_{command}{mobile}".format(
-            num=num,
-            command=name,
-            mobile="_mobile" if use_mobile else "",
-        )
+        f"learners_state_{num:03d}_{name}{'_mobile' if use_mobile else ''}"
     )
 
 
@@ -96,7 +87,7 @@ def test_data(django_db_blocker, seeded_database_loader, pytestconfig):
             terminate_db_connections()
         seeded_database_loader.load_backup()
         user = User.objects.get(username='staff')
-    yield dict(user=user)
+    yield {"user": user}
 
 
 class LearnersStates:
@@ -190,7 +181,7 @@ class LearnersStates:
         """
         Just go to the URL
         """
-        return lambda: "/learners?" + url
+        return lambda: f"/learners?{url}"
 
 
 # pylint: disable=too-many-locals
@@ -296,16 +287,16 @@ class Command(BaseCommand):
         if options.get('list_scenarios'):
             self.stdout.write('Scenarios:\n')
             for num, (_, name) in enumerate(LearnersStates()):
-                self.stdout.write("  {:03}_{}\n".format(num, name))
+                self.stdout.write(f"  {num:03}_{name}\n")
             return
 
         if not os.environ.get('WEBPACK_DEV_SERVER_HOST'):
             # This should only happen if the user is running in an environment without Docker, which isn't allowed
             # for this command.
-            raise Exception('Missing environment variable WEBPACK_DEV_SERVER_HOST.')
+            raise Exception('Missing environment variable WEBPACK_DEV_SERVER_HOST.')  # pylint: disable=broad-exception-raised
 
         if os.environ.get('RUNNING_SELENIUM') != 'true':
-            raise Exception(
+            raise Exception(  # pylint: disable=broad-exception-raised
                 "This management command must be run with ./scripts/test/run_snapshot_dashboard_states.sh"
             )
 
@@ -320,7 +311,7 @@ class Command(BaseCommand):
             OPENSEARCH_INDEX='testindex',
             OPENSEARCH_DEFAULT_PAGE_SIZE=15,
         ):
-            pytest_args = ["{}::test_learners_states".format(__file__), "-s"]
+            pytest_args = [f"{__file__}::test_learners_states", "-s"]
             if options.get('create_db'):
                 pytest_args.append('--create-db')
             sys.exit(pytest.main(args=pytest_args))

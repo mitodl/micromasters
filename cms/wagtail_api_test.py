@@ -2,7 +2,8 @@
 Tests for wagtail built-in endpoints
 """
 from django.urls import reverse
-from cms.factories import ProgramPageFactory, ProgramLetterSignatoryFactory
+
+from cms.factories import ProgramLetterSignatoryFactory, ProgramPageFactory
 from search.base import MockedESTestCase
 
 
@@ -56,18 +57,16 @@ class WagtailAPITestCase(MockedESTestCase):
         response_keys = list(json["items"][0].keys())
         self.assertTrue(
             all(
-                [
-                    key in response_keys
-                    for key in [
-                        "title",
-                        "program_id",
-                        "program_letter_footer",
-                        "program_letter_footer_text",
-                        "program_letter_header_text",
-                        "program_letter_logo",
-                        "program_letter_text",
-                        "program_letter_signatories",
-                    ]
+                key in response_keys
+                for key in [
+                    "title",
+                    "program_id",
+                    "program_letter_footer",
+                    "program_letter_footer_text",
+                    "program_letter_header_text",
+                    "program_letter_logo",
+                    "program_letter_text",
+                    "program_letter_signatories",
                 ]
             )
         )

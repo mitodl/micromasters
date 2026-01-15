@@ -1,25 +1,17 @@
 """Factories for making test data"""
-from tempfile import NamedTemporaryFile
 import uuid
 
 import factory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
-from robohash import Robohash
 from wagtail.images.models import Image
+from wagtail.images.tests.utils import get_test_image_file
 
-from cms.models import (
-    HomePage,
-    InfoLinks,
-    ProgramPage,
-    ProgramFaculty,
-    ProgramCourse,
-    SemesterDate,
-    CourseCertificateSignatories,
-    ProgramCertificateSignatories,
-    ProgramLetterSignatory,
-)
-from courses.factories import ProgramFactory, CourseFactory
+from cms.models import (CourseCertificateSignatories, HomePage, InfoLinks,
+                        ProgramCertificateSignatories, ProgramCourse,
+                        ProgramFaculty, ProgramLetterSignatory, ProgramPage,
+                        SemesterDate)
+from courses.factories import CourseFactory, ProgramFactory
 
 
 class ImageFactory(DjangoModelFactory):
@@ -33,23 +25,16 @@ class ImageFactory(DjangoModelFactory):
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
-        image = model_class.objects.create(*args, **kwargs)
+        name = f"{uuid.uuid4().hex}.jpg"
+        image_file = get_test_image_file(filename=name)
 
-        name = uuid.uuid4().hex
-        robohash = Robohash(name)
-        roboset = robohash.sets[0]
-        robohash.assemble(roboset=roboset)
+        # Ensure model receives a valid image file with dimensions set
+        kwargs.setdefault("file", image_file)
+        kwargs.setdefault("width", image_file.width)
+        kwargs.setdefault("height", image_file.height)
+        kwargs.setdefault("title", name)
 
-        with NamedTemporaryFile() as f:
-            robohash.img.convert('RGB').save(f, format='jpeg')
-            f.seek(0)
-            image.file.save(name, f)
-
-        # Close the file handle to prevent ResourceWarning
-        if image.file:
-            image.file.close()
-
-        return image
+        return model_class.objects.create(*args, **kwargs)
 
 
 class ProgramPageFactory(DjangoModelFactory):
@@ -58,7 +43,8 @@ class ProgramPageFactory(DjangoModelFactory):
         model = ProgramPage
 
     title = factory.Faker('sentence', nb_words=4)
-    description = factory.Faker('text')
+    # StreamField expects a list/dict structure; use empty stream by default
+    description = []
     program = factory.SubFactory(ProgramFactory)
     faculty_description = factory.Faker('paragraph')
     program_contact_email = factory.Faker('email')
@@ -68,6 +54,10 @@ class ProgramPageFactory(DjangoModelFactory):
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
         home_page = HomePage.objects.first()
+        # Ensure StreamField description is properly structured when a plain string is provided
+        description = kwargs.get("description")
+        if isinstance(description, str):
+            kwargs["description"] = [("paragraph", description)]
         page = model_class(*args, **kwargs)
         home_page.add_child(instance=page)
         page.save_revision().publish()

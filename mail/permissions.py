@@ -5,14 +5,13 @@ import hashlib
 import hmac
 
 from django.conf import settings
-
-from rolepermissions.checkers import has_permission
 from rest_framework.permissions import BasePermission
+from rolepermissions.checkers import has_permission
 
-from roles.roles import Permissions, Staff, Instructor
+from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import MMTrack
-from dashboard.api_edx_cache import CachedEdxUserData
+from roles.roles import Instructor, Permissions, Staff
 
 
 class UserCanMessageLearnersPermission(BasePermission):
@@ -104,7 +103,7 @@ class UserCanMessageCourseTeamPermission(BasePermission):
             edx_user_data
         )
         course_run_keys = obj.courserun_set.values_list('edx_course_key', flat=True)
-        return any([mmtrack.has_paid(course_run_key) for course_run_key in course_run_keys])
+        return any(mmtrack.has_paid(course_run_key) for course_run_key in course_run_keys)
 
 
 class MailGunWebHookPermission(BasePermission):
@@ -126,7 +125,7 @@ class MailGunWebHookPermission(BasePermission):
         """
         if timestamp is not None and signature is not None and token is not None:
             key_bytes = bytes(settings.MAILGUN_KEY, 'latin-1')
-            data_bytes = bytes('{}{}'.format(timestamp, token), 'latin-1')
+            data_bytes = bytes(f'{timestamp}{token}', 'latin-1')
 
             hmac_digest = hmac.new(
                 key=key_bytes,

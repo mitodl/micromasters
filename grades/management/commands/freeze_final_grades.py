@@ -23,17 +23,17 @@ class Command(BaseCommand):
         try:
             run = CourseRun.objects.get(edx_course_key=edx_course_key)
         except CourseRun.DoesNotExist:
-            raise CommandError('Course Run for course_id "{}" does not exist'.format(edx_course_key))
+            raise CommandError(f'Course Run for course_id "{edx_course_key}" does not exist')
         try:
             can_freeze = run.can_freeze_grades
         except ImproperlyConfigured:
-            raise CommandError('Course Run for course_id "{}" is missing the freeze date'.format(edx_course_key))
+            raise CommandError(f'Course Run for course_id "{edx_course_key}" is missing the freeze date')
         if not can_freeze:
-            raise CommandError('Course Run for course_id "{}" cannot be frozen yet'.format(edx_course_key))
+            raise CommandError(f'Course Run for course_id "{edx_course_key}" cannot be frozen yet')
         if CourseRunGradingStatus.is_complete(run):
             self.stdout.write(
                 self.style.SUCCESS(
-                    'Final grades for course "{0}" are already complete'.format(edx_course_key)
+                    f'Final grades for course "{edx_course_key}" are already complete'
                 )
             )
             return
@@ -41,6 +41,6 @@ class Command(BaseCommand):
         freeze_course_run_final_grades.delay(run.id)
         self.stdout.write(
             self.style.SUCCESS(
-                'Successfully submitted async task to freeze final grades for course "{0}"'.format(edx_course_key)
+                f'Successfully submitted async task to freeze final grades for course "{edx_course_key}"'
             )
         )

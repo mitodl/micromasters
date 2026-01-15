@@ -3,17 +3,13 @@ API for exams app
 """
 import logging
 
-from dashboard.utils import get_mmtrack
 from dashboard.api import has_to_pay_for_exam
+from dashboard.utils import get_mmtrack
 from exams.exceptions import ExamAuthorizationException
-from exams.models import (
-    ExamAuthorization,
-    ExamProfile,
-    ExamRun,
-)
+from exams.models import ExamAuthorization, ExamProfile, ExamRun
 from exams.utils import get_corresponding_course_run
-from grades.models import FinalGrade
 from grades.constants import FinalGradeStatus
+from grades.models import FinalGrade
 
 MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE = (
     '[Exam authorization] Unable to authorize user "{user}" for exam, '
@@ -56,10 +52,10 @@ def authorize_for_exam_run(user, course_run, exam_run):
         )
     if course_run.course != exam_run.course:
         raise ExamAuthorizationException(
-            "Course '{}' on CourseRun doesn't match Course '{}' on ExamRun".format(course_run.course, exam_run.course)
+            f"Course '{course_run.course}' on CourseRun doesn't match Course '{exam_run.course}' on ExamRun"
         )
     if not exam_run.is_schedulable:
-        raise ExamAuthorizationException("Exam isn't schedulable currently: {}".format(exam_run))
+        raise ExamAuthorizationException(f"Exam isn't schedulable currently: {exam_run}")
 
     # If user has not paid for course then we dont need to process authorization
     if not mmtrack.has_paid(course_run.edx_course_key):

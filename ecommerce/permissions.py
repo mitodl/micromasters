@@ -7,7 +7,6 @@ from rest_framework.permissions import BasePermission
 
 from ecommerce.api import generate_cybersource_sa_signature
 
-
 log = logging.getLogger(__name__)
 
 

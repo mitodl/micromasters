@@ -1,8 +1,5 @@
 """ui utilities"""
-from enum import (
-    Enum,
-    unique,
-)
+from enum import Enum, unique
 
 
 # Python 3.6: this should be upgraded to enum.Flag

@@ -4,10 +4,10 @@ Apis for the dashboard
 import datetime
 import logging
 from urllib.parse import urljoin
-import pytz
 
+import pytz
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Prefetch
@@ -15,25 +15,27 @@ from django.urls import reverse
 from django_redis import get_redis_connection
 from edx_api.client import EdxApi
 
-from backends.constants import COURSEWARE_BACKEND_URL, COURSEWARE_BACKENDS, BACKEND_MITX_ONLINE, BACKEND_EDX_ORG
-from backends.exceptions import InvalidCredentialStored
 from backends import utils
+from backends.constants import (BACKEND_EDX_ORG, BACKEND_MITX_ONLINE,
+                                COURSEWARE_BACKEND_URL, COURSEWARE_BACKENDS)
+from backends.exceptions import InvalidCredentialStored
 from backends.utils import has_social_auth
-from courses.models import Program, ElectiveCourse, CourseRun
+from courses.models import CourseRun, ElectiveCourse, Program
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.constants import DEDP_PROGRAM_TITLE
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack
+from exams.models import ExamAuthorization, ExamRun
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
 from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
-from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc
-
 # key that stores user_key and number of failures in a hash
 from profiles.api import get_social_auth
+
+User = get_user_model()
 
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
 # key that stores user ids to exclude from cache update
@@ -117,7 +119,7 @@ class CourseFormatConditionalFields:
         if course_status not in CourseStatus.all_statuses():
             log.error('%s not defined in Courses.api.CourseStatus', course_status)
             raise ImproperlyConfigured(
-                '{} not defined in Courses.api.CourseStatus'.format(course_status))
+                f'{course_status} not defined in Courses.api.CourseStatus')
         return cls.ASSOCIATED_FIELDS.get(course_status, [])
 
 
@@ -130,11 +132,8 @@ class CourseRunUserStatus:
         self.course_run = course_run
 
     def __repr__(self):
-        return "<CourseRunUserStatus for course {course} status {status} at {address}>".format(
-            status=self.status,
-            course=self.course_run.title if self.course_run is not None else '"None"',
-            address=hex(id(self))
-        )
+        course = self.course_run.title if self.course_run is not None else '"None"'
+        return f"<CourseRunUserStatus for course {course} status {self.status} at {hex(id(self))}>"
 
 
 def get_user_program_info(user, *, update_cache=True):
@@ -432,7 +431,7 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
             status = CourseRunStatus.CURRENTLY_ENROLLED
         else:
             raise ImproperlyConfigured(
-                'The course {0} results are not either current, past, or future at the same time'.format(
+                'The course {} results are not either current, past, or future at the same time'.format(
                     course_run.edx_course_key
                 )
             )

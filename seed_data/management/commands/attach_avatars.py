@@ -25,10 +25,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         profile_queryset = Profile.objects.filter(user__username__startswith=options['username_prefix'])
-        self.stdout.write("Attaching robot avatars to {} profiles...".format(profile_queryset.count()))
+        self.stdout.write(f"Attaching robot avatars to {profile_queryset.count()} profiles...")
 
         for count, profile in enumerate(profile_queryset):
-            name = "{}.jpg".format(profile.user.username)
+            name = f"{profile.user.username}.jpg"
             robohash = Robohash(name)
             roboset = robohash.sets[0]
             robohash.assemble(roboset=roboset)
@@ -40,6 +40,6 @@ class Command(BaseCommand):
             profile.save(update_image=True)
 
             if count % 10 == 0:
-                self.stdout.write("Updated {} profiles...".format(count))
+                self.stdout.write(f"Updated {count} profiles...")
 
         self.stdout.write("Done updating profiles!")

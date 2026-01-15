@@ -83,8 +83,5 @@ class Command(BaseCommand):
             programs = programs.filter(tier_programs__isnull=True)
         programs_with_tiers_created, tiers_created = create_tiers(programs, num_tiers)
         self.stdout.write(
-            "Created {tiers_created} Tiers/TierPrograms for {programs_created} Programs.".format(
-                tiers_created=tiers_created,
-                programs_created=programs_with_tiers_created
-            )
+            f"Created {tiers_created} Tiers/TierPrograms for {programs_with_tiers_created} Programs."
         )

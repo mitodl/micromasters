@@ -2,36 +2,27 @@
 Tests for financial aid api
 """
 import json
-
 from datetime import timedelta
+
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 from dashboard.models import ProgramEnrollment
-from financialaid.api import (
-    determine_auto_approval,
-    determine_income_usd,
-    determine_tier_program,
-    get_formatted_course_price,
-    get_no_discount_tier_program,
-    update_currency_exchange_rate
-)
+from financialaid.api import (determine_auto_approval, determine_income_usd,
+                              determine_tier_program,
+                              get_formatted_course_price,
+                              get_no_discount_tier_program,
+                              update_currency_exchange_rate)
 from financialaid.constants import FinancialAidStatus
-from financialaid.factories import (
-    FinancialAidFactory,
-    TierProgramFactory
-)
-from financialaid.models import (
-    CountryIncomeThreshold,
-    CurrencyExchangeRate
-)
+from financialaid.factories import FinancialAidFactory, TierProgramFactory
+from financialaid.models import CountryIncomeThreshold, CurrencyExchangeRate
 from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
 from roles.models import Role
-from roles.roles import Staff, Instructor
+from roles.roles import Instructor, Staff
 from search.base import MockedESTestCase
 
 

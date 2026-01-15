@@ -8,6 +8,7 @@ from mail.models import FinancialAidEmailAudit, PartnerSchool
 from micromasters.utils import get_field_names
 
 
+@admin.register(FinancialAidEmailAudit)
 class FinancialAidEmailAuditAdmin(admin.ModelAdmin):
     """Admin for FinancialAidEmailAudit"""
     model = FinancialAidEmailAudit
@@ -20,11 +21,8 @@ class FinancialAidEmailAuditAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(PartnerSchool)
 class PartnerSchoolAdmin(admin.ModelAdmin):
     """ModelAdmin for PartnerSchool"""
     list_display = ('name', 'email', )
     ordering = ('name', 'email', )
-
-
-admin.site.register(PartnerSchool, PartnerSchoolAdmin)
-admin.site.register(FinancialAidEmailAudit, FinancialAidEmailAuditAdmin)

@@ -7,21 +7,15 @@ from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
 from courses.models import CourseRun
 from dashboard.models import CachedEnrollment
 from dashboard.utils import get_mmtrack
 from ecommerce.models import Order
 from exams.api import authorize_user_for_schedulable_exam_runs
-from exams.models import (
-    ExamProfile,
-    ExamRun,
-)
+from exams.models import ExamProfile, ExamRun
 from exams.utils import is_eligible_for_exam
-
 from grades.api import update_existing_combined_final_grade_for_exam_run
 from grades.models import FinalGrade
-
 
 log = logging.getLogger(__name__)
 

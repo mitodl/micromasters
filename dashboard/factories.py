@@ -5,33 +5,18 @@ from datetime import timedelta
 from random import randint
 
 import faker
-from factory import (
-    SubFactory,
-    LazyAttribute,
-    Trait,
-)
+from factory import LazyAttribute, SubFactory, Trait
 from factory.django import DjangoModelFactory
-from factory.fuzzy import (
-    FuzzyDateTime,
-)
+from factory.fuzzy import FuzzyDateTime
 
-from dashboard.models import (
-    CachedCertificate,
-    CachedCurrentGrade,
-    CachedEnrollment,
-    ProgramEnrollment,
-    UserCacheRefreshTime,
-)
-from courses.factories import (
-    CourseRunFactory,
-    CourseFactory,
-    ProgramFactory,
-)
-from micromasters.factories import UserFactory
-from micromasters.utils import now_in_utc
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
+from dashboard.models import (CachedCertificate, CachedCurrentGrade,
+                              CachedEnrollment, ProgramEnrollment,
+                              UserCacheRefreshTime)
 from ecommerce.factories import LineFactory
 from ecommerce.models import Order
-
+from micromasters.factories import UserFactory
+from micromasters.utils import now_in_utc
 
 FAKE = faker.Factory.create()
 

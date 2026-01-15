@@ -2,45 +2,23 @@
 Models for storing ecommerce data
 """
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.fields import JSONField
-from django.core.exceptions import (
-    ImproperlyConfigured,
-    ValidationError,
-)
-from django.db.models import (
-    CASCADE,
-    Model,
-    SET_NULL,
-)
-from django.db.models.fields import (
-    BooleanField,
-    CharField,
-    DateTimeField,
-    DecimalField,
-    PositiveIntegerField,
-    TextField,
-)
-from django.db.models.fields.related import (
-    ForeignKey,
-)
+from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.db.models import CASCADE, SET_NULL, JSONField, Model
+from django.db.models.fields import (BooleanField, CharField, DateTimeField,
+                                     DecimalField, PositiveIntegerField,
+                                     TextField)
+from django.db.models.fields.related import ForeignKey
 
-from courses.models import (
-    Course,
-    CourseRun,
-    Program,
-)
+from courses.models import Course, CourseRun, Program
 from financialaid.models import TimestampedModel
-from micromasters.models import (
-    AuditableModel,
-    AuditModel,
-)
-from micromasters.utils import (
-    now_in_utc,
-    serialize_model_object,
-)
+from micromasters.models import AuditableModel, AuditModel
+from micromasters.utils import now_in_utc, serialize_model_object
+
+User = get_user_model()
 
 
 class Order(AuditableModel):
@@ -72,7 +50,7 @@ class Order(AuditableModel):
 
     def __str__(self):
         """Description for Order"""
-        return "Order {}, status={} for user={}".format(self.id, self.status, self.user)
+        return f"Order {self.id}, status={self.status} for user={self.user}"
 
     @classmethod
     def get_audit_class(cls):
@@ -109,7 +87,6 @@ class Order(AuditableModel):
         #
         # NOTE: while this value could be reused elsewhere in the ecommerce API
         #       that code was intentionally not modified to keep testing scope to a minimum
-
         # perform an initial save so that if this is a new instance we get the primary key
         super().save(*args, **kwargs)
 
@@ -147,7 +124,7 @@ class Line(Model):
 
     def __str__(self):
         """Description for Line"""
-        return "Line for order {}, course_key={}, price={}".format(self.order.id, self.course_key, self.price)
+        return f"Line for order {self.order.id}, course_key={self.course_key}, price={self.price}"
 
 
 class Receipt(Model):
@@ -163,7 +140,7 @@ class Receipt(Model):
     def __str__(self):
         """Description of Receipt"""
         if self.order:
-            return "Receipt for order {}".format(self.order.id)
+            return f"Receipt for order {self.order.id}"
         else:
             return "Receipt with no attached order"
 
@@ -181,10 +158,7 @@ class CouponInvoice(AuditableModel):
         return serialize_model_object(self)
 
     def __str__(self):
-        return "CouponInvoice for invoice {invoice_number}: {description}".format(
-            invoice_number=self.invoice_number,
-            description=self.description,
-        )
+        return f"CouponInvoice for invoice {self.invoice_number}: {self.description}"
 
 
 class CouponInvoiceAudit(AuditModel):
@@ -377,19 +351,17 @@ class Coupon(TimestampedModel, AuditableModel):
 
         if self.amount_type == self.PERCENT_DISCOUNT:
             if self.amount is None or not 0 <= self.amount <= 1:
-                raise ValidationError("amount must be between 0 and 1 if amount_type is {}".format(
-                    self.PERCENT_DISCOUNT
-                ))
+                raise ValidationError(f"amount must be between 0 and 1 if amount_type is {self.PERCENT_DISCOUNT}")
 
         if self.amount_type not in self.AMOUNT_TYPES:
-            raise ValidationError("amount_type must be one of {}".format(", ".join(self.AMOUNT_TYPES)))
+            raise ValidationError(f"amount_type must be one of {', '.join(self.AMOUNT_TYPES)}")
 
         if self.coupon_type not in self.COUPON_TYPES:
-            raise ValidationError("coupon_type must be one of {}".format(", ".join(self.COUPON_TYPES)))
+            raise ValidationError(f"coupon_type must be one of {', '.join(self.COUPON_TYPES)}")
 
         if self.coupon_type == self.DISCOUNTED_PREVIOUS_COURSE and not isinstance(self.content_object, Course):
             raise ValidationError(
-                "coupon must be for a course if coupon_type is {}".format(self.DISCOUNTED_PREVIOUS_COURSE)
+                f"coupon must be for a course if coupon_type is {self.DISCOUNTED_PREVIOUS_COURSE}"
             )
 
         if not self.program.financial_aid_availability:
@@ -412,12 +384,7 @@ class Coupon(TimestampedModel, AuditableModel):
 
     def __str__(self):
         """Description for Coupon"""
-        return "Coupon {amount_type} {amount} of type {coupon_type} for {product}".format(
-            amount_type=self.amount_type,
-            amount=self.amount,
-            product=self.content_object,
-            coupon_type=self.coupon_type,
-        )
+        return f"Coupon {self.amount_type} {self.amount} of type {self.coupon_type} for {self.content_object}"
 
 
 class CouponAudit(AuditModel):
@@ -448,10 +415,7 @@ class UserCoupon(TimestampedModel, AuditableModel):
 
     def __str__(self):
         """Description for UserCoupon"""
-        return "UserCoupon for {user}, {coupon}".format(
-            user=self.user,
-            coupon=self.coupon,
-        )
+        return f"UserCoupon for {self.user}, {self.coupon}"
 
 
 class UserCouponAudit(AuditModel):
@@ -482,10 +446,7 @@ class RedeemedCoupon(TimestampedModel, AuditableModel):
 
     def __str__(self):
         """Description for RedeemedCoupon"""
-        return "RedeemedCoupon for {order}, {coupon}".format(
-            order=self.order,
-            coupon=self.coupon,
-        )
+        return f"RedeemedCoupon for {self.order}, {self.coupon}"
 
 
 class RedeemedCouponAudit(AuditModel):

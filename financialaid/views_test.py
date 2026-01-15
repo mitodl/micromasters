@@ -13,36 +13,20 @@ from rest_framework.test import APIClient
 from backends.edxorg import EdxOrgOAuth2
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from financialaid.api import (
-    determine_income_usd,
-    determine_tier_program,
-    get_formatted_course_price,
-    get_no_discount_tier_program,
-)
-from financialaid.api_test import (
-    create_program,
-    create_enrolled_profile,
-    FinancialAidBaseTestCase,
-)
-from financialaid.constants import (
-    FinancialAidJustification,
-    FinancialAidStatus
-)
-from financialaid.factories import (
-    FinancialAidFactory,
-    TierProgramFactory
-)
-from financialaid.models import (
-    CountryIncomeThreshold,
-    CurrencyExchangeRate,
-    FinancialAid,
-    FinancialAidAudit,
-)
+from financialaid.api import (determine_income_usd, determine_tier_program,
+                              get_formatted_course_price,
+                              get_no_discount_tier_program)
+from financialaid.api_test import (FinancialAidBaseTestCase,
+                                   create_enrolled_profile, create_program)
+from financialaid.constants import (FinancialAidJustification,
+                                    FinancialAidStatus)
+from financialaid.factories import FinancialAidFactory, TierProgramFactory
+from financialaid.models import (CountryIncomeThreshold, CurrencyExchangeRate,
+                                 FinancialAid, FinancialAidAudit)
 from mail.utils import generate_financial_aid_email
 from mail.views_test import mocked_json
 from micromasters.utils import is_near_now
 from roles.models import Role
-
 
 # pylint: disable=too-many-lines
 

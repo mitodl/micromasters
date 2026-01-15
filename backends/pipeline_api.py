@@ -10,15 +10,13 @@ from social_core.exceptions import AuthException, AuthFailed
 
 from backends.base import BaseEdxOAuth2
 from backends.utils import update_email
-from dashboard.api import CACHE_KEY_FAILURE_NUMS_BY_USER, FIELD_USER_ID_BASE_STR, CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE
+from dashboard.api import (CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE,
+                           CACHE_KEY_FAILURE_NUMS_BY_USER,
+                           FIELD_USER_ID_BASE_STR)
 from micromasters.utils import now_in_utc
 from profiles.models import Profile
 from profiles.util import split_name
-from roles.models import (
-    Instructor,
-    Staff,
-)
-
+from roles.models import Instructor, Staff
 
 log = logging.getLogger(__name__)
 
@@ -103,12 +101,12 @@ def check_edx_verified_email(backend, response, details, *args, **kwargs):  # py
     access_token = response.get('access_token')
     if not access_token:
         # this should never happen for the edx oauth provider, but just in case...
-        raise AuthException('Missing access token for the edX user {0}'.format(username))
+        raise AuthException(f'Missing access token for the edX user {username}')
 
     user_profile_edx = backend.get_json(
-        backend.get_url('/api/user/v1/accounts/{0}'.format(username)),
+        backend.get_url(f'/api/user/v1/accounts/{username}'),
         headers={
-            "Authorization": "Bearer {}".format(access_token),
+            "Authorization": f"Bearer {access_token}",
         }
     )
 

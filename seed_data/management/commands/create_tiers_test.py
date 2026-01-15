@@ -4,19 +4,19 @@ Test file for create_tier management command
 from courses.factories import ProgramFactory
 from financialaid.factories import TierProgramFactory
 from financialaid.models import Tier, TierProgram
-from seed_data.management.commands import create_tiers
 from search.base import MockedESTestCase
+from seed_data.management.commands import create_tiers
 
 
 class CreateTiersTest(MockedESTestCase):
     """
     Tests for create_tier management command
     """
-    @classmethod
-    def setUpTestData(cls):
-        cls.program1 = ProgramFactory.create()
-        cls.program2 = ProgramFactory.create()
-        cls.command = create_tiers.Command()
+    def setUp(self):
+        super().setUp()
+        self.program1 = ProgramFactory.create()
+        self.program2 = ProgramFactory.create()
+        self.command = create_tiers.Command()
 
     def test_create_tier_with_tiers_parameter(self):
         """

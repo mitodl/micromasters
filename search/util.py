@@ -1,6 +1,6 @@
 """Utility functions for search"""
-from contextlib import contextmanager
 import json
+from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
 
 
@@ -70,7 +70,7 @@ def fix_nested_filter(query, parent_key):
         if 'filter' in query and parent_key == 'nested':
             copy = dict(query)
             if 'query' in copy:
-                raise Exception("Unexpected 'query' found")
+                raise ValueError("Unexpected 'query' found")
             copy['query'] = copy['filter']
             del copy['filter']
             return copy

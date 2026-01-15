@@ -4,8 +4,8 @@ EdX.org backend for Python Social Auth
 import abc
 from urllib.parse import urljoin
 
-from social_core.backends.oauth import BaseOAuth2
 from edx_api.client import EdxApi
+from social_core.backends.oauth import BaseOAuth2
 
 from micromasters.utils import now_in_utc
 

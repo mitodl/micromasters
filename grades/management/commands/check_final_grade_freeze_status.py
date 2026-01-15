@@ -7,12 +7,11 @@ from django.core.management import BaseCommand, CommandError
 from django_redis import get_redis_connection
 
 from courses.models import CourseRun
-from dashboard.models import CachedEnrollment, CachedCurrentGrade
+from dashboard.models import CachedCurrentGrade, CachedEnrollment
 from grades.api import CACHE_KEY_FAILED_USERS_BASE_STR
 from grades.models import CourseRunGradingStatus, FinalGrade
 from grades.tasks import CACHE_ID_BASE_STR
 from micromasters.celery import app
-
 
 cache_redis = caches['redis']
 
@@ -31,7 +30,7 @@ class Command(BaseCommand):
         try:
             run = CourseRun.objects.get(edx_course_key=edx_course_key)
         except CourseRun.DoesNotExist:
-            raise CommandError('Course Run for course_id "{0}" does not exist'.format(edx_course_key))
+            raise CommandError(f'Course Run for course_id "{edx_course_key}" does not exist')
 
         con = get_redis_connection("redis")
         failed_users_count = con.llen(CACHE_KEY_FAILED_USERS_BASE_STR.format(edx_course_key))
@@ -39,7 +38,7 @@ class Command(BaseCommand):
         if CourseRunGradingStatus.is_complete(run):
             self.stdout.write(
                 self.style.SUCCESS(
-                    'Final grades for course "{0}" are complete'.format(edx_course_key)
+                    f'Final grades for course "{edx_course_key}" are complete'
                 )
             )
         elif CourseRunGradingStatus.is_pending(run):
@@ -50,36 +49,36 @@ class Command(BaseCommand):
                 if not results.ready():
                     self.stdout.write(
                         self.style.WARNING(
-                            'Final grades for course "{0}" are being processed'.format(edx_course_key)
+                            f'Final grades for course "{edx_course_key}" are being processed'
                         )
                     )
                 else:
                     self.stdout.write(
                         self.style.WARNING(
-                            'Async task to freeze grade for course "{0}" '
+                            'Async task to freeze grade for course "{}" '
                             'are done, but course is not marked as complete.'.format(edx_course_key)
                         )
                     )
             else:
                 self.stdout.write(
                     self.style.ERROR(
-                        'Final grades for course "{0}" are marked as they are being processed'
+                        'Final grades for course "{}" are marked as they are being processed'
                         ', but no task found.'.format(edx_course_key)
                     )
                 )
         else:
             self.stdout.write(
                 self.style.WARNING(
-                    'Final grades for course "{0}" are not being processed yet'.format(edx_course_key)
+                    f'Final grades for course "{edx_course_key}" are not being processed yet'
                 )
             )
-        message_detail = ', where {0} failed authentication'.format(failed_users_count) if failed_users_count else ''
+        message_detail = f', where {failed_users_count} failed authentication' if failed_users_count else ''
         users_in_cache = set(CachedEnrollment.get_cached_users(run)).intersection(
             set(CachedCurrentGrade.get_cached_users(run))
         )
         self.stdout.write(
             self.style.SUCCESS(
-                'The students with a final grade are {0}/{1}{2}'.format(
+                'The students with a final grade are {}/{}{}'.format(
                     FinalGrade.objects.filter(course_run=run).count(),
                     len(users_in_cache),
                     message_detail

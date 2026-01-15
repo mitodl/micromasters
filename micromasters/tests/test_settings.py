@@ -6,14 +6,13 @@ import importlib
 import sys
 from unittest import mock
 
-from ddt import ddt, data
+import semantic_version
+from ddt import data, ddt
 from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
-import semantic_version
 
 from search.base import MockedESTestCase
-
 
 REQUIRED_SETTINGS = {
     'MAILGUN_URL': 'http://fake.mailgun.url',
@@ -46,8 +45,9 @@ class TestSettings(MockedESTestCase):
             'MICROMASTERS_USE_S3': 'False'
         }, clear=True):
             settings_vars = self.reload_settings()
+            storages = settings_vars.get('STORAGES', {})
             self.assertNotEqual(
-                settings_vars.get('DEFAULT_FILE_STORAGE'),
+                storages.get('default', {}).get('BACKEND'),
                 'storages.backends.s3boto3.S3Boto3Storage'
             )
 
@@ -67,8 +67,9 @@ class TestSettings(MockedESTestCase):
             'AWS_STORAGE_BUCKET_NAME': '3',
         }, clear=True):
             settings_vars = self.reload_settings()
+            storages = settings_vars.get('STORAGES', {})
             self.assertEqual(
-                settings_vars.get('DEFAULT_FILE_STORAGE'),
+                storages.get('default', {}).get('BACKEND'),
                 'storages.backends.s3boto3.S3Boto3Storage'
             )
 

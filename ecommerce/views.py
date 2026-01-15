@@ -1,7 +1,7 @@
 """Views from ecommerce"""
 import logging
 import traceback
-from urllib.parse import urljoin, quote
+from urllib.parse import quote, urljoin
 
 from django.conf import settings
 from django.db import transaction
@@ -11,7 +11,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 from ipware import get_client_ip
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.authentication import (SessionAuthentication,
+                                           TokenAuthentication)
 from rest_framework.exceptions import ValidationError
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
@@ -20,33 +21,19 @@ from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from courses.models import CourseRun
 from backends.constants import BACKEND_MITX_ONLINE
-from ecommerce.api import (
-    create_unfulfilled_order,
-    enroll_user_on_success,
-    generate_cybersource_sa_payload,
-    get_new_order_by_reference_number,
-    is_coupon_redeemable,
-    make_dashboard_receipt_url,
-    pick_coupons,
-)
-from ecommerce.constants import (
-    CYBERSOURCE_DECISION_ACCEPT,
-    CYBERSOURCE_DECISION_CANCEL,
-    MITXONLINE_CART_URL
-)
+from courses.models import CourseRun
+from ecommerce.api import (create_unfulfilled_order, enroll_user_on_success,
+                           generate_cybersource_sa_payload,
+                           get_new_order_by_reference_number,
+                           is_coupon_redeemable, make_dashboard_receipt_url,
+                           pick_coupons)
+from ecommerce.constants import (CYBERSOURCE_DECISION_ACCEPT,
+                                 CYBERSOURCE_DECISION_CANCEL,
+                                 MITXONLINE_CART_URL)
 from ecommerce.exceptions import EcommerceException
-from ecommerce.models import (
-    Coupon,
-    Order,
-    Receipt,
-    UserCoupon,
-)
-from ecommerce.permissions import (
-    IsLoggedInUser,
-    IsSignedByCyberSource,
-)
+from ecommerce.models import Coupon, Order, Receipt, UserCoupon
+from ecommerce.permissions import IsLoggedInUser, IsSignedByCyberSource
 from ecommerce.serializers import CouponSerializer
 from mail.api import MailgunClient
 from ui.url_utils import DASHBOARD_URL, PAYMENT_CALL_BACK_URL
@@ -130,13 +117,13 @@ class CheckoutView(APIView):
         elif course_run.courseware_backend == BACKEND_MITX_ONLINE:
             # Redirect the user to MITxOnline Cart page
             payload = {}
-            url = urljoin(MITXONLINE_CART_URL, 'add/?course_id={}'.format(quote(course_id)))
+            url = urljoin(MITXONLINE_CART_URL, f'add/?course_id={quote(course_id)}')
             method = 'GET'
 
         else:
             # This redirects the user to edX to purchase the course there
             payload = {}
-            url = urljoin(settings.EDXORG_CALLBACK_URL, '/course_modes/choose/{}/'.format(course_id))
+            url = urljoin(settings.EDXORG_CALLBACK_URL, f'/course_modes/choose/{course_id}/')
             method = 'GET'
 
         return Response({
@@ -174,7 +161,7 @@ class OrderFulfillmentView(APIView):
             # This is a duplicate message, ignore since it's already handled
             return Response(status=HTTP_200_OK)
         elif order.status != Order.CREATED:
-            raise EcommerceException("Order {} is expected to have status 'created'".format(order.id))
+            raise EcommerceException(f"Order {order.id} is expected to have status 'created'")
 
         if decision != CYBERSOURCE_DECISION_ACCEPT:
             order.status = Order.FAILED
@@ -185,12 +172,8 @@ class OrderFulfillmentView(APIView):
             if decision != CYBERSOURCE_DECISION_CANCEL:
                 try:
                     MailgunClient().send_individual_email(
-                        "Order fulfillment failed, decision={decision}".format(
-                            decision=decision
-                        ),
-                        "Order fulfillment failed for order {order}".format(
-                            order=order,
-                        ),
+                        f"Order fulfillment failed, decision={decision}",
+                        f"Order fulfillment failed for order {order}",
                         settings.ECOMMERCE_EMAIL
                     )
                 except:  # pylint: disable=bare-except

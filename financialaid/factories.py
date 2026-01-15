@@ -2,27 +2,18 @@
 Factories for financialaid tests
 """
 import datetime
+
 from django.db.models.signals import post_save
-from factory import SubFactory, Faker
+from factory import Faker, SubFactory
 from factory.django import DjangoModelFactory, mute_signals
-from factory.fuzzy import (
-    FuzzyChoice,
-    FuzzyDate,
-    FuzzyDateTime,
-    FuzzyFloat,
-    FuzzyInteger,
-    FuzzyText
-)
+from factory.fuzzy import (FuzzyChoice, FuzzyDate, FuzzyDateTime, FuzzyFloat,
+                           FuzzyInteger, FuzzyText)
 from pytz import UTC
 
 from courses.factories import ProgramFactory
 from financialaid.constants import FinancialAidStatus
-from financialaid.models import (
-    CountryIncomeThreshold,
-    FinancialAid,
-    Tier,
-    TierProgram
-)
+from financialaid.models import (CountryIncomeThreshold, FinancialAid, Tier,
+                                 TierProgram)
 from profiles.factories import ProfileFactory
 
 

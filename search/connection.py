@@ -6,7 +6,6 @@ from opensearch_dsl.connections import connections
 
 from search.exceptions import ReindexException
 
-
 _CONN = None
 # When we create the connection, check to make sure all appropriate mappings exist
 _CONN_VERIFIED = False
@@ -73,9 +72,7 @@ def get_conn(*, verify=True, verify_indices=None):
             )
     for verify_index in verify_indices:
         if not _CONN.indices.exists(verify_index):
-            raise ReindexException("Unable to find index {index_name}".format(
-                index_name=verify_index
-            ))
+            raise ReindexException(f"Unable to find index {verify_index}")
 
     _CONN_VERIFIED = True
     return _CONN
@@ -88,10 +85,7 @@ def make_backing_index_name():
     Returns:
         str: A new name for a backing index
     """
-    return "{prefix}_{hash}".format(
-        prefix=settings.OPENSEARCH_INDEX,
-        hash=uuid.uuid4().hex,
-    )
+    return f"{settings.OPENSEARCH_INDEX}_{uuid.uuid4().hex}"
 
 
 def make_alias_name(index_type, *, is_reindexing):
@@ -105,11 +99,7 @@ def make_alias_name(index_type, *, is_reindexing):
     Returns:
         str: The name of the alias
     """
-    return "{prefix}_{index_type}_{suffix}".format(
-        prefix=settings.OPENSEARCH_INDEX,
-        index_type=index_type,
-        suffix='reindexing' if is_reindexing else 'default'
-    )
+    return f"{settings.OPENSEARCH_INDEX}_{index_type}_{'reindexing' if is_reindexing else 'default'}"
 
 
 def get_aliases(index_type):

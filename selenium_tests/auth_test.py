@@ -3,11 +3,11 @@
 import json
 from urllib.parse import urlencode, urlparse
 
-from django.http.response import HttpResponse
 import pytest
+from django.http.response import HttpResponse
 
 from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
-from courses.factories import ProgramFactory, CourseRunFactory
+from courses.factories import CourseRunFactory, ProgramFactory
 
 pytestmark = [pytest.mark.django_db]
 

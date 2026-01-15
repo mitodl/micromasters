@@ -2,8 +2,9 @@
 Utility functions for the courses app
 """
 import re
-from opaque_keys.edx.keys import CourseKey
+
 from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 
 NUMBER_SEASON_MAP = {
     1: 'Spring',
@@ -102,7 +103,7 @@ def format_season_year_for_course_run(course_run):
         str: containing season and year, eg: 'Spring 2018'
     """
     year_season_tuple = get_year_season_from_course_run(course_run)
-    return '{} {}'.format(year_season_tuple[1], year_season_tuple[0]) if year_season_tuple else ''
+    return f'{year_season_tuple[1]} {year_season_tuple[0]}' if year_season_tuple else ''
 
 
 def is_blank(text):

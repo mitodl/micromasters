@@ -1,9 +1,9 @@
 """
 General util functions for database seeding
 """
+import math
 from datetime import timedelta
 from functools import wraps
-import math
 
 from pytz import timezone
 

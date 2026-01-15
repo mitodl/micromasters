@@ -6,32 +6,19 @@ from datetime import date
 
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from rest_framework.fields import (
-    CharField,
-    ReadOnlyField,
-    SerializerMethodField,
-)
-from rest_framework.serializers import ListSerializer
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import (CharField, ReadOnlyField,
+                                   SerializerMethodField)
+from rest_framework.serializers import ListSerializer
 
 from backends.edxorg import EdxOrgOAuth2
 from micromasters.factories import UserFactory
-from profiles.factories import (
-    EmploymentFactory,
-    EducationFactory,
-    ProfileFactory,
-)
-from profiles.models import (
-    BACHELORS,
-    DOCTORATE,
-)
-from profiles.serializers import (
-    EducationSerializer,
-    EmploymentSerializer,
-    ProfileLimitedSerializer,
-    ProfileSerializer,
-    ProfileFilledOutSerializer,
-)
+from profiles.factories import (EducationFactory, EmploymentFactory,
+                                ProfileFactory)
+from profiles.models import BACHELORS, DOCTORATE
+from profiles.serializers import (EducationSerializer, EmploymentSerializer,
+                                  ProfileFilledOutSerializer,
+                                  ProfileLimitedSerializer, ProfileSerializer)
 from profiles.test_mixins import ProfileImageCleanupMixin
 from search.base import MockedESTestCase
 
@@ -49,7 +36,7 @@ class ProfileTests(MockedESTestCase):
             profile = ProfileFactory.create(**kwargs)
             profile.user.social_auth.create(
                 provider=EdxOrgOAuth2.name,
-                uid="{}_edx".format(profile.user.username)
+                uid=f"{profile.user.username}_edx"
             )
             return profile
 
@@ -194,7 +181,7 @@ class ProfileTests(MockedESTestCase):
         serializer.is_valid(raise_exception=True)
         with self.assertRaises(ValidationError) as ex:
             serializer.save()
-        assert ex.exception.detail == ["Education {} does not exist".format(education2.id)]
+        assert ex.exception.detail == [f"Education {education2.id} does not exist"]
 
     def test_delete_education(self):
         """
@@ -286,7 +273,7 @@ class ProfileTests(MockedESTestCase):
         serializer.is_valid(raise_exception=True)
         with self.assertRaises(ValidationError) as ex:
             serializer.save()
-        assert ex.exception.detail == ["Work history {} does not exist".format(employment2.id)]
+        assert ex.exception.detail == [f"Work history {employment2.id} does not exist"]
 
     def test_delete_employment(self):
         """
@@ -330,7 +317,7 @@ class ProfileFilledOutTests(ProfileImageCleanupMixin, MockedESTestCase):
         EducationFactory.create(profile=cls.profile)
         cls.profile.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
-            uid="{}_edx".format(cls.profile.user.username)
+            uid=f"{cls.profile.user.username}_edx"
         )
 
     def setUp(self):

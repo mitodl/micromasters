@@ -3,14 +3,11 @@ Base test classes for search
 """
 from unittest.mock import patch
 
-from django.test import (
-    TestCase,
-    override_settings
-)
+from django.test import TestCase, override_settings
 
 from dashboard.models import ProgramEnrollment
 from search import tasks
-from search.indexing_api import delete_indices, create_backing_indices
+from search.indexing_api import create_backing_indices, delete_indices
 from search.models import PercolateQuery
 
 
@@ -54,7 +51,7 @@ class MockedESTestCase(TestCase):
             # This looks for functions starting with _ because those are the functions which are imported
             # from indexing_api. The _ lets it prevent name collisions.
             if callable(val) and name.startswith("_"):
-                cls.patchers.append(patch('search.tasks.{0}'.format(name), autospec=True))
+                cls.patchers.append(patch(f'search.tasks.{name}', autospec=True))
         for patcher in cls.patchers:
             mock = patcher.start()
             mock.name = patcher.attribute

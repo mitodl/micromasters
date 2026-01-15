@@ -1,25 +1,18 @@
 """Views for courses"""
 from django.db import transaction
 from django.db.models import Prefetch
-from rest_framework import (
-    viewsets,
-    mixins,
-    status,
-)
-from rest_framework.views import APIView
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.exceptions import (
-    APIException,
-    NotFound,
-    ValidationError,
-)
+from rest_framework import mixins, status, viewsets
+from rest_framework.authentication import (SessionAuthentication,
+                                           TokenAuthentication)
+from rest_framework.exceptions import APIException, NotFound, ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from courses.catalog_serializers import CatalogProgramSerializer
-from courses.models import Program, CourseRun
-from courses.serializers import ProgramSerializer, CourseRunSerializer
+from courses.models import CourseRun, Program
+from courses.serializers import CourseRunSerializer, ProgramSerializer
 from dashboard.models import ProgramEnrollment
 from profiles.models import Profile
 from profiles.serializers import ProfileImageSerializer

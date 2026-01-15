@@ -3,7 +3,7 @@
 from django.db import migrations
 from django.db.models import Count
 
-from micromasters.utils import generate_md5
+from micromasters.utils import generate_hash_32
 
 
 def delete_duplicate_cert(apps, schema_editor):
@@ -59,7 +59,7 @@ def add_final_grade(apps, schema_editor):
         certificate.save()
         # check if has other passing final_grades
         for final_grade in passing_final_grades[1:]:
-            hash = generate_md5('{}|{}'.format(certificate.user_id, final_grade.course_run_id).encode('utf-8'))
+            hash = generate_hash_32(f'{certificate.user_id}|{final_grade.course_run_id}'.encode())
             MicromastersCourseCertificate.objects.create(
                 final_grade=final_grade,
                 user=final_grade.user,

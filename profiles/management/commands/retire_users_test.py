@@ -1,14 +1,16 @@
 """retire user test"""
-from django.contrib.auth.models import User
+import pytest
+from django.contrib.auth import get_user_model
 from django.core.management import CommandError
 from django.test import TestCase
 from social_django.models import UserSocialAuth
-import pytest
 
-from profiles.management.commands import retire_users
-from micromasters.factories import UserFactory, UserSocialAuthFactory
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
+from micromasters.factories import UserFactory, UserSocialAuthFactory
+from profiles.management.commands import retire_users
+
+User = get_user_model()
 
 TOTAL_PROGRAMS = 3
 
@@ -16,9 +18,9 @@ TOTAL_PROGRAMS = 3
 class AlterDataCommandTests(TestCase):
     """Test cases for retire_users commands"""
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.command = retire_users.Command()
+    def setUp(self):
+        super().setUp()
+        self.command = retire_users.Command()
 
     def test_no_users_select(self):
         """selected no user"""

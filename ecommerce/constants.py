@@ -1,5 +1,6 @@
 """Ecommerce constants"""
 from urllib.parse import urljoin
+
 from django.conf import settings
 
 # From secure acceptance documentation, under API reply fields:

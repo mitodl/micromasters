@@ -2,31 +2,23 @@
 Models for the grades app
 """
 import uuid
-from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
+
+from django.contrib.auth import get_user_model
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import JSONField
 from django.db.utils import IntegrityError
 
-from courses.models import (
-    Course,
-    CourseRun,
-    Program,
-)
+from courses.models import Course, CourseRun, Program
+from exams.constants import EXAM_GRADE_FAIL, EXAM_GRADE_PASS
 from exams.models import ExamRun
-from exams.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
-from grades.constants import FinalGradeStatus, NEW_COMBINED_FINAL_GRADES_DATE
-from micromasters.models import (
-    AuditableModel,
-    AuditModel,
-    TimestampedModel,
-)
-from micromasters.utils import (
-    now_in_utc,
-    serialize_model_object,
-)
+from grades.constants import NEW_COMBINED_FINAL_GRADES_DATE, FinalGradeStatus
+from micromasters.models import AuditableModel, AuditModel, TimestampedModel
+from micromasters.utils import now_in_utc, serialize_model_object
 
 
+User = get_user_model()
 class CourseRunGradingAlreadyCompleteError(Exception):
     """
     Custom Exception to raise in case a change of status for a course run is attempted
@@ -121,11 +113,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
         )
 
     def __str__(self):
-        return 'Grade in course "{course_id}", user "{user}", value {grade}'.format(
-            user=self.user.username,
-            grade=self.grade,
-            course_id=self.course_run.edx_course_key
-        )
+        return f'Grade in course "{self.course_run.edx_course_key}", user "{self.user.username}", value {self.grade}'
 
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden method to run validation"""
@@ -144,10 +132,7 @@ class FinalGradeAudit(AuditModel):
         return 'final_grade'
 
     def __str__(self):
-        return 'Grade audit for user "{user}", course "{course_id}"'.format(
-            user=self.final_grade.user,
-            course_id=self.final_grade.course_run.edx_course_key
-        )
+        return f'Grade audit for user "{self.final_grade.user}", course "{self.final_grade.course_run.edx_course_key}"'
 
 
 class MicromastersCourseCertificate(TimestampedModel):
@@ -165,11 +150,7 @@ class MicromastersCourseCertificate(TimestampedModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return 'Course Certificate for user={user}, course={course}, hash="{hash}"'.format(
-            user=self.user,
-            course=self.course.id,
-            hash=self.hash,
-        )
+        return f'Course Certificate for user={self.user}, course={self.course.id}, hash="{self.hash}"'
 
 
 class MicromastersProgramCertificate(TimestampedModel):
@@ -190,11 +171,7 @@ class MicromastersProgramCertificate(TimestampedModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return 'Program Certificate for user={user}, program={program}, hash="{hash}"'.format(
-            user=self.user,
-            program=self.program,
-            hash=self.hash,
-        )
+        return f'Program Certificate for user={self.user}, program={self.program}, hash="{self.hash}"'
 
 
 class MicromastersProgramCommendation(TimestampedModel):
@@ -230,10 +207,7 @@ class CourseRunGradingStatus(TimestampedModel):
     )
 
     def __str__(self):
-        return 'Freezing status "{status}" for course "{course_id}"'.format(
-            course_id=self.course_run.edx_course_key,
-            status=self.status
-        )
+        return f'Freezing status "{self.status}" for course "{self.course_run.edx_course_key}"'
 
     @classmethod
     def is_complete(cls, course_run):
@@ -269,7 +243,7 @@ class CourseRunGradingStatus(TimestampedModel):
             course_fg_info, _ = cls.objects.get_or_create(course_run=course_run, status=FinalGradeStatus.PENDING)
         except IntegrityError:
             raise CourseRunGradingAlreadyCompleteError(
-                'Course Run "{0}" has already been completed'.format(course_run.edx_course_key))
+                f'Course Run "{course_run.edx_course_key}" has already been completed')
         return course_fg_info
 
 
@@ -324,10 +298,7 @@ class ProctoredExamGrade(TimestampedModel, AuditableModel):
         return serialize_model_object(self)
 
     def __str__(self):
-        return 'Proctored Exam Grade in course "{course_title}", user "{user}"'.format(
-            user=self.user.username,
-            course_title=self.course.title
-        )
+        return f'Proctored Exam Grade in course "{self.course.title}", user "{self.user.username}"'
 
 
 class ProctoredExamGradeAudit(AuditModel):
@@ -368,11 +339,7 @@ class CombinedFinalGrade(TimestampedModel, AuditableModel):
         return serialize_model_object(self)
 
     def __str__(self):
-        return 'Combined Final Grade in course "{course_title}", user "{user}", value {grade}'.format(
-            user=self.user.username,
-            grade=self.grade,
-            course_title=self.course.title
-        )
+        return f'Combined Final Grade in course "{self.course.title}", user "{self.user.username}", value {self.grade}'
 
 
 class CombinedFinalGradeAudit(AuditModel):

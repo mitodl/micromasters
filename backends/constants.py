@@ -1,7 +1,7 @@
 """backend related constants"""
 
 # courseware backend constants
-from micromasters.settings import MITXONLINE_CALLBACK_URL, EDXORG_CALLBACK_URL
+from micromasters.settings import EDXORG_CALLBACK_URL, MITXONLINE_CALLBACK_URL
 
 BACKEND_EDX_ORG = 'edxorg'
 BACKEND_MITX_ONLINE = 'mitxonline'

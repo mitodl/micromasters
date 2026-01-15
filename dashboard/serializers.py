@@ -2,6 +2,7 @@
 Provides functionality for serializing a ProgramEnrollment for the ES index
 """
 from rest_framework import serializers
+
 from courses.utils import get_year_season_from_course_run
 from dashboard.utils import get_mmtrack
 from roles.api import is_learner
@@ -126,7 +127,7 @@ class UserProgramSearchSerializer:
         """
         year_season_tuple = get_year_season_from_course_run(course_run)
         if year_season_tuple:
-            return '{} - {}'.format(year_season_tuple[0], year_season_tuple[1])
+            return f'{year_season_tuple[0]} - {year_season_tuple[1]}'
         return None
 
     @classmethod

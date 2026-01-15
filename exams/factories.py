@@ -3,19 +3,15 @@ Factories for exams
 """
 from datetime import timedelta
 
+import factory
 import faker
 import pytz
-import factory
 from factory import SubFactory, fuzzy
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from courses.factories import CourseFactory
-from exams.models import (
-    ExamAuthorization,
-    ExamProfile,
-    ExamRun,
-    ExamRunCoupon)
+from exams.models import ExamAuthorization, ExamProfile, ExamRun, ExamRunCoupon
 from micromasters.factories import UserFactory
 from micromasters.utils import as_datetime
 from profiles.factories import ProfileFactory
