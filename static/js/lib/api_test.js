@@ -9,7 +9,6 @@ import {
   getUserProfile,
   patchUserProfile,
   getDashboard,
-  getCoursePrices,
   checkout,
   sendSearchResultMail,
   sendCourseTeamMail,
@@ -31,7 +30,6 @@ import {
   COUPON,
   CYBERSOURCE_CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
-  COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
   PROGRAMS
 } from "../test_constants"
@@ -182,14 +180,6 @@ describe("api", function() {
           )
         })
       }
-    })
-
-    it("gets course prices", () => {
-      fetchJSONStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE))
-      return getCoursePrices("username").then(coursePrices => {
-        assert.ok(fetchJSONStub.calledWith("/api/v0/course_prices/username/"))
-        assert.deepEqual(coursePrices, COURSE_PRICES_RESPONSE)
-      })
     })
 
     it("posts to checkout", () => {

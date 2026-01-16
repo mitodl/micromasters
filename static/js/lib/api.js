@@ -11,10 +11,7 @@ import type {
   ProfilePatchResult
 } from "../flow/profileTypes"
 import type { Coupons, AttachCouponResponse } from "../flow/couponTypes"
-import type {
-  Dashboard,
-  ProgramLearners
-} from "../flow/dashboardTypes"
+import type { Dashboard, ProgramLearners } from "../flow/dashboardTypes"
 import type {
   AvailableProgram,
   AvailablePrograms

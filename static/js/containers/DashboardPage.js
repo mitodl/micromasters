@@ -78,10 +78,7 @@ import { gradeDetailPopupKey } from "../components/dashboard/courses/Grades"
 
 import type { UIState } from "../reducers/ui"
 import type { OrderReceiptState } from "../reducers/order_receipt"
-import type {
-  DashboardState,
-  ProgramLearners
-} from "../flow/dashboardTypes"
+import type { DashboardState, ProgramLearners } from "../flow/dashboardTypes"
 import type { AllEmailsState } from "../flow/emailTypes"
 import type {
   AvailableProgram,

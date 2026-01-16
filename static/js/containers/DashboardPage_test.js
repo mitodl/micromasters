@@ -432,7 +432,6 @@ describe("DashboardPage", function() {
             CLEAR_UI,
             CLEAR_ENROLLMENTS,
             CLEAR_DASHBOARD,
-            actions.prices.clearType,
             actions.programLearners.clearType,
             CLEAR_COUPONS
           ],
