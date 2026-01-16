@@ -1,7 +1,6 @@
 """
 Tests for exams API
 """
-import datetime
 from unittest.mock import patch
 
 import ddt

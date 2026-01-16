@@ -23,7 +23,6 @@ from cms.serializers import ProgramPageSerializer
 from courses.factories import ProgramFactory, CourseFactory
 from micromasters.serializers import serialize_maybe_user
 from micromasters.factories import UserSocialAuthFactory
-from micromasters.serializers import serialize_maybe_user
 from profiles.factories import ProfileFactory, SocialProfileFactory
 from roles.models import Role
 from search.base import MockedESTestCase

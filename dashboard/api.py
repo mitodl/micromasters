@@ -22,8 +22,8 @@ from backends.exceptions import InvalidCredentialStored
 from backends.utils import has_social_auth
 from courses.models import CourseRun, ElectiveCourse, Program
 from courses.utils import format_season_year_for_course_run
-from dashboard.api_edx_cache import CachedEdxDataApi
 from exams.models import ExamAuthorization, ExamRun
+from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.constants import DEDP_PROGRAM_TITLE
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack

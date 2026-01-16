@@ -19,23 +19,6 @@ from profiles.models import Profile
 from roles.models import Role, Staff
 from search.base import reindex_test_es_data
 from selenium_tests.data_util import create_enrolled_user_batch
-from roles.models import (
-    Staff,
-    Role,
-)
-from dashboard.models import ProgramEnrollment
-from courses.factories import (
-    ProgramFactory,
-    CourseFactory
-)
-from cms.factories import (
-    FacultyFactory,
-    InfoLinksFactory,
-    ProgramCourseFactory,
-    ProgramPageFactory,
-    SemesterDateFactory,
-)
-from profiles.models import Profile
 
 
 pytestmark = [

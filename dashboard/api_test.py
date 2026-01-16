@@ -946,7 +946,7 @@ class InfoCourseTest(CourseTests):
     @patch('dashboard.api.is_exam_schedulable', return_value=False)
     def test_info_with_contact_email(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_exam_course_key
-    ):  # pylint: disable=no-self-use
+    ):
         """test that get_info_for_course indicates that a course has a contact_email """
         course = CourseFactory.create(contact_email="abc@example.com")
         course_info = api.get_info_for_course(course, self.mmtrack)
@@ -1002,7 +1002,7 @@ class InfoCourseTest(CourseTests):
     @patch('dashboard.api.is_exam_schedulable', return_value=False)
     def test_info_without_contact_email(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_exam_course_key
-    ):  # pylint: disable=no-self-use
+    ):
         """test that get_info_for_course indicates that a course has no contact_email """
         course = CourseFactory.create(contact_email=None)
         course_info = api.get_info_for_course(course, self.mmtrack)

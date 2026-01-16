@@ -14,7 +14,6 @@ from selenium.webdriver import DesiredCapabilities, Remote
 from courses.factories import CourseRunFactory, ProgramFactory
 from dashboard.models import ProgramEnrollment
 from exams.factories import ExamRunFactory
-from financialaid.factories import TierProgramFactory
 from roles.models import Role
 from roles.roles import Staff
 from search.base import reindex_test_es_data
@@ -24,17 +23,6 @@ from selenium_tests.page import LoginPage
 from selenium_tests.util import (DEFAULT_PASSWORD, Browser, DatabaseLoader,
                                  should_load_from_existing_db,
                                  terminate_db_connections)
-from courses.factories import (
-    ProgramFactory,
-    CourseRunFactory,
-)
-from dashboard.models import ProgramEnrollment
-from search.indexing_api import (
-    delete_indices,
-)
-from search.base import reindex_test_es_data
-from roles.roles import Staff
-from roles.models import Role
 
 
 def pytest_exception_interact(node, call, report):

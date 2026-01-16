@@ -5,7 +5,6 @@ import re
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
-from django.db import transaction
 from django.db.utils import IntegrityError
 
 from courses.models import Course, CourseRun, Program

@@ -20,7 +20,6 @@ from cms.util import get_coupon_code
 from courses.models import Program
 from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
-from micromasters.utils import webpack_dev_server_host
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
 from ui.decorators import require_mandatory_urls

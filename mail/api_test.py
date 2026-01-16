@@ -34,7 +34,6 @@ from mail.models import (
     SentAutomaticEmail,
 )
 from mail.factories import AutomaticEmailFactory
-from mail.models import AutomaticEmail, SentAutomaticEmail
 from mail.views_test import mocked_json
 from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
