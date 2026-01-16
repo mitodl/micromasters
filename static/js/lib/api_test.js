@@ -9,7 +9,6 @@ import {
   getUserProfile,
   patchUserProfile,
   getDashboard,
-  getCoursePrices,
   checkout,
   sendSearchResultMail,
   sendCourseTeamMail,
@@ -17,9 +16,6 @@ import {
   getPrograms,
   addProgramEnrollment,
   updateProfileImage,
-  addFinancialAid,
-  skipFinancialAid,
-  updateDocumentSentDate,
   addCourseEnrollment,
   getCoupons,
   attachCoupon,
@@ -34,7 +30,6 @@ import {
   COUPON,
   CYBERSOURCE_CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
-  COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
   PROGRAMS
 } from "../test_constants"
@@ -185,14 +180,6 @@ describe("api", function() {
           )
         })
       }
-    })
-
-    it("gets course prices", () => {
-      fetchJSONStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE))
-      return getCoursePrices("username").then(coursePrices => {
-        assert.ok(fetchJSONStub.calledWith("/api/v0/course_prices/username/"))
-        assert.deepEqual(coursePrices, COURSE_PRICES_RESPONSE)
-      })
     })
 
     it("posts to checkout", () => {
@@ -363,119 +350,6 @@ describe("api", function() {
                 method: "POST",
                 body:   JSON.stringify({ program_id: enrollment.id })
               })
-            )
-          })
-      })
-    })
-
-    describe("for adding financial aid", () => {
-      it("add financial aid successfully", () => {
-        const programId = PROGRAMS[0].id
-        fetchJSONStub.returns(Promise.resolve())
-
-        return addFinancialAid(10000, "USD", programId).then(() => {
-          assert.ok(
-            fetchJSONStub.calledWith("/api/v0/financial_aid_request/", {
-              method: "POST",
-              body:   JSON.stringify({
-                original_income:   10000,
-                original_currency: "USD",
-                program_id:        3
-              })
-            })
-          )
-        })
-      })
-
-      it("fails to add financial aid", () => {
-        fetchJSONStub.returns(Promise.reject())
-
-        const programId = PROGRAMS[0].id
-
-        return assert
-          .isRejected(addFinancialAid(10000, "USD", programId))
-          .then(() => {
-            assert.ok(
-              fetchJSONStub.calledWith("/api/v0/financial_aid_request/", {
-                method: "POST",
-                body:   JSON.stringify({
-                  original_income:   10000,
-                  original_currency: "USD",
-                  program_id:        3
-                })
-              })
-            )
-          })
-      })
-    })
-
-    describe("for skipping financial aid", () => {
-      const programId = 2
-      it("successfully skips financial aid", () => {
-        fetchStub.returns(Promise.resolve())
-
-        return skipFinancialAid(programId).then(() => {
-          assert.ok(
-            fetchStub.calledWith("/api/v0/financial_aid_skip/2/", {
-              method: "PATCH"
-            })
-          )
-        })
-      })
-
-      it("fails to skip financial aid", () => {
-        fetchStub.returns(Promise.reject())
-
-        return assert.isRejected(skipFinancialAid(programId)).then(() => {
-          assert.ok(
-            fetchStub.calledWith("/api/v0/financial_aid_skip/2/", {
-              method: "PATCH"
-            })
-          )
-        })
-      })
-    })
-
-    describe("for updating document sent date", () => {
-      it("add updates the document sent date", () => {
-        const financialAidId = 123
-        const sentDate = "2012-12-12"
-        fetchJSONStub.returns(Promise.resolve())
-
-        return updateDocumentSentDate(financialAidId, sentDate).then(() => {
-          assert.ok(
-            fetchJSONStub.calledWith(
-              `/api/v0/financial_aid/${financialAidId}/`,
-              {
-                method: "PATCH",
-                body:   JSON.stringify({
-                  date_documents_sent: sentDate
-                })
-              }
-            )
-          )
-        })
-      })
-
-      it("fails to update the document sent date", () => {
-        fetchJSONStub.returns(Promise.reject())
-
-        const financialAidId = 123
-        const sentDate = "2012-12-12"
-
-        return assert
-          .isRejected(updateDocumentSentDate(financialAidId, sentDate))
-          .then(() => {
-            assert.ok(
-              fetchJSONStub.calledWith(
-                `/api/v0/financial_aid/${financialAidId}/`,
-                {
-                  method: "PATCH",
-                  body:   JSON.stringify({
-                    date_documents_sent: sentDate
-                  })
-                }
-              )
             )
           })
       })

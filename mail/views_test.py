@@ -15,13 +15,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
-from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
-from dashboard.factories import (CachedEnrollmentFactory,
-                                 ProgramEnrollmentFactory)
-from dashboard.models import CachedEnrollment, ProgramEnrollment
-from financialaid.api_test import (FinancialAidBaseTestCase,
-                                   create_enrolled_profile, create_program)
-from financialaid.factories import FinancialAidFactory, TierProgramFactory
+from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
+from dashboard.factories import (
+    ProgramEnrollmentFactory,
+    CachedEnrollmentFactory,
+)
+from dashboard.models import ProgramEnrollment, CachedEnrollment
 from mail.exceptions import SendBatchException
 from mail.factories import AutomaticEmailFactory
 from mail.models import AutomaticEmail, SentAutomaticEmail
@@ -367,7 +366,6 @@ class CourseTeamMailViewTests(APITestCase, MockedESTestCase):
         cls.staff_user = staff_profile.user
         cls.course = CourseFactory.create(
             contact_email='a@example.com',
-            program__financial_aid_availability=False
         )
         course_run = CourseRunFactory.create(course=cls.course)
         ProgramEnrollmentFactory.create(user=cls.staff_user, program=cls.course.program)
@@ -438,7 +436,7 @@ class LearnerMailViewTests(APITestCase, MockedESTestCase):
             )
         cls.staff_user = staff_profile.user
         cls.recipient_user = recipient_profile.user
-        cls.program = ProgramFactory.create(financial_aid_availability=False)
+        cls.program = ProgramFactory.create()
         ProgramEnrollmentFactory.create(
             user=cls.recipient_user,
             program=cls.program
@@ -560,83 +558,6 @@ class LearnerMailViewTests(APITestCase, MockedESTestCase):
         CachedEnrollmentFactory.create(user=learner_user, course_run__course__program=self.program, verified=True)
         resp_post = self.client.post(url, data=self.request_data, format='json')
         assert resp_post.status_code == status.HTTP_200_OK
-
-
-class FinancialAidMailViewTests(FinancialAidBaseTestCase, APITestCase):
-    """
-    Tests for FinancialAidMailView
-    """
-
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-
-        cls.financial_aid = FinancialAidFactory.create(
-            tier_program=TierProgramFactory.create(program=cls.program)
-        )
-        cls.url = reverse(
-            'financial_aid_mail_api',
-            kwargs={'financial_aid_id': cls.financial_aid.id}
-        )
-        cls.request_data = {
-            'email_subject': 'email subject',
-            'email_body': 'email body'
-        }
-
-    def test_different_programs_staff(self):
-        """Different program's staff should not be allowed to send email for this program"""
-        program, _ = create_program()
-        staff_user = create_enrolled_profile(program, Staff.ROLE_ID).user
-        self.client.force_login(staff_user)
-        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
-
-    def test_instructor(self):
-        """An instructor can't send email"""
-        self.client.force_login(self.instructor_user_profile.user)
-        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
-
-    def test_learner(self):
-        """A learner can't send email"""
-        self.client.force_login(self.profile.user)
-        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
-
-    def test_anonymous(self):
-        """
-        Anonymous users can't send email
-        """
-        self.client.logout()
-        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
-
-    @patch('mail.views.MailgunClient')
-    def test_send_financial_aid_view(self, mock_mailgun_client):
-        """
-        Test that the FinancialAidMailView will accept and return expected values
-        """
-        self.client.force_login(self.staff_user_profile.user)
-        mock_mailgun_client.send_financial_aid_email.return_value = Mock(
-            spec=Response,
-            status_code=status.HTTP_200_OK,
-            json=mocked_json()
-        )
-        resp_post = self.client.post(self.url, data=self.request_data, format='json')
-        assert resp_post.status_code == status.HTTP_200_OK
-        assert mock_mailgun_client.send_financial_aid_email.called
-        _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
-        assert called_kwargs['acting_user'] == self.staff_user_profile.user
-        assert called_kwargs['financial_aid'] == self.financial_aid
-        assert called_kwargs['subject'] == self.request_data['email_subject']
-        assert called_kwargs['body'] == self.request_data['email_body']
-        assert 'raise_for_status' not in called_kwargs
-
-    def test_send_financial_aid_view_improperly_configured(self):
-        """
-        Test that the FinancialAidMailView will raise ImproperlyConfigured if mailgun returns 401, which
-        results in returning 500 since micromasters.utils.custom_exception_hanlder catches ImproperlyConfigured
-        """
-        self.client.force_login(self.staff_user_profile.user)
-        with patch('mail.views.MailgunClient.send_batch', side_effect=ImproperlyConfigured):
-            resp = self.client.post(self.url, data=self.request_data, format='json')
-        assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 @ddt.ddt

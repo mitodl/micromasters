@@ -15,7 +15,7 @@ def populate_order_ref_number(apps, schema_editor):
     Order.objects.filter(reference_number__isnull=True).update(
         reference_number=Concat(
             Value(REFERENCE_NUMBER_PREFIX, output_field=CharField()),
-            Value(settings.CYBERSOURCE_REFERENCE_PREFIX, output_field=CharField()),
+            Value("prefix", output_field=CharField()),
             Value("-", output_field=CharField()),
             Cast(F("id"), CharField()),  # Cast AutoField to CharField for Django 5.2 compatibility
             output_field=CharField()

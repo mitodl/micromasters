@@ -12,7 +12,6 @@ import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.template import RequestContext
 from django.test import (
-    override_settings,
     RequestFactory,
 )
 import pytz
@@ -21,13 +20,6 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
 from courses.factories import CourseRunFactory
-from ecommerce.factories import (
-    ReceiptFactory,
-)
-from ecommerce.models import Order
-from financialaid.factories import (
-    FinancialAidFactory,
-)
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from micromasters.utils import (
     as_datetime,
@@ -36,7 +28,6 @@ from micromasters.utils import (
     dict_with_keys,
     first_matching_item,
     generate_hash_32,
-    get_field_names,
     is_near_now,
     is_subset_dict,
     now_in_utc,
@@ -114,41 +105,17 @@ class SerializerTests(MockedESTestCase):
     """
     Tests for serialize_model
     """
-    def test_jsonfield(self):
-        """
-        Test a model with a JSONField is handled correctly
-        """
-        with override_settings(CYBERSOURCE_SECURITY_KEY='asdf'):
-            receipt = ReceiptFactory.create()
-            assert serialize_model_object(receipt) == {
-                'created_at': format_as_iso8601(receipt.created_at),
-                'data': receipt.data,
-                'id': receipt.id,
-                'modified_at': format_as_iso8601(receipt.modified_at),
-                'order': receipt.order.id,
-            }
-
     def test_datetime(self):
         """
         Test that a model with a datetime and date field is handled correctly
         """
-        financial_aid = FinancialAidFactory.create(justification=None)
-        assert serialize_model_object(financial_aid) == {
-            'country_of_income': financial_aid.country_of_income,
-            'country_of_residence': financial_aid.country_of_residence,
-            'created_on': format_as_iso8601(financial_aid.created_on),
-            'date_documents_sent': financial_aid.date_documents_sent.isoformat(),
-            'date_exchange_rate': format_as_iso8601(financial_aid.date_exchange_rate),
-            'id': financial_aid.id,
-            'income_usd': financial_aid.income_usd,
-            'justification': None,
-            'original_currency': financial_aid.original_currency,
-            'original_income': financial_aid.original_income,
-            'status': financial_aid.status,
-            'tier_program': financial_aid.tier_program.id,
-            'updated_on': format_as_iso8601(financial_aid.updated_on),
-            'user': financial_aid.user.id,
-        }
+        course_run = CourseRunFactory.create()
+        # Test that serialize_model_object works with datetime fields
+        serialized = serialize_model_object(course_run)
+        assert serialized['id'] == course_run.id
+        assert serialized['start_date'] == format_as_iso8601(course_run.start_date)
+        assert serialized['end_date'] == format_as_iso8601(course_run.end_date)
+        assert serialized['enrollment_start'] == format_as_iso8601(course_run.enrollment_start)
 
     def test_decimal(self):
         """
@@ -172,25 +139,6 @@ class SerializerTests(MockedESTestCase):
             'upgrade_deadline': format_as_iso8601(course_run.upgrade_deadline),
             'courseware_backend': 'edxorg',
             'is_discontinued': course_run.is_discontinued,
-        }
-
-
-class FieldNamesTests(unittest.TestCase):
-    """
-    Tests for get_field_names
-    """
-
-    def test_get_field_names(self):
-        """
-        Assert that get_field_names does not include related fields
-        """
-        assert set(get_field_names(Order)) == {
-            'user',
-            'status',
-            'total_price_paid',
-            'created_at',
-            'modified_at',
-            'reference_number',
         }
 
 

@@ -1,29 +1,22 @@
 // @flow
-import moment from "moment"
-
-import type { Action } from "../flow/reduxTypes"
-import { SET_TIMEOUT_ACTIVE, SET_INITIAL_TIME } from "../actions/order_receipt"
+// Order receipt reducer - PAYMENTS DISCONTINUED IN 2021
+// This module is a stub to maintain compatibility
 
 export type OrderReceiptState = {
-  initialTime: string,
-  timeoutActive: boolean
+  timeoutActive: boolean,
+  initialTime: ?Date
 }
 
-export const INITIAL_ORDER_RECEIPT_STATE = {
+const INITIAL_STATE: OrderReceiptState = {
   timeoutActive: false,
-  initialTime:   moment().toISOString()
+  initialTime:   null
 }
 
-export const orderReceipt = (
-  state: OrderReceiptState = INITIAL_ORDER_RECEIPT_STATE,
-  action: Action<any, null>
-) => {
-  switch (action.type) {
-  case SET_TIMEOUT_ACTIVE:
-    return { ...state, timeoutActive: action.payload }
-  case SET_INITIAL_TIME:
-    return { ...state, initialTime: action.payload }
-  default:
-    return state
-  }
+export const orderReceiptReducer = (
+  state: OrderReceiptState = INITIAL_STATE,
+  action: Object
+): OrderReceiptState => {
+  return state
 }
+
+export default orderReceiptReducer

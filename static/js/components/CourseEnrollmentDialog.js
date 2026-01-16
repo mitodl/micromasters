@@ -8,7 +8,6 @@ import type { Course, CourseRun } from "../flow/programTypes"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogActions from "@material-ui/core/DialogActions"
-import moment from "moment-timezone"
 
 const dialogTitle = (course, setDialogVisibility) => (
   <div className="title">
@@ -32,32 +31,12 @@ export default class CourseEnrollmentDialog extends React.Component {
     setVisibility: (v: boolean) => void,
     course: Course,
     courseRun: CourseRun,
-    hasUserApplied: boolean,
-    pendingFinancialAid: boolean,
-    addCourseEnrollment: (courseId: string) => Promise<*>,
-    checkout: Function,
-    financialAidAvailability: boolean,
-    openFinancialAidCalculator: () => void
+    addCourseEnrollment: (courseId: string) => Promise<*>
   }
 
   handlePayClick = () => {
-    const {
-      courseRun,
-      setVisibility,
-      checkout,
-      financialAidAvailability
-      // eslint-disable-next-line no-invalid-this
-    } = this.props
-    if (financialAidAvailability) {
-      setVisibility(false)
-      const url = `/order_summary/?course_key=${encodeURIComponent(
-        courseRun.course_id
-      )}`
-      // eslint-disable-next-line no-invalid-this
-      this.context.router.push(url)
-    } else {
-      return checkout(courseRun.course_id)
-    }
+    // Payments are no longer accepted (discontinued in 2021)
+    // This is now a no-op
   }
 
   handleAuditClick = () => {
@@ -67,130 +46,27 @@ export default class CourseEnrollmentDialog extends React.Component {
     addCourseEnrollment(courseRun.course_id)
   }
 
-  handleCalculatePriceClick = (e: Event) => {
-    // eslint-disable-next-line no-invalid-this
-    const { openFinancialAidCalculator, setVisibility } = this.props
-    setVisibility(false)
-    openFinancialAidCalculator()
-    e.preventDefault()
-  }
-
   // eslint-disable-next-line require-jsdoc
   render() {
-    const {
-      open,
-      setVisibility,
-      course,
-      courseRun,
-      hasUserApplied,
-      pendingFinancialAid
-    } = this.props
-    let message, payButton
-    if (pendingFinancialAid) {
-      message = [
-        <p key="1">
-          Your personal course price is pending, and needs to approved before
-          you can pay for courses. Or you can audit for free and pay later.
-        </p>,
-        <p key="2">
-          You will need to pay in order to get credit for MicroMasters
-          certificate.
-        </p>
-      ]
-      payButton = (
-        <button
-          key="pay"
-          disabled
-          className="mdl-button dashboard-button pay-button"
-        >
-          Pay Now
-        </button>
-      )
-    } else if (courseRun.has_paid) {
-      message = (
-        <p>
-          Would you like to enroll in this course? You already paid for this
-          course.
-        </p>
-      )
-      payButton = (
-        <button
-          key="pay"
-          disabled
-          className="mdl-button dashboard-button pay-button"
-        >
-          Pay Now
-        </button>
-      )
-    } else if (
-      courseRun.course_upgrade_deadline &&
-      moment(courseRun.course_upgrade_deadline).isBefore(moment(), "day")
-    ) {
-      message = (
-        <p key="1">
-          You cannot pay for this course at this time. The payment deadline has
-          passed.
-        </p>
-      )
-      payButton = (
-        <button
-          key="pay"
-          disabled
-          className="mdl-button dashboard-button pay-button"
-        >
-          Pay Now
-        </button>
-      )
-    } else if (hasUserApplied) {
-      message = [
-        <p key="1">
-          You can pay now, or you can audit the course for FREE and upgrade
-          later. (Payment is required to get credit for the MicroMasters
-          certificate.)
-        </p>,
-        <p key="2">
-          <span className="bold">Coupon Holders</span> - If you have a coupon,
-          click Pay Now. The coupon will be applied during checkout.
-        </p>
-      ]
-      payButton = (
-        <button
-          key="pay"
-          onClick={this.handlePayClick}
-          className="mdl-button dashboard-button pay-button"
-        >
-          Pay Now
-        </button>
-      )
-    } else {
-      message = [
-        <p key="1">
-          You need to{" "}
-          <a
-            href="#"
-            className="calculate-link"
-            onClick={this.handleCalculatePriceClick}
-          >
-            calculate you course price
-          </a>{" "}
-          before you can pay for this course. Or you can audit courses for free
-          and pay later.
-        </p>,
-        <p key="2">
-          You will need to pay in order to get credit for MicroMasters
-          certificate.
-        </p>
-      ]
-      payButton = (
-        <button
-          key="pay"
-          disabled
-          className="mdl-button dashboard-button pay-button"
-        >
-          Pay Now
-        </button>
-      )
-    }
+    const { open, setVisibility, course, courseRun } = this.props
+
+    const message = (
+      <p>
+        Payments are no longer accepted for MicroMasters courses (discontinued
+        in 2021). You can audit courses for free.
+      </p>
+    )
+
+    const payButton = (
+      <button
+        key="pay"
+        disabled
+        className="mdl-button dashboard-button pay-button"
+      >
+        Payments Discontinued
+      </button>
+    )
+
     const auditButton = (
       <button
         key="audit"

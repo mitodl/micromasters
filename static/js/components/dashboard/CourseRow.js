@@ -9,11 +9,7 @@ import CourseAction from "./CourseAction"
 import Grades from "./courses/Grades"
 import ProgressMessage from "./courses/ProgressMessage"
 import StatusMessages from "./courses/StatusMessages"
-import type {
-  Course,
-  CourseRun,
-  FinancialAidUserInfo
-} from "../../flow/programTypes"
+import type { Course, CourseRun } from "../../flow/programTypes"
 import type { UIState } from "../../reducers/ui"
 import type { GradeType } from "../../containers/DashboardPage"
 import type { CouponPrices, Coupon } from "../../flow/couponTypes"
@@ -33,10 +29,7 @@ export default class CourseRow extends React.Component {
     course: Course,
     now: moment$Moment,
     couponPrices: CouponPrices,
-    financialAid: FinancialAidUserInfo,
-    hasFinancialAid: boolean,
     programHasElectives: boolean,
-    openFinancialAidCalculator: () => void,
     addCourseEnrollment: (courseId: string) => Promise<*>,
     openCourseContactDialog: (
       course: Course,
@@ -48,7 +41,6 @@ export default class CourseRow extends React.Component {
     setExamEnrollmentDialogVisibility: (b: boolean) => void,
     setSelectedExamCouponCourse: (n: number) => void,
     ui: UIState,
-    checkout: (s: string) => void,
     setShowExpandedCourseStatus: (n: number) => void,
     setShowGradeDetailDialog: (b: boolean, t: GradeType, title: string) => void,
     showStaffView: boolean
@@ -77,14 +69,10 @@ export default class CourseRow extends React.Component {
   ): React$Element<*> | null => {
     const {
       now,
-      financialAid,
-      hasFinancialAid,
-      openFinancialAidCalculator,
       addCourseEnrollment,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
       setCalculatePriceDialogVisibility,
-      checkout,
       showStaffView
     } = this.props
 
@@ -102,10 +90,6 @@ export default class CourseRow extends React.Component {
         courseRun={run}
         actionType={actionType}
         now={now}
-        hasFinancialAid={hasFinancialAid}
-        checkout={checkout}
-        financialAid={financialAid}
-        openFinancialAidCalculator={openFinancialAidCalculator}
         addCourseEnrollment={addCourseEnrollment}
         setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
@@ -137,8 +121,6 @@ export default class CourseRow extends React.Component {
   renderInProgressCourseInfo = (run: CourseRun) => {
     const {
       course,
-      financialAid,
-      hasFinancialAid,
       openCourseContactDialog,
       ui,
       setShowExpandedCourseStatus,
@@ -167,8 +149,6 @@ export default class CourseRow extends React.Component {
         {showStaffView ? null : (
           <StatusMessages
             course={course}
-            financialAid={financialAid}
-            hasFinancialAid={hasFinancialAid}
             firstRun={run}
             courseAction={this.courseAction}
             expandedStatuses={ui.expandedCourseStatuses}
@@ -185,7 +165,7 @@ export default class CourseRow extends React.Component {
   }
 
   renderEnrollableCourseInfo = (run: CourseRun) => {
-    const { course, hasFinancialAid, showStaffView } = this.props
+    const { course, showStaffView } = this.props
 
     return (
       <div className="enrollable-course-info">
@@ -204,7 +184,6 @@ export default class CourseRow extends React.Component {
           <StatusMessages
             course={course}
             courseAction={this.courseAction}
-            hasFinancialAid={hasFinancialAid}
             firstRun={run}
             coupon={this.getCourseCoupon()}
           />

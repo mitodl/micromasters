@@ -3,7 +3,6 @@ API for exams app
 """
 import logging
 
-from dashboard.api import has_to_pay_for_exam
 from dashboard.utils import get_mmtrack
 from exams.exceptions import ExamAuthorizationException
 from exams.models import ExamAuthorization, ExamProfile, ExamRun
@@ -76,13 +75,9 @@ def authorize_for_exam_run(user, course_run, exam_run):
         )
         raise ExamAuthorizationException(errors_message)
 
-    # if they have run out of attempts, they don't get authorized
-    if has_to_pay_for_exam(mmtrack, course_run.course):
-        errors_message = MESSAGE_NO_ATTEMPTS_TEMPLATE.format(
-            user=mmtrack.user.username,
-            course_id=course_run.edx_course_key
-        )
-        raise ExamAuthorizationException(errors_message)
+    # Previously checked: if has_to_pay_for_exam(mmtrack, course_run.course)
+    # This would prevent authorization if user had no remaining paid attempts
+
     # if they paid after deadline they don't get authorized for same term exam
     current_course_run = get_corresponding_course_run(exam_run)
     if current_course_run and mmtrack.paid_but_missed_deadline(current_course_run):

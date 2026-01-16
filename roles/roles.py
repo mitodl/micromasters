@@ -13,7 +13,6 @@ class Permissions:
     CAN_EDIT_CMS = 'can_edit_cms'
     CAN_MESSAGE_LEARNERS = 'can_message_learners'
     CAN_CREATE_FORUMS = 'can_create_forums'
-    CAN_EDIT_FINANCIAL_AID = 'can_edit_financial_aid'
 
 
 class Staff(AbstractUserRole):
@@ -30,7 +29,6 @@ class Staff(AbstractUserRole):
         Permissions.CAN_EDIT_CMS: True,
         Permissions.CAN_MESSAGE_LEARNERS: True,
         Permissions.CAN_CREATE_FORUMS: True,
-        Permissions.CAN_EDIT_FINANCIAL_AID: True,
     }
 
 
@@ -48,5 +46,4 @@ class Instructor(AbstractUserRole):
         Permissions.CAN_EDIT_CMS: True,
         Permissions.CAN_MESSAGE_LEARNERS: True,
         Permissions.CAN_CREATE_FORUMS: True,
-        Permissions.CAN_EDIT_FINANCIAL_AID: False,
     }

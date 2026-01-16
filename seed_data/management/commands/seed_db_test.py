@@ -106,7 +106,6 @@ class SeedDBDeserializationTests(MockedESTestCase):
         "title": "Digital Learning",
         "price": 1000,
         "description": "Learn stuff about digital learning.",
-        "financial_aid_availability": True,
         "num_required_courses": 1,
         "courses": [
             {
@@ -203,7 +202,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
         assert Program.objects.count() == 1
         assert len(programs) == 1
         program = programs[0]
-        for program_key in ('title', 'description', 'financial_aid_availability'):
+        for program_key in ('title', 'description'):
             assert getattr(program, program_key) == self.PROGRAM_DATA[program_key]
         assert program.live is True
 
@@ -218,6 +217,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
                 assert getattr(run, key) == self.PROGRAM_DATA['courses'][0]['course_runs'][i][key]
 
     def test_deserialize_elective_set(self):
+        """Test deserializing elective set data"""
         new_program = ProgramFactory.create()
         elective_set = deserialize_elective_data(new_program, self.ELECTIVE_DATA)
         assert elective_set.title == 'ELECTIVE'

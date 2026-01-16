@@ -5,19 +5,12 @@ import R from "ramda"
 import moment from "moment-timezone"
 
 import type { Coupon } from "../../../flow/couponTypes"
-import type {
-  Course,
-  CourseRun,
-  FinancialAidUserInfo
-} from "../../../flow/programTypes"
+import type { Course, CourseRun } from "../../../flow/programTypes"
 import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
-  FA_PENDING_STATUSES,
-  FA_TERMINAL_STATUSES,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_CAN_UPGRADE,
-  COURSE_ACTION_CALCULATE_PRICE,
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
   COURSE_ACTION_ENROLL
@@ -58,8 +51,6 @@ export const formatDate = (date: ?string) =>
 
 type CalculateMessagesProps = {
   courseAction: (run: CourseRun, actionType: string) => React$Element<*>,
-  financialAid: FinancialAidUserInfo,
-  hasFinancialAid: boolean,
   firstRun: CourseRun,
   course: Course,
   expandedStatuses: Set<number>,
@@ -103,8 +94,6 @@ const enrollmentDateMessage = (run: CourseRun) => {
 export const calculateMessages = (props: CalculateMessagesProps) => {
   const {
     courseAction,
-    financialAid,
-    hasFinancialAid,
     firstRun,
     course,
     expandedStatuses,
@@ -225,18 +214,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       message =
         "You are re-taking this course. To get a new grade, you need to pay again."
     }
-    let actionType = COURSE_ACTION_PAY
-    if (hasFinancialAid) {
-      if (FA_PENDING_STATUSES.includes(financialAid.application_status)) {
-        message =
-          "You are auditing. Your personal course price is pending, " +
-          "and needs to be approved before you can pay for courses."
-      } else if (
-        !FA_TERMINAL_STATUSES.includes(financialAid.application_status)
-      ) {
-        actionType = COURSE_ACTION_CALCULATE_PRICE
-      }
-    }
+    const actionType = COURSE_ACTION_PAY
 
     let paymentDueMessage = ""
     if (paymentDueDate.isValid()) {

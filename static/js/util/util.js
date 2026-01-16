@@ -29,7 +29,9 @@ import type {
 } from "../flow/profileTypes"
 import type { Program, Course, CourseRun } from "../flow/programTypes"
 import { workEntriesByDate } from "./sorting"
-import type { CheckoutPayload } from "../flow/checkoutTypes"
+
+// CheckoutPayload type - payments discontinued but type preserved for compatibility
+type CheckoutPayload = { [key: string]: string }
 
 export const isProfileOfLoggedinUser = (profile: Profile): boolean =>
   SETTINGS.user && profile.username === SETTINGS.user.username

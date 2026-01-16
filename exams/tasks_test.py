@@ -6,9 +6,13 @@ from unittest.mock import patch
 from ddt import data, ddt
 
 from dashboard.factories import ProgramEnrollmentFactory
-from exams.factories import ExamRunFactory
-from exams.tasks import authorize_enrollment_for_exam_run, authorize_exam_runs
-from financialaid.api_test import create_program
+from courses.factories import create_program
+from exams.factories import (
+    ExamRunFactory,
+)
+from exams.tasks import (
+    authorize_exam_runs,
+    authorize_enrollment_for_exam_run)
 from search.base import MockedESTestCase
 
 

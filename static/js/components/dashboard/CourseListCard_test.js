@@ -25,22 +25,10 @@ import {
   receiveGetProgramEnrollmentsSuccess,
   setCurrentProgramEnrollment
 } from "../../actions/programs"
-import {
-  FA_STATUS_CREATED,
-  FA_STATUS_APPROVED,
-  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-  FA_STATUS_PENDING_DOCS
-} from "../../constants"
-import { makeCoupon, makeCourseCoupon } from "../../factories/dashboard"
-import { programBackendName } from "../../util/util"
 
 describe("CourseListCard", () => {
-  let program,
-    coursePrice,
-    sandbox,
-    helper,
-    routerPushStub,
-    openFinancialAidCalculatorStub
+  let program, coursePrice, sandbox, helper, routerPushStub
+
   beforeEach(() => {
     program = _.cloneDeep(DASHBOARD_RESPONSE.programs[1])
     coursePrice = _.cloneDeep(
@@ -52,7 +40,6 @@ describe("CourseListCard", () => {
     assert.isAbove(program.courses.length, 0)
     sandbox = sinon.sandbox.create()
     routerPushStub = sandbox.stub()
-    openFinancialAidCalculatorStub = sandbox.spy()
     helper = new IntegrationTestHelper()
   })
 
@@ -60,22 +47,6 @@ describe("CourseListCard", () => {
     sandbox.restore()
     helper.cleanup()
   })
-
-  const changeToFinancialAid = (
-    status = FA_STATUS_APPROVED,
-    hasUserApplied = true
-  ) => {
-    program.financial_aid_availability = true
-    program.financial_aid_user_info = {
-      application_status:  status,
-      date_documents_sent: "foo",
-      has_user_applied:    hasUserApplied,
-      max_possible_cost:   100,
-      min_possible_cost:   100,
-      id:                  1
-    }
-    coursePrice.financial_aid_availability = true
-  }
 
   const renderCourseListCard = (props = {}) => {
     helper.store.dispatch(
@@ -91,7 +62,6 @@ describe("CourseListCard", () => {
             program={program}
             coursePrice={coursePrice}
             addCourseEnrollment={() => Promise.resolve()}
-            openFinancialAidCalculator={openFinancialAidCalculatorStub}
             couponPrices={couponPrices}
             ui={INITIAL_UI_STATE}
             openCourseContactDialog={() => undefined}
@@ -144,12 +114,6 @@ describe("CourseListCard", () => {
       // Each now must be exactly the same object
       assert.equal(now, nows[0])
     }
-  })
-
-  it("doesn't show the personalized pricing box for programs without it", () => {
-    program.financial_aid_availability = false
-    const wrapper = renderCourseListCard()
-    assert.equal(wrapper.find(".personalized-pricing").length, 0)
   })
 
   describe("staff view mode", () => {

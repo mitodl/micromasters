@@ -7,16 +7,21 @@ import ddt
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import CourseFactory, CourseRunFactory
-from dashboard.factories import (CachedCertificateFactory,
-                                 CachedCurrentGradeFactory,
-                                 CachedEnrollmentFactory)
-from ecommerce.factories import LineFactory, OrderFactory
-from ecommerce.models import Order
-from exams.api_test import create_order
+from courses.factories import (
+    CourseFactory,
+    CourseRunFactory,
+    create_program,
+)
+from dashboard.factories import (
+    CachedCertificateFactory,
+    CachedCurrentGradeFactory,
+    CachedEnrollmentFactory,
+)
 from exams.factories import ExamRunFactory
-from exams.models import ExamAuthorization, ExamProfile
-from financialaid.api_test import create_program
+from exams.models import (
+    ExamProfile,
+    ExamAuthorization
+)
 from grades.factories import FinalGradeFactory
 from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
@@ -55,7 +60,6 @@ class ExamSignalsTest(MockedESTestCase):
         """
         Verify that update_exam_authorization_final_grade is called when a FinalGrade saves
         """
-        create_order(self.profile.user, self.course_run)
         with mute_signals(post_save):
             # muted because enrollment also trigger signal for profile creation. right now we are just
             # looking final grades
@@ -72,42 +76,8 @@ class ExamSignalsTest(MockedESTestCase):
             user=self.profile.user,
             course_run=self.course_run,
             passed=True,
+            course_run_paid_on_edx=True,  # Mark as paid instead of creating an order
         )
-
-        # assert Exam Authorization and profile created.
-        assert ExamProfile.objects.filter(profile=self.profile).exists() is True
-        assert ExamAuthorization.objects.filter(
-            user=self.profile.user,
-            course=self.course_run.course
-        ).exists() is True
-
-    @ddt.data(Order.FULFILLED, Order.PARTIALLY_REFUNDED)
-    def test_update_exam_authorization_order(self, order_status):
-        """
-        Verify that update_exam_authorization_final_grade is called when a fulfilled Order saves
-        """
-        with mute_signals(post_save):
-            # muted because enrollment also trigger signal for profile creation. right now we are just
-            # looking final grades
-            CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
-
-        FinalGradeFactory.create(
-            user=self.profile.user,
-            course_run=self.course_run,
-            passed=True,
-        )
-
-        order = OrderFactory.create(user=self.profile.user, fulfilled=False)
-        LineFactory.create(course_key=self.course_run.edx_course_key, order=order)
-
-        # There is no ExamAuthorization before creating the FinalGrade.
-        assert ExamAuthorization.objects.filter(
-            user=self.profile.user,
-            course=self.course_run.course
-        ).exists() is False
-
-        order.status = order_status
-        order.save()
 
         # assert Exam Authorization and profile created.
         assert ExamProfile.objects.filter(profile=self.profile).exists() is True
@@ -150,7 +120,14 @@ class ExamSignalsTest(MockedESTestCase):
         """
         Test exam profile creation when user enroll in course.
         """
-        create_order(self.profile.user, self.course_run)
+        # Create a paid final grade to mark user as having paid
+        with mute_signals(post_save):
+            FinalGradeFactory.create(
+                user=self.profile.user,
+                course_run=self.course_run,
+                passed=True,
+                course_run_paid_on_edx=True,
+            )
         # There is no ExamProfile before enrollment.
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
 
@@ -177,7 +154,13 @@ class ExamSignalsTest(MockedESTestCase):
             enrollment_end=now_in_utc() + timedelta(hours=1),
             course=course
         )
-        create_order(self.profile.user, course_run)
+        # Create a paid final grade to mark user as having paid
+        FinalGradeFactory.create(
+            user=self.profile.user,
+            course_run=course_run,
+            passed=True,
+            course_run_paid_on_edx=True,
+        )
 
         # exam profile before enrollment.
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
