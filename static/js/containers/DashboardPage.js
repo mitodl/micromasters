@@ -71,7 +71,7 @@ import { singleBtnDialogActions } from "../components/inputs/util"
 import CouponNotificationDialog from "../components/CouponNotificationDialog"
 import CourseEnrollmentDialog from "../components/CourseEnrollmentDialog"
 import SocialAuthReauthenticateDialog from "../components/SocialAuthReauthenticateDialog"
-import { getOwnDashboard, getOwnCoursePrices } from "../reducers/util"
+import { getOwnDashboard } from "../reducers/util"
 import { actions } from "../lib/redux_rest"
 import { wait } from "../util/util"
 import { gradeDetailPopupKey } from "../components/dashboard/courses/Grades"
@@ -79,7 +79,6 @@ import { gradeDetailPopupKey } from "../components/dashboard/courses/Grades"
 import type { UIState } from "../reducers/ui"
 import type { OrderReceiptState } from "../reducers/order_receipt"
 import type {
-  CoursePrices,
   DashboardState,
   ProgramLearners
 } from "../flow/dashboardTypes"
@@ -113,7 +112,6 @@ class DashboardPage extends React.Component {
     currentProgramEnrollment: AvailableProgram,
     programs: AvailableProgramsState,
     dashboard: DashboardState,
-    prices: RestState<CoursePrices>,
     programLearners: RestState<ProgramLearners>,
     dispatch: Dispatch,
     ui: UIState,
@@ -134,7 +132,6 @@ class DashboardPage extends React.Component {
   componentWillUnmount() {
     const { dispatch, programLearners } = this.props
     dispatch(clearDashboard(SETTINGS.user.username))
-    dispatch(actions.prices.clear(SETTINGS.user.username))
 
     _.forEach(R.keys(programLearners), id =>
       dispatch(actions.programLearners.clear(id))
@@ -389,7 +386,6 @@ class DashboardPage extends React.Component {
     return dispatch(actions.courseEnrollments.post(courseId)).then(
       () => {
         dispatch(fetchDashboard(SETTINGS.user.username, true))
-        dispatch(actions.prices.get(SETTINGS.user.username, true))
         dispatch(showEnrollPayLaterSuccessMessage(courseId))
       },
       () => {
@@ -801,7 +797,6 @@ const mapStateToProps = state => {
   return {
     profile:                  profile,
     dashboard:                getOwnDashboard(state),
-    prices:                   getOwnCoursePrices(state),
     programLearners:          state.programLearners,
     programs:                 state.programs,
     currentProgramEnrollment: state.currentProgramEnrollment,

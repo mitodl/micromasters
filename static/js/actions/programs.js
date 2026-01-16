@@ -90,7 +90,6 @@ export const addProgramEnrollment = (
         )
         dispatch(setEnrollProgramDialogVisibility(false))
         dispatch(fetchDashboard(SETTINGS.user.username))
-        dispatch(actions.prices.get(SETTINGS.user.username))
       },
       error => {
         dispatch(receiveAddProgramEnrollmentFailure(error))

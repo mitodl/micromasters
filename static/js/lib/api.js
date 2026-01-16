@@ -13,7 +13,6 @@ import type {
 import type { Coupons, AttachCouponResponse } from "../flow/couponTypes"
 import type {
   Dashboard,
-  CoursePrices,
   ProgramLearners
 } from "../flow/dashboardTypes"
 import type {
@@ -165,15 +164,6 @@ export function updateProfileImage(
 // this hits our endpoint to get the sso_digest, session_timout, etc
 export function getPearsonSSO(): Promise<PearsonSSOParameters> {
   return fetchJSONWithCSRF("/api/v0/pearson/sso/")
-}
-
-export function getCoursePrices(username: string): Promise<CoursePrices> {
-  return fetchJSONWithCSRF(`/api/v0/course_prices/${username}/`).then(
-    coursePrices => {
-      // turn `price` from string into decimal
-      return R.map(R.evolve({ price: Decimal }), coursePrices)
-    }
-  )
 }
 
 // Checkout stub - payments discontinued in 2021
