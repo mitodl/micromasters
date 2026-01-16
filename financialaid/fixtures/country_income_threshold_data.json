@@ -1,0 +1,2162 @@
+[
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 0,
+        "fields": {
+            "country_code": "AD",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 1,
+        "fields": {
+            "country_code": "AE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 2,
+        "fields": {
+            "country_code": "AF",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 3,
+        "fields": {
+            "country_code": "AG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 4,
+        "fields": {
+            "country_code": "AL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 5,
+        "fields": {
+            "country_code": "AM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 6,
+        "fields": {
+            "country_code": "AO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 7,
+        "fields": {
+            "country_code": "AS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 8,
+        "fields": {
+            "country_code": "AT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 9,
+        "fields": {
+            "country_code": "AU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 10,
+        "fields": {
+            "country_code": "AW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 11,
+        "fields": {
+            "country_code": "AZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 12,
+        "fields": {
+            "country_code": "BA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 13,
+        "fields": {
+            "country_code": "BB",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 14,
+        "fields": {
+            "country_code": "BD",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 15,
+        "fields": {
+            "country_code": "BE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 16,
+        "fields": {
+            "country_code": "BF",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 17,
+        "fields": {
+            "country_code": "BG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 18,
+        "fields": {
+            "country_code": "BH",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 19,
+        "fields": {
+            "country_code": "BI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 20,
+        "fields": {
+            "country_code": "BJ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 21,
+        "fields": {
+            "country_code": "BM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 22,
+        "fields": {
+            "country_code": "BN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 23,
+        "fields": {
+            "country_code": "BO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 24,
+        "fields": {
+            "country_code": "BR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 25,
+        "fields": {
+            "country_code": "BS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 26,
+        "fields": {
+            "country_code": "BT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 27,
+        "fields": {
+            "country_code": "BW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 28,
+        "fields": {
+            "country_code": "BY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 29,
+        "fields": {
+            "country_code": "BZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 30,
+        "fields": {
+            "country_code": "CA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 31,
+        "fields": {
+            "country_code": "CD",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 32,
+        "fields": {
+            "country_code": "CF",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 33,
+        "fields": {
+            "country_code": "CG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 34,
+        "fields": {
+            "country_code": "CH",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 35,
+        "fields": {
+            "country_code": "CI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 36,
+        "fields": {
+            "country_code": "CL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 37,
+        "fields": {
+            "country_code": "CM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 38,
+        "fields": {
+            "country_code": "CN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 39,
+        "fields": {
+            "country_code": "CO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 40,
+        "fields": {
+            "country_code": "CR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 41,
+        "fields": {
+            "country_code": "CU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 42,
+        "fields": {
+            "country_code": "CV",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 43,
+        "fields": {
+            "country_code": "CW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 44,
+        "fields": {
+            "country_code": "CY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 45,
+        "fields": {
+            "country_code": "CZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 46,
+        "fields": {
+            "country_code": "DE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 47,
+        "fields": {
+            "country_code": "DJ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 48,
+        "fields": {
+            "country_code": "DK",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 49,
+        "fields": {
+            "country_code": "DM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 50,
+        "fields": {
+            "country_code": "DO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 51,
+        "fields": {
+            "country_code": "DZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 52,
+        "fields": {
+            "country_code": "EC",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 53,
+        "fields": {
+            "country_code": "EE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 54,
+        "fields": {
+            "country_code": "EG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 55,
+        "fields": {
+            "country_code": "ER",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 56,
+        "fields": {
+            "country_code": "ES",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 57,
+        "fields": {
+            "country_code": "ET",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 58,
+        "fields": {
+            "country_code": "FI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 59,
+        "fields": {
+            "country_code": "FJ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 60,
+        "fields": {
+            "country_code": "FM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 61,
+        "fields": {
+            "country_code": "FO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 62,
+        "fields": {
+            "country_code": "FR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 63,
+        "fields": {
+            "country_code": "GA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 64,
+        "fields": {
+            "country_code": "GB",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 65,
+        "fields": {
+            "country_code": "GD",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 66,
+        "fields": {
+            "country_code": "GE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 67,
+        "fields": {
+            "country_code": "GH",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 68,
+        "fields": {
+            "country_code": "GI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 69,
+        "fields": {
+            "country_code": "GL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 70,
+        "fields": {
+            "country_code": "GM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 71,
+        "fields": {
+            "country_code": "GN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 72,
+        "fields": {
+            "country_code": "GQ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 73,
+        "fields": {
+            "country_code": "GR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 74,
+        "fields": {
+            "country_code": "GT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 75,
+        "fields": {
+            "country_code": "GU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 76,
+        "fields": {
+            "country_code": "GW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 77,
+        "fields": {
+            "country_code": "GY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 78,
+        "fields": {
+            "country_code": "HK",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 79,
+        "fields": {
+            "country_code": "HN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 80,
+        "fields": {
+            "country_code": "HR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 81,
+        "fields": {
+            "country_code": "HT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 82,
+        "fields": {
+            "country_code": "HU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 83,
+        "fields": {
+            "country_code": "ID",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 84,
+        "fields": {
+            "country_code": "IE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 85,
+        "fields": {
+            "country_code": "IL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 86,
+        "fields": {
+            "country_code": "IM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 87,
+        "fields": {
+            "country_code": "IN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 88,
+        "fields": {
+            "country_code": "IQ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 89,
+        "fields": {
+            "country_code": "IR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 90,
+        "fields": {
+            "country_code": "IS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 91,
+        "fields": {
+            "country_code": "IT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 92,
+        "fields": {
+            "country_code": "JM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 93,
+        "fields": {
+            "country_code": "JO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 94,
+        "fields": {
+            "country_code": "JP",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 95,
+        "fields": {
+            "country_code": "KE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 96,
+        "fields": {
+            "country_code": "KG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 97,
+        "fields": {
+            "country_code": "KH",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 98,
+        "fields": {
+            "country_code": "KI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 99,
+        "fields": {
+            "country_code": "KM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 100,
+        "fields": {
+            "country_code": "KN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 101,
+        "fields": {
+            "country_code": "KP",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 102,
+        "fields": {
+            "country_code": "KR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 103,
+        "fields": {
+            "country_code": "KW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 104,
+        "fields": {
+            "country_code": "KY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 105,
+        "fields": {
+            "country_code": "KZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 106,
+        "fields": {
+            "country_code": "LA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 107,
+        "fields": {
+            "country_code": "LB",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 108,
+        "fields": {
+            "country_code": "LC",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 109,
+        "fields": {
+            "country_code": "LI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 110,
+        "fields": {
+            "country_code": "LK",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 111,
+        "fields": {
+            "country_code": "LR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 112,
+        "fields": {
+            "country_code": "LS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 113,
+        "fields": {
+            "country_code": "LT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 114,
+        "fields": {
+            "country_code": "LU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 115,
+        "fields": {
+            "country_code": "LV",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 116,
+        "fields": {
+            "country_code": "LY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 117,
+        "fields": {
+            "country_code": "MA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 118,
+        "fields": {
+            "country_code": "MC",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 119,
+        "fields": {
+            "country_code": "MD",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 120,
+        "fields": {
+            "country_code": "ME",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 121,
+        "fields": {
+            "country_code": "MF",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 122,
+        "fields": {
+            "country_code": "MG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 123,
+        "fields": {
+            "country_code": "MH",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 124,
+        "fields": {
+            "country_code": "MK",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 125,
+        "fields": {
+            "country_code": "ML",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 126,
+        "fields": {
+            "country_code": "MM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 127,
+        "fields": {
+            "country_code": "MN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 128,
+        "fields": {
+            "country_code": "MO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 129,
+        "fields": {
+            "country_code": "MP",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 130,
+        "fields": {
+            "country_code": "MR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 131,
+        "fields": {
+            "country_code": "MT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 132,
+        "fields": {
+            "country_code": "MU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 133,
+        "fields": {
+            "country_code": "MV",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 134,
+        "fields": {
+            "country_code": "MW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 135,
+        "fields": {
+            "country_code": "MX",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 136,
+        "fields": {
+            "country_code": "MY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 137,
+        "fields": {
+            "country_code": "MZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 138,
+        "fields": {
+            "country_code": "NA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 139,
+        "fields": {
+            "country_code": "NC",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 140,
+        "fields": {
+            "country_code": "NE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 141,
+        "fields": {
+            "country_code": "NG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 142,
+        "fields": {
+            "country_code": "NI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 143,
+        "fields": {
+            "country_code": "NL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 144,
+        "fields": {
+            "country_code": "NO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 145,
+        "fields": {
+            "country_code": "NP",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 146,
+        "fields": {
+            "country_code": "NR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 147,
+        "fields": {
+            "country_code": "NZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 148,
+        "fields": {
+            "country_code": "OM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 149,
+        "fields": {
+            "country_code": "PA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 150,
+        "fields": {
+            "country_code": "PE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 151,
+        "fields": {
+            "country_code": "PF",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 152,
+        "fields": {
+            "country_code": "PG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 153,
+        "fields": {
+            "country_code": "PH",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 154,
+        "fields": {
+            "country_code": "PK",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 155,
+        "fields": {
+            "country_code": "PL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 156,
+        "fields": {
+            "country_code": "PR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 157,
+        "fields": {
+            "country_code": "PS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 158,
+        "fields": {
+            "country_code": "PT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 159,
+        "fields": {
+            "country_code": "PW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 160,
+        "fields": {
+            "country_code": "PY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 161,
+        "fields": {
+            "country_code": "QA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 162,
+        "fields": {
+            "country_code": "RO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 163,
+        "fields": {
+            "country_code": "RS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 164,
+        "fields": {
+            "country_code": "RU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 165,
+        "fields": {
+            "country_code": "RW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 166,
+        "fields": {
+            "country_code": "SA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 167,
+        "fields": {
+            "country_code": "SB",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 168,
+        "fields": {
+            "country_code": "SC",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 169,
+        "fields": {
+            "country_code": "SD",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 170,
+        "fields": {
+            "country_code": "SE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 171,
+        "fields": {
+            "country_code": "SG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 172,
+        "fields": {
+            "country_code": "SI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 173,
+        "fields": {
+            "country_code": "SK",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 174,
+        "fields": {
+            "country_code": "SL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 175,
+        "fields": {
+            "country_code": "SM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 176,
+        "fields": {
+            "country_code": "SN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 177,
+        "fields": {
+            "country_code": "SO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 178,
+        "fields": {
+            "country_code": "SR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 179,
+        "fields": {
+            "country_code": "SS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 180,
+        "fields": {
+            "country_code": "ST",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 181,
+        "fields": {
+            "country_code": "SV",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 182,
+        "fields": {
+            "country_code": "SX",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 183,
+        "fields": {
+            "country_code": "SY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 184,
+        "fields": {
+            "country_code": "SZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 185,
+        "fields": {
+            "country_code": "TC",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 186,
+        "fields": {
+            "country_code": "TD",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 187,
+        "fields": {
+            "country_code": "TG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 188,
+        "fields": {
+            "country_code": "TH",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 189,
+        "fields": {
+            "country_code": "TJ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 190,
+        "fields": {
+            "country_code": "TL",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 191,
+        "fields": {
+            "country_code": "TM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 192,
+        "fields": {
+            "country_code": "TN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 193,
+        "fields": {
+            "country_code": "TO",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 194,
+        "fields": {
+            "country_code": "TR",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 195,
+        "fields": {
+            "country_code": "TT",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 196,
+        "fields": {
+            "country_code": "TV",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 197,
+        "fields": {
+            "country_code": "TW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 198,
+        "fields": {
+            "country_code": "TZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 199,
+        "fields": {
+            "country_code": "UA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 200,
+        "fields": {
+            "country_code": "UG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 201,
+        "fields": {
+            "country_code": "US",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 202,
+        "fields": {
+            "country_code": "UY",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 203,
+        "fields": {
+            "country_code": "UZ",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 204,
+        "fields": {
+            "country_code": "VC",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 205,
+        "fields": {
+            "country_code": "VE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 206,
+        "fields": {
+            "country_code": "VG",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 207,
+        "fields": {
+            "country_code": "VI",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 208,
+        "fields": {
+            "country_code": "VN",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 209,
+        "fields": {
+            "country_code": "VU",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 210,
+        "fields": {
+            "country_code": "WS",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 211,
+        "fields": {
+            "country_code": "XK",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 212,
+        "fields": {
+            "country_code": "YE",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 213,
+        "fields": {
+            "country_code": "ZA",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 214,
+        "fields": {
+            "country_code": "ZM",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    },
+    {
+        "model": "financialaid.countryincomethreshold",
+        "pk": 215,
+        "fields": {
+            "country_code": "ZW",
+            "income_threshold": 75000,
+            "created_on": "2016-10-10T14:40:08.247Z",
+            "updated_on": "2016-10-10T14:40:08.247Z"
+        }
+    }
+]
