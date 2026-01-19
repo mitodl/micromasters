@@ -205,31 +205,6 @@ class MMTrack:
         """
         return self.final_grade_qset.for_course_run_key(edx_course_key).exists()
 
-    def get_payments_count_for_course(self, course):  # pylint: disable=unused-argument
-        """
-        Get the total count of payments for given course
-        Args:
-            course (courses.models.Course): a course
-        Returns:
-            int: count of paid course runs (always 0 as payments are discontinued)
-        """
-        return 0
-
-    def get_number_of_attempts_left(self, course):  # pylint: disable=unused-argument
-        """
-        Checks for each payment from before first date (when a payment provided two attempts)
-        and find if any unused attempts are carried over to the single attempt era (when a payment
-        provides one attempt).
-        Calculate the number of attempts remaining based on the calculated carry over and the other
-        payments and attempts.
-
-        Args:
-            course (courses.models.Course): a course
-        Returns:
-            int: a number of attempts left (always 0 as payments are discontinued)
-        """
-        return 0
-
     def has_final_grade_paid_on_edx(self, edx_course_key):
         """
         Checks if there is a a frozen final grade and the user paid for it.
