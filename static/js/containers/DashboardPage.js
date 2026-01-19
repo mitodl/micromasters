@@ -7,7 +7,6 @@ import PropTypes from "prop-types"
 import type { Dispatch } from "redux"
 import { connect } from "react-redux"
 import _ from "lodash"
-import moment from "moment"
 import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
 import DialogTitle from "@material-ui/core/DialogTitle"
@@ -19,7 +18,6 @@ import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
 import Loader from "../components/Loader"
 import { FETCH_SUCCESS, FETCH_PROCESSING, FETCH_FAILURE } from "../actions"
 import {
-  updateCourseStatus,
   fetchDashboard,
   clearDashboard
 } from "../actions/dashboard"
@@ -27,21 +25,13 @@ import { addProgramEnrollment } from "../actions/programs"
 import {
   COUPON_CONTENT_TYPE_COURSE,
   TOAST_SUCCESS,
-  TOAST_FAILURE,
-  STATUS_OFFERED,
-  STATUS_CAN_UPGRADE,
-  STATUS_PENDING_ENROLLMENT,
-  STATUS_NOT_PASSED,
-  STATUS_PASSED,
-  STATUS_CURRENTLY_ENROLLED,
-  STATUS_PAID_BUT_NOT_ENROLLED
+  TOAST_FAILURE
 } from "../constants"
 import {
   setToastMessage,
   setConfirmSkipDialogVisibility,
   setDocsInstructionsVisibility,
   setCouponNotificationVisibility,
-  setPaymentTeaserDialogVisibility,
   setEnrollCourseDialogVisibility,
   setCalculatePriceDialogVisibility,
   setExamEnrollmentDialogVisibility,
@@ -55,14 +45,12 @@ import {
   setEnrollSelectedProgram
 } from "../actions/ui"
 import { showEnrollPayLaterSuccessMessage } from "../actions/course_enrollments"
-import { findCourseRun } from "../util/util"
 import CourseListCard from "../components/dashboard/CourseListCard"
 import DashboardUserCard from "../components/dashboard/DashboardUserCard"
 import ErrorMessage from "../components/ErrorMessage"
 import LearnersInProgramCard from "../components/LearnersInProgramCard"
 import ProgressWidget from "../components/ProgressWidget"
 import { clearCoupons } from "../actions/coupons"
-import { setTimeoutActive } from "../actions/order_receipt"
 import { attachCoupon, setRecentlyAttachedCoupon } from "../actions/coupons"
 import { COURSE_EMAIL_TYPE } from "../components/email/constants"
 import { COURSE_TEAM_EMAIL_CONFIG } from "../components/email/lib"
@@ -73,11 +61,9 @@ import CourseEnrollmentDialog from "../components/CourseEnrollmentDialog"
 import SocialAuthReauthenticateDialog from "../components/SocialAuthReauthenticateDialog"
 import { getOwnDashboard } from "../reducers/util"
 import { actions } from "../lib/redux_rest"
-import { wait } from "../util/util"
 import { gradeDetailPopupKey } from "../components/dashboard/courses/Grades"
 
 import type { UIState } from "../reducers/ui"
-import type { OrderReceiptState } from "../reducers/order_receipt"
 import type { DashboardState, ProgramLearners } from "../flow/dashboardTypes"
 import type { AllEmailsState } from "../flow/emailTypes"
 import type {
@@ -113,7 +99,6 @@ class DashboardPage extends React.Component {
     dispatch: Dispatch,
     ui: UIState,
     email: AllEmailsState,
-    orderReceipt: OrderReceiptState,
     location: Object,
     openEmailComposer: (emailType: string, emailOpenParams: any) => void
   }
@@ -140,91 +125,6 @@ class DashboardPage extends React.Component {
     const { dispatch, openEmailComposer } = this.props
     if (canContactCourseTeam) {
       openEmailComposer(COURSE_EMAIL_TYPE, course)
-    } else {
-      dispatch(setPaymentTeaserDialogVisibility(true))
-    }
-  }
-
-  closePaymentTeaserDialog = () => {
-    const { dispatch } = this.props
-    dispatch(setPaymentTeaserDialogVisibility(false))
-  }
-
-  handleOrderSuccess = (course: Course): void => {
-    const {
-      dispatch,
-      ui: { toastMessage }
-    } = this.props
-    const firstRun: ?CourseRun = course.runs.length > 0 ? course.runs[0] : null
-
-    if (_.isNil(toastMessage)) {
-      if (firstRun && firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
-        dispatch(
-          setToastMessage({
-            title:   "Course Enrollment",
-            message: `Something went wrong. You paid for this course '${
-              course.title
-            }' but are not enrolled.`,
-            icon: TOAST_FAILURE
-          })
-        )
-      } else {
-        dispatch(
-          setToastMessage({
-            title:   "Order Complete!",
-            message: `You are now enrolled in ${course.title}`,
-            icon:    TOAST_SUCCESS
-          })
-        )
-      }
-    }
-    this.context.router.push("/dashboard/")
-  }
-
-  handleOrderCancellation = (): void => {
-    const {
-      dispatch,
-      ui: { toastMessage }
-    } = this.props
-    if (_.isNil(toastMessage)) {
-      dispatch(
-        setToastMessage({
-          message: "Order was cancelled",
-          icon:    TOAST_FAILURE
-        })
-      )
-    }
-    this.context.router.push("/dashboard/")
-  }
-
-  handleOrderPending = (run: CourseRun): void => {
-    const { dispatch } = this.props
-    dispatch(
-      updateCourseStatus(
-        SETTINGS.user.username,
-        run.course_id,
-        STATUS_PENDING_ENROLLMENT
-      )
-    )
-
-    if (!this.props.orderReceipt.timeoutActive) {
-      wait(3000).then(() => {
-        const { orderReceipt } = this.props
-        dispatch(setTimeoutActive(false))
-        const deadline = moment(orderReceipt.initialTime).add(2, "minutes")
-        const now = moment()
-        if (now.isBefore(deadline)) {
-          dispatch(fetchDashboard(SETTINGS.user.username, true))
-        } else {
-          dispatch(
-            setToastMessage({
-              message: "Order was not processed",
-              icon:    TOAST_FAILURE
-            })
-          )
-        }
-      })
-      dispatch(setTimeoutActive(true))
     }
   }
 
@@ -232,7 +132,6 @@ class DashboardPage extends React.Component {
     this.fetchDashboard()
     this.fetchProgramLearners()
     this.handleCoupon()
-    this.handleOrderStatus()
   }
 
   fetchDashboard() {
@@ -254,48 +153,6 @@ class DashboardPage extends React.Component {
       dispatch(actions.programLearners.get(program.id)).catch(() => {
         /* Promise rejected */
       })
-    }
-  }
-
-  handleOrderStatus = () => {
-    const {
-      dashboard,
-      location: { query }
-    } = this.props
-
-    if (dashboard.fetchStatus !== FETCH_SUCCESS) {
-      // wait until we have access to the dashboard
-      return
-    }
-
-    const courseKey = query.course_key
-    if (query.status === "receipt") {
-      const [courseRun, course] = findCourseRun(
-        dashboard.programs,
-        run => run !== null && run.course_id === courseKey
-      )
-      if (courseRun === null || course === null) {
-        // could not find course to handle order status for
-        return
-      }
-      switch (courseRun.status) {
-      case STATUS_CAN_UPGRADE:
-      case STATUS_OFFERED:
-        // user is directed to the order receipt page but order is not yet fulfilled
-        this.handleOrderPending(courseRun)
-        break
-      case STATUS_NOT_PASSED:
-      case STATUS_PASSED:
-      case STATUS_CURRENTLY_ENROLLED:
-      case STATUS_PAID_BUT_NOT_ENROLLED:
-        this.handleOrderSuccess(course)
-        break
-      default:
-        // do nothing, a timeout was set to check back later
-        break
-      }
-    } else if (query.status === "cancel") {
-      this.handleOrderCancellation()
     }
   }
 
@@ -502,34 +359,6 @@ class DashboardPage extends React.Component {
     )
   }
 
-  renderCourseContactPaymentDialog() {
-    const { ui } = this.props
-    const messageTail = "verified learners"
-    return (
-      <Dialog
-        classes={{ paper: "dialog", root: "course-payment-dialog-wrapper" }}
-        open={ui.paymentTeaserDialogVisibility}
-        onClose={this.closePaymentTeaserDialog}
-      >
-        <DialogTitle className="dialog-title">
-          Contact the Course Team
-        </DialogTitle>
-        <DialogContent>
-          <div className="inner-content">
-            <img
-              src="/static/images/contact_course_team_icon.png"
-              alt="Instructor icon"
-            />
-            <p>{`This is a premium feature for ${messageTail}.`}</p>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          {singleBtnDialogActions(this.closePaymentTeaserDialog)}
-        </DialogActions>
-      </Dialog>
-    )
-  }
-
   renderExamEnrollmentDialog() {
     const { ui } = this.props
     const program = this.getCurrentlyEnrolledProgram()
@@ -704,7 +533,7 @@ class DashboardPage extends React.Component {
       return this.noProgramSelectedCard()
     }
 
-    // Since payments are discontinued, we use empty coupon prices
+    // Upgrades are discontinued, so coupon prices are empty
     const couponPrices = {
       pricesInclCouponByRun:     new Map(),
       pricesInclCouponByCourse:  new Map(),
@@ -773,7 +602,6 @@ class DashboardPage extends React.Component {
           <Loader loaded={loaded}>
             {errorMessage}
             {pageContent}
-            {this.renderCourseContactPaymentDialog()}
           </Loader>
           <SocialAuthReauthenticateDialog
             invalidBackendCredentials={dashboard.invalidBackendCredentials}
@@ -799,7 +627,6 @@ const mapStateToProps = state => {
     currentProgramEnrollment: state.currentProgramEnrollment,
     ui:                       state.ui,
     email:                    state.email,
-    orderReceipt:             state.orderReceipt,
     coupons:                  state.coupons
   }
 }

@@ -35,8 +35,7 @@ export default class CourseEnrollmentDialog extends React.Component {
   }
 
   handlePayClick = () => {
-    // Payments are no longer accepted (discontinued in 2021)
-    // This is now a no-op
+    // Upgrades are no longer available
   }
 
   handleAuditClick = () => {
@@ -52,8 +51,8 @@ export default class CourseEnrollmentDialog extends React.Component {
 
     const message = (
       <p>
-        Payments are no longer accepted for MicroMasters courses (discontinued
-        in 2021). You can audit courses for free.
+        Paid upgrades are no longer offered for MicroMasters courses. You can
+        enroll in the audit track for free.
       </p>
     )
 
@@ -63,7 +62,7 @@ export default class CourseEnrollmentDialog extends React.Component {
         disabled
         className="mdl-button dashboard-button pay-button"
       >
-        Payments Discontinued
+        Upgrade Unavailable
       </button>
     )
 

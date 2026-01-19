@@ -9,7 +9,6 @@ import {
   getUserProfile,
   patchUserProfile,
   getDashboard,
-  checkout,
   sendSearchResultMail,
   sendCourseTeamMail,
   sendLearnerMail,
@@ -28,7 +27,6 @@ import {
 } from "../constants"
 import {
   COUPON,
-  CYBERSOURCE_CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
   USER_PROFILE_RESPONSE,
   PROGRAMS
@@ -180,32 +178,6 @@ describe("api", function() {
           )
         })
       }
-    })
-
-    it("posts to checkout", () => {
-      fetchJSONStub.returns(Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE))
-      return checkout("course_id").then(checkoutInfo => {
-        assert.ok(
-          fetchJSONStub.calledWith("/api/v0/checkout/", {
-            method: "POST",
-            body:   JSON.stringify({ course_id: "course_id" })
-          })
-        )
-        assert.deepEqual(checkoutInfo, CYBERSOURCE_CHECKOUT_RESPONSE)
-      })
-    })
-
-    it("fails to post to checkout", () => {
-      fetchJSONStub.returns(Promise.reject())
-
-      return assert.isRejected(checkout("course_id")).then(() => {
-        assert.ok(
-          fetchJSONStub.calledWith("/api/v0/checkout/", {
-            method: "POST",
-            body:   JSON.stringify({ course_id: "course_id" })
-          })
-        )
-      })
     })
 
     describe("for email", () => {

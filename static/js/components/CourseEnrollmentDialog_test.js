@@ -58,8 +58,7 @@ describe("CourseEnrollmentDialog", () => {
     const payButton = ((wrapper.querySelector(
       ".pay-button"
     ): any): HTMLButtonElement)
-    // Payments discontinued in 2021
-    assert.equal(payButton.textContent, "Payments Discontinued")
+    assert.equal(payButton.textContent, "Upgrade Unavailable")
     assert.isTrue(payButton.disabled)
     const auditButton = getEl(wrapper, ".audit-button")
     assert.equal(auditButton.textContent, "Enroll")

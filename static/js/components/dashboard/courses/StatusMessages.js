@@ -7,12 +7,10 @@ import moment from "moment-timezone"
 import type { Coupon } from "../../../flow/couponTypes"
 import type { Course, CourseRun } from "../../../flow/programTypes"
 import {
-  COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_CAN_UPGRADE,
   DASHBOARD_FORMAT,
-  COURSE_DEADLINE_FORMAT,
   COURSE_ACTION_ENROLL
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
@@ -102,8 +100,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   } = props
 
   const exams = course.has_exam
-  const paymentDueDate = moment(R.defaultTo("", firstRun.course_upgrade_deadline))
-
   const messages = []
 
   // If first run is paid but user never enrolled, most likely there was
@@ -195,21 +191,11 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     firstRun.status === STATUS_CAN_UPGRADE &&
     courseUpcomingOrCurrent(firstRun)
   ) {
-    let message =
-      "You are auditing. To get credit, you need to pay for the course."
-    if (course.certificate_url) {
-      message =
-        "You are re-taking this course. To get a new grade, you need to pay again."
-    }
-    let paymentDueMessage = ""
-    if (paymentDueDate.isValid()) {
-      paymentDueMessage = ` (Payment due on ${paymentDueDate
-        .tz(moment.tz.guess())
-        .format(COURSE_DEADLINE_FORMAT)})`
-    }
+    const message = course.certificate_url
+      ? "You are re-taking this course. Upgrades are no longer available."
+      : "You are auditing. Upgrades are no longer available."
     messages.push({
-      message: message + paymentDueMessage,
-      action:  courseAction(firstRun, COURSE_ACTION_PAY)
+      message
     })
     return S.Just(messages)
   }
@@ -234,12 +220,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   } else if (hasCanUpgradeCourseRun(course)) {
     // the course finished but was audited
-    const dueDate = paymentDueDate.isValid()
-      ? ` (Payment due on ${paymentDueDate.format(DASHBOARD_FORMAT)})`
-      : ""
     messages.push({
-      message: `The edX course is complete, but you need to pay to get credit.${dueDate}`,
-      action:  courseAction(firstRun, COURSE_ACTION_PAY)
+      message:
+        "The edX course is complete, but upgrades are no longer available."
     })
     return S.Just(messages)
   } else if (hasMissedDeadlineCourseRun(course) && !hasCurrentlyEnrolledCourseRun(course)) {

@@ -138,12 +138,11 @@ describe("CourseAction", () => {
   })
 
   describe("course payment", () => {
-    it("says Payments Discontinued for COURSE_ACTION_PAY", () => {
+    it("says Upgrade Unavailable for COURSE_ACTION_PAY", () => {
       const wrapper = renderCourseAction({ actionType: COURSE_ACTION_PAY })
-      // Payments discontinued in 2021
       assert.equal(
         wrapper.find(".pay-button").props().children,
-        "Payments Discontinued"
+        "Upgrade Unavailable"
       )
       assert.equal(wrapper.find(".pay-button").props().disabled, true)
     })
@@ -204,8 +203,7 @@ describe("CourseAction", () => {
       })
 
       const button = wrapper.find(".pay-button")
-      // Payments discontinued in 2021
-      assert.equal(button.props().children, "Payments Discontinued")
+      assert.equal(button.props().children, "Upgrade Unavailable")
       assert.equal(button.props().disabled, true)
     })
 
@@ -224,9 +222,8 @@ describe("CourseAction", () => {
       })
 
       const button = wrapper.find(".pay-button")
-      // Payments discontinued in 2021
       assert.isTrue(button.props().disabled)
-      assert.equal(button.props().children, "Payments Discontinued")
+      assert.equal(button.props().children, "Upgrade Unavailable")
     })
   })
 })

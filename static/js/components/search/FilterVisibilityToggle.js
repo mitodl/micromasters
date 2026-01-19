@@ -8,9 +8,8 @@ import IconButton from "@material-ui/core/IconButton"
 import { getAppliedFilterValue, matchFieldName } from "./util"
 
 export const FILTER_ID_ADJUST = {
-  courses:        "program.courses.course_title",
-  payment_status: "program.courses.payment_status",
-  semester:       "program.course_runs.semester"
+  courses:  "program.courses.course_title",
+  semester: "program.course_runs.semester"
 }
 
 export default class FilterVisibilityToggle extends SearchkitComponent {

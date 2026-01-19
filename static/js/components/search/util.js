@@ -177,10 +177,9 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      * Gets an array of all term filters that are applied to this element's same nested path. Returns undefined if no
      * filters are applied on this element's nested path.
      *
-     * Example return value: [
-     *   {'term': {'program.courses.course_title': 'Some Course Title'},
-     *   {'term': {'program.courses.payment_status': 'Paid'}
-     * ]
+    * Example return value: [
+    *   {'term': {'program.courses.course_title': 'Some Course Title'}}
+    * ]
      */
     getAllFiltersOnPath(query) {
       const nestedPath = this.getNestedPath()

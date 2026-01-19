@@ -163,15 +163,6 @@ export function getPearsonSSO(): Promise<PearsonSSOParameters> {
   return fetchJSONWithCSRF("/api/v0/pearson/sso/")
 }
 
-// Checkout stub - payments discontinued in 2021
-// Keeps API call for test compatibility but should fail
-export function checkout(courseId: string): Promise<*> {
-  return fetchJSONWithCSRF("/api/v0/checkout/", {
-    method: "POST",
-    body:   JSON.stringify({ course_id: courseId })
-  })
-}
-
 export function addCourseEnrollment(courseId: string) {
   return fetchJSONWithCSRF("/api/v0/course_enrollments/", {
     method: "POST",

@@ -2,47 +2,26 @@
 /* global document: false, window: false, SETTINGS: false */
 /* eslint-disable no-unused-vars */
 import { assert } from "chai"
-import sinon from "sinon"
 import moment from "moment"
 import ReactDOM from "react-dom"
-import Decimal from "decimal.js-light"
 import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
 
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
-import {
-  makeAvailablePrograms,
-  makeCoupon,
-  makeCoursePrices,
-  makeDashboard,
-  makeCourse,
-  makeProgram,
-  makeProgramLearners
-} from "../factories/dashboard"
+import { makeAvailablePrograms, makeDashboard, makeCourse } from "../factories/dashboard"
 import IntegrationTestHelper from "../util/integration_test_helper"
-import {
-  REQUEST_DASHBOARD,
-  RECEIVE_DASHBOARD_SUCCESS,
-  UPDATE_COURSE_STATUS,
-  CLEAR_DASHBOARD
-} from "../actions/dashboard"
-import * as storeActions from "../actions"
+import { REQUEST_DASHBOARD, CLEAR_DASHBOARD } from "../actions/dashboard"
 import * as dashboardActions from "../actions/dashboard"
 import { CLEAR_COUPONS } from "../actions/coupons"
 import {
   SHOW_DIALOG,
   HIDE_DIALOG,
-  SET_TOAST_MESSAGE,
   CLEAR_UI,
-  SET_COUPON_NOTIFICATION_VISIBILITY,
-  SET_PAYMENT_TEASER_DIALOG_VISIBILITY,
   SET_ENROLL_COURSE_DIALOG_VISIBILITY,
   SET_ENROLL_SELECTED_COURSE_RUN,
-  SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
   SET_ENROLL_PROGRAM_DIALOG_VISIBILITY,
   SET_ENROLL_SELECTED_PROGRAM,
   SET_ENROLL_PROGRAM_DIALOG_ERROR,
-  setToastMessage,
   showDialog
 } from "../actions/ui"
 import {
@@ -52,7 +31,6 @@ import {
   CLEAR_EMAIL_EDIT,
   UPDATE_EMAIL_VALIDATION
 } from "../actions/email"
-import { SET_TIMEOUT_ACTIVE, setInitialTime } from "../actions/order_receipt"
 import { CLEAR_PROFILE } from "../actions/profile"
 import {
   CLEAR_ENROLLMENTS,
@@ -60,33 +38,8 @@ import {
   RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS
 } from "../actions/programs"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
-import {
-  REQUEST_ATTACH_COUPON,
-  RECEIVE_ATTACH_COUPON_SUCCESS,
-  RECEIVE_ATTACH_COUPON_FAILURE,
-  SET_RECENTLY_ATTACHED_COUPON,
-  REQUEST_FETCH_COUPONS,
-  RECEIVE_FETCH_COUPONS_SUCCESS
-} from "../actions/coupons"
-import { findCourseRun, wait } from "../util/util"
-import * as util from "../util/util"
-import {
-  COUPON,
-  DASHBOARD_RESPONSE,
-  ERROR_RESPONSE,
-  EDX_CHECKOUT_RESPONSE
-} from "../test_constants"
-import {
-  STATUS_CURRENTLY_ENROLLED,
-  STATUS_PENDING_ENROLLMENT,
-  STATUS_OFFERED,
-  STATUS_PAID_BUT_NOT_ENROLLED,
-  TOAST_FAILURE,
-  TOAST_SUCCESS,
-  STATUS_CAN_UPGRADE
-} from "../constants"
-import type { Program } from "../flow/programTypes"
-import { findCourse, modifyTextField } from "../util/test_utils"
+import { DASHBOARD_RESPONSE, ERROR_RESPONSE } from "../test_constants"
+import { modifyTextField } from "../util/test_utils"
 import {
   DASHBOARD_SUCCESS_ACTIONS,
   DASHBOARD_ERROR_ACTIONS,
@@ -268,160 +221,6 @@ describe("DashboardPage", function() {
     )
   })
 
-  describe("order receipt and cancellation pages", () => {
-    const SUCCESS_WITH_TOAST_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
-      SET_TOAST_MESSAGE
-    ])
-    const SUCCESS_WITH_TIMEOUT_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
-      SET_TIMEOUT_ACTIVE,
-      UPDATE_COURSE_STATUS
-    ])
-    let waitResolve, waitPromise, waitStub
-
-    beforeEach(() => {
-      waitPromise = new Promise(resolve => {
-        // Note that most tests here won't call waitResolve at all so the promise won't resolve. The only tests
-        // that should are tests testing the order receipt 3 second timeout functionality.
-        waitResolve = resolve
-      })
-      waitStub = helper.sandbox.stub(util, "wait").returns(waitPromise)
-    })
-
-    it("shows the order status toast when the query param is set for a cancellation", () => {
-      return renderComponent(
-        "/dashboard?status=cancel",
-        SUCCESS_WITH_TOAST_ACTIONS
-      ).then(() => {
-        assert.deepEqual(helper.store.getState().ui.toastMessage, {
-          message: "Order was cancelled",
-          icon:    TOAST_FAILURE
-        })
-      })
-    })
-
-    it("shows the order status toast when the query param is set for a success", () => {
-      const course = findCourse(
-        course =>
-          course.runs.length > 0 &&
-          course.runs[0].status === STATUS_CURRENTLY_ENROLLED
-      )
-      const run = course.runs[0]
-      const encodedKey = encodeURIComponent(run.course_id)
-      return renderComponent(
-        `/dashboard?status=receipt&course_key=${encodedKey}`,
-        SUCCESS_WITH_TOAST_ACTIONS
-      ).then(() => {
-        assert.deepEqual(helper.store.getState().ui.toastMessage, {
-          title:   "Order Complete!",
-          message: `You are now enrolled in ${course.title}`,
-          icon:    TOAST_SUCCESS
-        })
-      })
-    })
-
-    describe("toast loop", () => {
-      it("doesn't have a toast message loop on success", () => {
-        const course = findCourse(
-          course =>
-            course.runs.length > 0 &&
-            course.runs[0].status === STATUS_CURRENTLY_ENROLLED
-        )
-        const run = course.runs[0]
-        const encodedKey = encodeURIComponent(run.course_id)
-        const customMessage = {
-          message: "Custom toast message was not replaced"
-        }
-        helper.store.dispatch(setToastMessage(customMessage))
-        return renderComponent(
-          `/dashboard?status=receipt&course_key=${encodedKey}`,
-          DASHBOARD_SUCCESS_ACTIONS
-        ).then(() => {
-          assert.deepEqual(
-            helper.store.getState().ui.toastMessage,
-            customMessage
-          )
-        })
-      })
-
-      it("doesn't have a toast message loop on failure", () => {
-        const customMessage = {
-          message: "Custom toast message was not replaced"
-        }
-        helper.store.dispatch(setToastMessage(customMessage))
-        return renderComponent(
-          "/dashboard?status=cancel",
-          DASHBOARD_SUCCESS_ACTIONS
-        ).then(() => {
-          assert.deepEqual(
-            helper.store.getState().ui.toastMessage,
-            customMessage
-          )
-        })
-      })
-    })
-
-    it("shows the toast when the query param is set for a success but user is not enrolled", () => {
-      const course = findCourse(
-        course =>
-          course.runs.length > 0 &&
-          course.runs[0].status === STATUS_PAID_BUT_NOT_ENROLLED
-      )
-      const run = course.runs[0]
-      const encodedKey = encodeURIComponent(run.course_id)
-      return renderComponent(
-        `/dashboard?status=receipt&course_key=${encodedKey}`,
-        SUCCESS_WITH_TOAST_ACTIONS
-      ).then(() => {
-        assert.deepEqual(helper.store.getState().ui.toastMessage, {
-          title:   "Course Enrollment",
-          message: `Something went wrong. You paid for this course '${
-            course.title
-          }' but are not enrolled.`,
-          icon: TOAST_FAILURE
-        })
-      })
-    })
-
-    it("doesn't error if the course run couldn't be found", () => {
-      return renderComponent(
-        `/dashboard?status=receipt&course_key=missing`,
-        DASHBOARD_SUCCESS_ACTIONS
-      )
-    })
-
-    describe("course pricing", () => {
-      let dashboard,
-        availablePrograms,
-        coursePrices,
-        programLearners,
-        coupon,
-        run,
-        program: Program,
-        course
-
-      beforeEach(() => {
-        dashboard = makeDashboard()
-        program = dashboard.programs[0]
-        course = program.courses[0]
-        run = course.runs[0]
-        run.enrollment_start_date = "2016-01-01"
-        availablePrograms = makeAvailablePrograms(dashboard)
-        coursePrices = makeCoursePrices(dashboard)
-        programLearners = makeProgramLearners()
-        helper.dashboardStub.returns(Promise.resolve(dashboard))
-        helper.programsGetStub.returns(Promise.resolve(availablePrograms))
-        helper.coursePricesStub.returns(Promise.resolve(coursePrices))
-        helper.programLearnersStub = helper.fetchJSONWithCSRFStub.withArgs(
-          `/api/v0/programlearners/${program.id}/`
-        )
-        helper.programLearnersStub.returns(Promise.resolve(programLearners))
-        coupon = makeCoupon(program)
-        coupon.amount_type = "percent-discount"
-        coupon.amount = Decimal(".05")
-        helper.couponsStub.returns(Promise.resolve([coupon]))
-      })
-    })
-  })
 
   it("dispatches actions to clean up after unmounting", () => {
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
@@ -443,80 +242,6 @@ describe("DashboardPage", function() {
     )
   })
 
-  // Tests disabled - coupon payment functionality has been removed
-  // describe("handles redeeming coupons", () => {
-  //   const COUPON_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
-  //     REQUEST_ATTACH_COUPON,
-  //     RECEIVE_ATTACH_COUPON_SUCCESS,
-  //     SET_RECENTLY_ATTACHED_COUPON,
-  //     SET_COUPON_NOTIFICATION_VISIBILITY,
-  //     REQUEST_FETCH_COUPONS,
-  //     RECEIVE_FETCH_COUPONS_SUCCESS
-  //   ])
-  //   const COUPON_FAILURE_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
-  //     REQUEST_ATTACH_COUPON,
-  //     RECEIVE_ATTACH_COUPON_FAILURE,
-  //     SET_TOAST_MESSAGE
-  //   ])
-  //
-  //   it("with a successful fetch", () => {
-  //     helper.couponsStub.returns(Promise.resolve([COUPON]))
-  //
-  //     return renderComponent(
-  //       "/dashboard?coupon=success-coupon",
-  //       COUPON_SUCCESS_ACTIONS
-  //     ).then(() => {
-  //       const state = helper.store.getState()
-  //       assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON)
-  //       assert.isTrue(state.ui.couponNotificationVisibility)
-  //       assert.deepEqual(state.coupons.coupons, [COUPON])
-  //     })
-  //   })
-  //
-  //   it("with a failed fetch", () => {
-  //     helper.attachCouponStub.returns(Promise.reject())
-  //
-  //     return renderComponent(
-  //       "/dashboard?coupon=failure-coupon",
-  //       COUPON_FAILURE_ACTIONS
-  //     ).then(() => {
-  //       const state = helper.store.getState()
-  //       assert.isNull(state.coupons.recentlyAttachedCoupon)
-  //       assert.isFalse(state.ui.couponNotificationVisibility)
-  //       assert.deepEqual(state.ui.toastMessage, {
-  //         title:   "Coupon failed",
-  //         message: "This coupon code is invalid or does not exist.",
-  //         icon:    TOAST_FAILURE
-  //       })
-  //     })
-  //   })
-  //
-  //   it("without a race condition", () => {
-  //     // eslint-disable-line mocha/no-skipped-tests
-  //     const program = DASHBOARD_RESPONSE.programs[1]
-  //     const coupon1 = makeCoupon(program)
-  //     const coupon2 = makeCoupon(program)
-  //     coupon2.coupon_code = "second-coupon"
-  //     const slowPromise = wait(200).then(() => [coupon1])
-  //
-  //     // Make sure we wait for the first call to complete before resolving the second promise
-  //     helper.couponsStub.onCall(0).returns(slowPromise)
-  //     helper.couponsStub.onCall(1).returns(Promise.resolve([coupon2]))
-  //
-  //     return renderComponent(
-  //       "/dashboard?coupon=success-coupon",
-  //       COUPON_SUCCESS_ACTIONS
-  //     ).then(() => {
-  //       const state = helper.store.getState()
-  //       assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON)
-  //       // must be the second call result
-  //       assert.deepEqual(state.coupons.coupons, [coupon2])
-  //       assert.isTrue(state.ui.couponNotificationVisibility)
-  //       sinon.assert.calledTwice(helper.couponsStub)
-  //     })
-  //   })
-  // })
-
   describe("course contact UI behavior", () => {
     let dashboardResponse
     // Since financial aid is removed, all messages show "verified learners"
@@ -530,9 +255,8 @@ describe("DashboardPage", function() {
         expectedMessage: "This is a premium feature for verified learners."
       }
     ]
-    const CONTACT_LINK_SELECTOR = ".contact-link"
-    const EMAIL_DIALOG_ACTIONS = [START_EMAIL_EDIT, SHOW_DIALOG]
-    const PAYMENT_DIALOG_ACTIONS = [SET_PAYMENT_TEASER_DIALOG_VISIBILITY]
+  const CONTACT_LINK_SELECTOR = ".contact-link"
+  const EMAIL_DIALOG_ACTIONS = [START_EMAIL_EDIT, SHOW_DIALOG]
 
     beforeEach(() => {
       // Limit the dashboard response to 1 program
@@ -555,7 +279,6 @@ describe("DashboardPage", function() {
           return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
             contactLink.simulate("click")
           }).then(state => {
-            assert.isFalse(state.ui.paymentTeaserDialogVisibility)
             assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
 
             modifyTextField(document.querySelector(".email-subject"), "subject")

@@ -19,11 +19,6 @@ import {
   UPDATE_VALIDATION_VISIBILITY
 } from "../actions/profile"
 import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
-import {
-  REQUEST_CHECKOUT,
-  RECEIVE_CHECKOUT_SUCCESS,
-  RECEIVE_CHECKOUT_FAILURE
-} from "../actions"
 import { ui } from "./ui"
 import { email } from "./email"
 import { currentProgramEnrollment, programs } from "./programs"
@@ -165,37 +160,6 @@ export const profiles = (
   }
 }
 
-// Checkout reducer - PAYMENTS DISCONTINUED IN 2021
-// This is a stub to maintain compatibility
-export type CheckoutState = {
-  fetchStatus?: string
-}
-const INITIAL_CHECKOUT_STATE = {}
-export const checkout = (
-  state: CheckoutState = INITIAL_CHECKOUT_STATE,
-  action: Action<null, null>
-) => {
-  switch (action.type) {
-  case REQUEST_CHECKOUT:
-    return {
-      ...state,
-      fetchStatus: FETCH_PROCESSING
-    }
-  case RECEIVE_CHECKOUT_SUCCESS:
-    return {
-      ...state,
-      fetchStatus: FETCH_SUCCESS
-    }
-  case RECEIVE_CHECKOUT_FAILURE:
-    return {
-      ...state,
-      fetchStatus: FETCH_FAILURE
-    }
-  default:
-    return state
-  }
-}
-
 export default combineReducers({
   profiles,
   dashboard,
@@ -208,6 +172,5 @@ export default combineReducers({
   revokeShareDialog,
   imageUpload,
   coupons,
-  checkout,
   ...reducers
 })

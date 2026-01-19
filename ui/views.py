@@ -164,16 +164,6 @@ class SignInView(ReactView):
         Handle GET requests to templates using React
         """
         context = self.get_context(request)
-        coupon_code = get_coupon_code(request)
-
-        # if we didn't get a program in the context, look it up via the coupon code
-        if (
-            settings.FEATURES.get("MITXONLINE_LOGIN", False)
-            and coupon_code
-            and context["program"] is None
-        ):
-            # Coupon functionality is disabled as payments were discontinued in 2021
-            pass
 
         return render(
             request,

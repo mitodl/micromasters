@@ -28,7 +28,6 @@ export const EDUCATION_LEVELS = [
 export const SEARCH_FACET_FIELD_LABEL_MAP = {
   "program.courses.course_title":      "Course",
   "program.course_runs.semester":      "Semester",
-  "program.courses.payment_status":    "Payment Status",
   "program.grade_average":             "Average Grade in Program",
   "grade-average":                     "Average Grade in Program",
   "profile.birth_country":             "Country of Birth",

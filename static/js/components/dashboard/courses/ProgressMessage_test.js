@@ -226,7 +226,7 @@ describe("Course ProgressMessage", () => {
       course.runs[1].status = STATUS_CAN_UPGRADE
       assert.equal(staffCourseInfo(course.runs[0], course), "Audited, passed")
     })
-    it("should return Audited, missed payment deadline", () => {
+    it("should return Audited, missed upgrade deadline", () => {
       makeRunPast(course.runs[0])
       makeRunPast(course.runs[1])
       course.runs[0].status = STATUS_NOT_PASSED

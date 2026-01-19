@@ -68,8 +68,7 @@ export default class CourseAction extends React.Component {
 
   // eslint-disable-next-line no-unused-vars
   renderPayButton(run: CourseRun): React$Element<*> {
-    // Payments are no longer accepted (discontinued in 2021)
-    // This button is now disabled
+    // Upgrades are no longer available
     return (
       <div className="course-action">
         <button
@@ -77,7 +76,7 @@ export default class CourseAction extends React.Component {
           key="1"
           disabled={true}
         >
-          Payments Discontinued
+          Upgrade Unavailable
         </button>
       </div>
     )

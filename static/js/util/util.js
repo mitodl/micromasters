@@ -30,9 +30,6 @@ import type {
 import type { Program, Course, CourseRun } from "../flow/programTypes"
 import { workEntriesByDate } from "./sorting"
 
-// CheckoutPayload type - payments discontinued but type preserved for compatibility
-type CheckoutPayload = { [key: string]: string }
-
 export const isProfileOfLoggedinUser = (profile: Profile): boolean =>
   SETTINGS.user && profile.username === SETTINGS.user.username
 
@@ -385,31 +382,6 @@ export function asPercent(number: number): string {
     return ""
   }
   return `${Math.round(number * 100)}%`
-}
-
-/**
- * Creates a POST form with hidden input fields
- * @param url the url for the form action
- * @param payload Each key value pair will become an input field
- */
-export function createForm(
-  url: string,
-  payload: CheckoutPayload
-): HTMLFormElement {
-  const form = document.createElement("form")
-  form.setAttribute("action", url)
-  form.setAttribute("method", "post")
-  form.setAttribute("class", "cybersource-payload")
-
-  for (const key: string of Object.keys(payload)) {
-    const value = payload[key]
-    const input = document.createElement("input")
-    input.setAttribute("name", key)
-    input.setAttribute("value", value)
-    input.setAttribute("type", "hidden")
-    form.appendChild(input)
-  }
-  return form
 }
 
 /**

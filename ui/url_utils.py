@@ -10,7 +10,6 @@ PROFILE_EMPLOYMENT_URL = f'{PROFILE_URL}professional/?'
 SETTINGS_URL = "/settings/"
 SEARCH_URL = "/learners/"
 EMAIL_URL = "/automaticemails/"
-PAYMENT_CALL_BACK_URL = "/payment-callback/"
 
 DASHBOARD_URLS = [
     DASHBOARD_URL,

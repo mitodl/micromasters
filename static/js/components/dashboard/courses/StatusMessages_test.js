@@ -26,17 +26,14 @@ import {
   makeRunPast,
   makeRunFuture,
   makeRunOverdue,
-  makeRunDueSoon,
   makeRunFailed,
   makeRunCanUpgrade,
   makeRunMissedDeadline
 } from "./test_util"
 import { assertIsJust, assertIsNothing } from "../../../lib/test_utils"
 import {
-  COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
   DASHBOARD_FORMAT,
-  COURSE_DEADLINE_FORMAT,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_MISSED_DEADLINE,
   COURSE_ACTION_ENROLL
@@ -138,28 +135,17 @@ describe("Course Status Messages", () => {
       ])
     })
 
-    it("should nag unpaid auditors to pay", () => {
+    it("should inform unpaid auditors that upgrades are unavailable", () => {
       makeRunCurrent(course.runs[0])
       makeRunCanUpgrade(course.runs[0])
-      course.runs[0].course_upgrade_deadline = moment().format()
-      const dueDate = moment(course.runs[0].course_upgrade_deadline)
-        .tz(moment.tz.guess())
-        .format(COURSE_DEADLINE_FORMAT)
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          action:  "course action was called",
-          message: `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`
+          message: "You are auditing. Upgrades are no longer available."
         }
       ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
     })
 
-    it("should ask to pay for a new grade, if already has a certificate ", () => {
+    it("should note upgrades unavailable for re-takes when a certificate exists", () => {
       makeRunCurrent(course.runs[0])
       makeRunCanUpgrade(course.runs[0])
       course.certificate_url = "certificate"
@@ -173,36 +159,19 @@ describe("Course Status Messages", () => {
       )
 
       assert.deepEqual(messages[1], {
-        action:  "course action was called",
-        message:
-          "You are re-taking this course. To get a new grade, you need to pay again."
+        message: "You are re-taking this course. Upgrades are no longer available."
       })
-
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
     })
 
-    it("should not show payment due date if missing", () => {
+    it("should not show upgrade prompts when deadline is missing", () => {
       makeRunCurrent(course.runs[0])
       makeRunCanUpgrade(course.runs[0])
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          action:  "course action was called",
-          message:
-            "You are auditing. To get credit, you need to pay for the course."
+          message: "You are auditing. Upgrades are no longer available."
         }
       ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
     })
 
     describe("should prompt users who are passed but course is in progress, if applicable", () => {
@@ -361,44 +330,27 @@ describe("Course Status Messages", () => {
       ])
     })
 
-    it("should nag about paying after the edx course is complete", () => {
+    it("should indicate upgrades unavailable after the edx course is complete", () => {
       makeRunPast(course.runs[0])
       makeRunCanUpgrade(course.runs[0])
-      makeRunDueSoon(course.runs[0])
-      const date = moment(course.runs[0].course_upgrade_deadline).format(
-        DASHBOARD_FORMAT
-      )
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: `The edX course is complete, but you need to pay to get credit. (Payment due on ${date})`,
-          action:  "course action was called"
+          message:
+            "The edX course is complete, but upgrades are no longer available."
         }
       ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
     })
 
-    it("should nag about paying after the edx course is complete with no deadline", () => {
+    it("should state upgrades unavailable after the edx course is complete with no deadline", () => {
       makeRunPast(course.runs[0])
       makeRunCanUpgrade(course.runs[0])
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "The edX course is complete, but you need to pay to get credit.",
-          action: "course action was called"
+            "The edX course is complete, but upgrades are no longer available."
         }
       ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_PAY
-        )
-      )
     })
 
     it("should encourage the user to re-enroll after failing", () => {
