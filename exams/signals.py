@@ -30,6 +30,13 @@ def update_exam_authorization_final_grade(sender, instance, **kwargs):  # pylint
     """
     Signal handler to trigger an exam profile and authorization for FinalGrade creation.
     """
+    if not instance.course_run_paid_on_edx:
+        log.debug(
+            'Skipping exam authorization for user %s course %s: final grade not paid',
+            instance.user_id,
+            instance.course_run_id,
+        )
+        return
     authorize_user_for_schedulable_exam_runs(instance.user, instance.course_run)
 
 

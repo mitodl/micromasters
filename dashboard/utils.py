@@ -134,7 +134,8 @@ class MMTrack:
         Returns:
             bool: whether the user is enrolled mmtrack in the course run
         """
-        return self.is_enrolled(edx_course_key)
+        enrollment = self.enrollments.get_enrollment_for_course(edx_course_key)
+        return self._is_course_in_program(edx_course_key) and bool(enrollment and enrollment.is_verified)
 
     def has_verified_enrollment(self, edx_course_key):
         """

@@ -335,6 +335,8 @@ def get_info_for_course(course, mmtrack):
             _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
         elif run_status.status == CourseRunStatus.CURRENTLY_ENROLLED:
             _add_run(run_status.course_run, mmtrack, CourseStatus.CURRENTLY_ENROLLED)
+        elif run_status.status == CourseRunStatus.NOT_PASSED:
+            _add_run(run_status.course_run, mmtrack, CourseStatus.NOT_PASSED)
 
     return course_data
 
@@ -377,17 +379,26 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
     Returns:
         CourseRunUserStatus: an object representing the run status for the user
     """
+    enrolled = mmtrack.is_enrolled(course_run.edx_course_key)
 
     if mmtrack.has_final_grade(course_run.edx_course_key):
+        final_grade = get_final_grade(mmtrack, course_run)
+        if course_run.has_frozen_grades:
+            return CourseRunUserStatus(
+                CourseRunStatus.MISSED_DEADLINE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+                course_run,
+            )
         if course_run.is_upgradable:
-            final_grade = get_final_grade(mmtrack, course_run)
-            if final_grade.passed:
-                return CourseRunUserStatus(CourseRunStatus.CAN_UPGRADE, course_run)
-            else:
-                return CourseRunUserStatus(CourseRunStatus.NOT_PASSED, course_run)
-        else:
-            return CourseRunUserStatus(CourseRunStatus.MISSED_DEADLINE, course_run)
-    elif not mmtrack.is_enrolled(course_run.edx_course_key):
+            return CourseRunUserStatus(
+                CourseRunStatus.CAN_UPGRADE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+                course_run,
+            )
+        return CourseRunUserStatus(
+            CourseRunStatus.MISSED_DEADLINE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+            course_run,
+        )
+
+    if not enrolled:
         return CourseRunUserStatus(CourseRunStatus.NOT_ENROLLED, course_run)
     status = None
     if mmtrack.is_enrolled_mmtrack(course_run.edx_course_key):

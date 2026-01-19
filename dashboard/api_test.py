@@ -389,6 +389,17 @@ class CourseRunTest(CourseTests):
         super().setUpTestData()
         cls.now = now_in_utc()
 
+    def setUp(self):  # pylint: disable=invalid-name
+        super().setUp()
+        # Default course run for tests that rely on a shared instance
+        self.crun = self.create_run(
+            start=self.now - timedelta(weeks=10),
+            end=self.now - timedelta(weeks=5),
+            enr_start=self.now - timedelta(weeks=12),
+            enr_end=self.now - timedelta(weeks=9),
+            edx_key="course-v1:shared+run+test",
+        )
+
     def test_status_for_run_not_enrolled(self):
         """test for get_status_for_courserun for course without enrollment"""
         self.mmtrack.configure_mock(**{

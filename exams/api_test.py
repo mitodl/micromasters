@@ -87,7 +87,7 @@ class ExamAuthorizationApiTests(TestCase):
         ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException):
-            authorize_for_exam_run(self.user, self.course_run, self.exam_run)
+            authorize_for_exam_run(user, self.course_run, self.exam_run)
 
         # Assert user doesn't have exam profile and authorization
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
