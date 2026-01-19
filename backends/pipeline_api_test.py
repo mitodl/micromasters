@@ -2,7 +2,6 @@
 Tests for the pipeline APIs
 """
 from unittest import mock
-from urllib.parse import urljoin
 
 import ddt
 import pytest

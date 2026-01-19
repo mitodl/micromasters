@@ -8,10 +8,6 @@ import type { Dispatch } from "redux"
 import { connect } from "react-redux"
 import _ from "lodash"
 import R from "ramda"
-import Dialog from "@material-ui/core/Dialog"
-import DialogTitle from "@material-ui/core/DialogTitle"
-import DialogContent from "@material-ui/core/DialogContent"
-import DialogActions from "@material-ui/core/DialogActions"
 import Alert from "react-bootstrap/lib/Alert"
 
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
@@ -21,7 +17,6 @@ import { fetchDashboard, clearDashboard } from "../actions/dashboard"
 import { addProgramEnrollment } from "../actions/programs"
 import {
   COUPON_CONTENT_TYPE_COURSE,
-  TOAST_SUCCESS,
   TOAST_FAILURE
 } from "../constants"
 import {
@@ -52,7 +47,6 @@ import { attachCoupon, setRecentlyAttachedCoupon } from "../actions/coupons"
 import { COURSE_EMAIL_TYPE } from "../components/email/constants"
 import { COURSE_TEAM_EMAIL_CONFIG } from "../components/email/lib"
 import { withEmailDialog } from "../components/email/hoc"
-import { singleBtnDialogActions } from "../components/inputs/util"
 import CouponNotificationDialog from "../components/CouponNotificationDialog"
 import CourseEnrollmentDialog from "../components/CourseEnrollmentDialog"
 import SocialAuthReauthenticateDialog from "../components/SocialAuthReauthenticateDialog"
@@ -119,7 +113,7 @@ class DashboardPage extends React.Component {
   }
 
   openCourseContactDialog = (course: Course, canContactCourseTeam: boolean) => {
-    const { dispatch, openEmailComposer } = this.props
+    const { openEmailComposer } = this.props
     if (canContactCourseTeam) {
       openEmailComposer(COURSE_EMAIL_TYPE, course)
     }

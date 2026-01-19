@@ -5,7 +5,7 @@ import re
 from courses.models import CourseRun
 
 
-def is_eligible_for_exam(mmtrack, course_run):
+def is_eligible_for_exam(_mmtrack, course_run):
     """
     Returns True if a course has exam settings enabled.
 

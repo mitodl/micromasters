@@ -6,7 +6,6 @@ import logging
 from dashboard.utils import get_mmtrack
 from exams.exceptions import ExamAuthorizationException
 from exams.models import ExamAuthorization, ExamProfile, ExamRun
-from exams.utils import get_corresponding_course_run
 from grades.constants import FinalGradeStatus
 from grades.models import FinalGrade
 

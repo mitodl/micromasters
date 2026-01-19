@@ -16,7 +16,6 @@ from django.views.generic import TemplateView, View
 from rolepermissions.checkers import has_role
 from rolepermissions.permissions import available_perm_status
 
-from cms.util import get_coupon_code
 from courses.models import Program
 from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user

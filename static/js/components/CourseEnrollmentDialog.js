@@ -47,7 +47,7 @@ export default class CourseEnrollmentDialog extends React.Component {
 
   // eslint-disable-next-line require-jsdoc
   render() {
-    const { open, setVisibility, course, courseRun } = this.props
+    const { open, setVisibility, course } = this.props
 
     const message = (
       <p>

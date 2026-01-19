@@ -99,7 +99,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     setShowExpandedCourseStatus
   } = props
 
-  const exams = course.has_exam
   const messages = []
 
   // If first run is paid but user never enrolled, most likely there was
