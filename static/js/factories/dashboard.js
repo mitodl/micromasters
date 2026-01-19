@@ -96,7 +96,6 @@ export const makeRun = (position: number): CourseRun => {
       .subtract(1, "day")
       .format(),
     status:             STATUS_OFFERED,
-    has_paid:           false,
     year_season:        `Spring ${moment().year()}`,
     courseware_backend: COURSEWARE_BACKEND_EDXORG
   }

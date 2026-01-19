@@ -544,7 +544,6 @@ describe("DashboardPage", function() {
     it("shows the email composition dialog when a user has permission to contact a course team", () => {
       const course = makeCourse()
       course.has_contact_email = true
-      course.runs[0].has_paid = true
       makeRunEnrolled(course.runs[0])
       dashboardResponse.programs[0].courses = [course]
       helper.dashboardStub.returns(Promise.resolve(dashboardResponse))

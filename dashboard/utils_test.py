@@ -214,34 +214,6 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.has_final_grade(final_grade.course_run.edx_course_key) is True
         assert mmtrack.has_final_grade('random-course-id') is False
 
-    @ddt.data(True, False)
-    def test_has_paid_final_grade(self, has_paid):
-        """
-        Test that has_paid_final_grade returns True when the associated FinalGrade is paid
-        """
-        final_grade = FinalGradeFactory.create(
-            user=self.user,
-            course_run=self.cruns[0],
-            course_run_paid_on_edx=has_paid
-        )
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid_final_grade(final_grade.course_run.edx_course_key) is has_paid
-
-    def test_has_paid_final_grade_none(self):
-        """
-        Test that has_paid_final_grade returns False when a FinalGrade doesn't exist
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid_final_grade('random-course-id') is False
-
     def test_get_final_grade(self):
         """
         Test that get_final_grade returns the FinalGrade associated with a user's course run
@@ -428,55 +400,6 @@ class MMTrackTest(MockedESTestCase):
     # Removed test_not_paid_fa_with_course_run_paid_on_edx (financial aid logic)
 
     # Removed test_not_paid_fa_with_enrollment_verified_on_edx (financial aid logic)
-
-    def test_has_paid_not_fa_no_final_grade(self):
-        """
-        Assert that has_paid works for non-FA programs in case there is no final grade
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = "course-v1:edX+DemoX+Demo_Course"
-        assert mmtrack.has_paid(key) is True
-
-    def test_has_paid_not_fa_with_final_grade(self):
-        """
-        Assert that has_paid works for non-FA programs in case there is a final grade
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = "course-v1:odl+FOO102+CR-FALL16"
-        assert mmtrack.has_paid(key) is False
-        course_run = self.cruns[-1]
-        final_grade = FinalGradeFactory.create(user=self.user, course_run=course_run, course_run_paid_on_edx=True)
-        assert mmtrack.has_paid(key) is True
-        final_grade.course_run_paid_on_edx = False
-        final_grade.save()
-        assert mmtrack.has_paid(key) is False
-
-    def test_has_paid_for_any_in_program(self):
-        """
-        Assert that has_paid_for_any_in_program returns True if any CourseRun associated with a Program has been
-        paid for.
-        """
-        new_program = ProgramFactory.create()
-        new_course_runs = CourseRunFactory.create_batch(2, course__program=new_program)
-        mmtrack = MMTrack(
-            user=self.user,
-            program=new_program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid_for_any_in_program() is False
-        fg = FinalGradeFactory.create(user=self.user, course_run=new_course_runs[0], course_run_paid_on_edx=True)
-        assert mmtrack.has_paid_for_any_in_program() is True
-        fg.delete()
-        FinalGradeFactory.create(user=self.user, course_run=new_course_runs[1], course_run_paid_on_edx=True)
-        assert mmtrack.has_paid_for_any_in_program() is True
 
     @ddt.data(
         ("verified", True, True),

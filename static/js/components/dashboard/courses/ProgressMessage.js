@@ -25,7 +25,6 @@ import {
   courseCurrentlyInProgress,
   hasEnrolledInAnyRun,
   courseUpcomingOrCurrent,
-  hasPaidForAnyCourseRun,
   hasPassedCourseRun,
   hasCanUpgradeCourseRun,
   hasMissedDeadlineCourseRun
@@ -58,8 +57,8 @@ export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
     return null
   }
   if (courseUpcomingOrCurrent(courseRun)) {
-    if (hasPaidForAnyCourseRun(course)) {
-      return "Paid"
+    if (courseRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
+      return "Paid but not enrolled"
     }
     if (courseRun.status === STATUS_CAN_UPGRADE) {
       if (courseCurrentlyInProgress(courseRun)) {
@@ -70,11 +69,9 @@ export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
       return "Auditing"
     }
     if (courseRun.status === STATUS_MISSED_DEADLINE) {
-      return "Missed payment deadline"
+      return "Missed upgrade deadline"
     }
-    if (courseRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
-      return "Paid but not enrolled"
-    }
+    return "Enrolled"
   } else {
     if (hasPassedCourseRun(course)) {
       if (course.has_exam && course.can_schedule_exam) {
@@ -84,16 +81,12 @@ export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
       }
       return "Passed"
     } else if (hasCanUpgradeCourseRun(course)) {
-      return "Audited, passed, did not pay"
+      return "Audited, passed"
     } else if (hasMissedDeadlineCourseRun(course)) {
-      return "Audited, missed payment deadline"
+      return "Audited, missed upgrade deadline"
     }
     if (courseRun.status === STATUS_NOT_PASSED) {
-      if (hasPaidForAnyCourseRun(course)) {
-        return "Paid, did not pass"
-      } else {
-        return "Audited, did not pass"
-      }
+      return "Did not pass"
     }
   }
 }

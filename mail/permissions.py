@@ -55,8 +55,8 @@ class UserCanMessageSpecificLearnerPermission(BasePermission):
         ).exists():
             return True
 
-        # If the sender has paid for any course run in any of the recipient's enrolled programs, the
-        # sender has permission
+        # If the sender is enrolled in any course run in any of the recipient's enrolled programs, the
+        # sender has permission (payments discontinued)
         matching_program_enrollments = (
             sender_user.programenrollment_set
             .filter(program__id__in=recipient_enrolled_program_ids)
@@ -69,7 +69,7 @@ class UserCanMessageSpecificLearnerPermission(BasePermission):
                 program_enrollment.program,
                 edx_user_data
             )
-            if mmtrack.has_paid_for_any_in_program():
+            if mmtrack.get_all_enrolled_course_runs():
                 return True
 
         return False
@@ -95,7 +95,7 @@ class UserCanMessageCourseTeamPermission(BasePermission):
         # Make sure the user has an enrollment in the course's program
         if not ProgramEnrollment.objects.filter(user=user, program=program).exists():
             return False
-        # Make sure the user has paid for any course run for the given course
+        # Make sure the user is enrolled in any course run for the given course
         edx_user_data = CachedEdxUserData(user)
         mmtrack = MMTrack(
             user,
@@ -103,7 +103,7 @@ class UserCanMessageCourseTeamPermission(BasePermission):
             edx_user_data
         )
         course_run_keys = obj.courserun_set.values_list('edx_course_key', flat=True)
-        return any(mmtrack.has_paid(course_run_key) for course_run_key in course_run_keys)
+        return any(mmtrack.is_enrolled(course_run_key) for course_run_key in course_run_keys)
 
 
 class MailGunWebHookPermission(BasePermission):

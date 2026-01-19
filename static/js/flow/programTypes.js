@@ -76,7 +76,6 @@ export type CourseRun = {
   course_end_date?:             string,
   course_upgrade_deadline?:     string,
   enrollment_url?:              ?string,
-  has_paid:                     boolean,
   year_season:                  string,
   courseware_backend:           string,
 }

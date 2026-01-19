@@ -62,7 +62,7 @@ describe("CourseEnrollmentDialog", () => {
     assert.equal(payButton.textContent, "Payments Discontinued")
     assert.isTrue(payButton.disabled)
     const auditButton = getEl(wrapper, ".audit-button")
-    assert.equal(auditButton.textContent, "Audit for Free & Pay Later")
+    assert.equal(auditButton.textContent, "Enroll")
   })
 
   it("has a disabled pay button by default", () => {

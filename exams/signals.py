@@ -40,5 +40,5 @@ def update_exam_authorization_cached_enrollment(sender, instance, **kwargs):  # 
     """
     mmtrack = get_mmtrack(instance.user, instance.course_run.course.program)
     if is_eligible_for_exam(mmtrack, instance.course_run):
-        # if user paid for a course then create his exam profile if it is not created yet.
+        # ensure an exam profile exists when the course has an associated exam
         ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)

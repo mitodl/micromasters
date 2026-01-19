@@ -134,7 +134,7 @@ class MMTrack:
         Returns:
             bool: whether the user is enrolled mmtrack in the course run
         """
-        return self.is_enrolled(edx_course_key) and self.has_paid(edx_course_key)
+        return self.is_enrolled(edx_course_key)
 
     def has_verified_enrollment(self, edx_course_key):
         """
@@ -204,34 +204,6 @@ class MMTrack:
         """
         return self.final_grade_qset.for_course_run_key(edx_course_key).exists()
 
-    def has_paid(self, edx_course_key):
-        """
-        Returns true if user paid for a course run.
-
-        Args:
-            edx_course_key (str): an edX course run key
-
-        Returns:
-            bool: whether the user is paid
-        """
-        # edx_course_key for a course run can either be unique or None.
-        # If edx course keys lookup is none we should have no payment against it
-        if edx_course_key is None:
-            return False
-        has_paid = False
-        # financial aid programs might have a paid entry for the course
-        if self.has_exams:
-            # get the course associated with the course key
-            course = Course.objects.get(courserun__edx_course_key=edx_course_key)
-            has_paid = self.paid_course_fa.get(course.id, False)
-
-        if has_paid:
-            return True
-        # normal programs need to have paid_on_edx in the final grades or a verified enrollment
-        if self.has_final_grade(edx_course_key):
-            return self.has_final_grade_paid_on_edx(edx_course_key)
-        return self.has_verified_enrollment(edx_course_key)
-
     def get_payments_count_for_course(self, course):  # pylint: disable=unused-argument
         """
         Get the total count of payments for given course
@@ -257,12 +229,6 @@ class MMTrack:
         """
         return 0
 
-    def has_paid_for_any_in_program(self):
-        """
-        Returns true if a user has paid for any course run in the program
-        """
-        return any(self.has_paid(edx_course_key) for edx_course_key in self.edx_course_keys)
-
     def has_final_grade_paid_on_edx(self, edx_course_key):
         """
         Checks if there is a a frozen final grade and the user paid for it.
@@ -273,24 +239,6 @@ class MMTrack:
             bool: whether or not a user has a final grade and has paid
         """
         return self.final_grade_qset.paid_on_edx().for_course_run_key(edx_course_key).exists()
-
-    def has_paid_final_grade(self, edx_course_key):
-        """
-        Checks if there is a a frozen final grade and the user paid for it.
-
-        Args:
-            edx_course_key (str): an edX course run key
-        Returns:
-            bool: whether a frozen final grade exists
-        """
-        return self.has_final_grade(edx_course_key) and self.has_paid(edx_course_key)
-
-    def paid_but_missed_deadline(self, course_run):  # pylint: disable=unused-argument
-        """
-        Checks if user paid for this run only after the deadline
-        Returns False as payments are no longer accepted
-        """
-        return False
 
     def has_passed_course_run(self, edx_course_key):
         """

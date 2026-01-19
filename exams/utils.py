@@ -7,8 +7,7 @@ from courses.models import CourseRun
 
 def is_eligible_for_exam(mmtrack, course_run):
     """
-    Returns True if user is eligible exam authorization process. For that the course must have exam
-    settings and user must have paid for it.
+    Returns True if a course has exam settings enabled.
 
     Args:
         mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
@@ -17,7 +16,7 @@ def is_eligible_for_exam(mmtrack, course_run):
     Returns:
         bool: whether user is eligible or not
     """
-    return course_run.has_future_exam and mmtrack.has_paid(course_run.edx_course_key)
+    return course_run.has_future_exam
 
 
 def _match_field(profile, field):

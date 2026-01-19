@@ -14,17 +14,9 @@ MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE = (
     '[Exam authorization] Unable to authorize user "{user}" for exam, '
     'course id is "{course_id}". Either user has not passed course or already authorized.'
 )
-MESSAGE_NOT_ELIGIBLE_TEMPLATE = (
-    '[Exam authorization] Unable to authorize user "{user}" for exam, '
-    'course id is "{course_id}". User does not match the criteria.'
-)
 MESSAGE_NO_ATTEMPTS_TEMPLATE = (
     '[Exam authorization] Unable to authorize user "{user}" for exam, '
     'course id is "{course_id}". No attempts remaining.'
-)
-MESSAGE_MISSED_DEADLINE_TEMPLATE = (
-    '[Exam authorization] Unable to authorize user "{user}" for exam, '
-    'course id is "{course_id}". Missed payment deadline for current course run.'
 )
 
 
@@ -33,7 +25,7 @@ log = logging.getLogger(__name__)
 
 def authorize_for_exam_run(user, course_run, exam_run):
     """
-    Authorize user for exam if he has paid for course and passed course.
+    Authorize user for an exam if they are eligible and have passed the course.
 
     Args:
         mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
@@ -56,32 +48,12 @@ def authorize_for_exam_run(user, course_run, exam_run):
     if not exam_run.is_schedulable:
         raise ExamAuthorizationException(f"Exam isn't schedulable currently: {exam_run}")
 
-    # If user has not paid for course then we dont need to process authorization
-    if not mmtrack.has_paid(course_run.edx_course_key):
-        errors_message = MESSAGE_NOT_ELIGIBLE_TEMPLATE.format(
-            user=mmtrack.user.username,
-            course_id=course_run.edx_course_key
-        )
-        raise ExamAuthorizationException(errors_message)
-
-    # if user paid for a course then create his exam profile if it is not created yet
+    # ensure an exam profile exists for this user
     ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
 
     # if they didn't pass, they don't get authorized
     if not mmtrack.has_passed_course_run(course_run.edx_course_key):
         errors_message = MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE.format(
-            user=mmtrack.user.username,
-            course_id=course_run.edx_course_key
-        )
-        raise ExamAuthorizationException(errors_message)
-
-    # Previously checked: if has_to_pay_for_exam(mmtrack, course_run.course)
-    # This would prevent authorization if user had no remaining paid attempts
-
-    # if they paid after deadline they don't get authorized for same term exam
-    current_course_run = get_corresponding_course_run(exam_run)
-    if current_course_run and mmtrack.paid_but_missed_deadline(current_course_run):
-        errors_message = MESSAGE_MISSED_DEADLINE_TEMPLATE.format(
             user=mmtrack.user.username,
             course_id=course_run.edx_course_key
         )

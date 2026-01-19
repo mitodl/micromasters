@@ -13,7 +13,6 @@ import {
   makeRunEnrolled,
   makeRunFuture,
   makeRunMissedDeadline,
-  makeRunPaid,
   makeRunPast
 } from "./test_util"
 import {
@@ -109,9 +108,8 @@ describe("Course ProgressMessage", () => {
   it("should only call staffCourseInfo if showStaffView is true", () => {
     makeRunCurrent(course.runs[0])
     makeRunEnrolled(course.runs[0])
-    course.runs[0].has_paid = true
     let wrapper = renderCourseDescription({ showStaffView: true })
-    assert.include(wrapper.text(), "Paid")
+    assert.include(wrapper.text(), "Enrolled")
     wrapper = renderCourseDescription({ showStaffView: false })
     assert.notInclude(wrapper.text(), "Paid")
   })
@@ -133,19 +131,17 @@ describe("Course ProgressMessage", () => {
       assert.isNull(staffCourseInfo(course.runs[0], course))
     })
 
-    it("should return paid if course current and user has paid", () => {
+    it("should return enrolled if course current", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
-      course.runs[0].has_paid = true
-      assert.equal("Paid", staffCourseInfo(course.runs[0], course))
+      assert.equal("Enrolled", staffCourseInfo(course.runs[0], course))
     })
 
-    it("should return paid if course current and user has paid and end date is empty", () => {
+    it("should return enrolled if course current and end date is empty", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
       course.runs[0].course_end_date = ""
-      course.runs[0].has_paid = true
-      assert.equal("Paid", staffCourseInfo(course.runs[0], course))
+      assert.equal("Enrolled", staffCourseInfo(course.runs[0], course))
     })
 
     it("should return auditing and upgrade date, if course in progress", () => {
@@ -170,7 +166,7 @@ describe("Course ProgressMessage", () => {
       course.runs[0].status = STATUS_MISSED_DEADLINE
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Missed payment deadline"
+        "Missed upgrade deadline"
       )
     })
 
@@ -214,20 +210,13 @@ describe("Course ProgressMessage", () => {
     it("should return did not pass, if paid", () => {
       makeRunPast(course.runs[0])
       course.runs[0].status = STATUS_NOT_PASSED
-      course.runs[0].has_paid = true
-      assert.equal(
-        staffCourseInfo(course.runs[0], course),
-        "Paid, did not pass"
-      )
+      assert.equal(staffCourseInfo(course.runs[0], course), "Did not pass")
     })
 
     it("should return audited, did not pass, if not paid", () => {
       makeRunPast(course.runs[0])
       course.runs[0].status = STATUS_NOT_PASSED
-      assert.equal(
-        staffCourseInfo(course.runs[0], course),
-        "Audited, did not pass"
-      )
+      assert.equal(staffCourseInfo(course.runs[0], course), "Did not pass")
     })
 
     it("should return Audited, passed, did not pay", () => {
@@ -235,10 +224,7 @@ describe("Course ProgressMessage", () => {
       makeRunPast(course.runs[1])
       course.runs[0].status = STATUS_NOT_PASSED
       course.runs[1].status = STATUS_CAN_UPGRADE
-      assert.equal(
-        staffCourseInfo(course.runs[0], course),
-        "Audited, passed, did not pay"
-      )
+      assert.equal(staffCourseInfo(course.runs[0], course), "Audited, passed")
     })
     it("should return Audited, missed payment deadline", () => {
       makeRunPast(course.runs[0])
@@ -247,17 +233,16 @@ describe("Course ProgressMessage", () => {
       course.runs[1].status = STATUS_MISSED_DEADLINE
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Audited, missed payment deadline"
+        "Audited, missed upgrade deadline"
       )
     })
 
     it("should return Paid when course is past, but still currently-enrolled", () => {
       makeRunPast(course.runs[0])
       makeRunEnrolled(course.runs[0])
-      makeRunPaid(course.runs[0])
       makeRunMissedDeadline(course.runs[1])
       makeRunPast(course.runs[1])
-      assert.equal(staffCourseInfo(course.runs[0], course), "Paid")
+      assert.equal(staffCourseInfo(course.runs[0], course), "Enrolled")
     })
   })
 })

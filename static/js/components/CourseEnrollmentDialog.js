@@ -73,7 +73,7 @@ export default class CourseEnrollmentDialog extends React.Component {
         onClick={this.handleAuditClick}
         className="mdl-button dashboard-button audit-button"
       >
-        {courseRun.has_paid ? "Enroll" : "Audit for Free & Pay Later"}
+        Enroll
       </button>
     )
 

@@ -378,9 +378,7 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
         CourseRunUserStatus: an object representing the run status for the user
     """
 
-    if mmtrack.has_paid_final_grade(course_run.edx_course_key):
-        return CourseRunUserStatus(CourseRunStatus.CHECK_IF_PASSED, course_run)
-    elif mmtrack.has_final_grade(course_run.edx_course_key):
+    if mmtrack.has_final_grade(course_run.edx_course_key):
         if course_run.is_upgradable:
             final_grade = get_final_grade(mmtrack, course_run)
             if final_grade.passed:
@@ -458,7 +456,6 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
         'course_id': course_run.edx_course_key,
         'title': course_run.title,
         'status': status_for_user,
-        'has_paid': mmtrack.has_paid(course_run.edx_course_key),
         'position': position,
         'course_start_date': course_run.start_date,
         'course_end_date': course_run.end_date,

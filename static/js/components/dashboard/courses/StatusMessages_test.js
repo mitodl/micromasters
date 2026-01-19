@@ -21,7 +21,6 @@ import {
 } from "../../../factories/dashboard"
 import {
   makeRunCurrent,
-  makeRunPaid,
   makeRunEnrolled,
   makeRunPassed,
   makeRunPast,
@@ -32,7 +31,7 @@ import {
   makeRunCanUpgrade,
   makeRunMissedDeadline
 } from "./test_util"
-import { assertIsJust } from "../../../lib/test_utils"
+import { assertIsJust, assertIsNothing } from "../../../lib/test_utils"
 import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
@@ -105,9 +104,7 @@ describe("Course Status Messages", () => {
     })
 
     it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED", () => {
-      course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
-      course.runs[0].has_paid = true
-      course.runs[1].has_paid = true
+  course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
       makeRunCurrent(course.runs[0])
       makeRunFuture(course.runs[1])
       const [{ message, action }] = calculateMessages(
@@ -116,8 +113,7 @@ describe("Course Status Messages", () => {
       const mounted = shallow(message)
       assert.equal(
         mounted.text(),
-        "You paid for this course but are not enrolled. You can enroll now, or if you" +
-          " think there is a problem, contact us for help."
+        "You're not enrolled in this course yet. You can enroll now, or if you think there is a problem, contact us for help."
       )
       assert.equal(
         mounted.find("a").props().href,
@@ -209,10 +205,9 @@ describe("Course Status Messages", () => {
       )
     })
 
-    describe("should prompt users who are paid and passed but course is in progress, if applicable", () => {
+    describe("should prompt users who are passed but course is in progress, if applicable", () => {
       beforeEach(() => {
         makeRunCurrent(course.runs[0])
-        makeRunPaid(course.runs[0])
         makeRunPassed(course.runs[0])
       })
 
@@ -228,7 +223,6 @@ describe("Course Status Messages", () => {
     it("should congratulate the user on passing, exam or no", () => {
       makeRunPast(course.runs[0])
       makeRunPassed(course.runs[0])
-      makeRunPaid(course.runs[0])
       course.is_passed = true
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
@@ -263,7 +257,7 @@ describe("Course Status Messages", () => {
       assert(calculateMessagesProps.setShowExpandedCourseStatus.called)
     })
 
-    it("should nag about missing the payment deadline", () => {
+  it("should nag about missing the upgrade deadline", () => {
       makeRunPast(course.runs[0])
       makeRunMissedDeadline(course.runs[0])
       makeRunOverdue(course.runs[0])
@@ -275,7 +269,7 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.` +
+            `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date}.` +
             ` Enrollment started ${formatDate(
               course.runs[1].enrollment_start_date
             )}.`,
@@ -290,7 +284,7 @@ describe("Course Status Messages", () => {
       )
     })
 
-    it("should nag about missing the payment deadline for future course with one run", () => {
+  it("should nag about missing the upgrade deadline for future course with one run", () => {
       course.runs = [course.runs[0]]
       course.runs[0].course_start_date = ""
       course.runs[0].course_end_date = ""
@@ -299,20 +293,20 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+            "You missed the upgrade deadline and will not receive MicroMasters credit for this course. " +
             "There are no future runs of this course scheduled at this time."
         }
       ])
     })
 
-    it("should nag about missing the payment deadline for current course with one run", () => {
+    it("should nag about missing the upgrade deadline for current course with one run", () => {
       course.runs = [course.runs[0]]
       makeRunCurrent(course.runs[0])
       course.runs[0].status = STATUS_MISSED_DEADLINE
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+            "You missed the upgrade deadline and will not receive MicroMasters credit for this course. " +
             "There are no future runs of this course scheduled at this time."
         }
       ])
@@ -327,7 +321,7 @@ describe("Course Status Messages", () => {
         ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`
       ]
     ]) {
-      it(`should nag about missing the payment deadline when future re-enrollments and date is ${
+      it(`should nag about missing the upgrade deadline when future re-enrollments and date is ${
         nextEnrollmentStart[0]
       }`, () => {
         makeRunPast(course.runs[0])
@@ -338,7 +332,7 @@ describe("Course Status Messages", () => {
         const date = formatDate(course.runs[1].course_start_date)
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.${
+            message: `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date}.${
               nextEnrollmentStart[1]
             }`,
             action: "course action was called"
@@ -353,7 +347,7 @@ describe("Course Status Messages", () => {
       })
     }
 
-    it("should have a message for missing the payment deadline with no future courses", () => {
+  it("should have a message for missing the upgrade deadline with no future courses", () => {
       course.runs = [course.runs[0]]
       makeRunPast(course.runs[0])
       makeRunMissedDeadline(course.runs[0])
@@ -361,7 +355,7 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+            "You missed the upgrade deadline and will not receive MicroMasters credit for this course. " +
             "There are no future runs of this course scheduled at this time."
         }
       ])
@@ -486,10 +480,9 @@ describe("Course Status Messages", () => {
     it("should not have a message if course is past but still not frozen", () => {
       makeRunPast(course.runs[0])
       makeRunEnrolled(course.runs[0])
-      makeRunPaid(course.runs[0])
       makeRunMissedDeadline(course.runs[1])
       makeRunPast(course.runs[1])
-      assertIsJust(calculateMessages(calculateMessagesProps), [])
+      assertIsNothing(calculateMessages(calculateMessagesProps))
     })
   })
 })

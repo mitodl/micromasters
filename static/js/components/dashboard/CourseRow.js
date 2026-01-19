@@ -20,7 +20,7 @@ import {
 import {
   courseStartDateMessage,
   userIsEnrolled,
-  hasPaidForAnyCourseRun
+  hasEnrolledInAnyRun
 } from "./courses/util"
 import { isEnrollableRun } from "./courses/util"
 
@@ -142,7 +142,7 @@ export default class CourseRow extends React.Component {
           course={course}
           openCourseContactDialog={R.partial(openCourseContactDialog, [
             course,
-            hasPaidForAnyCourseRun(course)
+            hasEnrolledInAnyRun(course)
           ])}
           showStaffView={showStaffView}
         />

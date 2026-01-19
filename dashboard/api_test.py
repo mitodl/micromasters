@@ -170,7 +170,6 @@ class FormatRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'get_final_grade_percent.return_value': 99.99,
             'get_current_grade.return_value': 33.33,
-            'has_paid.return_value': False,
             'has_final_grade.return_value': False
         })
         self.course.refresh_from_db()
@@ -194,7 +193,6 @@ class FormatRunTest(CourseTests):
             'fuzzy_start_date': self.crun.fuzzy_start_date,
             'final_grade': 99.99,
             'enrollment_url': self.crun.enrollment_url,
-            'has_paid': False,
             'year_season': format_season_year_for_course_run(self.crun)
         }
 
@@ -287,14 +285,10 @@ class FormatRunTest(CourseTests):
         """
         Test for format_courserun_for_dashboard with a paid course run
         """
-        self.mmtrack.configure_mock(**{
-            'has_paid.return_value': True
-        })
         del self.expected_ret_data['final_grade']
         self.expected_ret_data.update({
             'status': api.CourseStatus.CURRENTLY_ENROLLED,
             'current_grade': 33.33,
-            'has_paid': True,
         })
         self.assertEqual(
             api.format_courserun_for_dashboard(self.crun, api.CourseStatus.CURRENTLY_ENROLLED, self.mmtrack),
@@ -337,9 +331,6 @@ class FormatRunTest(CourseTests):
 
     def test_format_run_conditional(self):
         """Test for format_courserun_for_dashboard with conditional fields"""
-        self.mmtrack.configure_mock(**{
-            'has_paid.return_value': False
-        })
         crun = self.create_run(
             start=self.now+timedelta(weeks=52),
             end=self.now+timedelta(weeks=62),
@@ -362,7 +353,6 @@ class FormatRunTest(CourseTests):
                 'courseware_backend': crun.courseware_backend,
                 'fuzzy_start_date': crun.fuzzy_start_date,
                 'enrollment_url': crun.enrollment_url,
-                'has_paid': False,
                 'year_season': format_season_year_for_course_run(crun)
             }
         )
@@ -378,7 +368,6 @@ class FormatRunTest(CourseTests):
         """
         self.mmtrack.configure_mock(**{
             'get_final_grade_percent.return_value': 99.99,
-            'has_paid.return_value': False,
             'has_final_grade.return_value': True
         })
         self.expected_ret_data.update({
@@ -404,8 +393,6 @@ class CourseRunTest(CourseTests):
         """test for get_status_for_courserun for course without enrollment"""
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': False,
-            'has_paid.return_value': False,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         crun = self.create_run(
@@ -425,8 +412,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'has_paid.return_value': True,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         # create a run that is current
@@ -443,16 +428,16 @@ class CourseRunTest(CourseTests):
 
     @patch('courses.models.CourseRun.is_upgradable', new_callable=PropertyMock)
     @ddt.data(
-        (True, False, None, False, 0.1, api.CourseRunStatus.CHECK_IF_PASSED),
-        (False, True, True, True, 1.0, api.CourseRunStatus.CAN_UPGRADE),
-        (False, True, False, False, 0.0, api.CourseRunStatus.MISSED_DEADLINE),
-        (False, True, True, False, 0.0, api.CourseRunStatus.NOT_PASSED),
+        (True, True, True, 1.0, api.CourseRunStatus.CAN_UPGRADE),
+        (True, True, False, 0.0, api.CourseRunStatus.NOT_PASSED),
+        (True, False, True, 0.7, api.CourseRunStatus.MISSED_DEADLINE),
+        (False, False, False, 0.0, api.CourseRunStatus.CURRENTLY_ENROLLED),
     )
     @ddt.unpack
     def test_has_final_grade_taken_before_anything_else(
-            self, has_paid_froz, has_frozen, is_upgradable, is_passed, grade, status, mock_is_upgradable):
+            self, has_frozen, is_upgradable, is_passed, grade, status, mock_is_upgradable):
         """
-        Tests that if an user has a final grade for the course,
+        Tests that if a user has a final grade for the course,
         that is taken in account before checking anything else
         """
         mock_is_upgradable.return_value = is_upgradable
@@ -470,21 +455,21 @@ class CourseRunTest(CourseTests):
             grade=grade,
             passed=is_passed,
             status=FinalGradeStatus.COMPLETE,
-            course_run_paid_on_edx=has_paid_froz
+            course_run_paid_on_edx=False
         )
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
-            'has_paid_final_grade.return_value': has_paid_froz,
+            'is_enrolled_mmtrack.return_value': True,
             'has_final_grade.return_value': has_frozen,
             'get_required_final_grade.return_value': final_grade,
         })
         run_status = api.get_status_for_courserun(crun, self.mmtrack)
         assert run_status.status == status
         assert run_status.course_run == crun
-        assert self.mmtrack.is_enrolled.call_count == 0
+        assert self.mmtrack.is_enrolled.call_count == 1
 
     @ddt.data(
-        (True, api.CourseRunStatus.CHECK_IF_PASSED),
+        (True, api.CourseRunStatus.MISSED_DEADLINE),
         (False, api.CourseRunStatus.CURRENTLY_ENROLLED)
     )
     @ddt.unpack
@@ -496,10 +481,11 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'has_paid.return_value': True,
-            'has_paid_final_grade.return_value': has_final_grades,
             'has_final_grade.return_value': has_final_grades,
         })
+        if has_final_grades:
+            final_grade = FinalGradeFactory.create(user=self.user, course_run=self.crun, passed=True)
+            self.mmtrack.get_required_final_grade.return_value = final_grade
         if not has_final_grades:
             self.mmtrack.get_final_grade.return_value = None
         # create a run that is past
@@ -529,8 +515,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'has_paid.return_value': True,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         has_frozen_mock.return_value = True
@@ -556,8 +540,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'has_paid.return_value': True,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         # create a run that is future
@@ -582,8 +564,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'has_paid.return_value': False,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         # create a run that is future
@@ -614,8 +594,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'has_paid.return_value': False,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         # create a run that is current with upgrade deadline None
@@ -650,8 +628,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'has_paid.return_value': True,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         crun = self.create_run(
@@ -676,8 +652,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'has_paid.return_value': False,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
         })
         # create a run that is past
@@ -718,8 +692,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'has_paid.return_value': False,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
             'get_required_final_grade.side_effect': FinalGrade.DoesNotExist,
         })
@@ -751,8 +723,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'has_paid.return_value': False,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
             'get_required_final_grade.side_effect': FinalGrade.DoesNotExist,
         })
@@ -787,8 +757,6 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'has_paid.return_value': False,
-            'has_paid_final_grade.return_value': False,
             'has_final_grade.return_value': False,
             'get_required_final_grade.return_value': Mock(passed=passed),
         })
@@ -1571,7 +1539,6 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         current_run.save()
         CachedEnrollmentFactory.create(user=self.user, course_run=current_run)
         CachedCurrentGradeFactory.create(user=self.user, course_run=current_run)
-        # Payments discontinued - removing Order/Line creation
 
         # User paid and enrolled for future course run.
         future_course_run = CourseRunFactory.create(
@@ -1582,7 +1549,6 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         )
         CachedEnrollmentFactory.create(user=self.user, course_run=future_course_run)
         CachedCurrentGradeFactory.create(user=self.user, course_run=future_course_run)
-        # Payments discontinued - removing Order/Line creation
         # set the last access for the cache
         UserCacheRefreshTimeFactory.create(user=self.user, unexpired=True)
 
@@ -1623,7 +1589,6 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         )
         CachedEnrollmentFactory.create(user=self.user, course_run=future_course_run)
         CachedCurrentGradeFactory.create(user=self.user, course_run=future_course_run)
-        # Payments discontinued - removing Order/Line creation
         # set the last access for the cache
         UserCacheRefreshTimeFactory.create(user=self.user, unexpired=True)
 

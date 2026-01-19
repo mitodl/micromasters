@@ -51,7 +51,6 @@ class FullProgramFactory(ProgramFactory):
         """Post-object generation hook"""
         if created:
             CourseRunFactory.create(course__program=self)
-            # Financial aid functionality removed - TierProgram no longer created
             return self
         return None
 

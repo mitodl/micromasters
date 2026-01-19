@@ -25,7 +25,8 @@ import {
   isOfferedInUncertainFuture,
   notNilorEmpty,
   hasCanUpgradeCourseRun,
-  hasMissedDeadlineCourseRun
+  hasMissedDeadlineCourseRun,
+  hasCurrentlyEnrolledCourseRun
 } from "./util"
 import { hasPassedCourseRun } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
@@ -101,10 +102,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   } = props
 
   const exams = course.has_exam
-  const paid = firstRun.has_paid
-  const paymentDueDate = moment(
-    R.defaultTo("", firstRun.course_upgrade_deadline)
-  )
+  const paymentDueDate = moment(R.defaultTo("", firstRun.course_upgrade_deadline))
 
   const messages = []
 
@@ -127,8 +125,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       {
         message: (
           <div>
-            {`You paid for this course but are not enrolled. You can enroll ${date}, or if` +
-              " you think there is a problem, "}
+            {`You're not enrolled in this course yet. You can enroll ${date}, or if you think there is a problem, `}
             <a href={contactHref}>contact us for help.</a>
           </div>
         ),
@@ -193,16 +190,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       message: "You passed this course."
     })
   }
-  // Course is running, user has already paid,
-  if (
-    courseUpcomingOrCurrent(firstRun) &&
-    paid &&
-    userIsEnrolled(firstRun) &&
-    !exams
-  ) {
-    return S.Just(messages)
-  }
-
   // handle other 'in-progress' cases
   if (
     firstRun.status === STATUS_CAN_UPGRADE &&
@@ -214,8 +201,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       message =
         "You are re-taking this course. To get a new grade, you need to pay again."
     }
-    const actionType = COURSE_ACTION_PAY
-
     let paymentDueMessage = ""
     if (paymentDueDate.isValid()) {
       paymentDueMessage = ` (Payment due on ${paymentDueDate
@@ -224,7 +209,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     messages.push({
       message: message + paymentDueMessage,
-      action:  courseAction(firstRun, actionType)
+      action:  courseAction(firstRun, COURSE_ACTION_PAY)
     })
     return S.Just(messages)
   }
@@ -248,7 +233,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     return S.Just(messages)
   } else if (hasCanUpgradeCourseRun(course)) {
-    // the course finished but can still pay
+    // the course finished but was audited
     const dueDate = paymentDueDate.isValid()
       ? ` (Payment due on ${paymentDueDate.format(DASHBOARD_FORMAT)})`
       : ""
@@ -257,11 +242,11 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       action:  courseAction(firstRun, COURSE_ACTION_PAY)
     })
     return S.Just(messages)
-  } else if (hasMissedDeadlineCourseRun(course)) {
-    // the course finished can't pay
+  } else if (hasMissedDeadlineCourseRun(course) && !hasCurrentlyEnrolledCourseRun(course)) {
+    // the course finished and the upgrade deadline passed
     const date = run => formatDate(run.course_start_date)
     const msg = run => {
-      return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
+      return `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date(
         run
       )}.${enrollmentDateMessage(run)}`
     }
@@ -269,8 +254,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       S.maybe(
         {
           message:
-            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
-            "There are no future runs of this course scheduled at this time."
+            "You missed the upgrade deadline and will not receive MicroMasters credit for this course. There are no future runs of this course scheduled at this time."
         },
         run => ({
           message: msg(run),

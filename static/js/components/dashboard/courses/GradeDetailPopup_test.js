@@ -12,7 +12,6 @@ import {
   makeProctoredExamResult
 } from "../../../factories/dashboard"
 import {
-  makeRunPaid,
   makeRunPassed,
   makeRunFailed,
   makeRunEnrolled
@@ -53,18 +52,6 @@ describe("GradeDetailPopup", () => {
       )
   })
 
-  it("shows info for a paid course", () => {
-    makeRunPaid(course.runs[0])
-    const wrapper = renderDetailPopup()
-    assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
-      `${course.runs[0].year_season}Paid`
-    )
-  })
-
   it("shows info for a currently enrolled course", () => {
     makeRunEnrolled(course.runs[0])
     const wrapper = renderDetailPopup()
@@ -73,20 +60,7 @@ describe("GradeDetailPopup", () => {
         .find(".course-run-row")
         .first()
         .text(),
-      `${course.runs[0].year_season}Auditing`
-    )
-  })
-
-  it("shows info for a currently enrolled paid course", () => {
-    makeRunEnrolled(course.runs[0])
-    makeRunPaid(course.runs[0])
-    const wrapper = renderDetailPopup()
-    assert.equal(
-      wrapper
-        .find(".course-run-row")
-        .first()
-        .text(),
-      `${course.runs[0].year_season}In Progress (paid)`
+      `${course.runs[0].year_season}In Progress`
     )
   })
 

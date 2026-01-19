@@ -7,6 +7,7 @@ import ddt
 
 from courses.factories import CourseRunFactory
 from dashboard.factories import ProgramEnrollmentFactory
+from dashboard.models import CachedEnrollment
 from dashboard.utils import get_mmtrack
 from micromasters.factories import UserFactory
 from search.base import MockedESTestCase
@@ -50,9 +51,9 @@ class AlterDataCommandTests(MockedESTestCase):
 
     @ddt.data('fa', 'non_fa')
     def test_set_payment_status(self, course_run_program_type):
-        """Commands that set a User's payment status should work based on the audit flag value"""
+        """Commands that toggle audit/verified enrollment should match the audit flag value"""
         course_run = self.course_runs[course_run_program_type]
         for audit_setting in (True, False):
             set_to_enrolled(user=self.user, course_run=course_run, audit=audit_setting)
-            mmtrack = get_mmtrack(self.user, course_run.course.program)
-            assert mmtrack.has_paid(course_run.edx_course_key) is not audit_setting
+            enrollment = CachedEnrollment.objects.get(user=self.user, course_run=course_run)
+            assert enrollment.verified is (not audit_setting)
