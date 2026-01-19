@@ -101,7 +101,7 @@ describe("Course Status Messages", () => {
     })
 
     it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED", () => {
-  course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
+      course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
       makeRunCurrent(course.runs[0])
       makeRunFuture(course.runs[1])
       const [{ message, action }] = calculateMessages(
@@ -159,7 +159,8 @@ describe("Course Status Messages", () => {
       )
 
       assert.deepEqual(messages[1], {
-        message: "You are re-taking this course. Upgrades are no longer available."
+        message:
+          "You are re-taking this course. Upgrades are no longer available."
       })
     })
 
@@ -226,7 +227,7 @@ describe("Course Status Messages", () => {
       assert(calculateMessagesProps.setShowExpandedCourseStatus.called)
     })
 
-  it("should nag about missing the upgrade deadline", () => {
+    it("should nag about missing the upgrade deadline", () => {
       makeRunPast(course.runs[0])
       makeRunMissedDeadline(course.runs[0])
       makeRunOverdue(course.runs[0])
@@ -253,7 +254,7 @@ describe("Course Status Messages", () => {
       )
     })
 
-  it("should nag about missing the upgrade deadline for future course with one run", () => {
+    it("should nag about missing the upgrade deadline for future course with one run", () => {
       course.runs = [course.runs[0]]
       course.runs[0].course_start_date = ""
       course.runs[0].course_end_date = ""
@@ -316,7 +317,7 @@ describe("Course Status Messages", () => {
       })
     }
 
-  it("should have a message for missing the upgrade deadline with no future courses", () => {
+    it("should have a message for missing the upgrade deadline with no future courses", () => {
       course.runs = [course.runs[0]]
       makeRunPast(course.runs[0])
       makeRunMissedDeadline(course.runs[0])

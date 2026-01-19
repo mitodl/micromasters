@@ -17,10 +17,7 @@ import Alert from "react-bootstrap/lib/Alert"
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
 import Loader from "../components/Loader"
 import { FETCH_SUCCESS, FETCH_PROCESSING, FETCH_FAILURE } from "../actions"
-import {
-  fetchDashboard,
-  clearDashboard
-} from "../actions/dashboard"
+import { fetchDashboard, clearDashboard } from "../actions/dashboard"
 import { addProgramEnrollment } from "../actions/programs"
 import {
   COUPON_CONTENT_TYPE_COURSE,

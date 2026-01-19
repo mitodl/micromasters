@@ -225,7 +225,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         "The edX course is complete, but upgrades are no longer available."
     })
     return S.Just(messages)
-  } else if (hasMissedDeadlineCourseRun(course) && !hasCurrentlyEnrolledCourseRun(course)) {
+  } else if (
+    hasMissedDeadlineCourseRun(course) &&
+    !hasCurrentlyEnrolledCourseRun(course)
+  ) {
     // the course finished and the upgrade deadline passed
     const date = run => formatDate(run.course_start_date)
     const msg = run => {

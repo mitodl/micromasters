@@ -644,7 +644,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
     "program.course_runs.semester4": {
       doc_count: 66,
       inner:     {
-        doc_count:                        100,
+        doc_count:                            100,
         "program.course_runs.semester_count": {
           value: 3
         },

@@ -476,7 +476,6 @@ describe("LearnerSearchPage", function() {
           doc_count: 31,
           key:       "Digital Learning 200"
         })
-
       })
     })
   })

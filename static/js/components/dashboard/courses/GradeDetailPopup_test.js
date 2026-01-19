@@ -11,11 +11,7 @@ import {
   makeCourse,
   makeProctoredExamResult
 } from "../../../factories/dashboard"
-import {
-  makeRunPassed,
-  makeRunFailed,
-  makeRunEnrolled
-} from "./test_util"
+import { makeRunPassed, makeRunFailed, makeRunEnrolled } from "./test_util"
 import { EXAM_GRADE, COURSE_GRADE } from "../../../containers/DashboardPage"
 import { formatGrade } from "../util"
 

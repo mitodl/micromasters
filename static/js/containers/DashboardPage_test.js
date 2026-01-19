@@ -8,7 +8,11 @@ import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
 
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
-import { makeAvailablePrograms, makeDashboard, makeCourse } from "../factories/dashboard"
+import {
+  makeAvailablePrograms,
+  makeDashboard,
+  makeCourse
+} from "../factories/dashboard"
 import IntegrationTestHelper from "../util/integration_test_helper"
 import { REQUEST_DASHBOARD, CLEAR_DASHBOARD } from "../actions/dashboard"
 import * as dashboardActions from "../actions/dashboard"
@@ -221,7 +225,6 @@ describe("DashboardPage", function() {
     )
   })
 
-
   it("dispatches actions to clean up after unmounting", () => {
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
       ([, div]) => {
@@ -255,8 +258,8 @@ describe("DashboardPage", function() {
         expectedMessage: "This is a premium feature for verified learners."
       }
     ]
-  const CONTACT_LINK_SELECTOR = ".contact-link"
-  const EMAIL_DIALOG_ACTIONS = [START_EMAIL_EDIT, SHOW_DIALOG]
+    const CONTACT_LINK_SELECTOR = ".contact-link"
+    const EMAIL_DIALOG_ACTIONS = [START_EMAIL_EDIT, SHOW_DIALOG]
 
     beforeEach(() => {
       // Limit the dashboard response to 1 program
