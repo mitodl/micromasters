@@ -1,6 +1,21 @@
 Release Notes
 =============
 
+Version 0.247.0
+---------------
+
+- chore: upgrade newrelic version for python 3.11 compatibility (#5461)
+- fix: wagtail migration breaking on RC (#5456)
+- chore: upgrade django to v52 and wagtail to v7 (#5443)
+- fix: node build sentry issue (#5449)
+- fix: heroku npm build (#5445)
+- security: disable yarn postinstall scripts (#5432)
+- Remove Open Discussions integration (#5442)
+- Fix deprecated GitHub Actions causing workflow failures (#5434)
+- Add enrollment_url for course runs (#5438)
+- adding import_course command and course run sync (#5429)
+- update
+
 Version 0.246.0 (Released January 13, 2025)
 ---------------
 
