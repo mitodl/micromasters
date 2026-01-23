@@ -19,8 +19,6 @@ from dashboard.factories import (CachedCertificateFactory,
                                  CachedCurrentGradeFactory,
                                  CachedEnrollmentFactory)
 from exams.factories import ExamRunFactory
-from financialaid.constants import FinancialAidStatus
-from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from grades import api
 from grades.exceptions import FreezeGradeFailedException
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
@@ -48,7 +46,6 @@ class GradeAPITests(MockedESTestCase):
 
         cls.run_fa = CourseRunFactory.create(
             freeze_grade_date=now_in_utc()-timedelta(days=1),
-            course__program__financial_aid_availability=True,
         )
         ExamRunFactory.create(course=cls.run_fa.course)
         cls.run_fa_with_cert = CourseRunFactory.create(
@@ -58,23 +55,12 @@ class GradeAPITests(MockedESTestCase):
 
         cls.run_no_fa = CourseRunFactory.create(
             freeze_grade_date=now_in_utc()+timedelta(days=1),
-            course__program__financial_aid_availability=False,
         )
         cls.run_no_fa_with_cert = CourseRunFactory.create(
             course__program=cls.run_no_fa.course.program,
         )
 
         all_course_runs = (cls.run_fa, cls.run_fa_with_cert, cls.run_no_fa, cls.run_no_fa_with_cert, )
-
-        for run in all_course_runs:
-            if run.course.program.financial_aid_availability:
-                FinancialAidFactory.create(
-                    user=cls.user,
-                    tier_program=TierProgramFactory.create(
-                        program=run.course.program, income_threshold=0, current=True
-                    ),
-                    status=FinancialAidStatus.RESET,
-                )
 
         cls.enrollments = {
             course_run.edx_course_key: CachedEnrollmentFactory.create(
@@ -421,7 +407,6 @@ class GenerateCertificatesAPITests(MockedESTestCase):
 
         cls.run_1 = CourseRunFactory.create(
             freeze_grade_date=now_in_utc()-timedelta(days=1),
-            course__program__financial_aid_availability=True,
         )
         cls.program = cls.run_1.course.program
 
@@ -524,7 +509,6 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         cls.user = SocialUserFactory.create()
         cls.run_1 = CourseRunFactory.create(
             freeze_grade_date=now_in_utc()-timedelta(days=1),
-            course__program__financial_aid_availability=True,
         )
         CourseRunGradingStatus.objects.create(course_run=cls.run_1, status='complete')
         cls.program = cls.run_1.course.program
@@ -533,8 +517,6 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         """
         Test happy scenario
         """
-        self.program.financial_aid_availability = False
-        self.program.save()
         with mute_signals(post_save):
             FinalGradeFactory.create(
                 user=self.user,
@@ -553,9 +535,6 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         """
         Test a program with elective courses
         """
-        self.program.financial_aid_availability = False
-        self.program.save()
-
         electives_set = ElectivesSet.objects.create(program=self.program, required_number=1)
 
         for _ in range(2):
@@ -594,29 +573,6 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         api.generate_program_letter(self.user, self.program)
         assert letter_qset.exists() is True
 
-    def test_with_fa_program(self):
-        """
-        Test that letter won't be created if program is FA-enabled
-        """
-        self.program.financial_aid_availability = True
-        self.program.save()
-        with mute_signals(post_save):
-            MicromastersProgramCertificate.objects.create(
-                user=self.user,
-                program=self.program
-            )
-
-        letter_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program, is_active=True)
-        assert letter_qset.exists() is False
-        api.generate_program_letter(self.user, self.program)
-        assert letter_qset.exists() is True
-
-        # Test that the inactive letters get activated
-        letter_qset.update(is_active=False)
-        assert letter_qset.exists() is False
-        api.generate_program_letter(self.user, self.program)
-        assert letter_qset.exists() is True
-
     def test_already_has_program_letter(self):
         """
         Test scenario where a user already has a letter for the given program
@@ -630,8 +586,6 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         """
         Test that a user without the needed final grades will not have a letter generated
         """
-        self.program.financial_aid_availability = False
-        self.program.save()
         letter_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
         api.generate_program_letter(self.user, self.program)
         assert letter_qset.exists() is False
@@ -646,9 +600,7 @@ class UpdateCombinedFinalGradesTests(MockedESTestCase):
     def setUpTestData(cls):
         cls.user = SocialUserFactory.create()
 
-        cls.course_run = CourseRunFactory.create(
-            course__program__financial_aid_availability=True
-        )
+        cls.course_run = CourseRunFactory.create()
         cls.exam_run = ExamRunFactory.create(
             course=cls.course_run.course,
             date_grades_available=now_in_utc() - timedelta(weeks=1)

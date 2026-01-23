@@ -6,13 +6,11 @@ import ProgressWidget from "./ProgressWidget"
 import { STATUS_NOT_PASSED, STATUS_PASSED } from "../constants"
 
 export const program = {
-  financial_aid_availability: false,
-  financial_aid_user_info:    null,
-  description:                "Not passed program",
-  title:                      "Not passed program",
-  number_courses_required:    5,
-  number_courses_passed:      3,
-  courses:                    [
+  description:             "Not passed program",
+  title:                   "Not passed program",
+  number_courses_required: 5,
+  number_courses_passed:   3,
+  courses:                 [
     {
       prerequisites: "",
       runs:          [

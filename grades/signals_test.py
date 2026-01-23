@@ -117,21 +117,12 @@ class FinalGradeTests(MockedESTestCase):
         with mute_signals(post_save):
             cls.user = ProfileFactory.create().user
 
-    def test_create_final_grade_fa(self, generate_letter_mock, update_grade_mock, mock_on_commit):
+    def test_create_final_grade(self, generate_letter_mock, update_grade_mock, mock_on_commit):
         """
-        Test that final grades created for non-FA courses will try to update combined final grades.
-        """
-        fa_course_run = CourseRunFactory.create(course__program__financial_aid_availability=True)
-        FinalGradeFactory.create(user=self.user, course_run=fa_course_run, grade=0.9)
-        update_grade_mock.assert_called_once_with(self.user, fa_course_run.course)
-        generate_letter_mock.assert_not_called()
-
-    def test_create_final_grade_non_fa(self, generate_letter_mock, update_grade_mock, mock_on_commit):
-        """
-        Test that final grades created for non-FA courses will try to update combined final grades and
+        Test that final grades created will try to update combined final grades and
         generate a program commendation letter.
         """
-        non_fa_course_run = CourseRunFactory.create(course__program__financial_aid_availability=False)
-        FinalGradeFactory.create(user=self.user, course_run=non_fa_course_run, grade=0.9)
-        update_grade_mock.assert_called_once_with(self.user, non_fa_course_run.course)
-        generate_letter_mock.assert_called_once_with(self.user, non_fa_course_run.course.program)
+        course_run = CourseRunFactory.create()
+        FinalGradeFactory.create(user=self.user, course_run=course_run, grade=0.9)
+        update_grade_mock.assert_called_once_with(self.user, course_run.course)
+        generate_letter_mock.assert_called_once_with(self.user, course_run.course.program)

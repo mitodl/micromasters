@@ -47,8 +47,7 @@ class UserProgramSearchSerializer:
             dict: Serialized course enrollment
         """
         course_title = course_run.course.title
-        has_paid = mmtrack.has_paid(course_run.edx_course_key)
-        payment_status = cls.PAID_STATUS if has_paid else cls.UNPAID_STATUS
+        payment_status = cls.PAID_STATUS if mmtrack.has_verified_enrollment(course_run.edx_course_key) else cls.UNPAID_STATUS
 
         final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
         semester = cls.serialize_semester(course_run)
@@ -91,8 +90,7 @@ class UserProgramSearchSerializer:
             dict: Serialized course enrollment
         """
         course_title = course_run.course.title
-        has_paid = mmtrack.has_paid(course_run.edx_course_key)
-        payment_status = cls.PAID_STATUS if has_paid else cls.UNPAID_STATUS
+        payment_status = cls.PAID_STATUS if mmtrack.has_verified_enrollment(course_run.edx_course_key) else cls.UNPAID_STATUS
 
         final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
         return {

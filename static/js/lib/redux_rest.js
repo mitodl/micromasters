@@ -3,7 +3,6 @@ import { deriveReducers, deriveActions } from "redux-hammock"
 
 import { automaticEmailsEndpoint } from "../reducers/automatic_emails"
 import { courseEnrollmentsEndpoint } from "../reducers/course_enrollments"
-import { coursePricesEndpoint } from "../reducers/course_prices"
 import { programLearnersEndpoint } from "../reducers/program_learners"
 import { examEnrollmentEndpoint } from "../reducers/exam_enrollment"
 
@@ -13,7 +12,6 @@ export const endpoints: Array<Endpoint> = [
   automaticEmailsEndpoint,
   courseEnrollmentsEndpoint,
   examEnrollmentEndpoint,
-  coursePricesEndpoint,
   programLearnersEndpoint
 ]
 

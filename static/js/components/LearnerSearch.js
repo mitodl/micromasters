@@ -286,24 +286,6 @@ export default class LearnerSearch extends SearchkitComponent {
             />
           </div>
         ) : null}
-        {isStaff ? (
-          <FilterVisibilityToggle
-            {...this.props}
-            filterName="payment_status"
-            title="Payment Status"
-          >
-            <NestedAggregatingMenuFilter
-              field="program.courses.payment_status"
-              fieldOptions={{
-                type:    "nested",
-                options: { path: "program.courses" }
-              }}
-              title=""
-              orderKey="_term"
-              id="payment_status"
-            />
-          </FilterVisibilityToggle>
-        ) : null}
         <FilterVisibilityToggle
           {...this.props}
           filterName="semester"

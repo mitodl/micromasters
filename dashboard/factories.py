@@ -9,14 +9,21 @@ from factory import LazyAttribute, SubFactory, Trait
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyDateTime
 
-from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
-from dashboard.models import (CachedCertificate, CachedCurrentGrade,
-                              CachedEnrollment, ProgramEnrollment,
-                              UserCacheRefreshTime)
-from ecommerce.factories import LineFactory
-from ecommerce.models import Order
+from dashboard.models import (
+    CachedCertificate,
+    CachedCurrentGrade,
+    CachedEnrollment,
+    ProgramEnrollment,
+    UserCacheRefreshTime,
+)
+from courses.factories import (
+    CourseRunFactory,
+    CourseFactory,
+    ProgramFactory,
+)
 from micromasters.factories import UserFactory
 from micromasters.utils import now_in_utc
+
 
 FAKE = faker.Factory.create()
 
@@ -85,15 +92,10 @@ class CachedEnrollmentFactory(DjangoModelFactory):
     @classmethod
     def create(cls, **kwargs):
         """
-        Overrides the default .create() method. Creates an Order/Line for an FA course if the client
-        asked for a 'verified' enrollment specifically
+        Overrides the default .create() method. Previously created Order/Line for FA courses
+        with verified enrollments, but payments are now discontinued.
         """
         created_obj = super().create(**kwargs)
-        if kwargs.get('verified') is True:
-            course_run = created_obj.course_run
-            program = course_run.course.program
-            if program.financial_aid_availability:
-                LineFactory.create(course_key=course_run.edx_course_key, order__status=Order.FULFILLED)
         return created_obj
 
 

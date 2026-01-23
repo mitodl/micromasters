@@ -23,7 +23,6 @@ import {
   validationErrorSelector,
   asPercent,
   getEmployer,
-  createForm,
   formatPrice,
   findCourseRun,
   isProfileOfLoggedinUser,
@@ -54,11 +53,7 @@ import {
   COURSEWARE_BACKEND_NAMES,
   COURSEWARE_BACKEND_EDXORG
 } from "../constants"
-import {
-  USER_PROFILE_RESPONSE,
-  DASHBOARD_RESPONSE,
-  CYBERSOURCE_CHECKOUT_RESPONSE
-} from "../test_constants"
+import { USER_PROFILE_RESPONSE, DASHBOARD_RESPONSE } from "../test_constants"
 import { assertMaybeEquality, assertIsNothing } from "../lib/test_utils"
 import { program } from "../components/ProgressWidget_test"
 import { makeRun, makeCourse, makeProgram } from "../factories/dashboard"
@@ -509,25 +504,6 @@ describe("utility functions", () => {
       assert.equal(asPercent(1234.567), "123457%")
       assert.equal(asPercent(-0.34), "-34%")
       assert.equal(asPercent(0.129), "13%")
-    })
-  })
-
-  describe("createForm", () => {
-    it("creates a form with hidden values corresponding to the payload", () => {
-      const { url, payload } = CYBERSOURCE_CHECKOUT_RESPONSE
-      const form = createForm(url, payload)
-
-      const clone = _.clone(payload)
-      for (const hidden of form.querySelectorAll("input[type=hidden]")) {
-        const key = hidden.getAttribute("name")
-        const value = hidden.getAttribute("value")
-        assert.equal(clone[key], value)
-        delete clone[key]
-      }
-      // all keys exhausted
-      assert.deepEqual(clone, {})
-      assert.equal(form.getAttribute("action"), url)
-      assert.equal(form.getAttribute("method"), "post")
     })
   })
 

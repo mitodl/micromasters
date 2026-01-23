@@ -178,8 +178,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      * filters are applied on this element's nested path.
      *
      * Example return value: [
-     *   {'term': {'program.courses.course_title': 'Some Course Title'},
-     *   {'term': {'program.courses.payment_status': 'Paid'}
+     *   {'term': {'program.courses.course_title': 'Some Course Title'}}
      * ]
      */
     getAllFiltersOnPath(query) {

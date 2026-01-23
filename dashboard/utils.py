@@ -3,22 +3,27 @@ Utility functions and classes for the dashboard
 """
 import logging
 from decimal import Decimal
-from math import floor
 
 from django.db import transaction
 from django.db.models import Count, Q
 from django.urls import reverse
 
-from courses.models import Course, CourseRun
+from courses.models import CourseRun
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import ProgramEnrollment
-from ecommerce.models import Line, Order
-from exams.models import ExamAuthorization, ExamProfile, ExamRun
-from grades.constants import NEW_COMBINED_FINAL_GRADES_DATE, FinalGradeStatus
-from grades.models import (CombinedFinalGrade, FinalGrade,
-                           MicromastersCourseCertificate,
-                           MicromastersProgramCertificate,
-                           MicromastersProgramCommendation, ProctoredExamGrade)
+from grades.constants import FinalGradeStatus, NEW_COMBINED_FINAL_GRADES_DATE
+from grades.models import (
+    FinalGrade,
+    ProctoredExamGrade,
+    MicromastersProgramCertificate,
+    CombinedFinalGrade,
+    MicromastersCourseCertificate,
+    MicromastersProgramCommendation)
+from exams.models import (
+    ExamProfile,
+    ExamAuthorization,
+    ExamRun,
+)
 from micromasters.utils import now_in_utc
 
 # maximum number of exam attempts per payment
@@ -59,7 +64,6 @@ class MMTrack:
         self.enrollments = edx_user_data.enrollments
         self.current_grades = edx_user_data.current_grades
         self.certificates = edx_user_data.certificates
-        self.financial_aid_available = program.financial_aid_availability
         self.paid_course_fa = {}  # courses_id -> payment number association for financial aid courses
 
         with transaction.atomic():
@@ -78,8 +82,9 @@ class MMTrack:
                     course__program=program, course__exam_runs__isnull=True
                 ).values_list("edx_course_key", flat=True))
 
+                # Payments are no longer accepted, so all courses are unpaid
                 for course in self.program.course_set.all():
-                    self.paid_course_fa[course.id] = self.get_payments_count_for_course(course) > 0
+                    self.paid_course_fa[course.id] = False
 
     def __str__(self):
         return f'MMTrack for user {self.user.username} on program "{self.program.title}"'
@@ -129,7 +134,8 @@ class MMTrack:
         Returns:
             bool: whether the user is enrolled mmtrack in the course run
         """
-        return self.is_enrolled(edx_course_key) and self.has_paid(edx_course_key)
+        enrollment = self.enrollments.get_enrollment_for_course(edx_course_key)
+        return self._is_course_in_program(edx_course_key) and bool(enrollment and enrollment.is_verified)
 
     def has_verified_enrollment(self, edx_course_key):
         """
@@ -199,115 +205,6 @@ class MMTrack:
         """
         return self.final_grade_qset.for_course_run_key(edx_course_key).exists()
 
-    def has_paid(self, edx_course_key):
-        """
-        Returns true if user paid for a course run.
-
-        Args:
-            edx_course_key (str): an edX course run key
-
-        Returns:
-            bool: whether the user is paid
-        """
-        # edx_course_key for a course run can either be unique or None.
-        # If edx course keys lookup is none we should have no payment against it
-        if edx_course_key is None:
-            return False
-        has_paid = False
-        # financial aid programs might have a paid entry for the course
-        if self.has_exams:
-            # get the course associated with the course key
-            course = Course.objects.get(courserun__edx_course_key=edx_course_key)
-            has_paid = self.paid_course_fa.get(course.id, False)
-
-        if has_paid:
-            return True
-        # normal programs need to have paid_on_edx in the final grades or a verified enrollment
-        if self.has_final_grade(edx_course_key):
-            return self.has_final_grade_paid_on_edx(edx_course_key)
-        return self.has_verified_enrollment(edx_course_key)
-
-    def get_payments_count_for_course(self, course):
-        """
-        Get the total count of payments for given course
-        Args:
-            course (courses.models.Course): a course
-        Returns:
-            int: count of paid course runs
-        """
-        return Line.objects.filter(
-            order__status__in=Order.FULFILLED_STATUSES,
-            order__user=self.user,
-            course_key__in=course.courserun_set.values('edx_course_key'),
-        ).values('order_id').distinct().count()
-
-    def get_number_of_attempts_left(self, course):
-        """
-        Checks for each payment from before first date (when a payment provided two attempts)
-        and find if any unused attempts are carried over to the single attempt era (when a payment
-        provides one attempt).
-        Calculate the number of attempts remaining based on the calculated carry over and the other
-        payments and attempts.
-
-        Args:
-            course (courses.models.Course): a course
-        Returns:
-            int: a number of attempts left
-        """
-        first_date = course.program.exam_attempts_first_date
-        payments_qset = Line.objects.filter(
-            order__status__in=Order.FULFILLED_STATUSES,
-            order__user=self.user,
-            course_key__in=course.courserun_set.values('edx_course_key')
-        ).order_by('created_at')
-        used_attempts_qset = ExamAuthorization.objects.filter(user=self.user, course=course, exam_taken=True)
-        # if for some reason the first date is not set, return the difference between payments and used attempts
-        if first_date is None:
-            return payments_qset.count() - used_attempts_qset.count()
-
-        # number of payments before the first date
-        old_payments = payments_qset.filter(modified_at__lt=first_date).count()
-        # number of payments after the first date
-        new_payments = payments_qset.filter(modified_at__gte=first_date).count()
-
-        # number of used attempts before the second date
-        old_attempts = used_attempts_qset.filter(
-            exam_run__date_first_eligible__lt=self.program.exam_attempts_second_date
-        ).count()
-        # number of used attempts after the second date
-        new_attempts = used_attempts_qset.filter(
-            exam_run__date_first_eligible__gte=self.program.exam_attempts_second_date
-        ).count()
-
-        # calculate any unused attempts from for the period when one payment provided two attempts
-        unused_double_attempts = (old_payments * ATTEMPTS_PER_PAID_RUN_OLD) - old_attempts
-        if unused_double_attempts > 0:
-            # the user has unused attempts from before the first date
-            # divide unused attempts from before the first date by two since payments are
-            # only valid for one attempt after the second date. This is the carryover.
-            attempts_carryover = floor(unused_double_attempts / 2)
-            # Calculate the number of remaining attempts
-            #   the number of payments after the first date
-            #   minus the number of attempts after the second date
-            #   plus the carryover attempts
-            return new_payments - new_attempts + attempts_carryover
-        elif unused_double_attempts == 0:
-            # there is no carry over
-            return new_payments - new_attempts
-
-        else:
-            # the user has more used attempts (before the second date) than payments (before the first date)
-            # this can happen if the user made at least one payment and attempt both after the first date
-            # find the number of attempts without the double attempts and subtract that from new payments
-            single_attempts = used_attempts_qset.count() - old_payments * ATTEMPTS_PER_PAID_RUN_OLD
-            return new_payments - single_attempts
-
-    def has_paid_for_any_in_program(self):
-        """
-        Returns true if a user has paid for any course run in the program
-        """
-        return any(self.has_paid(edx_course_key) for edx_course_key in self.edx_course_keys)
-
     def has_final_grade_paid_on_edx(self, edx_course_key):
         """
         Checks if there is a a frozen final grade and the user paid for it.
@@ -318,32 +215,6 @@ class MMTrack:
             bool: whether or not a user has a final grade and has paid
         """
         return self.final_grade_qset.paid_on_edx().for_course_run_key(edx_course_key).exists()
-
-    def has_paid_final_grade(self, edx_course_key):
-        """
-        Checks if there is a a frozen final grade and the user paid for it.
-
-        Args:
-            edx_course_key (str): an edX course run key
-        Returns:
-            bool: whether a frozen final grade exists
-        """
-        return self.has_final_grade(edx_course_key) and self.has_paid(edx_course_key)
-
-    def paid_but_missed_deadline(self, course_run):
-        """
-        Checks if user paid for this run only after the deadline
-        """
-        if self.has_paid(course_run.edx_course_key):
-            orders = Order.objects.filter(
-                status__in=Order.FULFILLED_STATUSES,
-                user=self.user,
-                line__course_key=course_run.edx_course_key,
-                modified_at__gt=course_run.upgrade_deadline,
-            )
-            if orders.exists():
-                return True
-        return False
 
     def has_passed_course_run(self, edx_course_key):
         """

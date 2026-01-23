@@ -12,8 +12,7 @@ def delete_duplicate_cert(apps, schema_editor):
     FinalGrade = apps.get_model('grades', 'FinalGrade')
 
     courses = Course.objects.filter(
-        program__live=True,
-        program__financial_aid_availability=True
+        program__live=True
     )
     for course in courses:
         # find all users with duplicate certificates
@@ -47,7 +46,7 @@ def add_final_grade(apps, schema_editor):
     certificates= MicromastersCourseCertificate.objects.filter(course__isnull=True)
     for certificate in certificates:
         certificate.delete()
-    certificates = MicromastersCourseCertificate.objects.filter(course__program__financial_aid_availability=True)
+    certificates = MicromastersCourseCertificate.objects.filter(course__program__live=True)
 
     for certificate in certificates:
         passing_final_grades = FinalGrade.objects.filter(

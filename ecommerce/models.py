@@ -77,26 +77,19 @@ class Order(AuditableModel):
 
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """
-        Save the order to the database
-        """
-        from ecommerce.api import make_reference_id
+        Save the order to the database.
 
-        # to support the migration to MITx Online
-        # we're storing the generated reference number in the database
-        # so we generate it here
-        #
-        # NOTE: while this value could be reused elsewhere in the ecommerce API
-        #       that code was intentionally not modified to keep testing scope to a minimum
+        Note: Ecommerce is discontinued. The reference number generation that
+        depended on ``ecommerce.api.make_reference_id`` has been removed to
+        avoid import errors. Existing orders can still be saved for historical
+        data; new reference numbers are no longer generated here.
+        """
+
         # perform an initial save so that if this is a new instance we get the primary key
         super().save(*args, **kwargs)
 
         # can't insert twice because it'll try to insert with a PK now
         kwargs.pop("force_insert", None)
-
-        # if we don't have a reference number, we generate one and save again
-        if self.reference_number is None:
-            self.reference_number = make_reference_id(self)
-            super().save(*args, **kwargs)
 
 
 class OrderAudit(AuditModel):

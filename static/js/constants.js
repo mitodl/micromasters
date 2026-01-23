@@ -28,7 +28,6 @@ export const EDUCATION_LEVELS = [
 export const SEARCH_FACET_FIELD_LABEL_MAP = {
   "program.courses.course_title":      "Course",
   "program.course_runs.semester":      "Semester",
-  "program.courses.payment_status":    "Payment Status",
   "program.grade_average":             "Average Grade in Program",
   "grade-average":                     "Average Grade in Program",
   "profile.birth_country":             "Country of Birth",
@@ -86,37 +85,6 @@ export const ALL_COURSE_STATUSES = [
   STATUS_PENDING_ENROLLMENT,
   STATUS_MISSED_DEADLINE,
   STATUS_PAID_BUT_NOT_ENROLLED
-]
-
-// financial aid statuses
-export const FA_STATUS_CREATED = "created"
-export const FA_STATUS_PENDING_DOCS = "pending-docs"
-export const FA_STATUS_DOCS_SENT = "docs-sent"
-export const FA_STATUS_PENDING_MANUAL_APPROVAL = "pending-manual-approval"
-export const FA_STATUS_APPROVED = "approved"
-export const FA_STATUS_AUTO_APPROVED = "auto-approved"
-export const FA_STATUS_SKIPPED = "skipped"
-export const FA_STATUS_RESET = "reset"
-
-export const FA_ALL_STATUSES = [
-  FA_STATUS_CREATED,
-  FA_STATUS_PENDING_DOCS,
-  FA_STATUS_DOCS_SENT,
-  FA_STATUS_PENDING_MANUAL_APPROVAL,
-  FA_STATUS_APPROVED,
-  FA_STATUS_AUTO_APPROVED,
-  FA_STATUS_SKIPPED,
-  FA_STATUS_RESET
-]
-export const FA_PENDING_STATUSES = [
-  FA_STATUS_PENDING_DOCS,
-  FA_STATUS_DOCS_SENT,
-  FA_STATUS_PENDING_MANUAL_APPROVAL
-]
-export const FA_TERMINAL_STATUSES = [
-  FA_STATUS_AUTO_APPROVED,
-  FA_STATUS_APPROVED,
-  FA_STATUS_SKIPPED
 ]
 
 export const TOAST_SUCCESS = "done"

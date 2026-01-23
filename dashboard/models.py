@@ -139,6 +139,11 @@ class CachedEnrollment(CachedEdxInfoModel):
         """
         return Enrollments(data_iter)
 
+    @property
+    def verified(self):
+        """Whether the cached enrollment reflects a verified (paid) track"""
+        return self.data.get('mode') == 'verified'
+
 
 class CachedCertificate(CachedEdxInfoModel):
     """

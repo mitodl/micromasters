@@ -198,7 +198,6 @@ describe("LearnerSearchPage", function() {
   })
 
   const STAFF_ONLY_FILTERS = [
-    "payment_status",
     "num-courses-passed",
     "grade-average",
     "education_level"
@@ -462,7 +461,6 @@ describe("LearnerSearchPage", function() {
           "NestedAggregatingMenuFilter ItemList"
         )
         const courseTitleItems = allEnrollmentItems.at(0).prop("items")
-        const paymentStatusItems = allEnrollmentItems.at(1).prop("items")
 
         assert.deepEqual(_.pick(courseTitleItems[0], ["key", "doc_count"]), {
           doc_count: 66,
@@ -478,19 +476,6 @@ describe("LearnerSearchPage", function() {
           doc_count: 31,
           key:       "Digital Learning 200"
         })
-
-        assert.deepEqual(_.pick(paymentStatusItems[0], ["key", "doc_count"]), {
-          doc_count: 66,
-          key:       "$all"
-        })
-        assert.deepEqual(_.pick(paymentStatusItems[1], ["key", "doc_count"]), {
-          doc_count: 65,
-          key:       "Auditing"
-        })
-        assert.deepEqual(_.pick(paymentStatusItems[2], ["key", "doc_count"]), {
-          doc_count: 31,
-          key:       "Paid"
-        })
       })
     })
   })
@@ -500,7 +485,6 @@ describe("LearnerSearchPage", function() {
       const query = {
         courses:              ["Digital Learning 200"],
         "final-grade":        { min: 50, max: 100 },
-        payment_status:       ["Paid"],
         semester:             ["2016 - Spring"],
         "num-courses-passed": {},
         "grade-average":      { min: 47, max: 100 },
@@ -519,7 +503,6 @@ describe("LearnerSearchPage", function() {
         assert.deepEqual(titles, [
           "Course: Digital Learning 200",
           "Final Grade in Selected Course: 50 - 100",
-          "Payment Status: Paid",
           "Semester: 2016 - Spring",
           "Average Grade in Program: 47 - 100",
           "Country of Birth: United States",
@@ -560,7 +543,6 @@ describe("LearnerSearchPage", function() {
     const query = {
       courses:              ["Digital Learning 200"],
       "final-grade":        { min: 50, max: 100 },
-      payment_status:       ["Paid"],
       semester:             ["2016 - Spring"],
       "num-courses-passed": {},
       "grade-average":      { min: 47, max: 100 },
@@ -583,7 +565,7 @@ describe("LearnerSearchPage", function() {
       searchkit.searchFromUrlQuery(qs.stringify(query))
 
       assert(wrapper.find(".sk-search-box"), "Unable to find textbox")
-      assert.equal(wrapper.find(".filter-visibility-toggle").length, 9)
+      assert.equal(wrapper.find(".filter-visibility-toggle").length, 8)
     })
   })
 
@@ -598,8 +580,12 @@ describe("LearnerSearchPage", function() {
     assert.equal(replySpy.callCount, 1)
     const callArgs = replySpy.firstCall.args[0]
     const body = JSON.parse(callArgs.data)
+    const educationAggKey = Object.keys(body.aggs).find(
+      matchFieldName("education_level")
+    )
+    assert.isDefined(educationAggKey)
     // there should be three filters, none should be duplicates
-    assert.deepEqual(body.aggs.education_level10.filter, {
+    assert.deepEqual(body.aggs[educationAggKey].filter, {
       bool: {
         must: [
           {

@@ -2,30 +2,24 @@
 Tests for the utils module
 """
 from datetime import datetime, timedelta
-from unittest.mock import MagicMock, PropertyMock, patch
+from unittest.mock import (
+    patch,
+    MagicMock,
+)
 
-import ddt
 import pytz
-from django.urls import reverse
+import ddt
 
-from cms.factories import (ImageFactory, ProgramCertificateSignatoriesFactory,
-                           ProgramLetterSignatoryFactory)
-from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
-from courses.models import ElectiveCourse, ElectivesSet
+from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
+from courses.models import ElectivesSet, ElectiveCourse
 from dashboard.api_edx_cache import CachedEdxUserData
-from dashboard.models import (CachedCertificate, CachedCurrentGrade,
-                              CachedEnrollment)
-from dashboard.utils import MMTrack, convert_to_letter, get_mmtrack
-from ecommerce.factories import LineFactory, OrderFactory
-from ecommerce.models import Order
-from exams.factories import (ExamAuthorizationFactory, ExamProfileFactory,
-                             ExamRunFactory)
-from exams.models import ExamAuthorization, ExamProfile
+from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
+from dashboard.utils import MMTrack, convert_to_letter
+from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRunFactory
+from exams.models import ExamProfile, ExamAuthorization
 from grades.constants import NEW_COMBINED_FINAL_GRADES_DATE
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
-from grades.models import (CombinedFinalGrade, CourseRunGradingStatus,
-                           FinalGrade, MicromastersProgramCertificate,
-                           MicromastersProgramCommendation)
+from grades.models import FinalGrade, CombinedFinalGrade, CourseRunGradingStatus
 from micromasters.factories import UserFactory
 from micromasters.utils import load_json_from_file, now_in_utc
 from search.base import MockedESTestCase
@@ -56,8 +50,7 @@ class MMTrackTest(MockedESTestCase):
         )
 
         # create the programs
-        cls.program = ProgramFactory.create(live=True, financial_aid_availability=False, price=1000)
-        cls.program_financial_aid = ProgramFactory.create(live=True, financial_aid_availability=True, price=1000)
+        cls.program = ProgramFactory.create(live=True, price=1000)
 
         # create course runs for the normal program
         cls.course = CourseFactory.create(program=cls.program)
@@ -78,44 +71,13 @@ class MMTrackTest(MockedESTestCase):
             if course_key:
                 cls.cruns.append(course_run)
 
-        # and the program with financial aid
-        finaid_course = CourseFactory.create(program=cls.program_financial_aid)
-        cls.finaid_course_2 = CourseFactory.create(program=cls.program_financial_aid)
-        ExamRunFactory.create(course=cls.finaid_course_2)
-        cls.now = now_in_utc()
-        cls.end_date = cls.now - timedelta(weeks=45)
-        cls.crun_fa = CourseRunFactory.create(
-            course=finaid_course,
-            start_date=cls.now-timedelta(weeks=52),
-            end_date=cls.end_date,
-            enrollment_start=cls.now-timedelta(weeks=62),
-            enrollment_end=cls.now-timedelta(weeks=53),
-            edx_course_key="course-v1:odl+FOO101+CR-FALL15"
-        )
-        # a financial aid program has exams
-        ExamRunFactory.create()
-        cls.crun_fa2 = CourseRunFactory.create(
-            course=finaid_course
-        )
-        CourseRunFactory.create(
-            course=finaid_course,
-            edx_course_key=None
-        )
-
-    def pay_for_fa_course(self, course_id, status=Order.FULFILLED):
+    def pay_for_fa_course(self, course_id, status=None):  # pylint: disable=unused-argument
         """
         Helper function to pay for a financial aid course
+        NOTE: Payments discontinued in 2021, this is now a no-op
         """
-        order = OrderFactory.create(
-            user=self.user,
-            status=status
-        )
-        return LineFactory.create(
-            order=order,
-            course_key=course_id
-        )
 
-    def test_init_normal_track(self):
+    def test_init(self):
         """
         Test of the init of the class for programs without financial aid
         """
@@ -130,54 +92,11 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.enrollments == self.cached_edx_user_data.enrollments
         assert mmtrack.current_grades == self.cached_edx_user_data.current_grades
         assert mmtrack.certificates == self.cached_edx_user_data.certificates
-        assert mmtrack.financial_aid_available == self.program.financial_aid_availability
         assert mmtrack.edx_course_keys == {
             "course-v1:edX+DemoX+Demo_Course",
             "course-v1:MITx+8.MechCX+2014_T1",
             "course-v1:odl+FOO102+CR-FALL16"
         }
-        assert not mmtrack.paid_course_fa
-
-    def test_init_financial_aid_track(self):
-        """
-        Test of the init of the class for programs with financial aid
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-
-        assert mmtrack.user == self.user
-        assert mmtrack.program == self.program_financial_aid
-        assert mmtrack.enrollments == self.cached_edx_user_data.enrollments
-        assert mmtrack.current_grades == self.cached_edx_user_data.current_grades
-        assert mmtrack.certificates == self.cached_edx_user_data.certificates
-        assert mmtrack.financial_aid_available == self.program_financial_aid.financial_aid_availability
-        assert mmtrack.edx_course_keys == {self.crun_fa.edx_course_key, self.crun_fa2.edx_course_key}
-        assert mmtrack.paid_course_fa == {self.crun_fa.course.id: False, self.finaid_course_2.id: False}
-
-    @ddt.data(Order.FULFILLED, Order.PARTIALLY_REFUNDED)
-    def test_fa_paid(self, order_status):
-        """
-        Test that for financial aid, mmtrack.paid_course_ids only apply to the user with a matching Order
-        """
-        key = "course-v1:odl+FOO101+CR-FALL15"
-        self.pay_for_fa_course(key, status=order_status)
-
-        mmtrack_paid = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack_paid.paid_course_fa == {self.crun_fa.course.id: True, self.finaid_course_2.id: False}
-
-        mmtrack = MMTrack(
-            user=UserFactory.create(),
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.paid_course_fa == {self.crun_fa.course.id: False, self.finaid_course_2.id: False}
 
     def test_is_course_in_program(self):
         """
@@ -207,15 +126,7 @@ class MMTrackTest(MockedESTestCase):
             with patch('edx_api.enrollments.models.Enrollments.is_enrolled_in', return_value=False):
                 assert mmtrack.is_enrolled(course_id) is False
 
-        # for financial aid program there is no difference
-        mmtrack_fa = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack_fa.is_enrolled("course-v1:odl+FOO101+CR-FALL15") is True
-        with patch('edx_api.enrollments.models.Enrollments.is_enrolled_in', return_value=False):
-            assert mmtrack.is_enrolled("course-v1:odl+FOO101+CR-FALL15") is False
+        # Removed financial aid program enrollment tests
 
     def test_is_enrolled_mmtrack_normal(self):
         """
@@ -230,29 +141,6 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.is_enrolled_mmtrack("course-v1:edX+DemoX+Demo_Course") is True
         # this is a audit enrollment from edx
         assert mmtrack.is_enrolled_mmtrack("course-v1:MITx+8.MechCX+2014_T1") is False
-
-    def test_is_enrolled_mmtrack_fa(self):
-        """
-        Tests for the is_enrolled_mmtrack method in case financial aid is available
-        """
-        course_id = "course-v1:odl+FOO101+CR-FALL15"
-
-        # before paying
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.is_enrolled_mmtrack(course_id) is False
-
-        # after paying
-        self.pay_for_fa_course(course_id)
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.is_enrolled_mmtrack(course_id) is True
 
     @ddt.data(True, False)
     def test_has_passed_course_run(self, final_grade_passed):
@@ -325,34 +213,6 @@ class MMTrackTest(MockedESTestCase):
         )
         assert mmtrack.has_final_grade(final_grade.course_run.edx_course_key) is True
         assert mmtrack.has_final_grade('random-course-id') is False
-
-    @ddt.data(True, False)
-    def test_has_paid_final_grade(self, has_paid):
-        """
-        Test that has_paid_final_grade returns True when the associated FinalGrade is paid
-        """
-        final_grade = FinalGradeFactory.create(
-            user=self.user,
-            course_run=self.cruns[0],
-            course_run_paid_on_edx=has_paid
-        )
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid_final_grade(final_grade.course_run.edx_course_key) is has_paid
-
-    def test_has_paid_final_grade_none(self):
-        """
-        Test that has_paid_final_grade returns False when a FinalGrade doesn't exist
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid_final_grade('random-course-id') is False
 
     def test_get_final_grade(self):
         """
@@ -451,50 +311,9 @@ class MMTrackTest(MockedESTestCase):
         mmtrack.edx_course_keys.add(final_grade.course_run.edx_course_key)
         assert mmtrack.count_courses_passed() == 2
 
-    def test_count_courses_passed_fa(self):
-        """
-        Assert that count_courses_passed works in case of fa program.
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        with patch('courses.models.Course.has_exam', new_callable=PropertyMock, return_value=True):
-            assert mmtrack.count_courses_passed() == 0
-            CombinedFinalGrade.objects.create(
-                user=self.user,
-                course=self.crun_fa.course,
-                grade=0.6
-            )
-            assert mmtrack.count_courses_passed() == 1
+    # Removed test_count_courses_passed_fa (financial aid logic)
 
-    def test_count_courses_mixed_fa(self):
-        """
-        Test count_courses_passed with mixed course-exam configuration
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        # this is course with exam run and the user has CombinedFinalGrade for it
-        course_with_exam_1 = CourseFactory.create(program=self.program_financial_aid)
-        ExamRunFactory.create(course=course_with_exam_1, date_grades_available=now_in_utc()-timedelta(weeks=1))
-        CombinedFinalGrade.objects.create(user=self.user, course=course_with_exam_1, grade=0.7)
-        # create course with exam run the user did not pass
-        ExamRunFactory.create(
-            course__program=self.program_financial_aid,
-            date_grades_available=now_in_utc() - timedelta(weeks=1)
-        )
-        # another course with no exam
-        FinalGradeFactory.create(
-            user=self.user,
-            course_run=self.crun_fa,
-            passed=True
-        )
-
-        assert mmtrack.count_courses_passed() == 2
+    # Removed test_count_courses_mixed_fa (financial aid logic)
 
     def test_get_number_of_passed_courses_for_completion(self):
         """
@@ -578,141 +397,9 @@ class MMTrackTest(MockedESTestCase):
         mmtrack.edx_course_keys.add(final_grade.course_run.edx_course_key)
         assert mmtrack.count_passing_courses_for_keys(mmtrack.edx_course_keys) == 2
 
-    def test_has_paid_fa_no_final_grade(self):
-        """
-        Assert that has_paid works for FA programs in case there is no final grade
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = self.crun_fa.edx_course_key
-        assert mmtrack.has_paid(key) is False
+    # Removed test_not_paid_fa_with_course_run_paid_on_edx (financial aid logic)
 
-        self.pay_for_fa_course(key)
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid(key) is True
-
-    def test_has_paid_for_entire_course(self):
-        """
-        Tests that the .has_paid method returns true if
-        any of the course runs in the course have been paid for
-        """
-        self.pay_for_fa_course(self.crun_fa.edx_course_key)
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid(self.crun_fa2.edx_course_key) is True
-
-    def test_not_paid_fa_with_course_run_paid_on_edx(self):
-        """
-        Test for has_paid is True for FA programs in case
-        there is a final grade with course_run_paid_on_edx=True
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = self.crun_fa.edx_course_key
-        assert mmtrack.has_paid(key) is False
-        final_grade = FinalGradeFactory.create(user=self.user, course_run=self.crun_fa, course_run_paid_on_edx=True)
-        assert mmtrack.has_paid(key) is True
-        final_grade.course_run_paid_on_edx = False
-        final_grade.save()
-        assert mmtrack.has_paid(key) is False
-
-    def test_not_paid_fa_with_enrollment_verified_on_edx(self):
-        """
-        Test for has_paid is True for FA programs in case
-        there is no payment but enrollment is verified on edx
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        course_with_exam_1 = CourseFactory.create(program=self.program_financial_aid)
-        ExamRunFactory.create(course=course_with_exam_1)
-        key = "course-v1:edX+DemoX+Demo_Course"
-        assert mmtrack.has_verified_enrollment(key) is True
-        assert mmtrack.has_paid(key) is True
-
-    def test_has_paid_fa_with_course_run_paid_on_mm(self):
-        """
-        Test for has_paid is True for FA programs when the course has been paid on MicroMasters
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = self.crun_fa.edx_course_key
-        assert mmtrack.has_paid(key) is False
-
-        self.pay_for_fa_course(key)
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid(key) is True
-
-    def test_has_paid_not_fa_no_final_grade(self):
-        """
-        Assert that has_paid works for non-FA programs in case there is no final grade
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = "course-v1:edX+DemoX+Demo_Course"
-        assert mmtrack.has_paid(key) is True
-
-    def test_has_paid_not_fa_with_final_grade(self):
-        """
-        Assert that has_paid works for non-FA programs in case there is a final grade
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = "course-v1:odl+FOO102+CR-FALL16"
-        assert mmtrack.has_paid(key) is False
-        course_run = self.cruns[-1]
-        final_grade = FinalGradeFactory.create(user=self.user, course_run=course_run, course_run_paid_on_edx=True)
-        assert mmtrack.has_paid(key) is True
-        final_grade.course_run_paid_on_edx = False
-        final_grade.save()
-        assert mmtrack.has_paid(key) is False
-
-    def test_has_paid_for_any_in_program(self):
-        """
-        Assert that has_paid_for_any_in_program returns True if any CourseRun associated with a Program has been
-        paid for.
-        """
-        new_program = ProgramFactory.create()
-        new_course_runs = CourseRunFactory.create_batch(2, course__program=new_program)
-        mmtrack = MMTrack(
-            user=self.user,
-            program=new_program,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.has_paid_for_any_in_program() is False
-        fg = FinalGradeFactory.create(user=self.user, course_run=new_course_runs[0], course_run_paid_on_edx=True)
-        assert mmtrack.has_paid_for_any_in_program() is True
-        fg.delete()
-        FinalGradeFactory.create(user=self.user, course_run=new_course_runs[1], course_run_paid_on_edx=True)
-        assert mmtrack.has_paid_for_any_in_program() is True
+    # Removed test_not_paid_fa_with_enrollment_verified_on_edx (financial aid logic)
 
     @ddt.data(
         ("verified", True, True),
@@ -724,7 +411,7 @@ class MMTrackTest(MockedESTestCase):
         """
         Test for has_passing_certificate method with different type of certificates
         """
-        course_key = self.crun_fa.edx_course_key
+        course_key = self.cruns[2].edx_course_key  # Use course without existing cert
         cert_json = {
             "username": "staff",
             "course_id": course_key,
@@ -742,101 +429,16 @@ class MMTrackTest(MockedESTestCase):
         )
         mmtrack = MMTrack(
             user=self.user,
-            program=self.program_financial_aid,
+            program=self.program,
             edx_user_data=cached_edx_user_data
         )
         assert mmtrack.has_passing_certificate(course_key) is expected_result
 
-    def test_has_passing_certificate_fa(self):
-        """
-        Assert that has_passing_certificate is true if user has a cert even if has_paid is false for FA programs
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        key = self.crun_fa.edx_course_key
-        assert mmtrack.has_passing_certificate(key) is False
-        assert mmtrack.has_paid(key) is False
+    # Removed test_has_passing_certificate_fa (financial aid logic)
 
-        cert_json = {
-            "username": "staff",
-            "course_id": self.crun_fa.edx_course_key,
-            "certificate_type": "verified",
-            "status": "downloadable",
-            "is_passing": True,
-            "download_url": "http://www.example.com/demo.pdf",
-            "grade": "0.98"
-        }
-        cached_edx_user_data = MagicMock(
-            spec=CachedEdxUserData,
-            enrollments=CachedEnrollment.deserialize_edx_data(self.enrollments_json),
-            certificates=CachedCertificate.deserialize_edx_data(self.certificates_json + [cert_json]),
-            current_grades=CachedCurrentGrade.deserialize_edx_data(self.current_grades_json),
-        )
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=cached_edx_user_data
-        )
-        assert mmtrack.has_passing_certificate(key) is True
-        assert mmtrack.has_paid(key) is False
+    # Removed test_get_program_certificate_url (financial aid logic)
 
-    def test_get_program_certificate_url(self):
-        """
-        Test get_program_certificate_url
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.get_program_certificate_url() == ""
-
-        certificate = MicromastersProgramCertificate.objects.create(
-            user=self.user, program=self.program_financial_aid
-        )
-        assert mmtrack.get_program_certificate_url() == ""
-
-        ProgramCertificateSignatoriesFactory.create(program_page__program=certificate.program)
-        assert mmtrack.get_program_certificate_url() == reverse('program-certificate', args=[certificate.hash])
-
-    def test_get_program_letter_url(self):
-        """
-        Test get_program_letter_url
-        """
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program_financial_aid,
-            edx_user_data=self.cached_edx_user_data
-        )
-        assert mmtrack.get_program_letter_url() == ""
-
-        letter = MicromastersProgramCommendation.objects.create(
-            user=self.user, program=self.program_financial_aid
-        )
-        assert mmtrack.get_program_letter_url() == ""
-
-        signatory = ProgramLetterSignatoryFactory.create(program_page__program=letter.program)
-        assert mmtrack.get_program_letter_url() == ""
-
-        program_page = signatory.program_page
-
-        program_page.program_letter_text = "<p> Some example test </p>"
-        program_page.save()
-        assert mmtrack.get_program_letter_url() == ""
-
-        program_page.program_letter_logo = ImageFactory()
-        program_page.save()
-
-        assert mmtrack.get_program_letter_url() == reverse('program_letter', args=[letter.uuid])
-
-        # Don't return inactive letters
-        letter.is_active = False
-        letter.save()
-
-        assert mmtrack.get_program_letter_url() == ""
+    # Removed test_get_program_letter_url (financial aid logic)
 
     def test_get_best_final_grade_for_course(self):
         """
@@ -844,20 +446,20 @@ class MMTrackTest(MockedESTestCase):
         """
         mmtrack = MMTrack(
             user=self.user,
-            program=self.program_financial_aid,
+            program=self.program,
             edx_user_data=self.cached_edx_user_data
         )
-        finaid_course = self.crun_fa.course
+        course = self.cruns[0].course
 
-        FinalGradeFactory.create(user=self.user, course_run=self.crun_fa, grade=0.3, passed=False)
-        assert mmtrack.get_best_final_grade_for_course(finaid_course) is None
+        FinalGradeFactory.create(user=self.user, course_run=self.cruns[0], grade=0.3, passed=False)
+        assert mmtrack.get_best_final_grade_for_course(course) is None
 
         for grade in [0.3, 0.5, 0.8]:
             course_run = CourseRunFactory.create(
-                course=finaid_course,
+                course=course,
             )
             FinalGradeFactory.create(user=self.user, course_run=course_run, grade=grade, passed=True)
-        assert mmtrack.get_best_final_grade_for_course(finaid_course).grade == 0.8
+        assert mmtrack.get_best_final_grade_for_course(course).grade == 0.8
 
     @ddt.data(True, False)
     def test_get_overall_final_grade_for_course(self, before_exam_merge):
@@ -866,25 +468,26 @@ class MMTrackTest(MockedESTestCase):
         """
         mmtrack = MMTrack(
             user=self.user,
-            program=self.program_financial_aid,
+            program=self.program,
             edx_user_data=self.cached_edx_user_data
         )
-        finaid_course = self.crun_fa.course
-        assert mmtrack.get_overall_final_grade_for_course(finaid_course) == ""
-        FinalGradeFactory.create(user=self.user, course_run=self.crun_fa, passed=True, grade=0.8)
-        assert mmtrack.get_overall_final_grade_for_course(finaid_course) == "80"
-        ExamRunFactory.create(course=finaid_course)
+        course = self.cruns[0].course
+        course_run = self.cruns[0]
+        assert mmtrack.get_overall_final_grade_for_course(course) == ""
+        FinalGradeFactory.create(user=self.user, course_run=course_run, passed=True, grade=0.8)
+        assert mmtrack.get_overall_final_grade_for_course(course) == "80"
+        ExamRunFactory.create(course=course)
         if before_exam_merge:
             # if the course run end date is before Fall 2022
-            self.crun_fa.start_date = NEW_COMBINED_FINAL_GRADES_DATE - timedelta(days=1)
-            self.crun_fa.save()
-            CombinedFinalGrade.objects.create(user=self.user, course=finaid_course, grade="74")
-            assert mmtrack.get_overall_final_grade_for_course(finaid_course) == "74"
+            course_run.start_date = NEW_COMBINED_FINAL_GRADES_DATE - timedelta(days=1)
+            course_run.save()
+            CombinedFinalGrade.objects.create(user=self.user, course=course, grade="74")
+            assert mmtrack.get_overall_final_grade_for_course(course) == "74"
         else:
-            self.crun_fa.start_date = NEW_COMBINED_FINAL_GRADES_DATE + timedelta(days=1)
-            self.crun_fa.save()
-            CombinedFinalGrade.objects.create(user=self.user, course=finaid_course, grade="80")
-            assert mmtrack.get_overall_final_grade_for_course(finaid_course) == "80"
+            course_run.start_date = NEW_COMBINED_FINAL_GRADES_DATE + timedelta(days=1)
+            course_run.save()
+            CombinedFinalGrade.objects.create(user=self.user, course=course, grade="80")
+            assert mmtrack.get_overall_final_grade_for_course(course) == "80"
 
     def test_get_best_proctored_exam_grade(self):
         """
@@ -892,35 +495,25 @@ class MMTrackTest(MockedESTestCase):
         """
         mmtrack = MMTrack(
             user=self.user,
-            program=self.program_financial_aid,
+            program=self.program,
             edx_user_data=self.cached_edx_user_data
         )
-        finaid_course = self.crun_fa.course
+        course = self.cruns[0].course
         last_week = now_in_utc() - timedelta(weeks=1)
 
-        ProctoredExamGradeFactory.create(user=self.user, course=finaid_course, passed=False, percentage_grade=0.6)
-        assert mmtrack.get_best_proctored_exam_grade(finaid_course) is None
+        ProctoredExamGradeFactory.create(user=self.user, course=course, passed=False, percentage_grade=0.6)
+        assert mmtrack.get_best_proctored_exam_grade(course) is None
         best_exam = ProctoredExamGradeFactory.create(
-            user=self.user, course=finaid_course, passed=True, percentage_grade=0.9,
+            user=self.user, course=course, passed=True, percentage_grade=0.9,
             exam_run__date_grades_available=last_week
         )
-        assert mmtrack.get_best_proctored_exam_grade(finaid_course) == best_exam
+        assert mmtrack.get_best_proctored_exam_grade(course) == best_exam
 
         ProctoredExamGradeFactory.create(
-            user=self.user, course=finaid_course, passed=True, percentage_grade=0.8,
+            user=self.user, course=course, passed=True, percentage_grade=0.8,
             exam_run__date_grades_available=last_week
         )
-        assert mmtrack.get_best_proctored_exam_grade(finaid_course) == best_exam
-
-    def test_get_mmtrack(self):
-        """
-        test creation of  mmtrack(dashboard.utils.MMTrack) object.
-        """
-        self.pay_for_fa_course(self.crun_fa.edx_course_key)
-        mmtrack = get_mmtrack(self.user, self.program_financial_aid)
-        key = self.crun_fa.edx_course_key
-        assert mmtrack.user == self.user
-        assert mmtrack.has_paid(key) is True
+        assert mmtrack.get_best_proctored_exam_grade(course) == best_exam
 
     @ddt.data(
         ["", "", False, False, False],

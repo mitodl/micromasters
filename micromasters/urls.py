@@ -26,8 +26,6 @@ urlpatterns += [
     path('', include('courses.urls')),
     path("", include("cms.urls")),
     path('', include('dashboard.urls')),
-    path('', include('ecommerce.urls')),
-    path('', include('financialaid.urls')),
     path('', include('search.urls')),
     path('', include('mail.urls')),
     path('', include('profiles.urls')),

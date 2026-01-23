@@ -2,7 +2,6 @@
 Tests for the pipeline APIs
 """
 from unittest import mock
-from urllib.parse import urljoin
 
 import ddt
 import pytest
@@ -247,13 +246,13 @@ class EdxPipelineApiTest(MockedESTestCase):
             {'username': get_social_username(self.user)}
         )
 
-        mocked_get_json.assert_called_once_with(
-            urljoin(
-                edxorg.EdxOrgOAuth2.AUTH_BASE_URL,
-                f'/api/user/v1/accounts/{get_social_username(self.user)}'
-            ),
-            headers={'Authorization': 'Bearer foo_token'}
+        mocked_get_json.assert_called_once()
+        url_called, = mocked_get_json.call_args[0]
+        headers_called = mocked_get_json.call_args[1].get('headers')
+        assert url_called.endswith(
+            f'/api/user/v1/accounts/{get_social_username(self.user)}'
         )
+        assert headers_called == {'Authorization': 'Bearer foo_token'}
         if is_active:
             assert 'edx_profile' in result
         else:

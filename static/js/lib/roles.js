@@ -28,10 +28,3 @@ export const canAdvanceSearchProgram = hasPermForProgram("can_advance_search")
 export const canMessageLearnersProgram = hasPermForProgram(
   "can_message_learners"
 )
-
-export const hasEditAbility = hasRolePerm("can_edit_financial_aid")
-
-export const firstFinancialAidProgram = R.compose(
-  R.propOr(null, "program"),
-  R.find(hasEditAbility)
-)

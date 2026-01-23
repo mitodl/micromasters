@@ -9,7 +9,6 @@ import {
   hasPearsonExam,
   userIsEnrolled,
   courseCurrentlyInProgress,
-  hasPaidForAnyCourseRun,
   isPassedOrMissedDeadline,
   courseUpcomingOrCurrent,
   hasFailedCourseRun,
@@ -203,24 +202,6 @@ describe("dashboard course utilities", () => {
         .format()
       run.status = STATUS_CURRENTLY_ENROLLED
       assert.isTrue(courseUpcomingOrCurrent(run))
-    })
-  })
-
-  describe("hasPaidForAnyCourseRun", () => {
-    let course
-
-    beforeEach(() => {
-      course = makeCourse(0)
-    })
-
-    it("should return false if the user has not paid for any runs", () => {
-      course.runs.forEach(run => (run.has_paid = false))
-      assert.isFalse(hasPaidForAnyCourseRun(course))
-    })
-
-    it("should return true if the user has paid for at least one run", () => {
-      course.runs[0].has_paid = true
-      assert.isTrue(hasPaidForAnyCourseRun(course))
     })
   })
 

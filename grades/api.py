@@ -269,17 +269,9 @@ def generate_program_letter(user, program):
         log.info('User [%s] already has a letter for program [%s]', user, program)
         return
 
-    created = None
-    if (program.financial_aid_availability and MicromastersProgramCertificate.objects.filter(user=user,
-                                                                                             program=program).exists()):
+    if completed_program(user, program):
         _, created = MicromastersProgramCommendation.objects.update_or_create(user=user, program=program,
                                                                               defaults={"is_active": True})
-
-    elif completed_program(user, program):
-        _, created = MicromastersProgramCommendation.objects.update_or_create(user=user, program=program,
-                                                                              defaults={"is_active": True})
-
-    if created is not None:
         log.info(
             '[%s] MM program letter for [%s] in program [%s]',
             'Created' if created else 'Activated',

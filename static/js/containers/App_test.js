@@ -137,17 +137,11 @@ describe("App", function() {
       helper.programsGetStub.returns(Promise.reject("error"))
       const types = [
         REQUEST_DASHBOARD,
-        actions.prices.get.requestType,
-        REQUEST_FETCH_COUPONS,
         REQUEST_GET_USER_PROFILE,
         REQUEST_GET_PROGRAM_ENROLLMENTS,
         RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
         CLEAR_DASHBOARD,
-        actions.prices.clearType,
-        CLEAR_COUPONS,
         RECEIVE_DASHBOARD_SUCCESS,
-        actions.prices.get.successType,
-        RECEIVE_FETCH_COUPONS_SUCCESS,
         RECEIVE_GET_USER_PROFILE_SUCCESS
       ]
       return renderComponent("/dashboard", types).then(([wrapper]) => {

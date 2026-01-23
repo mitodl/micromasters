@@ -51,9 +51,6 @@ class FullProgramFactory(ProgramFactory):
         """Post-object generation hook"""
         if created:
             CourseRunFactory.create(course__program=self)
-            if self.financial_aid_availability:
-                from financialaid.factories import TierProgramFactory
-                TierProgramFactory.create_properly_configured_batch(2, program=self)
             return self
         return None
 
@@ -122,3 +119,30 @@ class CourseRunFactory(DjangoModelFactory):
                 tzinfo=pytz.utc
             )
         )
+
+
+def create_program(past=False):
+    """
+    Helper function to create a program with course and course run for tests.
+
+    Args:
+        past (bool): If True, creates course runs with past dates
+
+    Returns:
+        tuple: (program, None) - second element is None for backward compatibility
+    """
+    from datetime import timedelta
+    from micromasters.utils import now_in_utc
+
+    program = FullProgramFactory.create()
+
+    if past:
+        now = now_in_utc()
+        course_run = program.course_set.first().courserun_set.first()
+        course_run.start_date = now - timedelta(days=365)
+        course_run.end_date = now - timedelta(days=30)
+        course_run.enrollment_start = now - timedelta(days=400)
+        course_run.enrollment_end = now - timedelta(days=350)
+        course_run.save()
+
+    return program, None

@@ -25,9 +25,7 @@ export type DashboardsState = {
 
 export type CoursePrice = {
   program_id: number,
-  price: Decimal,
-  financial_aid_availability: boolean,
-  has_financial_aid_request: boolean
+  price: Decimal
 }
 
 export type CoursePrices = Array<CoursePrice>;
