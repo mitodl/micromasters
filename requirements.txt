@@ -179,8 +179,6 @@ modelsearch==1.1.1
     # via wagtail
 natsort==8.4.0
     # via robohash
-newrelic==10.17.0
-    # via -r requirements.in
 oauthlib==2.1.0
     # via
     #   requests-oauthlib
