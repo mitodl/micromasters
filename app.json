@@ -1,7 +1,6 @@
 {
   "addons": [
     "heroku-postgresql:hobby-dev",
-    "newrelic:wayne",
     "rediscloud:30"
   ],
   "buildpacks": [
@@ -207,10 +206,6 @@
     "MICROMASTERS_USE_S3": {
       "description": "Use S3 for storage backend (required on Heroku)",
       "value": "True"
-    },
-    "NEW_RELIC_APP_NAME": {
-      "default": "MicroMasters",
-      "description": "Application identifier in New Relic."
     },
     "NODE_MODULES_CACHE": {
       "description": "If false, disables the node_modules cache to fix yarn install",
