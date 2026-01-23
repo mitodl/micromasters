@@ -532,17 +532,9 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'exams.tasks.authorize_exam_runs',
         'schedule': crontab(minute=0, hour='*')
     },
-    'generate-mm-course-certificates-every-1-hrs': {
-        'task': 'grades.tasks.generate_course_certificates_for_fa_students',
-        'schedule': crontab(minute=0, hour='*')
-    },
     'freeze-final-grades-every-24-hrs-few-times': {
         'task': 'grades.tasks.find_course_runs_and_freeze_grades',
         'schedule': crontab(minute='*/15', hour='16')
-    },
-    'create-combined-final-grade-every-1-hrs': {
-        'task': 'grades.tasks.create_combined_final_grades',
-        'schedule': crontab(minute=40, hour='*')
     },
 }
 CELERY_TASK_SERIALIZER = 'json'
