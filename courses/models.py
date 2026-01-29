@@ -138,6 +138,10 @@ class Course(models.Model):
         information about the course.
         """
         course_run = self.first_unexpired_run()
+
+        if self.course_number == "FIN.CFx":
+            return "Enrollment by Eligibility"
+
         if not course_run or not course_run.start_date:
             promised_run = self.get_promised_run()
             if promised_run:
