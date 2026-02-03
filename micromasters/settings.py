@@ -434,6 +434,9 @@ LOGGING = {
 CORS_ORIGIN_WHITELIST = get_list_of_str("MICROMASTERS_CORS_ORIGIN_WHITELIST", [])
 CORS_ALLOW_CREDENTIALS = True
 
+# Finance program specific message for course status Enrollment by Eligibility
+ENROLLMENT_BY_ELIGIBILITY_COURSES = get_list_of_str('ENROLLMENT_BY_ELIGIBILITY_COURSES', [ "FIN.CFx" ])
+
 # server-status
 STATUS_TOKEN = get_string("STATUS_TOKEN", "")
 HEALTH_CHECK = ['CELERY', 'REDIS', 'POSTGRES', 'OPEN_SEARCH']
