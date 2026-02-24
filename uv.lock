@@ -855,14 +855,14 @@ wheels = [
 
 [[package]]
 name = "factory-boy"
-version = "2.12.0"
+version = "2.8.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "faker" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5d/28/9f2284328547a3e29b39422a0a138d118a57686c0b4479f00c72240668d7/factory_boy-2.12.0.tar.gz", hash = "sha256:faf48d608a1735f0d0a3c9cbf536d64f9132b547dae7ba452c4d99a79e84a370", size = 153557, upload-time = "2019-05-11T14:39:42.384Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3b/e7/cc3abcf261f10ef643b8edbd530f55e6533d08cc3bb575c5ff9e731e11a6/factory_boy-2.8.1.tar.gz", hash = "sha256:a6644e391a371be603aca8624f3dedbc5a2aa4622878c20494ba17abb4b171bb", size = 38531, upload-time = "2016-12-17T00:45:09.457Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/63/c3/e4d5ed760f09f5dfb6ebbc44e22801a5fa9fcad9158f5ec59d8304092833/factory_boy-2.12.0-py2.py3-none-any.whl", hash = "sha256:728df59b372c9588b83153facf26d3d28947fc750e8e3c95cefa9bed0e6394ee", size = 36911, upload-time = "2019-05-11T14:39:40.493Z" },
+    { url = "https://files.pythonhosted.org/packages/8d/0a/1466fd13883dbc4a47e16d4a316389f0e0aa23bdef27759603467f9e6ecb/factory_boy-2.8.1-py2.py3-none-any.whl", hash = "sha256:246f7da9caf9bf855aaa73b4963353ccb147fdd3adcbc419fa29422c5b69dd4c", size = 46680, upload-time = "2016-12-17T00:45:11.509Z" },
 ]
 
 [[package]]
@@ -1204,7 +1204,7 @@ requires-dist = [
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "edx-api-client", specifier = "==1.2.0" },
     { name = "edx-opaque-keys", specifier = "==0.4" },
-    { name = "factory-boy", specifier = "<3" },
+    { name = "factory-boy", specifier = "==2.8.1" },
     { name = "faker" },
     { name = "flaky", specifier = "==3.7.0" },
     { name = "html5lib", specifier = ">=1.1" },
@@ -1231,7 +1231,7 @@ requires-dist = [
     { name = "social-auth-core", specifier = ">=4.0,<5.0" },
     { name = "sqlparse", specifier = ">=0.5" },
     { name = "tornado", specifier = ">=6.0" },
-    { name = "urllib3", specifier = ">=1.26.5" },
+    { name = "urllib3", specifier = "==1.26.5" },
     { name = "uwsgi" },
     { name = "wagtail", specifier = ">=7.0,<8.0" },
     { name = "willow", extras = ["heif"], specifier = ">=1.8" },
@@ -2126,11 +2126,11 @@ wheels = [
 
 [[package]]
 name = "urllib3"
-version = "1.26.20"
+version = "1.26.5"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e4/e8/6ff5e6bc22095cfc59b6ea711b687e2b7ed4bdb373f7eeec370a97d7392f/urllib3-1.26.20.tar.gz", hash = "sha256:40c2dc0c681e47eb8f90e7e27bf6ff7df2e677421fd46756da1161c39ca70d32", size = 307380, upload-time = "2024-08-29T15:43:11.37Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/94/40/c396b5b212533716949a4d295f91a4c100d51ba95ea9e2d96b6b0517e5a5/urllib3-1.26.5.tar.gz", hash = "sha256:a7acd0977125325f516bda9735fa7142b909a8d01e8b2e4c8108d0984e6e0098", size = 292865, upload-time = "2021-05-26T17:02:35.597Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/cf/8435d5a7159e2a9c83a95896ed596f68cf798005fe107cc655b5c5c14704/urllib3-1.26.20-py2.py3-none-any.whl", hash = "sha256:0ed14ccfbf1c30a9072c7ca157e4319b70d65f623e91e7b32fadb2853431016e", size = 144225, upload-time = "2024-08-29T15:43:08.921Z" },
+    { url = "https://files.pythonhosted.org/packages/0c/cd/1e2ec680ec7b09846dc6e605f5a7709dfb9d7128e51a026e7154e18a234e/urllib3-1.26.5-py2.py3-none-any.whl", hash = "sha256:753a0374df26658f99d826cfe40394a686d05985786d946fbe4165b5148f5a7c", size = 138144, upload-time = "2021-05-26T17:02:33.236Z" },
 ]
 
 [package.optional-dependencies]
