@@ -100,6 +100,12 @@ jobs:
             sleep 2
           done
 
+      - name: Configure OpenSearch
+        run: |
+          curl -s -XPUT http://localhost:9200/_cluster/settings \
+            -H 'Content-Type: application/json' \
+            -d '{"transient": {"cluster.max_shards_per_node": "10000"}}'
+
       - name: Tests
         run: |
           export MEDIA_ROOT="$(mktemp -d)"
