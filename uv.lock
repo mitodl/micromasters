@@ -860,14 +860,14 @@ wheels = [
 
 [[package]]
 name = "factory-boy"
-version = "3.3.3"
+version = "2.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "faker" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ba/98/75cacae9945f67cfe323829fc2ac451f64517a8a330b572a06a323997065/factory_boy-3.3.3.tar.gz", hash = "sha256:866862d226128dfac7f2b4160287e899daf54f2612778327dd03d0e2cb1e3d03", size = 164146, upload-time = "2025-02-03T09:49:04.433Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5d/28/9f2284328547a3e29b39422a0a138d118a57686c0b4479f00c72240668d7/factory_boy-2.12.0.tar.gz", hash = "sha256:faf48d608a1735f0d0a3c9cbf536d64f9132b547dae7ba452c4d99a79e84a370", size = 153557, upload-time = "2019-05-11T14:39:42.384Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/8d/2bc5f5546ff2ccb3f7de06742853483ab75bf74f36a92254702f8baecc79/factory_boy-3.3.3-py2.py3-none-any.whl", hash = "sha256:1c39e3289f7e667c4285433f305f8d506efc2fe9c73aaea4151ebd5cdea394fc", size = 37036, upload-time = "2025-02-03T09:49:01.659Z" },
+    { url = "https://files.pythonhosted.org/packages/63/c3/e4d5ed760f09f5dfb6ebbc44e22801a5fa9fcad9158f5ec59d8304092833/factory_boy-2.12.0-py2.py3-none-any.whl", hash = "sha256:728df59b372c9588b83153facf26d3d28947fc750e8e3c95cefa9bed0e6394ee", size = 36911, upload-time = "2019-05-11T14:39:40.493Z" },
 ]
 
 [[package]]
@@ -1209,7 +1209,7 @@ requires-dist = [
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "edx-api-client", specifier = "==1.2.0" },
     { name = "edx-opaque-keys", specifier = "==0.4" },
-    { name = "factory-boy" },
+    { name = "factory-boy", specifier = "<3" },
     { name = "faker" },
     { name = "flaky", specifier = "==3.7.0" },
     { name = "html5lib", specifier = ">=1.1" },

@@ -23,7 +23,7 @@ dependencies = [
     "edx-opaque-keys==0.4",
     "opensearch-py==1.0.0",
     "opensearch-dsl==1.0.0",
-    "factory-boy",
+    "factory-boy<3",
     "faker",
     "html5lib>=1.1",
     "l18n==2021.3",
