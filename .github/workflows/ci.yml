@@ -114,10 +114,16 @@ jobs:
           MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
           MICROMASTERS_DB_DISABLE_SSL: 'True'
           OPENSEARCH_URL: localhost:9200
+          OPENSEARCH_INDEX: testindex
           CELERY_TASK_ALWAYS_EAGER: 'True'
           BROKER_URL: redis://localhost:6379/4
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
           DJANGO_SETTINGS_MODULE: micromasters.settings
+          MAILGUN_URL: https://api.mailgun.net/v3/fake.mailgun.org
+          MAILGUN_KEY: fake_mailgun_key
+          OPEN_DISCUSSIONS_SITE_KEY: mm_test
+          SENTRY_DSN: ''
+          DISABLE_WEBPACK_LOADER_STATS: 'True'
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@v4
