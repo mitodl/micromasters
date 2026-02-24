@@ -57,3 +57,22 @@ dependencies = [
 
 [tool.uv]
 package = false
+
+[dependency-groups]
+dev = [
+    "astroid>=3.0,<4.0",
+    "ddt",
+    "django-debug-toolbar",
+    "ipdb",
+    "nplusone>=0.8.1",
+    "pylint>=3.0,<4.0",
+    "pylint-django>=2.5,<3.0",
+    "pylint-plugin-utils>=0.8",
+    "pytest>=7.0,<8.0",
+    "pytest-cov",
+    "pytest-django",
+    "pytest-mock",
+    "selenium",
+    "testfixtures",
+    "isort",
+]
