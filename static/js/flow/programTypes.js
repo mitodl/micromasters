@@ -1,40 +1,10 @@
 // @flow
-import {
-  FA_STATUS_APPROVED,
-  FA_STATUS_AUTO_APPROVED,
-  FA_STATUS_CREATED,
-  FA_STATUS_DOCS_SENT,
-  FA_STATUS_PENDING_DOCS,
-  FA_STATUS_PENDING_MANUAL_APPROVAL,
-  FA_STATUS_SKIPPED,
-  FA_STATUS_RESET,
-} from '../constants'
-
-export type FinancialAidUserInfo = {
-  application_status: (
-    FA_STATUS_APPROVED |
-    FA_STATUS_AUTO_APPROVED |
-    FA_STATUS_CREATED |
-    FA_STATUS_DOCS_SENT |
-    FA_STATUS_PENDING_DOCS |
-    FA_STATUS_PENDING_MANUAL_APPROVAL |
-    FA_STATUS_SKIPPED |
-    FA_STATUS_RESET
-  ),
-  date_documents_sent: ?string,
-  has_user_applied: boolean,
-  max_possible_cost: number,
-  min_possible_cost: number,
-  id: number,
-}
 
 export type Program = {
   courses:                    Array<Course>,
   id:                         number,
   title:                      string,
-  financial_aid_availability: boolean,
   has_exams:                  boolean,
-  financial_aid_user_info:    FinancialAidUserInfo,
   exam_card_status:        string,
   grade_average:              ?number,
   certificate:                string,
@@ -106,7 +76,6 @@ export type CourseRun = {
   course_end_date?:             string,
   course_upgrade_deadline?:     string,
   enrollment_url?:              ?string,
-  has_paid:                     boolean,
   year_season:                  string,
   courseware_backend:           string,
 }

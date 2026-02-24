@@ -16,11 +16,9 @@ from django.views.generic import TemplateView, View
 from rolepermissions.checkers import has_role
 from rolepermissions.permissions import available_perm_status
 
-from cms.util import get_coupon_code
-from courses.models import Course, Program
-from ecommerce.models import Coupon
-from micromasters.serializers import serialize_maybe_user
+from courses.models import Program
 from micromasters.utils import webpack_dev_server_host
+from micromasters.serializers import serialize_maybe_user
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
 from ui.decorators import require_mandatory_urls
@@ -165,32 +163,6 @@ class SignInView(ReactView):
         Handle GET requests to templates using React
         """
         context = self.get_context(request)
-        coupon_code = get_coupon_code(request)
-
-        # if we didn't get a program in the context, look it up via the coupon code
-        if (
-            settings.FEATURES.get("MITXONLINE_LOGIN", False)
-            and coupon_code
-            and context["program"] is None
-        ):
-            program = None
-
-            coupon = Coupon.objects.filter(coupon_code=coupon_code).first()
-
-            if coupon is not None:
-                if isinstance(coupon.content_object, Program):
-                    program = coupon.content_object
-                elif isinstance(coupon.content_object, Course):
-                    program = coupon.content_object.program
-
-
-            if program:
-                params = request.GET.copy()
-                params["program"] = program.id
-
-                return redirect(
-                    f"{reverse('signin')}?{params.urlencode()}",
-                )
 
         return render(
             request,

@@ -10,7 +10,6 @@ import type {
   ProgramLearners
 } from "./flow/dashboardTypes"
 import type { AvailablePrograms } from "./flow/enrollmentTypes"
-import type { FinancialAidUserInfo } from "./flow/programTypes"
 import {
   HIGH_SCHOOL,
   BACHELORS,
@@ -133,10 +132,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
             id:          34,
             enrollments: [
               {
-                final_grade:    86.0,
-                semester:       "2017 - Fall",
-                course_title:   "Digital Learning 100",
-                payment_status: "Auditing"
+                final_grade:  86.0,
+                semester:     "2017 - Fall",
+                course_title: "Digital Learning 100"
               }
             ],
             grade_average:      86,
@@ -240,10 +238,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
             id:          34,
             enrollments: [
               {
-                final_grade:    98.0,
-                semester:       "2017 - Fall",
-                course_title:   "Digital Learning 100",
-                payment_status: "Auditing"
+                final_grade:  98.0,
+                semester:     "2017 - Fall",
+                course_title: "Digital Learning 100"
               }
             ],
             grade_average:      98,
@@ -324,7 +321,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    company_name11: {
+    company_name10: {
       doc_count: 66,
       inner:     {
         doc_count:                                 66,
@@ -593,13 +590,13 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    "num-courses-passed6": {
+    "num-courses-passed5": {
       doc_count:            66,
       "num-courses-passed": {
         value: 4
       }
     },
-    education_level10: {
+    education_level9: {
       doc_count: 66,
       inner:     {
         doc_count:                       186,
@@ -644,14 +641,14 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    "program.courses.semester5": {
+    "program.course_runs.semester4": {
       doc_count: 66,
       inner:     {
-        doc_count:                        100,
-        "program.courses.semester_count": {
+        doc_count:                            100,
+        "program.course_runs.semester_count": {
           value: 3
         },
-        "program.courses.semester": {
+        "program.course_runs.semester": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,
           buckets:                     [
@@ -680,7 +677,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    "grade-average7": {
+    "grade-average6": {
       doc_count:       65,
       "grade-average": {
         buckets: [
@@ -771,36 +768,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
         ]
       }
     },
-    "program.courses.payment_status4": {
-      doc_count: 66,
-      inner:     {
-        doc_count:                        100,
-        "program.courses.payment_status": {
-          doc_count_error_upper_bound: 0,
-          sum_other_doc_count:         0,
-          buckets:                     [
-            {
-              key:                 "Auditing",
-              doc_count:           65,
-              top_level_doc_count: {
-                doc_count: 65
-              }
-            },
-            {
-              key:                 "Paid",
-              doc_count:           35,
-              top_level_doc_count: {
-                doc_count: 31
-              }
-            }
-          ]
-        },
-        "program.courses.payment_status_count": {
-          value: 2
-        }
-      }
-    },
-    birth_location8: {
+    birth_location7: {
       doc_count:                     66,
       "profile.birth_country_count": {
         value: 4
@@ -997,8 +965,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      financial_aid_availability: false,
-      id:                         3
+      id: 3
     },
     {
       courses: [
@@ -1259,18 +1226,16 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      title:                      "Master Program",
-      description:                null,
-      financial_aid_availability: false,
-      id:                         4,
-      number_courses_passed:      1
+      title:                 "Master Program",
+      description:           null,
+      id:                    4,
+      number_courses_passed: 1
     },
     {
-      financial_aid_availability: false,
-      title:                      "Missed deadline program",
-      description:                "Missed deadline program",
-      number_courses_passed:      1,
-      courses:                    [
+      title:                 "Missed deadline program",
+      description:           "Missed deadline program",
+      number_courses_passed: 1,
+      courses:               [
         {
           id:                  9,
           position_in_program: 0,
@@ -1295,12 +1260,11 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
       id: 5
     },
     {
-      financial_aid_availability: false,
-      title:                      "Empty program",
-      description:                "The empty program",
-      number_courses_passed:      0,
-      courses:                    [],
-      id:                         2
+      title:                 "Empty program",
+      description:           "The empty program",
+      number_courses_passed: 0,
+      courses:               [],
+      id:                    2
     },
     {
       title:                 "Last program",
@@ -1331,8 +1295,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      financial_aid_availability: false,
-      id:                         6
+      id: 6
     },
     {
       title:                 "Paid but not enrolled",
@@ -1363,8 +1326,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           proctorate_exams_grades: []
         }
       ],
-      financial_aid_availability: true,
-      id:                         7
+      id: 7
     }
   ]
 })
@@ -1379,19 +1341,10 @@ export const PROGRAMS: AvailablePrograms = deepFreeze(
   }))
 )
 
-export const FINANCIAL_AID_PARTIAL_RESPONSE: FinancialAidUserInfo = deepFreeze({
-  application_status: null,
-  has_user_applied:   false,
-  max_possible_cost:  1000,
-  min_possible_cost:  1000
-})
-
 export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(
   DASHBOARD_RESPONSE.programs.map(program => ({
-    program_id:                 program.id,
-    price:                      Decimal(program.id * 1000),
-    financial_aid_availability: false,
-    has_financial_aid_request:  false
+    program_id: program.id,
+    price:      Decimal(program.id * 1000)
   }))
 )
 
@@ -1426,49 +1379,11 @@ export const ATTACH_COUPON_RESPONSE = deepFreeze({
 export const COUPON = deepFreeze(ATTACH_COUPON_RESPONSE.coupon)
 
 /* eslint-disable max-len */
-export const CYBERSOURCE_CHECKOUT_RESPONSE = deepFreeze({
-  payload: {
-    access_key:                   "access_key",
-    amount:                       "123.45",
-    consumer_id:                  "staff",
-    currency:                     "USD",
-    locale:                       "en-us",
-    override_custom_cancel_page:  "https://micromasters.mit.edu?cancel",
-    override_custom_receipt_page: "https://micromasters.mit.edu?receipt",
-    profile_id:                   "profile_id",
-    reference_number:             "MM-george.local-56",
-    signature:                    "56ItDy52E+Ii5aXhiq89OwRsImukIQRQetaHVOM0Fug=",
-    signed_date_time:             "2016-08-24T19:07:57Z",
-    signed_field_names:
-      "access_key,amount,consumer_id,currency,locale,override_custom_cancel_page,override_custom_receipt_page,profile_id,reference_number,signed_date_time,signed_field_names,transaction_type,transaction_uuid,unsigned_field_names",
-    transaction_type:     "sale",
-    transaction_uuid:     "uuid",
-    unsigned_field_names: ""
-  },
-  url:    "https://testsecureacceptance.cybersource.com/pay",
-  method: "POST"
-})
-
-export const EDX_CHECKOUT_RESPONSE = deepFreeze({
-  payload: {},
-  url:     "http://edx.org/",
-  method:  "GET"
-})
 /* eslint-enable max-len */
 
 const queryFilters = `{
   "bool": {
     "must":[
-      {
-        "nested": {
-          "path": "program.courses",
-          "filter": {
-            "term": {
-              "program.courses.payment_status": "Paid"
-            }
-          }
-        }
-      },
       {
         "term": {
           "program.id":1

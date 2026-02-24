@@ -12,20 +12,13 @@ import { makeCourse, makeRun } from "../factories/dashboard"
 import { getEl } from "../util/test_utils"
 
 describe("CourseEnrollmentDialog", () => {
-  let sandbox,
-    setVisibilityStub,
-    addCourseEnrollmentStub,
-    openFinancialAidCalculatorStub,
-    routerPushStub,
-    checkoutStub
+  let sandbox, setVisibilityStub, addCourseEnrollmentStub, routerPushStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     setVisibilityStub = sandbox.spy()
     addCourseEnrollmentStub = sandbox.spy()
-    openFinancialAidCalculatorStub = sandbox.spy()
     routerPushStub = sandbox.spy()
-    checkoutStub = sandbox.spy()
   })
 
   afterEach(() => {
@@ -33,12 +26,9 @@ describe("CourseEnrollmentDialog", () => {
   })
 
   const renderDialog = (
-    hasUserApplied = false,
     courseRun = makeRun(1),
     course = makeCourse(1),
-    open = true,
-    financialAidAvailability = true,
-    pendingFinancialAid = false
+    open = true
   ) => {
     mount(
       <MuiThemeProvider theme={createMuiTheme()}>
@@ -48,11 +38,6 @@ describe("CourseEnrollmentDialog", () => {
           courseRun={courseRun}
           setVisibility={setVisibilityStub}
           addCourseEnrollment={addCourseEnrollmentStub}
-          checkout={checkoutStub}
-          financialAidAvailability={financialAidAvailability}
-          hasUserApplied={hasUserApplied}
-          pendingFinancialAid={pendingFinancialAid}
-          openFinancialAidCalculator={openFinancialAidCalculatorStub}
         />
       </MuiThemeProvider>,
       {
@@ -73,38 +58,10 @@ describe("CourseEnrollmentDialog", () => {
     const payButton = ((wrapper.querySelector(
       ".pay-button"
     ): any): HTMLButtonElement)
-    assert.equal(payButton.textContent, "Pay Now")
+    assert.equal(payButton.textContent, "Upgrade Unavailable")
     assert.isTrue(payButton.disabled)
     const auditButton = getEl(wrapper, ".audit-button")
-    assert.equal(auditButton.textContent, "Audit for Free & Pay Later")
-  })
-
-  it("can render with hasUserApplied = true", () => {
-    const wrapper = renderDialog(true)
-    const payButton = ((wrapper.querySelector(
-      ".pay-button"
-    ): any): HTMLButtonElement)
-    assert.equal(payButton.textContent, "Pay Now")
-    assert.isFalse(payButton.disabled)
-    const auditButton = getEl(wrapper, ".audit-button")
-    assert.equal(auditButton.textContent, "Audit for Free & Pay Later")
-  })
-  it("can render with pendingFinancialAid = true", () => {
-    const wrapper = renderDialog(
-      true,
-      makeRun(1),
-      makeCourse(1),
-      true,
-      true,
-      true
-    )
-    const payButton = ((wrapper.querySelector(
-      ".pay-button"
-    ): any): HTMLButtonElement)
-    assert.equal(payButton.textContent, "Pay Now")
-    assert.isTrue(payButton.disabled)
-    const auditButton = getEl(wrapper, ".audit-button")
-    assert.equal(auditButton.textContent, "Audit for Free & Pay Later")
+    assert.equal(auditButton.textContent, "Enroll")
   })
 
   it("has a disabled pay button by default", () => {
@@ -115,40 +72,12 @@ describe("CourseEnrollmentDialog", () => {
     sinon.assert.notCalled(routerPushStub)
   })
 
-  it("can click pay button with price", () => {
-    const courseRun = makeRun(1)
-    const wrapper = renderDialog(true, courseRun)
-    const payButton = wrapper.querySelector(".pay-button")
-    ReactTestUtils.Simulate.click(payButton)
-    sinon.assert.calledWith(setVisibilityStub, false)
-    const url = `/order_summary/?course_key=${encodeURIComponent(
-      courseRun.course_id
-    )}`
-    sinon.assert.calledWith(routerPushStub, url)
-  })
-
   it("can click audit button", () => {
     const courseRun = makeRun(1)
-    const wrapper = renderDialog(true, courseRun)
+    const wrapper = renderDialog(courseRun)
     const auditButton = wrapper.querySelector(".audit-button")
     ReactTestUtils.Simulate.click(auditButton)
     sinon.assert.calledWith(setVisibilityStub, false)
     sinon.assert.calledWith(addCourseEnrollmentStub, courseRun.course_id)
-  })
-
-  it("can click link to calculate price", () => {
-    const wrapper = renderDialog()
-    const auditButton = getEl(wrapper, ".calculate-link")
-    ReactTestUtils.Simulate.click(auditButton)
-    sinon.assert.calledWith(setVisibilityStub, false)
-    sinon.assert.calledOnce(openFinancialAidCalculatorStub)
-  })
-
-  it("pay button redirects to checkout", () => {
-    const courseRun = makeRun(1)
-    const wrapper = renderDialog(true, courseRun, makeCourse(1), true, false)
-    const payButton = wrapper.querySelector(".pay-button")
-    ReactTestUtils.Simulate.click(payButton)
-    assert.equal(checkoutStub.calledWith(courseRun.course_id), true)
   })
 })

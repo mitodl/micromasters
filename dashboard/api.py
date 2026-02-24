@@ -22,12 +22,11 @@ from backends.exceptions import InvalidCredentialStored
 from backends.utils import has_social_auth
 from courses.models import CourseRun, ElectiveCourse, Program
 from courses.utils import format_season_year_for_course_run
+from exams.models import ExamAuthorization, ExamRun
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.constants import DEDP_PROGRAM_TITLE
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack
-from exams.models import ExamAuthorization, ExamRun
-from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
 from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
@@ -58,12 +57,11 @@ class CourseStatus:
     CAN_UPGRADE = 'can-upgrade'
     MISSED_DEADLINE = 'missed-deadline'
     OFFERED = 'offered'
-    PAID_BUT_NOT_ENROLLED = 'paid-but-not-enrolled'
 
     @classmethod
     def all_statuses(cls):
         """Helper to get all the statuses"""
-        return [cls.PASSED, cls.NOT_PASSED, cls.CURRENTLY_ENROLLED, cls.PAID_BUT_NOT_ENROLLED,
+        return [cls.PASSED, cls.NOT_PASSED, cls.CURRENTLY_ENROLLED,
                 cls.CAN_UPGRADE, cls.OFFERED, cls.WILL_ATTEND, cls.MISSED_DEADLINE, ]
 
 
@@ -78,7 +76,6 @@ class CourseRunStatus:
     CAN_UPGRADE = 'can-upgrade'
     MISSED_DEADLINE = 'missed-deadline'
     NOT_PASSED = 'not-passed'
-    PAID_BUT_NOT_ENROLLED = 'paid-but-not-enrolled'
 
 
 class CourseFormatConditionalFields:
@@ -101,12 +98,6 @@ class CourseFormatConditionalFields:
             {
                 'course_run_field': 'fuzzy_enrollment_start_date',
                 'format_field': 'fuzzy_enrollment_start_date'
-            },
-        ],
-        CourseStatus.PAID_BUT_NOT_ENROLLED: [
-            {
-                'course_run_field': 'enrollment_start',
-                'format_field': 'enrollment_start_date'
             },
         ]
     }
@@ -194,7 +185,6 @@ def get_info_for_program(mmtrack):
         "id": mmtrack.program.pk,
         "description": mmtrack.program.description,
         "title": mmtrack.program.title,
-        "financial_aid_availability": mmtrack.financial_aid_available,
         "has_exams": mmtrack.has_exams,
         "courses": [],
         "exam_card_status": mmtrack.get_exam_card_status(),
@@ -210,8 +200,6 @@ def get_info_for_program(mmtrack):
         "has_socialauth_for_backend": has_social_auth(mmtrack.user, backend)
     }
 
-    if mmtrack.financial_aid_available:
-        data["financial_aid_user_info"] = FinancialAidDashboardSerializer.serialize(mmtrack.user, mmtrack.program)
     if mmtrack.has_exams:
         data["grade_records_url"] = reverse('grade_records', args=[mmtrack.get_program_enrollment().id])
 
@@ -252,7 +240,6 @@ def get_info_for_course(course, mmtrack):
         "exams_schedulable_in_future": get_future_exam_runs(course),
         "exam_date_next_semester": get_exam_date_next_semester(course),
         "current_exam_dates": get_current_exam_run_dates(course),
-        "has_to_pay": has_to_pay_for_exam(mmtrack, course),
         "runs": [],
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
             mmtrack.get_course_proctorate_exam_results(course), many=True
@@ -292,7 +279,7 @@ def get_info_for_course(course, mmtrack):
                       datetime.datetime(datetime.MAXYEAR, 1, 1, tzinfo=pytz.utc), reverse=True)
     # pick the first `not enrolled` or the first
     for run_status in run_statuses:
-        if run_status.status not in [CourseRunStatus.NOT_ENROLLED, CourseRunStatus.PAID_BUT_NOT_ENROLLED]:
+        if run_status.status != CourseRunStatus.NOT_ENROLLED:
             break
     else:
         run_status = run_statuses[0]
@@ -331,13 +318,6 @@ def get_info_for_course(course, mmtrack):
         _add_run(run_status.course_run, mmtrack, CourseStatus.WILL_ATTEND)
     elif run_status.status == CourseRunStatus.CAN_UPGRADE:
         _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
-    elif run_status.status == CourseRunStatus.PAID_BUT_NOT_ENROLLED:
-        if course.program.financial_aid_availability:
-            next_run = course.first_unexpired_run()
-            if next_run is not None:
-                _add_run(next_run, mmtrack, CourseStatus.PAID_BUT_NOT_ENROLLED)
-        else:
-            _add_run(run_status.course_run, mmtrack, CourseStatus.PAID_BUT_NOT_ENROLLED)
 
     # add all the other runs with status != NOT_ENROLLED
     # the first one (or two in some cases) has been added with the logic before
@@ -355,6 +335,8 @@ def get_info_for_course(course, mmtrack):
             _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
         elif run_status.status == CourseRunStatus.CURRENTLY_ENROLLED:
             _add_run(run_status.course_run, mmtrack, CourseStatus.CURRENTLY_ENROLLED)
+        elif run_status.status == CourseRunStatus.NOT_PASSED:
+            _add_run(run_status.course_run, mmtrack, CourseStatus.NOT_PASSED)
 
     return course_data
 
@@ -397,21 +379,26 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
     Returns:
         CourseRunUserStatus: an object representing the run status for the user
     """
+    enrolled = mmtrack.is_enrolled(course_run.edx_course_key)
 
-    if mmtrack.has_paid_final_grade(course_run.edx_course_key):
-        return CourseRunUserStatus(CourseRunStatus.CHECK_IF_PASSED, course_run)
-    elif mmtrack.has_final_grade(course_run.edx_course_key):
+    if mmtrack.has_final_grade(course_run.edx_course_key):
+        final_grade = get_final_grade(mmtrack, course_run)
+        if course_run.has_frozen_grades:
+            return CourseRunUserStatus(
+                CourseRunStatus.MISSED_DEADLINE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+                course_run,
+            )
         if course_run.is_upgradable:
-            final_grade = get_final_grade(mmtrack, course_run)
-            if final_grade.passed:
-                return CourseRunUserStatus(CourseRunStatus.CAN_UPGRADE, course_run)
-            else:
-                return CourseRunUserStatus(CourseRunStatus.NOT_PASSED, course_run)
-        else:
-            return CourseRunUserStatus(CourseRunStatus.MISSED_DEADLINE, course_run)
-    elif not mmtrack.is_enrolled(course_run.edx_course_key):
-        if mmtrack.has_paid(course_run.edx_course_key):
-            return CourseRunUserStatus(CourseRunStatus.PAID_BUT_NOT_ENROLLED, course_run)
+            return CourseRunUserStatus(
+                CourseRunStatus.CAN_UPGRADE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+                course_run,
+            )
+        return CourseRunUserStatus(
+            CourseRunStatus.MISSED_DEADLINE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+            course_run,
+        )
+
+    if not enrolled:
         return CourseRunUserStatus(CourseRunStatus.NOT_ENROLLED, course_run)
     status = None
     if mmtrack.is_enrolled_mmtrack(course_run.edx_course_key):
@@ -480,7 +467,6 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
         'course_id': course_run.edx_course_key,
         'title': course_run.title,
         'status': status_for_user,
-        'has_paid': mmtrack.has_paid(course_run.edx_course_key),
         'position': position,
         'course_start_date': course_run.start_date,
         'course_end_date': course_run.end_date,
@@ -627,19 +613,6 @@ def get_current_exam_run_dates(course):
         schedulable_exam_run.date_first_eligible.strftime('%b %-d'),
         schedulable_exam_run.date_last_eligible.strftime('%b %-d, %Y')
     ) if schedulable_exam_run else ''
-
-
-def has_to_pay_for_exam(mmtrack, course):
-    """
-    Determine if payment is required for another exam attempt
-
-    Args:
-        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
-        course (courses.models.Course): A course
-    Returns:
-        bool: if the user has to pay for another exam attempt
-    """
-    return mmtrack.get_number_of_attempts_left(course) < 1
 
 
 def get_certificate_url(mmtrack, course):

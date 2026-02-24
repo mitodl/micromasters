@@ -7,7 +7,6 @@ import Card from "@material-ui/core/Card"
 import type { Program, Course } from "../../flow/programTypes"
 import type { CouponPrices } from "../../flow/couponTypes"
 import CourseRow from "./CourseRow"
-import FinancialAidCalculator from "../../containers/FinancialAidCalculator"
 import type { CourseRun } from "../../flow/programTypes"
 import type { UIState } from "../../reducers/ui"
 import { programBackendName } from "../../util/util"
@@ -23,7 +22,6 @@ export default class CourseListCard extends React.Component {
     email?: string,
     program: Program,
     couponPrices?: CouponPrices,
-    openFinancialAidCalculator?: () => void,
     now?: Object,
     addCourseEnrollment?: (courseId: string) => Promise<*>,
     openCourseContactDialog: (
@@ -38,7 +36,6 @@ export default class CourseListCard extends React.Component {
     setShowExpandedCourseStatus?: (n: number) => void,
     setShowGradeDetailDialog: (b: boolean, t: GradeType, title: string) => void,
     ui: UIState,
-    checkout?: (s: string) => void,
     showStaffView: boolean
   }
 
@@ -72,7 +69,6 @@ export default class CourseListCard extends React.Component {
     const {
       program,
       couponPrices,
-      openFinancialAidCalculator,
       addCourseEnrollment,
       openCourseContactDialog,
       setEnrollSelectedCourseRun,
@@ -83,7 +79,6 @@ export default class CourseListCard extends React.Component {
       setShowExpandedCourseStatus,
       setShowGradeDetailDialog,
       ui,
-      checkout,
       showStaffView
     } = this.props
     const now = this.props.now || moment()
@@ -95,11 +90,8 @@ export default class CourseListCard extends React.Component {
     )
     const courseRows = sortedCourses.map(course => (
       <CourseRow
-        hasFinancialAid={program.financial_aid_availability}
-        financialAid={program.financial_aid_user_info}
         course={course}
         key={course.id}
-        openFinancialAidCalculator={openFinancialAidCalculator}
         couponPrices={couponPrices}
         now={now}
         programHasElectives={hasElectives}
@@ -111,7 +103,6 @@ export default class CourseListCard extends React.Component {
         setExamEnrollmentDialogVisibility={setExamEnrollmentDialogVisibility}
         setSelectedExamCouponCourse={setSelectedExamCouponCourse}
         ui={ui}
-        checkout={checkout}
         setShowExpandedCourseStatus={setShowExpandedCourseStatus}
         setShowGradeDetailDialog={setShowGradeDetailDialog}
         showStaffView={showStaffView}
@@ -121,7 +112,6 @@ export default class CourseListCard extends React.Component {
     return (
       <Card shadow={0} className="card course-list">
         <CardContent className="course-list-content">
-          <FinancialAidCalculator />
           <h2>
             {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
           </h2>

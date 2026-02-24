@@ -1,5 +1,9 @@
-"""Management command to take screenshots and save API results for dashboard states"""
-# pylint: disable=redefined-outer-name,unused-argument
+"""Management command to take screenshots and save API results for dashboard states
+
+NOTE: This command is currently non-functional as it depends on the removed
+ecommerce and financialaid modules. It is kept for reference only.
+"""
+# pylint: disable=redefined-outer-name,unused-argument,undefined-variable
 import itertools
 import os
 import sys
@@ -17,11 +21,11 @@ from cms.factories import CourseCertificateSignatoriesFactory
 from courses.factories import CourseRunFactory
 from courses.models import Course, CourseRun, Program
 from dashboard.models import ProgramEnrollment
-from ecommerce.factories import LineFactory
+
 from ecommerce.models import Coupon, Order, UserCoupon
 from exams.factories import (ExamAuthorizationFactory, ExamProfileFactory,
                              ExamRunFactory)
-from financialaid.factories import FinancialAidFactory
+
 from financialaid.models import FinancialAidStatus
 from grades.factories import (FinalGradeFactory,
                               MicromastersCourseCertificateFactory,

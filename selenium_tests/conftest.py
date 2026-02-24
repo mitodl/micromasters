@@ -14,7 +14,6 @@ from selenium.webdriver import DesiredCapabilities, Remote
 from courses.factories import CourseRunFactory, ProgramFactory
 from dashboard.models import ProgramEnrollment
 from exams.factories import ExamRunFactory
-from financialaid.factories import TierProgramFactory
 from roles.models import Role
 from roles.roles import Staff
 from search.base import reindex_test_es_data
@@ -164,15 +163,13 @@ def base_test_data():
     """
     Fixture for test data that should be available to any test case in the suite
     """
-    # Create a live program with valid prices and financial aid
+    # Create a live program
     program = ProgramFactory.create(
         live=True,
-        financial_aid_availability=True,
         price=1000,
     )
     course_run = CourseRunFactory.create(course__program=program)
     ExamRunFactory.create(course=course_run.course)
-    TierProgramFactory.create_properly_configured_batch(2, program=program)
     # Create users
     staff_user, student_user = (create_user_for_login(is_staff=True), create_user_for_login(is_staff=False))
     ProgramEnrollment.objects.create(program=program, user=staff_user)

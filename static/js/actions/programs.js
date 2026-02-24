@@ -15,7 +15,6 @@ import {
 import type { Dispatcher } from "../flow/reduxTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
 import * as api from "../lib/api"
-import { actions } from "../lib/redux_rest"
 
 export const SET_CURRENT_PROGRAM_ENROLLMENT = "SET_CURRENT_PROGRAM_ENROLLMENT"
 export const setCurrentProgramEnrollment = createAction(
@@ -90,7 +89,6 @@ export const addProgramEnrollment = (
         )
         dispatch(setEnrollProgramDialogVisibility(false))
         dispatch(fetchDashboard(SETTINGS.user.username))
-        dispatch(actions.prices.get(SETTINGS.user.username))
       },
       error => {
         dispatch(receiveAddProgramEnrollmentFailure(error))

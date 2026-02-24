@@ -24,7 +24,6 @@ import {
 import * as api from "../lib/api"
 import * as dashboardActions from "../actions/dashboard"
 import rootReducer from "../reducers"
-import { actions } from "../lib/redux_rest"
 
 describe("enrollments", () => {
   let sandbox, store, getPrograms, addProgramEnrollmentStub
@@ -46,12 +45,9 @@ describe("enrollments", () => {
   }
 
   describe("enrollments reducer", () => {
-    let dispatchThen, fetchCoursePricesStub, fetchDashboardStub
+    let dispatchThen, fetchDashboardStub
     beforeEach(() => {
       dispatchThen = store.createDispatchThen(state => state.programs)
-
-      fetchCoursePricesStub = sandbox.stub(actions.prices, "get")
-      fetchCoursePricesStub.returns({ type: "fake" })
       fetchDashboardStub = sandbox.stub(dashboardActions, "fetchDashboard")
       fetchDashboardStub.returns({ type: "fake" })
     })
@@ -109,7 +105,6 @@ describe("enrollments", () => {
         )
         assert.equal(addProgramEnrollmentStub.callCount, 1)
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id])
-        assert.ok(fetchCoursePricesStub.calledWith())
         assert.ok(fetchDashboardStub.calledWith())
 
         assert.deepEqual(store.getState().ui.toastMessage, {
@@ -135,7 +130,6 @@ describe("enrollments", () => {
         assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS)
         assert.equal(addProgramEnrollmentStub.callCount, 1)
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id])
-        assert.notOk(fetchCoursePricesStub.calledWith())
         assert.notOk(fetchDashboardStub.calledWith())
 
         assert.deepEqual(store.getState().ui.toastMessage, {

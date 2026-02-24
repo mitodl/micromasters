@@ -5,21 +5,12 @@ import R from "ramda"
 import moment from "moment-timezone"
 
 import type { Coupon } from "../../../flow/couponTypes"
-import type {
-  Course,
-  CourseRun,
-  FinancialAidUserInfo
-} from "../../../flow/programTypes"
+import type { Course, CourseRun } from "../../../flow/programTypes"
 import {
-  COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
-  FA_PENDING_STATUSES,
-  FA_TERMINAL_STATUSES,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_CAN_UPGRADE,
-  COURSE_ACTION_CALCULATE_PRICE,
   DASHBOARD_FORMAT,
-  COURSE_DEADLINE_FORMAT,
   COURSE_ACTION_ENROLL
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
@@ -32,7 +23,8 @@ import {
   isOfferedInUncertainFuture,
   notNilorEmpty,
   hasCanUpgradeCourseRun,
-  hasMissedDeadlineCourseRun
+  hasMissedDeadlineCourseRun,
+  hasCurrentlyEnrolledCourseRun
 } from "./util"
 import { hasPassedCourseRun } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
@@ -58,8 +50,6 @@ export const formatDate = (date: ?string) =>
 
 type CalculateMessagesProps = {
   courseAction: (run: CourseRun, actionType: string) => React$Element<*>,
-  financialAid: FinancialAidUserInfo,
-  hasFinancialAid: boolean,
   firstRun: CourseRun,
   course: Course,
   expandedStatuses: Set<number>,
@@ -103,19 +93,11 @@ const enrollmentDateMessage = (run: CourseRun) => {
 export const calculateMessages = (props: CalculateMessagesProps) => {
   const {
     courseAction,
-    financialAid,
-    hasFinancialAid,
     firstRun,
     course,
     expandedStatuses,
     setShowExpandedCourseStatus
   } = props
-
-  const exams = course.has_exam
-  const paid = firstRun.has_paid
-  const paymentDueDate = moment(
-    R.defaultTo("", firstRun.course_upgrade_deadline)
-  )
 
   const messages = []
 
@@ -138,8 +120,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       {
         message: (
           <div>
-            {`You paid for this course but are not enrolled. You can enroll ${date}, or if` +
-              " you think there is a problem, "}
+            {`You're not enrolled in this course yet. You can enroll ${date}, or if you think there is a problem, `}
             <a href={contactHref}>contact us for help.</a>
           </div>
         ),
@@ -204,49 +185,16 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       message: "You passed this course."
     })
   }
-  // Course is running, user has already paid,
-  if (
-    courseUpcomingOrCurrent(firstRun) &&
-    paid &&
-    userIsEnrolled(firstRun) &&
-    !exams
-  ) {
-    return S.Just(messages)
-  }
-
   // handle other 'in-progress' cases
   if (
     firstRun.status === STATUS_CAN_UPGRADE &&
     courseUpcomingOrCurrent(firstRun)
   ) {
-    let message =
-      "You are auditing. To get credit, you need to pay for the course."
-    if (course.certificate_url) {
-      message =
-        "You are re-taking this course. To get a new grade, you need to pay again."
-    }
-    let actionType = COURSE_ACTION_PAY
-    if (hasFinancialAid) {
-      if (FA_PENDING_STATUSES.includes(financialAid.application_status)) {
-        message =
-          "You are auditing. Your personal course price is pending, " +
-          "and needs to be approved before you can pay for courses."
-      } else if (
-        !FA_TERMINAL_STATUSES.includes(financialAid.application_status)
-      ) {
-        actionType = COURSE_ACTION_CALCULATE_PRICE
-      }
-    }
-
-    let paymentDueMessage = ""
-    if (paymentDueDate.isValid()) {
-      paymentDueMessage = ` (Payment due on ${paymentDueDate
-        .tz(moment.tz.guess())
-        .format(COURSE_DEADLINE_FORMAT)})`
-    }
+    const message = course.certificate_url
+      ? "You are re-taking this course. Upgrades are no longer available."
+      : "You are auditing. Upgrades are no longer available."
     messages.push({
-      message: message + paymentDueMessage,
-      action:  courseAction(firstRun, actionType)
+      message
     })
     return S.Just(messages)
   }
@@ -270,20 +218,20 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     return S.Just(messages)
   } else if (hasCanUpgradeCourseRun(course)) {
-    // the course finished but can still pay
-    const dueDate = paymentDueDate.isValid()
-      ? ` (Payment due on ${paymentDueDate.format(DASHBOARD_FORMAT)})`
-      : ""
+    // the course finished but was audited
     messages.push({
-      message: `The edX course is complete, but you need to pay to get credit.${dueDate}`,
-      action:  courseAction(firstRun, COURSE_ACTION_PAY)
+      message:
+        "The edX course is complete, but upgrades are no longer available."
     })
     return S.Just(messages)
-  } else if (hasMissedDeadlineCourseRun(course)) {
-    // the course finished can't pay
+  } else if (
+    hasMissedDeadlineCourseRun(course) &&
+    !hasCurrentlyEnrolledCourseRun(course)
+  ) {
+    // the course finished and the upgrade deadline passed
     const date = run => formatDate(run.course_start_date)
     const msg = run => {
-      return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
+      return `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date(
         run
       )}.${enrollmentDateMessage(run)}`
     }
@@ -291,8 +239,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       S.maybe(
         {
           message:
-            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
-            "There are no future runs of this course scheduled at this time."
+            "You missed the upgrade deadline and will not receive MicroMasters credit for this course. There are no future runs of this course scheduled at this time."
         },
         run => ({
           message: msg(run),

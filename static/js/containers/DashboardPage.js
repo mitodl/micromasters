@@ -7,51 +7,20 @@ import PropTypes from "prop-types"
 import type { Dispatch } from "redux"
 import { connect } from "react-redux"
 import _ from "lodash"
-import moment from "moment"
 import R from "ramda"
-import Dialog from "@material-ui/core/Dialog"
-import DialogTitle from "@material-ui/core/DialogTitle"
-import DialogContent from "@material-ui/core/DialogContent"
-import DialogActions from "@material-ui/core/DialogActions"
 import Alert from "react-bootstrap/lib/Alert"
 
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
 import Loader from "../components/Loader"
-import { calculatePrices, isFreeCoupon } from "../lib/coupon"
-import {
-  FETCH_SUCCESS,
-  FETCH_PROCESSING,
-  FETCH_FAILURE,
-  checkout
-} from "../actions"
-import {
-  updateCourseStatus,
-  fetchDashboard,
-  clearDashboard
-} from "../actions/dashboard"
-import { clearProfile } from "../actions/profile"
+import { FETCH_SUCCESS, FETCH_PROCESSING, FETCH_FAILURE } from "../actions"
+import { fetchDashboard, clearDashboard } from "../actions/dashboard"
 import { addProgramEnrollment } from "../actions/programs"
-import {
-  COUPON_CONTENT_TYPE_COURSE,
-  COUPON_CONTENT_TYPE_PROGRAM,
-  FA_TERMINAL_STATUSES,
-  FA_PENDING_STATUSES,
-  TOAST_SUCCESS,
-  TOAST_FAILURE,
-  STATUS_OFFERED,
-  STATUS_CAN_UPGRADE,
-  STATUS_PENDING_ENROLLMENT,
-  STATUS_NOT_PASSED,
-  STATUS_PASSED,
-  STATUS_CURRENTLY_ENROLLED,
-  STATUS_PAID_BUT_NOT_ENROLLED
-} from "../constants"
+import { COUPON_CONTENT_TYPE_COURSE, TOAST_FAILURE } from "../constants"
 import {
   setToastMessage,
   setConfirmSkipDialogVisibility,
   setDocsInstructionsVisibility,
   setCouponNotificationVisibility,
-  setPaymentTeaserDialogVisibility,
   setEnrollCourseDialogVisibility,
   setCalculatePriceDialogVisibility,
   setExamEnrollmentDialogVisibility,
@@ -65,63 +34,36 @@ import {
   setEnrollSelectedProgram
 } from "../actions/ui"
 import { showEnrollPayLaterSuccessMessage } from "../actions/course_enrollments"
-import { clearCalculatorEdit } from "../actions/financial_aid"
-import { findCourseRun } from "../util/util"
 import CourseListCard from "../components/dashboard/CourseListCard"
 import DashboardUserCard from "../components/dashboard/DashboardUserCard"
 import ErrorMessage from "../components/ErrorMessage"
 import LearnersInProgramCard from "../components/LearnersInProgramCard"
 import ProgressWidget from "../components/ProgressWidget"
-import { clearCoupons, fetchCoupons } from "../actions/coupons"
-import {
-  setDocumentSentDate,
-  updateDocumentSentDate
-} from "../actions/documents"
-import {
-  startCalculatorEdit,
-  updateCalculatorEdit
-} from "../actions/financial_aid"
-import { setTimeoutActive } from "../actions/order_receipt"
+import { clearCoupons } from "../actions/coupons"
 import { attachCoupon, setRecentlyAttachedCoupon } from "../actions/coupons"
 import { COURSE_EMAIL_TYPE } from "../components/email/constants"
 import { COURSE_TEAM_EMAIL_CONFIG } from "../components/email/lib"
 import { withEmailDialog } from "../components/email/hoc"
-import { singleBtnDialogActions } from "../components/inputs/util"
-import { skipFinancialAid } from "../actions/financial_aid"
-import { currencyForCountry } from "../lib/currency"
-import DocsInstructionsDialog from "../components/DocsInstructionsDialog"
 import CouponNotificationDialog from "../components/CouponNotificationDialog"
 import CourseEnrollmentDialog from "../components/CourseEnrollmentDialog"
 import SocialAuthReauthenticateDialog from "../components/SocialAuthReauthenticateDialog"
-import { INCOME_DIALOG } from "./FinancialAidCalculator"
-import { processCheckout } from "./OrderSummaryPage"
-import { getOwnDashboard, getOwnCoursePrices } from "../reducers/util"
+import { getOwnDashboard } from "../reducers/util"
 import { actions } from "../lib/redux_rest"
-import { wait } from "../util/util"
-import { CALCULATOR_DIALOG } from "./FinancialAidCalculator"
 import { gradeDetailPopupKey } from "../components/dashboard/courses/Grades"
 
 import type { UIState } from "../reducers/ui"
-import type { OrderReceiptState } from "../reducers/order_receipt"
-import type { DocumentsState } from "../reducers/documents"
-import type {
-  CoursePrices,
-  DashboardState,
-  ProgramLearners
-} from "../flow/dashboardTypes"
+import type { DashboardState, ProgramLearners } from "../flow/dashboardTypes"
 import type { AllEmailsState } from "../flow/emailTypes"
 import type {
   AvailableProgram,
   AvailableProgramsState
 } from "../flow/enrollmentTypes"
-import type { FinancialAidState } from "../reducers/financial_aid"
 import type { CouponsState } from "../reducers/coupons"
 import type { ProfileGetResult } from "../flow/profileTypes"
 import type { Course, CourseRun, Program } from "../flow/programTypes"
 import type { Coupon } from "../flow/couponTypes"
 import type { RestState } from "../flow/restTypes"
 import type { ExamEnrollmentResponse } from "../flow/enrollmentTypes"
-import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])
@@ -141,14 +83,10 @@ class DashboardPage extends React.Component {
     currentProgramEnrollment: AvailableProgram,
     programs: AvailableProgramsState,
     dashboard: DashboardState,
-    prices: RestState<CoursePrices>,
     programLearners: RestState<ProgramLearners>,
     dispatch: Dispatch,
     ui: UIState,
     email: AllEmailsState,
-    documents: DocumentsState,
-    orderReceipt: OrderReceiptState,
-    financialAid: FinancialAidState,
     location: Object,
     openEmailComposer: (emailType: string, emailOpenParams: any) => void
   }
@@ -159,17 +97,11 @@ class DashboardPage extends React.Component {
 
   componentDidUpdate() {
     this.updateRequirements()
-
-    const program = this.getCurrentlyEnrolledProgram()
-    if (this.shouldSkipFinancialAid() && program !== undefined) {
-      this.skipFinancialAid(program.id)
-    }
   }
 
   componentWillUnmount() {
     const { dispatch, programLearners } = this.props
     dispatch(clearDashboard(SETTINGS.user.username))
-    dispatch(actions.prices.clear(SETTINGS.user.username))
 
     _.forEach(R.keys(programLearners), id =>
       dispatch(actions.programLearners.clear(id))
@@ -178,133 +110,22 @@ class DashboardPage extends React.Component {
   }
 
   openCourseContactDialog = (course: Course, canContactCourseTeam: boolean) => {
-    const { dispatch, openEmailComposer } = this.props
+    const { openEmailComposer } = this.props
     if (canContactCourseTeam) {
       openEmailComposer(COURSE_EMAIL_TYPE, course)
-    } else {
-      dispatch(setPaymentTeaserDialogVisibility(true))
-    }
-  }
-
-  closePaymentTeaserDialog = () => {
-    const { dispatch } = this.props
-    dispatch(setPaymentTeaserDialogVisibility(false))
-  }
-
-  handleOrderSuccess = (course: Course): void => {
-    const {
-      dispatch,
-      ui: { toastMessage }
-    } = this.props
-    const firstRun: ?CourseRun = course.runs.length > 0 ? course.runs[0] : null
-
-    if (_.isNil(toastMessage)) {
-      if (firstRun && firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
-        dispatch(
-          setToastMessage({
-            title:   "Course Enrollment",
-            message: `Something went wrong. You paid for this course '${
-              course.title
-            }' but are not enrolled.`,
-            icon: TOAST_FAILURE
-          })
-        )
-      } else {
-        dispatch(
-          setToastMessage({
-            title:   "Order Complete!",
-            message: `You are now enrolled in ${course.title}`,
-            icon:    TOAST_SUCCESS
-          })
-        )
-      }
-    }
-    this.context.router.push("/dashboard/")
-  }
-
-  handleOrderCancellation = (): void => {
-    const {
-      dispatch,
-      ui: { toastMessage }
-    } = this.props
-    if (_.isNil(toastMessage)) {
-      dispatch(
-        setToastMessage({
-          message: "Order was cancelled",
-          icon:    TOAST_FAILURE
-        })
-      )
-    }
-    this.context.router.push("/dashboard/")
-  }
-
-  handleOrderPending = (run: CourseRun): void => {
-    const { dispatch } = this.props
-    dispatch(
-      updateCourseStatus(
-        SETTINGS.user.username,
-        run.course_id,
-        STATUS_PENDING_ENROLLMENT
-      )
-    )
-
-    if (!this.props.orderReceipt.timeoutActive) {
-      wait(3000).then(() => {
-        const { orderReceipt } = this.props
-        dispatch(setTimeoutActive(false))
-        const deadline = moment(orderReceipt.initialTime).add(2, "minutes")
-        const now = moment()
-        if (now.isBefore(deadline)) {
-          dispatch(fetchDashboard(SETTINGS.user.username, true))
-        } else {
-          dispatch(
-            setToastMessage({
-              message: "Order was not processed",
-              icon:    TOAST_FAILURE
-            })
-          )
-        }
-      })
-      dispatch(setTimeoutActive(true))
     }
   }
 
   updateRequirements = () => {
     this.fetchDashboard()
-    this.fetchCoursePrices()
     this.fetchProgramLearners()
     this.handleCoupon()
-    this.fetchCoupons()
-    this.handleOrderStatus()
-    this.checkFinancialAidError()
-  }
-
-  checkFinancialAidError = () => {
-    const {
-      financialAid: { fetchError },
-      dispatch
-    } = this.props
-    if (fetchError && fetchError.message === "Profile is not complete") {
-      dispatch(clearProfile(SETTINGS.user.username))
-      this.context.router.push(`/profile/`)
-      dispatch(hideDialog(INCOME_DIALOG))
-      dispatch(clearCalculatorEdit())
-    }
   }
 
   fetchDashboard() {
     const { dashboard, dispatch } = this.props
     if (dashboard.fetchStatus === undefined) {
       dispatch(fetchDashboard(SETTINGS.user.username)).catch(() => {
-        /* Promise rejected */
-      })
-    }
-  }
-
-  fetchCoursePrices() {
-    const { prices, dispatch } = this.props
-    if (prices.getStatus === undefined) {
-      dispatch(actions.prices.get(SETTINGS.user.username)).catch(() => {
         /* Promise rejected */
       })
     }
@@ -320,57 +141,6 @@ class DashboardPage extends React.Component {
       dispatch(actions.programLearners.get(program.id)).catch(() => {
         /* Promise rejected */
       })
-    }
-  }
-
-  fetchCoupons() {
-    const { coupons, dispatch } = this.props
-    if (coupons.fetchGetStatus === undefined) {
-      dispatch(fetchCoupons()).catch(() => {
-        /* Promise rejected */
-      })
-    }
-  }
-
-  handleOrderStatus = () => {
-    const {
-      dashboard,
-      location: { query }
-    } = this.props
-
-    if (dashboard.fetchStatus !== FETCH_SUCCESS) {
-      // wait until we have access to the dashboard
-      return
-    }
-
-    const courseKey = query.course_key
-    if (query.status === "receipt") {
-      const [courseRun, course] = findCourseRun(
-        dashboard.programs,
-        run => run !== null && run.course_id === courseKey
-      )
-      if (courseRun === null || course === null) {
-        // could not find course to handle order status for
-        return
-      }
-      switch (courseRun.status) {
-      case STATUS_CAN_UPGRADE:
-      case STATUS_OFFERED:
-        // user is directed to the order receipt page but order is not yet fulfilled
-        this.handleOrderPending(courseRun)
-        break
-      case STATUS_NOT_PASSED:
-      case STATUS_PASSED:
-      case STATUS_CURRENTLY_ENROLLED:
-      case STATUS_PAID_BUT_NOT_ENROLLED:
-        this.handleOrderSuccess(course)
-        break
-      default:
-        // do nothing, a timeout was set to check back later
-        break
-      }
-    } else if (query.status === "cancel") {
-      this.handleOrderCancellation()
     }
   }
 
@@ -419,8 +189,6 @@ class DashboardPage extends React.Component {
         this.setRecentlyAttachedCoupon(result.coupon)
         this.setCouponNotificationVisibility(true)
         this.context.router.push("/dashboard/")
-        // update coupon state in Redux
-        dispatch(fetchCoupons())
       },
       () => {
         dispatch(
@@ -435,27 +203,6 @@ class DashboardPage extends React.Component {
     )
   }
 
-  openFinancialAidCalculator = () => {
-    const {
-      dispatch,
-      currentProgramEnrollment,
-      profile: {
-        profile: { country }
-      }
-    } = this.props
-    dispatch(startCalculatorEdit(currentProgramEnrollment.id))
-    if (country) {
-      const currencyPrediction = currencyForCountry(country)
-      dispatch(updateCalculatorEdit({ currency: currencyPrediction }))
-    }
-    dispatch(showDialog(CALCULATOR_DIALOG))
-  }
-
-  setDocumentSentDate = (newDate: string): void => {
-    const { dispatch } = this.props
-    dispatch(setDocumentSentDate(newDate))
-  }
-
   getCurrentlyEnrolledProgram = () => {
     const { currentProgramEnrollment, dashboard } = this.props
     if (_.isNil(currentProgramEnrollment) || _.isNil(dashboard)) {
@@ -464,35 +211,6 @@ class DashboardPage extends React.Component {
     return dashboard.programs.find(
       program => program.id === currentProgramEnrollment.id
     )
-  }
-
-  skipFinancialAid = (programId: number): any => {
-    const { dispatch, financialAid } = this.props
-
-    const program = this.getCurrentlyEnrolledProgram()
-    if (
-      program &&
-      program.financial_aid_user_info &&
-      !FA_TERMINAL_STATUSES.includes(
-        program.financial_aid_user_info.application_status
-      ) &&
-      financialAid.fetchSkipStatus === undefined
-    ) {
-      return dispatch(skipFinancialAid(programId)).then(
-        () => {
-          this.setConfirmSkipDialogVisibility(false)
-        },
-        () => {
-          this.setConfirmSkipDialogVisibility(false)
-          dispatch(
-            setToastMessage({
-              message: "Failed to skip financial aid.",
-              icon:    TOAST_FAILURE
-            })
-          )
-        }
-      )
-    }
   }
 
   setConfirmSkipDialogVisibility = bool => {
@@ -505,20 +223,11 @@ class DashboardPage extends React.Component {
     dispatch(setExamEnrollmentDialogVisibility(bool))
   }
 
-  updateDocumentSentDate = (
-    financialAidId: number,
-    sentDate: string
-  ): Promise<*> => {
-    const { dispatch } = this.props
-    return dispatch(updateDocumentSentDate(financialAidId, sentDate))
-  }
-
   addCourseEnrollment = (courseId: string): Promise<*> => {
     const { dispatch } = this.props
     return dispatch(actions.courseEnrollments.post(courseId)).then(
       () => {
         dispatch(fetchDashboard(SETTINGS.user.username, true))
-        dispatch(actions.prices.get(SETTINGS.user.username, true))
         dispatch(showEnrollPayLaterSuccessMessage(courseId))
       },
       () => {
@@ -591,22 +300,6 @@ class DashboardPage extends React.Component {
     this.context.router.push("/learner")
   }
 
-  shouldSkipFinancialAid = (): boolean => {
-    // If the user has a 100% off coupon for the program, there's no need for financial aid
-    const program = this.getCurrentlyEnrolledProgram()
-
-    return R.compose(
-      R.any(
-        coupon =>
-          program !== undefined &&
-          isFreeCoupon(coupon) &&
-          coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM &&
-          coupon.program_id === program.id
-      ),
-      R.pathOr([], ["coupons", "coupons"])
-    )(this.props)
-  }
-
   setShowGradeDetailDialog = (
     open: boolean,
     gradeType: GradeType,
@@ -654,53 +347,6 @@ class DashboardPage extends React.Component {
     )
   }
 
-  renderCourseContactPaymentDialog() {
-    const { ui } = this.props
-    const program = this.getCurrentlyEnrolledProgram()
-    const messageTail =
-      program && program.financial_aid_availability
-        ? "learners who have paid for the course"
-        : "verified learners"
-    return (
-      <Dialog
-        classes={{ paper: "dialog", root: "course-payment-dialog-wrapper" }}
-        open={ui.paymentTeaserDialogVisibility}
-        onClose={this.closePaymentTeaserDialog}
-      >
-        <DialogTitle className="dialog-title">
-          Contact the Course Team
-        </DialogTitle>
-        <DialogContent>
-          <div className="inner-content">
-            <img
-              src="/static/images/contact_course_team_icon.png"
-              alt="Instructor icon"
-            />
-            <p>{`This is a premium feature for ${messageTail}.`}</p>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          {singleBtnDialogActions(this.closePaymentTeaserDialog)}
-        </DialogActions>
-      </Dialog>
-    )
-  }
-
-  dispatchCheckout = (courseId: string) => {
-    const { dispatch } = this.props
-    return dispatch(checkout(courseId)).then(processCheckout)
-  }
-
-  renderPersonalCoursePriceDialog() {
-    const { ui } = this.props
-    return (
-      <PersonalCoursePriceDialog
-        open={ui.calculatePriceDialogVisibility}
-        openFinancialAidCalculator={this.openFinancialAidCalculator}
-        setVisibility={this.setCalculatePriceDialogVisibility}
-      />
-    )
-  }
   renderExamEnrollmentDialog() {
     const { ui } = this.props
     const program = this.getCurrentlyEnrolledProgram()
@@ -744,27 +390,10 @@ class DashboardPage extends React.Component {
       return null
     }
 
-    // technically this is, has user applied or does it not matter if they didn't
-    const hasUserApplied =
-      !program.financial_aid_availability ||
-      this.shouldSkipFinancialAid() ||
-      program.financial_aid_user_info.has_user_applied
-    const pendingFinancialAid =
-      program.financial_aid_availability &&
-      program.financial_aid_user_info.has_user_applied &&
-      FA_PENDING_STATUSES.includes(
-        program.financial_aid_user_info.application_status
-      )
-
     return (
       <CourseEnrollmentDialog
         course={course}
         courseRun={courseRun}
-        hasUserApplied={hasUserApplied}
-        pendingFinancialAid={pendingFinancialAid}
-        financialAidAvailability={program.financial_aid_availability}
-        openFinancialAidCalculator={this.openFinancialAidCalculator}
-        checkout={this.dispatchCheckout}
         open={ui.enrollCourseDialogVisibility}
         setVisibility={this.setEnrollCourseDialogVisibility}
         addCourseEnrollment={this.addCourseEnrollment}
@@ -797,12 +426,9 @@ class DashboardPage extends React.Component {
   }
 
   renderErrorMessage = (): React$Element<*> | null => {
-    const { dashboard, prices } = this.props
+    const { dashboard } = this.props
     if (dashboard.errorInfo) {
       return <ErrorMessage errorInfo={dashboard.errorInfo} />
-    }
-    if (prices.error) {
-      return <ErrorMessage errorInfo={prices.error} />
     }
     return null
   }
@@ -886,11 +512,8 @@ class DashboardPage extends React.Component {
 
   renderPageContent = (): React$Element<*> => {
     const {
-      dashboard,
-      prices,
       profile: { profile },
-      ui,
-      coupons
+      ui
     } = this.props
     const program = this.getCurrentlyEnrolledProgram()
 
@@ -898,28 +521,21 @@ class DashboardPage extends React.Component {
       return this.noProgramSelectedCard()
     }
 
-    if (!prices.data) {
-      throw new Error("no program; should never get here")
+    // Upgrades are discontinued, so coupon prices are empty
+    const couponPrices = {
+      pricesInclCouponByRun:     new Map(),
+      pricesInclCouponByCourse:  new Map(),
+      pricesInclCouponByProgram: new Map(),
+      pricesExclCouponByProgram: new Map()
     }
-
-    const couponPrices = calculatePrices(
-      dashboard.programs,
-      prices.data,
-      coupons.coupons
-    )
 
     return (
       <div>
         {this.renderEdxCacheRefreshErrorMessage()}
         <h5 className="program-title-dashboard">{program.title}</h5>
         <div className="double-column">
-          <DocsInstructionsDialog
-            open={ui.docsInstructionsVisibility}
-            setDialogVisibility={this.setDocsInstructionsVisibility}
-          />
           {this.renderCouponDialog()}
           {this.renderCourseEnrollmentDialog()}
-          {this.renderPersonalCoursePriceDialog()}
           {this.renderExamEnrollmentDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program} />
@@ -929,8 +545,6 @@ class DashboardPage extends React.Component {
               couponPrices={couponPrices}
               key={program.id}
               ui={ui}
-              checkout={this.dispatchCheckout}
-              openFinancialAidCalculator={this.openFinancialAidCalculator}
               addCourseEnrollment={this.addCourseEnrollment}
               openCourseContactDialog={this.openCourseContactDialog}
               setEnrollSelectedCourseRun={this.setEnrollSelectedCourseRun}
@@ -959,15 +573,9 @@ class DashboardPage extends React.Component {
   }
 
   render() {
-    const { dashboard, prices } = this.props
-    const loaded = R.all(isFinishedProcessing, [
-      dashboard.fetchStatus,
-      prices.getStatus
-    ])
-    const fetchStarted =
-      !_.isNil(prices.getStatus) && !_.isNil(dashboard.fetchStatus)
-    // TODO: we should handle prices.noSpinner too. This currently works because we always dispatch both actions with
-    // noSpinner: true at the same time
+    const { dashboard } = this.props
+    const loaded = isFinishedProcessing(dashboard.fetchStatus)
+    const fetchStarted = !_.isNil(dashboard.fetchStatus)
     const noSpinner = dashboard.noSpinner
 
     const errorMessage = this.renderErrorMessage()
@@ -982,7 +590,6 @@ class DashboardPage extends React.Component {
           <Loader loaded={loaded}>
             {errorMessage}
             {pageContent}
-            {this.renderCourseContactPaymentDialog()}
           </Loader>
           <SocialAuthReauthenticateDialog
             invalidBackendCredentials={dashboard.invalidBackendCredentials}
@@ -1003,15 +610,11 @@ const mapStateToProps = state => {
   return {
     profile:                  profile,
     dashboard:                getOwnDashboard(state),
-    prices:                   getOwnCoursePrices(state),
     programLearners:          state.programLearners,
     programs:                 state.programs,
     currentProgramEnrollment: state.currentProgramEnrollment,
     ui:                       state.ui,
     email:                    state.email,
-    documents:                state.documents,
-    orderReceipt:             state.orderReceipt,
-    financialAid:             state.financialAid,
     coupons:                  state.coupons
   }
 }

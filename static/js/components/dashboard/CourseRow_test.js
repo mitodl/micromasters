@@ -14,7 +14,6 @@ import CourseRow from "./CourseRow"
 import CourseAction from "./CourseAction"
 import ProgressMessage from "./courses/ProgressMessage"
 import StatusMessages from "./courses/StatusMessages"
-import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../test_constants"
 import { STATUS_NOT_PASSED } from "../../constants"
 import { INITIAL_UI_STATE } from "../../reducers/ui"
 import { makeRunCurrent, makeRunPast } from "./courses/test_util"
@@ -41,9 +40,6 @@ describe("CourseRow", () => {
     const couponPrices = calculatePrices(dashboard.programs, prices, [])
     return render(
       <CourseRow
-        hasFinancialAid={true}
-        financialAid={FINANCIAL_AID_PARTIAL_RESPONSE}
-        openFinancialAidCalculator={sandbox.stub}
         now={moment()}
         addCourseEnrollment={sandbox.stub()}
         course={course}
@@ -76,7 +72,6 @@ describe("CourseRow", () => {
     )
     const statusProps = wrapper.find(StatusMessages).props()
     assert.deepEqual(statusProps.course, course)
-    assert.deepEqual(statusProps.hasFinancialAid, true)
     assert.deepEqual(statusProps.firstRun, course.runs[0])
 
     assert.deepEqual(wrapper.find(".course-title").text(), course.title)

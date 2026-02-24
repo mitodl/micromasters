@@ -18,23 +18,13 @@ import {
   UPDATE_PROFILE_VALIDATION,
   UPDATE_VALIDATION_VISIBILITY
 } from "../actions/profile"
-import {
-  REQUEST_CHECKOUT,
-  RECEIVE_CHECKOUT_SUCCESS,
-  RECEIVE_CHECKOUT_FAILURE,
-  FETCH_FAILURE,
-  FETCH_PROCESSING,
-  FETCH_SUCCESS
-} from "../actions"
+import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
 import { ui } from "./ui"
 import { email } from "./email"
 import { currentProgramEnrollment, programs } from "./programs"
 import type { Action } from "../flow/reduxTypes"
 import type { ProfileGetResult, Profiles } from "../flow/profileTypes"
 import { imageUpload } from "./image_upload"
-import { financialAid } from "./financial_aid"
-import { documents } from "./documents"
-import { orderReceipt } from "./order_receipt"
 import { coupons } from "./coupons"
 import { dashboard } from "./dashboard"
 import { ALL_ERRORS_VISIBLE } from "../constants"
@@ -170,50 +160,17 @@ export const profiles = (
   }
 }
 
-export type CheckoutState = {
-  fetchStatus?: string
-}
-const INITIAL_CHECKOUT_STATE = {}
-export const checkout = (
-  state: CheckoutState = INITIAL_CHECKOUT_STATE,
-  action: Action<null, null>
-) => {
-  switch (action.type) {
-  case REQUEST_CHECKOUT:
-    return {
-      ...state,
-      fetchStatus: FETCH_PROCESSING
-    }
-  case RECEIVE_CHECKOUT_SUCCESS:
-    return {
-      ...state,
-      fetchStatus: FETCH_SUCCESS
-    }
-  case RECEIVE_CHECKOUT_FAILURE:
-    return {
-      ...state,
-      fetchStatus: FETCH_FAILURE
-    }
-  default:
-    return state
-  }
-}
-
 export default combineReducers({
   profiles,
   dashboard,
   ui,
   email,
-  checkout,
   programs,
   currentProgramEnrollment,
   shareDialog,
   sendDialog,
   revokeShareDialog,
   imageUpload,
-  financialAid,
-  documents,
-  orderReceipt,
   coupons,
   ...reducers
 })

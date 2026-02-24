@@ -10,7 +10,6 @@ import EducationTab from './components/EducationTab';
 import EmploymentTab from './components/EmploymentTab';
 import LearnerPage from './containers/LearnerPage';
 import Learner from './components/Learner';
-import OrderSummaryPage from './containers/OrderSummaryPage';
 
 const errorLoading = error => {
   console.log("loading error caused by:", error)
@@ -31,14 +30,6 @@ export const routes = {
       path: 'dashboard',
       getComponent(nextState, cb) {
         import('./containers/DashboardPage')
-          .then(loadRoute(cb))
-          .catch(errorLoading);
-      }
-    },
-    {
-      path: 'order_summary',
-      getComponent(nextState, cb) {
-        import('./containers/OrderSummaryPage')
           .then(loadRoute(cb))
           .catch(errorLoading);
       }

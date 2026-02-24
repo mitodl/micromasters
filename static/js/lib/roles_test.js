@@ -4,12 +4,10 @@ import { assert } from "chai"
 import {
   hasAnyStaffRole,
   hasStaffForProgram,
-  hasEditAbility,
   canAdvanceSearchProgram,
   canMessageLearnersProgram,
   hasRolePerm,
-  hasPermForProgram,
-  firstFinancialAidProgram
+  hasPermForProgram
 } from "./roles"
 
 describe("roles library", () => {
@@ -54,45 +52,23 @@ describe("roles library", () => {
   describe("hasRolePerm", () => {
     it("should return false if the user has perm on the specified program", () => {
       const role = { permissions: [] }
-      assert.isFalse(hasRolePerm("can_edit_financial_aid", role))
+      assert.isFalse(hasRolePerm("some_permission", role))
     })
 
     it("should return true if the user has perm on the specified program", () => {
-      const role = { permissions: ["can_edit_financial_aid"] }
-      assert.isTrue(hasRolePerm("can_edit_financial_aid", role))
+      const role = { permissions: ["some_permission"] }
+      assert.isTrue(hasRolePerm("some_permission", role))
     })
   })
 
   describe("hasPermForProgram", () => {
     it("should return false if the user has perm on the specified program", () => {
-      assert.isFalse(
-        hasPermForProgram("can_edit_financial_aid", { id: 1 }, roles)
-      )
+      assert.isFalse(hasPermForProgram("some_permission", { id: 1 }, roles))
     })
 
     it("should return true if the user has perm on the specified program", () => {
-      roles[0].permissions.push("can_edit_financial_aid")
-      assert.isTrue(
-        hasPermForProgram("can_edit_financial_aid", { id: 1 }, roles)
-      )
-    })
-  })
-
-  describe("hasEditAbility", () => {
-    it("should return false if user does not have the permission", () => {
-      roles.forEach(role => {
-        assert.isFalse(hasEditAbility(role))
-      })
-    })
-
-    it("should return true if user has permission on any program", () => {
-      roles[0].permissions.push("can_edit_financial_aid")
-      assert.isTrue(hasEditAbility(roles[0]))
-    })
-
-    it("should return false if the user only has other permissions", () => {
-      roles[0].permissions.push("can_make_bad_jokes")
-      assert.isFalse(hasEditAbility(roles[0]))
+      roles[0].permissions.push("some_permission")
+      assert.isTrue(hasPermForProgram("some_permission", { id: 1 }, roles))
     })
   })
 
@@ -125,19 +101,6 @@ describe("roles library", () => {
     it("should return false if the user only has other permissions", () => {
       roles[0].permissions.push("can_make_bad_jokes")
       assert.isFalse(canMessageLearnersProgram({ id: 1 }, roles))
-    })
-  })
-
-  describe("firstFinancialAidProgram", () => {
-    it("should return null if the user doesnt have the right permission", () => {
-      assert.isNull(firstFinancialAidProgram(roles))
-    })
-
-    it("should return the program ID if the user does have the permission", () => {
-      roles[1].permissions.push("can_edit_financial_aid")
-      assert.equal(2, firstFinancialAidProgram(roles))
-      roles[0].permissions.push("can_edit_financial_aid")
-      assert.equal(1, firstFinancialAidProgram(roles))
     })
   })
 })
