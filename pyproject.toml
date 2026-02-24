@@ -38,7 +38,7 @@ dependencies = [
     "sentry-sdk==1.1.0",
     "redis>=4.0",
     "requests>=2.20.0",
-    "setuptools>=67.6.1",
+    "setuptools>=67.6.1,<80",
     "six>=1.11.0",
     "robohash==2.0.0",
     "tornado>=6.0",
