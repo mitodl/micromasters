@@ -75,4 +75,5 @@ dev = [
     "selenium",
     "testfixtures",
     "isort",
+    "semantic-version",
 ]
