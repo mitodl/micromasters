@@ -104,7 +104,9 @@ jobs:
           export MEDIA_ROOT="$(mktemp -d)"
           sudo mkdir /var/media 
           sudo chown -R $USER:$USER /var/media
-          tox
+          uv run pytest
+          ./scripts/test/detect_missing_migrations.sh
+          ./scripts/test/no_auto_migrations.sh
         env:
           DEBUG: 'False'
           NODE_ENV: 'production'
