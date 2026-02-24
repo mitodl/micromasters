@@ -47,16 +47,17 @@ jobs:
       - name: Apt install
         run: cat Aptfile | sudo xargs apt-get install
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install Python
+        run: uv python install
 
       - name: Install dependencies
-        run: pip install -r requirements.txt -r test_requirements.txt
+        run: uv sync --frozen
 
       - name: Lint
-        run: pylint ./**/*.py
+        run: uv run pylint ./**/*.py
         env:
           DEBUG: 'False'
           NODE_ENV: 'production'

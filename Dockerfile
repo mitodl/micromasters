@@ -11,17 +11,21 @@ RUN apt-get install -y $(grep -vE "^\s*#" apt.txt  | tr "\n" " ")
 
 RUN apt-get update && apt-get install libpq-dev postgresql-client -y
 
-# pip
-RUN curl --silent --location https://bootstrap.pypa.io/get-pip.py | python3 -
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # Add, and run as, non-root user.
 RUN mkdir /src
 RUN adduser --disabled-password --gecos "" mitodl
 RUN mkdir /var/media && chown -R mitodl:mitodl /var/media
 
+ENV UV_PROJECT_ENVIRONMENT="/opt/venv"
+ENV PATH="/opt/venv/bin:$PATH"
+
 # Install project packages
-COPY *requirements.txt /tmp/
-RUN pip install -r requirements.txt -r test_requirements.txt
+COPY pyproject.toml uv.lock /src/
+WORKDIR /src
+RUN uv sync --frozen --no-install-project
 
 # Add project
 COPY . /src
