@@ -312,7 +312,7 @@ typing-extensions==4.15.0
     # via
     #   django-stubs-ext
     #   django-tasks
-urllib3==1.26.5
+urllib3==1.26.19
     # via
     #   -r requirements.in
     #   botocore
