@@ -9,7 +9,7 @@ fail() {
     exit 1
 }
 
-./manage.py makemigrations --no-input --dry-run >& "$TMPFILE"
+uv run python manage.py makemigrations --no-input --dry-run >& "$TMPFILE"
 if [[ $? -ne 0 ]]
 then
     # makemigrations has returned a non-zero for some reason, possibly
