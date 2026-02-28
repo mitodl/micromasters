@@ -20,7 +20,7 @@ dependencies = [
     "django-webpack-loader==1.7.0",
     "djangorestframework>=3.14",
     "edx-api-client==1.2.0",
-    "edx-opaque-keys==0.4",
+    "edx-opaque-keys==0.4.4",
     "opensearch-py==1.0.0",
     "opensearch-dsl==1.0.0",
     "factory-boy==2.8.1",
