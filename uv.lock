@@ -826,14 +826,14 @@ wheels = [
 
 [[package]]
 name = "edx-opaque-keys"
-version = "0.4"
+version = "0.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pymongo" },
     { name = "six" },
     { name = "stevedore" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/63/86/d4bf9c7e7a720125b0572c43dda002f72be2cc66313be601cd7b6cccb2ad/edx-opaque-keys-0.4.tar.gz", hash = "sha256:bc0a2b6d3e4c67a18f063251cc15be808d614a01975a6b9e64c1974341588cb4", size = 36983, upload-time = "2016-11-29T17:17:34.088Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a8/f4/74507737c161bf7b1ca1a5041cd60f64b4edd7ad9df6e1b804ef0ba5a770/edx-opaque-keys-0.4.4.tar.gz", hash = "sha256:ea413a491045abff156eef409c9194cfee9bfdbe43d483ae401f70a31201af32", size = 22454, upload-time = "2018-03-26T20:05:53.833Z" }
 
 [[package]]
 name = "et-xmlfile"
@@ -1203,7 +1203,7 @@ requires-dist = [
     { name = "django-webpack-loader", specifier = "==1.7.0" },
     { name = "djangorestframework", specifier = ">=3.14" },
     { name = "edx-api-client", specifier = "==1.2.0" },
-    { name = "edx-opaque-keys", specifier = "==0.4" },
+    { name = "edx-opaque-keys", specifier = "==0.4.4" },
     { name = "factory-boy", specifier = "==2.8.1" },
     { name = "faker" },
     { name = "flaky", specifier = "==3.7.0" },
