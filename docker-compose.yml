@@ -30,7 +30,7 @@ services:
       - "5432"
 
   redis:
-    image: redis:5.0.8
+    image: redis:5.0.14
     ports:
       - "6379"
 
