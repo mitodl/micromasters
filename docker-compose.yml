@@ -59,7 +59,7 @@ services:
       - 9600:9600 # required for Performance Analyzer
 
   nginx:
-    image: nginx:1.27
+    image: nginx:1.29
     ports:
       - "8079:8079"
     links:
