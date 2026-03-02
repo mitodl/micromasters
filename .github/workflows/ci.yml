@@ -28,7 +28,7 @@ jobs:
           - 6379:6379
 
       opensearch:
-        image: opensearchproject/opensearch:1.2.4
+        image: opensearchproject/opensearch:1.3.20
         env:
           network.host: "0.0.0.0"
           http.cors.enabled: "true"
