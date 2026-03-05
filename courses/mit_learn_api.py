@@ -1,13 +1,11 @@
-"""
-MIT Learn API integration module.
-"""
-from typing import Any
 from urllib.parse import urlencode
 
 import requests
-from django.utils.dateparse import parse_datetime
+import re
+from typing import Any, Dict, List, Optional
 
-from courses.models import CourseRun
+from courses.models import Course, CourseRun
+from django.utils.dateparse import parse_datetime
 
 
 class MITLearnAPIError(Exception):
