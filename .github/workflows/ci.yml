@@ -147,7 +147,7 @@ jobs:
       - name: Set up NodeJS
         uses: actions/setup-node@v5
         with:
-          node-version: "14.18.2"
+          node-version: "14.21.3"
           cache: 'yarn'
 
       - name: Set up environment
