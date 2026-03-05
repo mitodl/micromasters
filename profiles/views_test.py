@@ -1,55 +1,37 @@
 """
 Tests for profile view
 """
-import json
+import datetime
 import itertools
+import json
 from unittest.mock import patch
 
-import datetime
 import ddt
-from django.urls import resolve, reverse
 from django.db.models.signals import post_save
+from django.urls import resolve, reverse
 from factory.django import mute_signals
-from rest_framework.fields import (
-    DateField,
-    ReadOnlyField,
-    SerializerMethodField,
-)
+from rest_framework.fields import (DateField, ReadOnlyField,
+                                   SerializerMethodField)
 from rest_framework.serializers import ListSerializer
-from rest_framework.status import (
-    HTTP_405_METHOD_NOT_ALLOWED,
-    HTTP_404_NOT_FOUND
-)
-from rest_framework.test import (
-    APIClient,
-)
+from rest_framework.status import (HTTP_404_NOT_FOUND,
+                                   HTTP_405_METHOD_NOT_ALLOWED)
+from rest_framework.test import APIClient
 
 from backends.edxorg import EdxOrgOAuth2
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import SocialUserFactory
-from profiles.factories import (
-    EducationFactory,
-    EmploymentFactory,
-    ProfileFactory,
-)
+from profiles.factories import (EducationFactory, EmploymentFactory,
+                                ProfileFactory)
 from profiles.models import Profile
-from profiles.permissions import (
-    CanEditIfOwner,
-    CanSeeIfNotPrivate,
-)
-from profiles.serializers import (
-    ProfileFilledOutSerializer,
-    ProfileLimitedSerializer,
-    ProfileSerializer,
-)
+from profiles.permissions import CanEditIfOwner, CanSeeIfNotPrivate
+from profiles.serializers import (ProfileFilledOutSerializer,
+                                  ProfileLimitedSerializer, ProfileSerializer)
+from profiles.test_mixins import ProfileImageCleanupMixin
 from profiles.util import make_temp_image_file
 from profiles.views import ProfileViewSet
 from roles.models import Role
-from roles.roles import (
-    Instructor,
-    Staff,
-)
+from roles.roles import Instructor, Staff
 from search.base import MockedESTestCase
 
 
@@ -58,7 +40,7 @@ def format_image_expectation(profile):
     image_fields = ['image', 'image_medium', 'image_small']
     for field in image_fields:
         if field in profile:
-            profile[field] = "http://testserver{}".format(profile[field])
+            profile[field] = f"http://testserver{profile[field]}"
     return profile
 
 
@@ -290,7 +272,7 @@ class ProfileGETTests(ProfileBaseTests):
 
 
 @ddt.ddt
-class ProfilePATCHTests(ProfileBaseTests):
+class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
     """
     Tests for profile PATCH
     """
@@ -308,7 +290,7 @@ class ProfilePATCHTests(ProfileBaseTests):
             new_profile = ProfileFactory.create(filled_out=False)
         new_profile.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
-            uid="{}_edx".format(new_profile.user.username)
+            uid=f"{new_profile.user.username}_edx"
         )
         patch_data = ProfileSerializer(new_profile).data
         del patch_data['image']
@@ -477,10 +459,13 @@ class ProfilePATCHTests(ProfileBaseTests):
         # create a dummy image file in memory for upload
         with make_temp_image_file() as image_file:
 
-            # save old thumbnail
-            resized_image_file = getattr(profile, image_key).file
-            backup_thumb_bytes = resized_image_file.read()
-            resized_image_file.seek(0)
+            # save old thumbnail - use proper file opening
+            resized_field = getattr(profile, image_key)
+            resized_field.open('rb')
+            try:
+                backup_thumb_bytes = resized_field.read()
+            finally:
+                resized_field.close()
 
             # format patch using multipart upload
             resp = self.client.patch(self.url1, data={
@@ -489,6 +474,11 @@ class ProfilePATCHTests(ProfileBaseTests):
         assert resp.status_code == 200, resp.content.decode('utf-8')
 
         profile.refresh_from_db()
-        # resized image should not have changed
-        thumb_bytes = getattr(profile, image_key).file.read()
+        # resized image should not have changed - use proper file opening
+        new_resized_field = getattr(profile, image_key)
+        new_resized_field.open('rb')
+        try:
+            thumb_bytes = new_resized_field.read()
+        finally:
+            new_resized_field.close()
         assert thumb_bytes == backup_thumb_bytes

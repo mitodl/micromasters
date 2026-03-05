@@ -6,17 +6,18 @@ import logging
 from collections import namedtuple
 
 from django.db import transaction
-from requests.exceptions import HTTPError
 from edx_api.client import EdxApi
+from requests.exceptions import HTTPError
 
 from backends import utils
-from backends.constants import COURSEWARE_BACKEND_URL, BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
+from backends.constants import (BACKEND_EDX_ORG, BACKEND_MITX_ONLINE,
+                                COURSEWARE_BACKEND_URL)
 from backends.exceptions import InvalidCredentialStored
 from backends.utils import has_social_auth
 from courses.models import CourseRun
 from dashboard import models
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_username, get_social_auth
+from profiles.api import get_social_auth, get_social_username
 from search import tasks
 
 log = logging.getLogger(__name__)
@@ -106,7 +107,7 @@ class CachedEdxDataApi:
             Enrollments or Certificates or CurrentGrades
         """
         if cache_type not in cls.ALL_CACHE_TYPES:
-            raise ValueError("{} is an unsupported cache type".format(cache_type))
+            raise ValueError(f"{cache_type} is an unsupported cache type")
         return cls.CACHED_EDX_MODELS[cache_type].get_edx_data(user)
 
     @classmethod
@@ -122,7 +123,7 @@ class CachedEdxDataApi:
             None
         """
         if cache_type not in cls.ALL_CACHE_TYPES:
-            raise ValueError("{} is an unsupported cache type".format(cache_type))
+            raise ValueError(f"{cache_type} is an unsupported cache type")
         if timestamp is None:
             timestamp = now_in_utc()
         updated_values = {
@@ -143,7 +144,7 @@ class CachedEdxDataApi:
             bool
         """
         if cache_type not in cls.ALL_CACHE_TYPES:
-            raise ValueError("{} is an unsupported cache type".format(cache_type))
+            raise ValueError(f"{cache_type} is an unsupported cache type")
         try:
             cache_timestamps = models.UserCacheRefreshTime.objects.get(user=user)
         except models.UserCacheRefreshTime.DoesNotExist:
@@ -344,7 +345,7 @@ class CachedEdxDataApi:
             cls.ENROLLMENT_MITXONLINE: cls.update_cached_enrollments,
         }
         if cache_type not in cls.ALL_CACHE_TYPES:
-            raise ValueError("{} is an unsupported cache type".format(cache_type))
+            raise ValueError(f"{cache_type} is an unsupported cache type")
         if not cls.is_cache_fresh(user, cache_type):
             update_func = cache_update_methods[cache_type]
             try:
@@ -352,8 +353,8 @@ class CachedEdxDataApi:
             except HTTPError as exc:
                 if exc.response.status_code in (400, 401,):
                     raise InvalidCredentialStored(
-                        message='Received a {} status code from the server even'
-                        ' if access token was supposed to be valid'.format(exc.response.status_code),
+                        message=f'Received a {exc.response.status_code} status code from the server even'
+                        ' if access token was supposed to be valid',
                         http_status_code=exc.response.status_code
                     )
                 raise

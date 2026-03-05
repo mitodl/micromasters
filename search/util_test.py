@@ -3,10 +3,7 @@ Tests for utilty functions
 """
 from collections import OrderedDict
 
-from search.util import (
-    open_json_stream,
-    traverse_mapping,
-)
+from search.util import open_json_stream, traverse_mapping
 
 
 def test_traverse_mapping():
@@ -47,7 +44,7 @@ def test_json_stream():
     """
     objs = [1, "2", False, None, {}, {"x": {"y": ["z\n\n"]}}]
     with open_json_stream() as stream:
-        assert list(stream.read_stream()) == []
+        assert not list(stream.read_stream())
 
         stream.write_stream(objs)
 

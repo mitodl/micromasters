@@ -93,12 +93,6 @@ export const setEnrollProgramDialogError = createAction(
   SET_ENROLL_PROGRAM_DIALOG_ERROR
 )
 
-export const SET_PAYMENT_TEASER_DIALOG_VISIBILITY =
-  "SET_PAYMENT_TEASER_DIALOG_VISIBILITY"
-export const setPaymentTeaserDialogVisibility = createAction(
-  SET_PAYMENT_TEASER_DIALOG_VISIBILITY
-)
-
 export const SET_ENROLL_PROGRAM_DIALOG_VISIBILITY =
   "SET_ENROLL_PROGRAM_DIALOG_VISIBILITY"
 export const setEnrollProgramDialogVisibility = createAction(

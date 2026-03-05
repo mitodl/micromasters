@@ -1,10 +1,12 @@
 """
 Creates exam authorization for particular selection of students
 """
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand, CommandError
 
-from exams.models import ExamRun, ExamAuthorization
+from exams.models import ExamAuthorization, ExamRun
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -23,11 +25,11 @@ class Command(BaseCommand):
 
         user = User.objects.get(username=username)
         if user is None:
-            raise CommandError('Username {} does not exist'.format(username))
+            raise CommandError(f'Username {username} does not exist')
         try:
             exam_run = ExamRun.objects.get(id=exam_run_id)
         except ExamRun.DoesNotExist:
-            raise CommandError('ExamRun with this id "{}" does not exist'.format(exam_run_id))
+            raise CommandError(f'ExamRun with this id "{exam_run_id}" does not exist')
 
         ExamAuthorization.objects.get_or_create(
             user=user,

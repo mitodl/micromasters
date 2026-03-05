@@ -1,8 +1,6 @@
 """Factories for roles"""
 from factory import SubFactory
-from factory.django import (
-    DjangoModelFactory,
-)
+from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from courses.factories import ProgramFactory

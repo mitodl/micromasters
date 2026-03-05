@@ -17,7 +17,7 @@ class MicroMastersRoleTest(MockedESTestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(MicroMastersRoleTest, cls).setUpTestData()
+        super().setUpTestData()
         cls.user = UserFactory.create()
         cls.program1 = ProgramFactory.create()
         cls.program2 = ProgramFactory.create()

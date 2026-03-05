@@ -15,7 +15,7 @@ class APITests(MockedESTestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(APITests, cls).setUpTestData()
+        super().setUpTestData()
         # create an user
         cls.user = UserFactory.create()
         # create the programs

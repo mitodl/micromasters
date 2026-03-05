@@ -5,35 +5,28 @@ import json
 import logging
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import Q as Query
-from opensearchpy.exceptions import NotFoundError
-from opensearch_dsl import Search, Q
 from jsonpatch import make_patch
+from opensearch_dsl import Q, Search
+from opensearchpy.exceptions import NotFoundError
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
 from profiles.models import Profile
 from roles.api import get_advance_searchable_program_ids
-from search.connection import (
-    get_default_alias,
-    get_conn,
-    PRIVATE_ENROLLMENT_INDEX_TYPE,
-    PUBLIC_ENROLLMENT_INDEX_TYPE,
-    PERCOLATE_INDEX_TYPE,
-)
-from search.models import (
-    PercolateQuery,
-    PercolateQueryMembership,
-)
-from search.exceptions import (
-    NoProgramAccessException,
-    PercolateException,
-)
+from search.connection import (PERCOLATE_INDEX_TYPE,
+                               PRIVATE_ENROLLMENT_INDEX_TYPE,
+                               PUBLIC_ENROLLMENT_INDEX_TYPE, get_conn,
+                               get_default_alias)
+from search.exceptions import NoProgramAccessException, PercolateException
 from search.indexing_api import serialize_program_enrolled_user
+from search.models import PercolateQuery, PercolateQueryMembership
 
+User = get_user_model()
 DEFAULT_ES_LOOP_PAGE_SIZE = 100
 
 
@@ -295,7 +288,7 @@ def _search_percolate_queries(program_enrollment):
     result = conn.search(index=percolate_index, body=body)
     failures = result.get('_shards', {}).get('failures', [])
     if len(failures) > 0:
-        raise PercolateException("Failed to percolate: {}".format(failures))
+        raise PercolateException(f"Failed to percolate: {failures}")
 
     return [int(row['_id']) for row in result['hits']['hits']]
 
@@ -439,4 +432,4 @@ def populate_query_memberships(percolate_query_id):
 
     for user in users:
         membership_ids = _ensure_memberships_for_queries([query], user)
-        _update_memberships(set([query.id]), membership_ids, user, force_save=True)
+        _update_memberships({query.id}, membership_ids, user, force_save=True)

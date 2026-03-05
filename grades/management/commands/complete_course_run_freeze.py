@@ -10,7 +10,6 @@ from grades.models import CourseRunGradingStatus
 from grades.tasks import CACHE_ID_BASE_STR
 from micromasters.celery import app
 
-
 cache_redis = caches['redis']
 
 
@@ -29,12 +28,12 @@ class Command(BaseCommand):
         try:
             run = CourseRun.objects.get(edx_course_key=edx_course_key)
         except CourseRun.DoesNotExist:
-            raise CommandError('Course Run for course_id "{0}" does not exist'.format(edx_course_key))
+            raise CommandError(f'Course Run for course_id "{edx_course_key}" does not exist')
 
         if not run.can_freeze_grades:
             self.stdout.write(
                 self.style.ERROR(
-                    'Course Run "{0}" cannot be marked as frozen yet'.format(edx_course_key)
+                    f'Course Run "{edx_course_key}" cannot be marked as frozen yet'
                 )
             )
             return
@@ -42,7 +41,7 @@ class Command(BaseCommand):
         if CourseRunGradingStatus.is_complete(run):
             self.stdout.write(
                 self.style.SUCCESS(
-                    'Course Run "{0}" is already marked as complete'.format(edx_course_key)
+                    f'Course Run "{edx_course_key}" is already marked as complete'
                 )
             )
             return
@@ -55,7 +54,7 @@ class Command(BaseCommand):
             if results and not results.ready():
                 self.stdout.write(
                     self.style.WARNING(
-                        'Tasks for Course Run "{0}" are still running. '
+                        'Tasks for Course Run "{}" are still running. '
                         'Impossible to set the global "complete" status'.format(edx_course_key)
                     )
                 )
@@ -66,6 +65,6 @@ class Command(BaseCommand):
         CourseRunGradingStatus.set_to_complete(run)
         self.stdout.write(
             self.style.SUCCESS(
-                'Course Run "{0}" has been marked as complete'.format(edx_course_key)
+                f'Course Run "{edx_course_key}" has been marked as complete'
             )
         )

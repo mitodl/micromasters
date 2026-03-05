@@ -6,18 +6,17 @@ import logging
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from django.shortcuts import Http404, redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View, TemplateView
-from rolepermissions.permissions import available_perm_status
+from django.views.generic import TemplateView, View
 from rolepermissions.checkers import has_role
+from rolepermissions.permissions import available_perm_status
 
-from cms.util import get_coupon_code
-from courses.models import Program, Course
-from ecommerce.models import Coupon
+from courses.models import Program
 from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
 from profiles.permissions import CanSeeIfNotPrivate
@@ -73,12 +72,9 @@ class ReactView(View):
             "public_path": public_path(request),
             "FEATURES": {
                 "PROGRAM_LEARNERS": settings.FEATURES.get('PROGRAM_LEARNERS_ENABLED', False),
-                "DISCUSSIONS_POST_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_POST_UI', False),
-                "DISCUSSIONS_CREATE_CHANNEL_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_CREATE_CHANNEL_UI', False),
                 "PROGRAM_RECORD_LINK": settings.FEATURES.get('PROGRAM_RECORD_LINK', False),
                 "ENABLE_PROGRAM_LETTER": settings.FEATURES.get('ENABLE_PROGRAM_LETTER', False),
             },
-            "open_discussions_redirect_url": settings.OPEN_DISCUSSIONS_REDIRECT_URL,
         }
 
         return {
@@ -123,7 +119,7 @@ class UsersView(ReactView):
         """
         Handle GET requests
         """
-        user = kwargs.pop('user')
+        user = kwargs.pop('user', None)
         if user is not None:
             if not CanSeeIfNotPrivate().has_permission(request, self):
                 raise Http404
@@ -167,32 +163,6 @@ class SignInView(ReactView):
         Handle GET requests to templates using React
         """
         context = self.get_context(request)
-        coupon_code = get_coupon_code(request)
-
-        # if we didn't get a program in the context, look it up via the coupon code
-        if (
-            settings.FEATURES.get("MITXONLINE_LOGIN", False)
-            and coupon_code
-            and context["program"] is None
-        ):
-            program = None
-
-            coupon = Coupon.objects.filter(coupon_code=coupon_code).first()
-
-            if coupon is not None:
-                if isinstance(coupon.content_object, Program):
-                    program = coupon.content_object
-                elif isinstance(coupon.content_object, Course):
-                    program = coupon.content_object.program
-
-
-            if program:
-                params = request.GET.copy()
-                params["program"] = program.id
-
-                return redirect(
-                    f"{reverse('signin')}?{params.urlencode()}",
-                )
 
         return render(
             request,
@@ -257,6 +227,12 @@ def oauth_maintenance(request, *args, **kwargs):  # pylint: disable=unused-argum
     Returns maintenance page during oauth downtime
     """
     return standard_error_page(request, 200, "oauth_maintenance.html")
+
+
+def logout_view(request):
+    """Log the user out and redirect to the site home."""
+    logout(request)
+    return redirect('/')
 
 
 class BackgroundImagesCSSView(TemplateView):

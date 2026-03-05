@@ -1,25 +1,18 @@
 """
 Tests for grades models
 """
-from django.core.exceptions import ValidationError
 import ddt
+from django.core.exceptions import ValidationError
 
-from courses.factories import (
-    CourseFactory,
-    CourseRunFactory,
-    ProgramFactory,
-)
-from exams.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
-from grades.models import (
-    CourseRunGradingAlreadyCompleteError,
-    CourseRunGradingStatus,
-    FinalGrade,
-    MicromastersCourseCertificate,
-    MicromastersProgramCertificate,
-    MicromastersProgramCommendation)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
+from exams.constants import EXAM_GRADE_FAIL, EXAM_GRADE_PASS
 from grades.constants import FinalGradeStatus
 from grades.factories import ProctoredExamGradeFactory
-from grades.models import ProctoredExamGrade
+from grades.models import (CourseRunGradingAlreadyCompleteError,
+                           CourseRunGradingStatus, FinalGrade,
+                           MicromastersCourseCertificate,
+                           MicromastersProgramCertificate,
+                           MicromastersProgramCommendation, ProctoredExamGrade)
 from micromasters.factories import UserFactory
 from search.base import MockedESTestCase
 

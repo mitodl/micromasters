@@ -10,13 +10,8 @@ import type {
   ProfileGetResult,
   ProfilePatchResult
 } from "../flow/profileTypes"
-import type { CheckoutResponse } from "../flow/checkoutTypes"
 import type { Coupons, AttachCouponResponse } from "../flow/couponTypes"
-import type {
-  Dashboard,
-  CoursePrices,
-  ProgramLearners
-} from "../flow/dashboardTypes"
+import type { Dashboard, ProgramLearners } from "../flow/dashboardTypes"
 import type {
   AvailableProgram,
   AvailablePrograms
@@ -61,15 +56,6 @@ export async function getDashboard(username: string): Promise<Dashboard> {
     logoutOnError(response)
     return Promise.reject(response)
   }
-}
-
-export function checkout(courseId: string): Promise<CheckoutResponse> {
-  return fetchJSONWithCSRF("/api/v0/checkout/", {
-    method: "POST",
-    body:   JSON.stringify({
-      course_id: courseId
-    })
-  })
 }
 
 export function sendSearchResultMail(
@@ -175,47 +161,6 @@ export function updateProfileImage(
 // this hits our endpoint to get the sso_digest, session_timout, etc
 export function getPearsonSSO(): Promise<PearsonSSOParameters> {
   return fetchJSONWithCSRF("/api/v0/pearson/sso/")
-}
-
-export function addFinancialAid(
-  income: number,
-  currency: string,
-  programId: number
-): Promise<*> {
-  return fetchJSONWithCSRF("/api/v0/financial_aid_request/", {
-    method: "POST",
-    body:   JSON.stringify({
-      original_income:   income,
-      original_currency: currency,
-      program_id:        programId
-    })
-  })
-}
-
-export function getCoursePrices(username: string): Promise<CoursePrices> {
-  return fetchJSONWithCSRF(`/api/v0/course_prices/${username}/`).then(
-    coursePrices => {
-      // turn `price` from string into decimal
-      return R.map(R.evolve({ price: Decimal }), coursePrices)
-    }
-  )
-}
-
-export function skipFinancialAid(programId: number): Promise<*> {
-  return fetchWithCSRF(`/api/v0/financial_aid_skip/${programId}/`, {
-    method: "PATCH"
-  })
-}
-export function updateDocumentSentDate(
-  financialAidId: number,
-  sentDate: string
-): Promise<*> {
-  return fetchJSONWithCSRF(`/api/v0/financial_aid/${financialAidId}/`, {
-    method: "PATCH",
-    body:   JSON.stringify({
-      date_documents_sent: sentDate
-    })
-  })
 }
 
 export function addCourseEnrollment(courseId: string) {

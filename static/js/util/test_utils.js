@@ -17,7 +17,6 @@ import App from "../containers/App"
 import DashboardPage from "../containers/DashboardPage"
 import SettingsPage from "../containers/SettingsPage"
 import ProfilePage from "../containers/ProfilePage"
-import OrderSummaryPage from "../containers/OrderSummaryPage"
 import PersonalTab from "../components/PersonalTab"
 import EducationTab from "../components/EducationTab"
 import EmploymentTab from "../components/EmploymentTab"
@@ -248,7 +247,6 @@ export const testRoutes = (
       <Route path="professional" component={EmploymentTab} />
     </Route>
     <Route path="/settings" component={SettingsPage} />
-    <Route path="/order_summary" component={OrderSummaryPage} />
     <Route path="/learner" component={LearnerPage}>
       <IndexRedirect to={username} />
       <Route path=":username" component={Learner} />

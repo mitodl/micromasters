@@ -2,6 +2,7 @@
 Provides functionality for serializing a ProgramEnrollment for the ES index
 """
 from rest_framework import serializers
+
 from courses.utils import get_year_season_from_course_run
 from dashboard.utils import get_mmtrack
 from roles.api import is_learner
@@ -46,8 +47,7 @@ class UserProgramSearchSerializer:
             dict: Serialized course enrollment
         """
         course_title = course_run.course.title
-        has_paid = mmtrack.has_paid(course_run.edx_course_key)
-        payment_status = cls.PAID_STATUS if has_paid else cls.UNPAID_STATUS
+        payment_status = cls.PAID_STATUS if mmtrack.has_verified_enrollment(course_run.edx_course_key) else cls.UNPAID_STATUS
 
         final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
         semester = cls.serialize_semester(course_run)
@@ -90,8 +90,7 @@ class UserProgramSearchSerializer:
             dict: Serialized course enrollment
         """
         course_title = course_run.course.title
-        has_paid = mmtrack.has_paid(course_run.edx_course_key)
-        payment_status = cls.PAID_STATUS if has_paid else cls.UNPAID_STATUS
+        payment_status = cls.PAID_STATUS if mmtrack.has_verified_enrollment(course_run.edx_course_key) else cls.UNPAID_STATUS
 
         final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
         return {
@@ -126,7 +125,7 @@ class UserProgramSearchSerializer:
         """
         year_season_tuple = get_year_season_from_course_run(course_run)
         if year_season_tuple:
-            return '{} - {}'.format(year_season_tuple[0], year_season_tuple[1])
+            return f'{year_season_tuple[0]} - {year_season_tuple[1]}'
         return None
 
     @classmethod

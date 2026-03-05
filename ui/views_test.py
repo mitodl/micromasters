@@ -3,12 +3,11 @@ Test end to end django views.
 """
 import json
 from unittest.mock import patch, Mock
-from urllib.parse import urlencode
 
 import ddt
 from django.db.models.signals import post_save
-from django.urls import reverse
 from django.test import override_settings
+from django.urls import reverse
 from factory import Iterator
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
@@ -17,16 +16,11 @@ from rolepermissions.permissions import available_perm_status
 from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
 
-from cms.factories import (
-    FacultyFactory,
-    InfoLinksFactory,
-    ProgramCourseFactory,
-    SemesterDateFactory,
-)
+from cms.factories import (FacultyFactory, InfoLinksFactory,
+                           ProgramCourseFactory, SemesterDateFactory)
 from cms.models import HomePage, ProgramPage
 from cms.serializers import ProgramPageSerializer
 from courses.factories import ProgramFactory, CourseFactory
-from ecommerce.factories import CouponFactory
 from micromasters.serializers import serialize_maybe_user
 from micromasters.factories import UserSocialAuthFactory
 from profiles.factories import ProfileFactory, SocialProfileFactory
@@ -218,10 +212,10 @@ class TestHomePage(ViewsTests):
         Assert that programs are output in id order
         """
         for i in range(10):
-            ProgramFactory.create(live=True, title="Program {}".format(i + 1))
+            ProgramFactory.create(live=True, title=f"Program {i + 1}")
         response = self.client.get("/")
         content = response.content.decode('utf-8')
-        indexes = [content.find("Program {}".format(i + 1)) for i in range(10)]
+        indexes = [content.find(f"Program {i + 1}") for i in range(10)]
         assert indexes == sorted(indexes)
 
 
@@ -244,7 +238,6 @@ class DashboardTests(ViewsTests):
         mitxonline_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
-        open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -256,7 +249,6 @@ class DashboardTests(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             OPENSEARCH_DEFAULT_PAGE_SIZE=10,
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url,
         ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             resp = self.client.get(DASHBOARD_URL)
 
@@ -294,13 +286,10 @@ class DashboardTests(ViewsTests):
                 'public_path': '/static/bundles/',
                 'FEATURES': {
                     'PROGRAM_LEARNERS': False,
-                    'DISCUSSIONS_POST_UI': False,
-                    'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                     'PROGRAM_RECORD_LINK': False,
                     'ENABLE_PROGRAM_LETTER': False,
 
                 },
-                'open_discussions_redirect_url': open_discussions_redirect_url
             }
             assert resp.context['is_public'] is False
             assert resp.context['has_zendesk_widget'] is True
@@ -334,7 +323,7 @@ class DashboardTests(ViewsTests):
         response = self.client.get(DASHBOARD_URL)
         self.assertRedirects(
             response,
-            "/signin/?next={}".format(DASHBOARD_URL)
+            f"/signin/?next={DASHBOARD_URL}"
         )
 
     def test_authenticated_user_doesnt_redirect(self):
@@ -704,7 +693,6 @@ class TestUsersPage(ViewsTests):
         mitxonline_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
-        open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -716,7 +704,6 @@ class TestUsersPage(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             OPENSEARCH_DEFAULT_PAGE_SIZE=10,
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -755,12 +742,9 @@ class TestUsersPage(ViewsTests):
                     'public_path': '/static/bundles/',
                     'FEATURES': {
                         'PROGRAM_LEARNERS': False,
-                        'DISCUSSIONS_POST_UI': False,
-                        'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                         'PROGRAM_RECORD_LINK': False,
                         'ENABLE_PROGRAM_LETTER': False,
                     },
-                    'open_discussions_redirect_url': open_discussions_redirect_url
                 }
                 assert has_permission.called
 
@@ -788,7 +772,6 @@ class TestUsersPage(ViewsTests):
         mitxonline_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
-        open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -800,7 +783,6 @@ class TestUsersPage(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             OPENSEARCH_DEFAULT_PAGE_SIZE=10,
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -832,12 +814,9 @@ class TestUsersPage(ViewsTests):
                     'public_path': '/static/bundles/',
                     'FEATURES': {
                         'PROGRAM_LEARNERS': False,
-                        'DISCUSSIONS_POST_UI': False,
-                        'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                         'PROGRAM_RECORD_LINK': False,
                         'ENABLE_PROGRAM_LETTER': False,
                     },
-                    'open_discussions_redirect_url': open_discussions_redirect_url
                 }
                 assert has_permission.called
 
@@ -873,37 +852,3 @@ class TestUsersPage(ViewsTests):
         """
         resp = self.client.get(reverse('ui-users'))
         assert resp.status_code == 404
-
-
-class TestSignIn(ViewsTests):
-    """ Tests for the sign in page """
-
-    def test_login_program_coupon_redirect(self):
-        """ Test that the login page redirects if the next url has a coupon for a program """
-        with self.settings(FEATURES={
-            "MITXONLINE_LOGIN": True
-        }):
-            coupon = CouponFactory.create(program=True)
-            next_url = f"/dashboard/?coupon={coupon.coupon_code}"
-            response = self.client.get(f"{reverse('signin')}?{urlencode({'next': next_url})}")
-            redirect_params = urlencode({
-                'next': next_url,
-                'program': coupon.content_object.id
-            })
-            assert response.status_code == 302
-            assert response.url == f"{reverse('signin')}?{redirect_params}"
-
-    def test_login_course_coupon_redirect(self):
-        """ Test that the login page redirects if the next url has a coupon for a course """
-        with self.settings(FEATURES={
-            "MITXONLINE_LOGIN": True
-        }):
-            coupon = CouponFactory.create(course=True)
-            next_url = f"/dashboard/?coupon={coupon.coupon_code}"
-            response = self.client.get(f"{reverse('signin')}?{urlencode({'next': next_url})}")
-            redirect_params = urlencode({
-                'next': next_url,
-                'program': coupon.content_object.program.id
-            })
-            assert response.status_code == 302
-            assert response.url == f"{reverse('signin')}?{redirect_params}"

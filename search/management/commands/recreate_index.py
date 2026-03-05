@@ -3,8 +3,9 @@ Management command to recreate the Opensearch index
 """
 
 from django.core.management.base import BaseCommand, CommandError
+
+from micromasters.utils import log, now_in_utc
 from search.tasks import start_recreate_index
-from micromasters.utils import now_in_utc, log
 
 
 class Command(BaseCommand):
@@ -19,9 +20,7 @@ class Command(BaseCommand):
         """
         task = start_recreate_index.delay()
         self.stdout.write(
-            "Started celery task {task} to index content for all indexes".format(
-                task=task
-            )
+            f"Started celery task {task} to index content for all indexes"
         )
 
         self.stdout.write("Waiting on task...")
@@ -35,5 +34,5 @@ class Command(BaseCommand):
 
         total_seconds = (now_in_utc() - start).total_seconds()
         self.stdout.write(
-            "Recreate index finished, took {} seconds".format(total_seconds)
+            f"Recreate index finished, took {total_seconds} seconds"
         )

@@ -1,35 +1,31 @@
 """
 Provides functions for sending and retrieving data about in-app email
 """
-from contextlib import contextmanager
-import logging
 import json
-import requests
+import logging
+from contextlib import contextmanager
 
+import requests
+from bs4 import BeautifulSoup
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from rest_framework import status
 
-from bs4 import BeautifulSoup
-
 from mail.exceptions import SendBatchException
 from mail.models import (
     AutomaticEmail,
-    FinancialAidEmailAudit,
     SentAutomaticEmail,
 )
 from mail.utils import filter_recipient_variables
 from micromasters.utils import chunks
 from profiles.models import Profile
-from search.api import (
-    adjust_search_for_percolator,
-    search_percolate_queries,
-)
+from search.api import adjust_search_for_percolator, search_percolate_queries
 from search.models import PercolateQuery
 
-
+User = get_user_model()
 log = logging.getLogger(__name__)
 
 
@@ -65,15 +61,12 @@ class MailgunClient:
         Returns:
             requests.Response: HTTP response
         """
-        mailgun_url = '{}/{}'.format(settings.MAILGUN_URL, endpoint)
+        mailgun_url = f'{settings.MAILGUN_URL}/{endpoint}'
         email_params = cls.default_params()
         email_params.update(params)
         # Update 'from' address if sender_name was specified
         if sender_name is not None:
-            email_params['from'] = "{sender_name} <{email}>".format(
-                sender_name=sender_name,
-                email=email_params['from']
-            )
+            email_params['from'] = f"{sender_name} <{email_params['from']}>"
         response = request_func(
             mailgun_url,
             auth=cls._basic_auth_credentials,
@@ -126,7 +119,7 @@ class MailgunClient:
             body = '{body}\n\n[overridden recipient]\n{recipient_data}'.format(
                 body=body,
                 recipient_data='\n'.join(
-                    ["{}: {}".format(recipient, json.dumps(context)) for recipient, context in recipients]
+                    [f"{recipient}: {json.dumps(context)}" for recipient, context in recipients]
                 ),
             )
             recipients = [(settings.MAILGUN_RECIPIENT_OVERRIDE, {})]
@@ -212,44 +205,6 @@ class MailgunClient:
             log_error_on_bounce=log_error_on_bounce
         )
         return responses[0]
-
-    @classmethod
-    def send_financial_aid_email(  # pylint: disable=too-many-arguments
-            cls, acting_user, financial_aid, subject, body, raise_for_status=True, log_error_on_bounce=True
-    ):
-        """
-        Sends a text email to a single recipient, specifically as part of the financial aid workflow. This bundles
-        saving an audit trail for emails sent (to be implemented).
-
-        Args:
-            acting_user (User): the user who is initiating this request, for auditing purposes
-            financial_aid (FinancialAid): the FinancialAid object this pertains to (recipient is pulled from here)
-            subject (str): email subject
-            body (str): email body
-            raise_for_status (bool): If true and we received a non 2xx status code from Mailgun, raise an exception
-            log_error_on_bounce (bool): App will log bounce email event when True
-        Returns:
-            requests.Response: response from Mailgun
-        """
-        from_address = cls.default_params()['from']
-        to_address = financial_aid.user.email
-        response = cls.send_individual_email(
-            subject,
-            body,
-            to_address,
-            raise_for_status=raise_for_status,
-            log_error_on_bounce=log_error_on_bounce
-        )
-        if response.ok:
-            FinancialAidEmailAudit.objects.create(
-                acting_user=acting_user,
-                financial_aid=financial_aid,
-                to_email=to_address,
-                from_email=from_address,
-                email_subject=subject,
-                email_body=body
-            )
-        return response
 
     @classmethod
     def send_course_team_email(  # pylint: disable=too-many-arguments

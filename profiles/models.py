@@ -4,21 +4,17 @@ Models for user profile
 import re
 from uuid import uuid4
 
-from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
+from django.contrib.auth import get_user_model
 from django.db import models, transaction
+from django.db.models import JSONField
 
-from profiles.util import (
-    IMAGE_SMALL_MAX_DIMENSION,
-    IMAGE_MEDIUM_MAX_DIMENSION,
-    full_name,
-    make_thumbnail,
-    profile_image_upload_uri,
-    profile_image_upload_uri_small,
-    profile_image_upload_uri_medium,
-    split_at_space,
-)
+from profiles.util import (IMAGE_MEDIUM_MAX_DIMENSION,
+                           IMAGE_SMALL_MAX_DIMENSION, full_name,
+                           make_thumbnail, profile_image_upload_uri,
+                           profile_image_upload_uri_medium,
+                           profile_image_upload_uri_small, split_at_space)
 
+User = get_user_model()
 
 DOCTORATE = 'p'
 MASTERS = 'm'
@@ -162,7 +158,7 @@ class Profile(models.Model):
     image_small = models.ImageField(upload_to=profile_image_upload_uri_small, null=True)
     image_medium = models.ImageField(upload_to=profile_image_upload_uri_medium, null=True)
 
-    edx_requires_parental_consent = models.NullBooleanField()
+    edx_requires_parental_consent = models.BooleanField(null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     edx_level_of_education = models.TextField(
         max_length=6,
@@ -196,8 +192,8 @@ class Profile(models.Model):
                 medium_thumbnail = make_thumbnail(self.image.file, IMAGE_MEDIUM_MAX_DIMENSION)
 
                 # name doesn't matter here, we use upload_to to produce that
-                self.image_small.save("{}.jpg".format(uuid4().hex), small_thumbnail)
-                self.image_medium.save("{}.jpg".format(uuid4().hex), medium_thumbnail)
+                self.image_small.save(f"{uuid4().hex}.jpg", small_thumbnail)
+                self.image_medium.save(f"{uuid4().hex}.jpg", medium_thumbnail)
             else:
                 self.image_small = None
                 self.image_medium = None
@@ -209,12 +205,12 @@ class Profile(models.Model):
             super().save()
 
     def __str__(self):
-        return 'Profile for "{0}"'.format(self.user.username)
+        return f'Profile for "{self.user.username}"'
 
     @property
     def pretty_printed_student_id(self):
         """pretty prints the student id for easy display"""
-        return "MMM{0:06}".format(self.student_id) if self.student_id else ""
+        return f"MMM{self.student_id:06}" if self.student_id else ""
 
     @property
     def email(self):
@@ -270,7 +266,7 @@ class Profile(models.Model):
         if self.last_name:
             name_components.append(self.last_name)
         if self.preferred_name and self.preferred_name != self.first_name:
-            name_components.append('({})'.format(self.preferred_name))
+            name_components.append(f'({self.preferred_name})')
         return ' '.join(name_components)
 
 

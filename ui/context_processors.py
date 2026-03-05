@@ -26,7 +26,7 @@ def do_not_track(request):
     """
     Detect the "Do Not Track" HTTP header: http://donottrack.us
     """
-    dnt = request.META.get("HTTP_DNT", None)
+    dnt = request.headers.get("dnt", None)
     # if dnt is "1", the user does not wish to be tracked
     # if dnt is "0", the user explicitly consents to be tracked
     # if dnt is not set, the user hasn't stated a preference

@@ -71,11 +71,6 @@ export const courseUpcomingOrCurrent = (courseRun: CourseRun) =>
       courseRun.status === STATUS_CURRENTLY_ENROLLED
     : true
 
-export const hasPaidForAnyCourseRun = R.compose(
-  R.any(R.propEq("has_paid", true)),
-  R.prop("runs")
-)
-
 export const isPassedOrMissedDeadline = R.compose(
   R.contains(R.__, [STATUS_PASSED, STATUS_MISSED_DEADLINE]),
   R.prop("status")

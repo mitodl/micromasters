@@ -22,9 +22,9 @@ class AttachAvatarsTest(MockedESTestCase):
         """
         with mute_signals(post_save):
             for i in range(3):
-                ProfileFactory.create(user__username="user_{}".format(i))
+                ProfileFactory.create(user__username=f"user_{i}")
             for i in range(3):
-                ProfileFactory.create(user__username="fake_{}".format(i))
+                ProfileFactory.create(user__username=f"fake_{i}")
 
         # clear all images
         for profile in Profile.objects.all():

@@ -4,9 +4,10 @@ Admin views for Dashboard
 
 from django.contrib import admin
 
-from dashboard.models import ProgramEnrollment, MicromastersLearnerRecordShare
+from dashboard.models import MicromastersLearnerRecordShare, ProgramEnrollment
 
 
+@admin.register(ProgramEnrollment)
 class ProgramEnrollmentAdmin(admin.ModelAdmin):
     """ModelAdmin for ProgramEnrollment"""
     list_display = ('user', 'program',)
@@ -18,6 +19,7 @@ class ProgramEnrollmentAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(MicromastersLearnerRecordShare)
 class MicromastersLearnerRecordShareAdmin(admin.ModelAdmin):
     """ModelAdmin for MicromastersLearnerRecordShare"""
     list_display = ('user', 'program', 'partner_school', 'created_on', 'updated_on')
@@ -27,8 +29,3 @@ class MicromastersLearnerRecordShareAdmin(admin.ModelAdmin):
         'user__username',
         'user__email',
     )
-
-admin.site.register(ProgramEnrollment, ProgramEnrollmentAdmin)
-admin.site.register(
-    MicromastersLearnerRecordShare, MicromastersLearnerRecordShareAdmin
-)

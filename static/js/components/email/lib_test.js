@@ -75,19 +75,9 @@ describe("Specific email config", () => {
   const queryFilters = `{
     "bool": {
       "must":[
-        { 
-          "nested": {
-            "path": "program.courses",
-            "filter": {
-              "term": {
-                "program.courses.payment_status": "Paid"
-              }
-            }
-          }
-        },
         {
           "term": {
-            "program.id":1
+            "profile.country":"US"
           }
         }
       ]
@@ -264,9 +254,9 @@ describe("Specific email config", () => {
         const filters = getFilters(JSON.parse(queryFilters))
         assert.deepEqual(filters, [
           {
-            id:    "program.courses.payment_status",
-            name:  "program.courses.payment_status",
-            value: "Paid"
+            id:    "profile.country",
+            name:  "profile.country",
+            value: "US"
           }
         ])
       })
@@ -276,9 +266,9 @@ describe("Specific email config", () => {
           const filters = getFilters(JSON.parse(queryFilters))
           assert.deepEqual(filters, [
             {
-              id:    "program.courses.payment_status",
-              name:  "program.courses.payment_status",
-              value: "Paid"
+              id:    "profile.country",
+              name:  "profile.country",
+              value: "US"
             }
           ])
         })
@@ -362,11 +352,6 @@ describe("Specific email config", () => {
                           },
                           {
                             "term": {
-                              "program.courses.payment_status": "Paid"
-                            }
-                          },
-                          {
-                            "term": {
                               "program.courses.semester": "2016 - Summer"
                             }
                           }
@@ -382,7 +367,6 @@ describe("Specific email config", () => {
           assert.deepEqual(filters, [
             { "program.courses.course_title": "Digital Learning 100" },
             { "program.courses.final_grade": { gte: 0, lte: 89 } },
-            { "program.courses.payment_status": "Paid" },
             { "program.courses.semester": "2016 - Summer" }
           ])
         })

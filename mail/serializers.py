@@ -2,10 +2,8 @@
 Serializers for mail
 """
 
-from rest_framework import (
-    fields,
-    serializers
-)
+from rest_framework import fields, serializers
+
 from mail.models import AutomaticEmail
 from search.models import PercolateQuery
 

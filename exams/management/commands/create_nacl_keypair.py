@@ -1,9 +1,8 @@
 """Command to generate a NaCl private and public key"""
 
 from django.core.management.base import BaseCommand
-
-from nacl.public import PrivateKey
-from nacl.encoding import Base64Encoder
+from nacl.encoding import Base64Encoder  # pylint: disable=import-error
+from nacl.public import PrivateKey  # pylint: disable=import-error
 
 
 class Command(BaseCommand):

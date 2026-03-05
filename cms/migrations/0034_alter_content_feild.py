@@ -2,8 +2,8 @@
 
 from django.db import migrations
 import wagtail.contrib.table_block.blocks
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='programtabpage',
             name='content',
-            field=wagtail.core.fields.StreamField([('rich_text', wagtail.core.blocks.RichTextBlock()), ('course_table', wagtail.contrib.table_block.blocks.TableBlock(table_options={'startCols': 2, 'startRows': 3}))], blank=True, help_text='The content of this tab on the program page'),
+            field=wagtail.fields.StreamField([('rich_text', wagtail.blocks.RichTextBlock()), ('course_table', wagtail.contrib.table_block.blocks.TableBlock(table_options={'startCols': 2, 'startRows': 3}))], blank=True, help_text='The content of this tab on the program page'),
         ),
     ]

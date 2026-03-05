@@ -9,7 +9,6 @@ import sinon from "sinon"
 
 import SpinnerButton from "../SpinnerButton"
 import CourseAction from "./CourseAction"
-import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../test_constants"
 import {
   STATUS_OFFERED,
   STATUS_CAN_UPGRADE,
@@ -17,10 +16,7 @@ import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_ENROLL,
-  COURSE_ACTION_REENROLL,
-  FA_STATUS_PENDING_DOCS,
-  FA_STATUS_APPROVED,
-  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
+  COURSE_ACTION_REENROLL
 } from "../../constants"
 import {
   findCourse,
@@ -35,7 +31,6 @@ describe("CourseAction", () => {
     addCourseEnrollmentStub,
     setEnrollSelectedCourseRunStub,
     setEnrollCourseDialogVisibilityStub,
-    openFinancialAidCalculatorStub,
     routerPushStub,
     checkoutStub,
     course
@@ -45,7 +40,6 @@ describe("CourseAction", () => {
     addCourseEnrollmentStub = sandbox.stub()
     setEnrollSelectedCourseRunStub = sandbox.stub()
     setEnrollCourseDialogVisibilityStub = sandbox.stub()
-    openFinancialAidCalculatorStub = sandbox.stub()
     routerPushStub = sandbox.stub()
     checkoutStub = sandbox.spy()
     course = makeCourse(0)
@@ -66,15 +60,12 @@ describe("CourseAction", () => {
   const renderCourseAction = (props = {}) => {
     return shallow(
       <CourseAction
-        hasFinancialAid={false}
-        financialAid={{}}
         addCourseEnrollment={addCourseEnrollmentStub}
         setEnrollSelectedCourseRun={setEnrollSelectedCourseRunStub}
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibilityStub}
         now={now}
         courseRun={course.runs[0]}
         checkout={checkoutStub}
-        openFinancialAidCalculator={openFinancialAidCalculatorStub}
         {...props}
       />,
       { context: { router: { push: routerPushStub } } }
@@ -147,9 +138,13 @@ describe("CourseAction", () => {
   })
 
   describe("course payment", () => {
-    it("says Pay for COURSE_ACTION_PAY", () => {
+    it("says Upgrade Unavailable for COURSE_ACTION_PAY", () => {
       const wrapper = renderCourseAction({ actionType: COURSE_ACTION_PAY })
-      assert.equal(wrapper.find(".pay-button").props().children, "Pay Now")
+      assert.equal(
+        wrapper.find(".pay-button").props().children,
+        "Upgrade Unavailable"
+      )
+      assert.equal(wrapper.find(".pay-button").props().disabled, true)
     })
   })
 
@@ -168,7 +163,7 @@ describe("CourseAction", () => {
     assert.isTrue(buttonProps.spinning)
   })
 
-  describe("with financial aid", () => {
+  describe("with discontinued payments", () => {
     let course
 
     beforeEach(() => {
@@ -185,17 +180,12 @@ describe("CourseAction", () => {
       firstRun.status = STATUS_OFFERED
 
       const wrapper = renderCourseAction({
-        courseRun:    firstRun,
-        financialAid: {
-          ...FINANCIAL_AID_PARTIAL_RESPONSE,
-          has_user_applied: false
-        },
-        hasFinancialAid: true,
-        actionType:      COURSE_ACTION_ENROLL
+        courseRun:  firstRun,
+        actionType: COURSE_ACTION_ENROLL
       })
       const button = wrapper.find(SpinnerButton)
       assert.isFalse(button.props().disabled)
-      assert.equal(button.props().children, "Enroll *")
+      assert.equal(button.props().children, "Enroll")
     })
 
     it("indicates that a user must calculate the course price to upgrade to paid", () => {
@@ -208,17 +198,13 @@ describe("CourseAction", () => {
       })
 
       const wrapper = renderCourseAction({
-        courseRun:    firstRun,
-        financialAid: {
-          ...FINANCIAL_AID_PARTIAL_RESPONSE,
-          has_user_applied: false
-        },
-        hasFinancialAid: true,
-        actionType:      COURSE_ACTION_CALCULATE_PRICE
+        courseRun:  firstRun,
+        actionType: COURSE_ACTION_CALCULATE_PRICE
       })
 
       const button = wrapper.find(".pay-button")
-      assert.equal(button.props().children, "Pay Now *")
+      assert.equal(button.props().children, "Upgrade Unavailable")
+      assert.equal(button.props().disabled, true)
     })
 
     it("indicates that a user can't pay for course while FA is pending", () => {
@@ -231,57 +217,13 @@ describe("CourseAction", () => {
       })
 
       const wrapper = renderCourseAction({
-        courseRun:    firstRun,
-        financialAid: {
-          has_user_applied:   true,
-          application_status: FA_STATUS_PENDING_DOCS
-        },
-        hasFinancialAid: true,
-        actionType:      COURSE_ACTION_PAY
+        courseRun:  firstRun,
+        actionType: COURSE_ACTION_PAY
       })
 
       const button = wrapper.find(".pay-button")
       assert.isTrue(button.props().disabled)
-      assert.equal(button.props().children, "Pay Now *")
-    })
-
-    it("pay button redirects to checkout", () => {
-      const firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
-        status:                STATUS_CAN_UPGRADE
-      })
-      const wrapper = renderCourseAction({
-        courseRun:       firstRun,
-        hasFinancialAid: false,
-        actionType:      COURSE_ACTION_PAY
-      })
-      const payButton = wrapper.find(".pay-button")
-      payButton.simulate("click")
-      assert.equal(checkoutStub.calledWith(firstRun.course_id), true)
-    })
-
-    it("enroll button redirects to order summary if full coupon and order fulfilled", () => {
-      const firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString()
-      })
-      const wrapper = renderCourseAction({
-        coupon: {
-          amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-          amount:      new Decimal("1")
-        },
-        courseRun:       firstRun,
-        hasFinancialAid: true,
-        financialAid:    {
-          has_user_applied:   true,
-          application_status: FA_STATUS_APPROVED
-        },
-        actionType: COURSE_ACTION_ENROLL
-      })
-      const enrollButton = wrapper.find(".enroll-button")
-      assert.equal(wrapper.find(SpinnerButton).props().children, "Enroll")
-      enrollButton.simulate("click")
-      assert.equal(checkoutStub.calledWith(firstRun.course_id), false)
-      assert.equal(routerPushStub.called, true)
+      assert.equal(button.props().children, "Upgrade Unavailable")
     })
   })
 })

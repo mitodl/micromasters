@@ -1,15 +1,12 @@
 """Factories for mail models"""
-from factory import (
-    Faker,
-    SubFactory,
-)
+from factory import Faker, SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
 
 from mail.models import AutomaticEmail
+from micromasters.factories import UserFactory
 from search.factories import PercolateQueryFactory
 from search.models import PercolateQuery
-from micromasters.factories import UserFactory
 
 
 class AutomaticEmailFactory(DjangoModelFactory):

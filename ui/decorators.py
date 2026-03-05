@@ -5,9 +5,7 @@ from functools import wraps
 
 from django.shortcuts import redirect
 
-from ui.url_utils import (
-    PROFILE_URL,
-)
+from ui.url_utils import PROFILE_URL
 
 
 def require_mandatory_urls(func):

@@ -1,20 +1,13 @@
 """
 Tests for CMS serializers
 """
-from search.base import MockedESTestCase
-from cms.serializers import (
-    CourseSerializer,
-    FacultySerializer,
-    RenditionSerializer,
-    ProgramPageSerializer,
-)
-from cms.factories import (
-    FacultyFactory,
-    ProgramPageFactory,
-)
+from cms.factories import FacultyFactory, ProgramPageFactory
+from cms.serializers import (CourseSerializer, FacultySerializer,
+                             ProgramPageSerializer, RenditionSerializer)
 from courses.factories import CourseFactory
+from courses.models import ElectiveCourse, ElectivesSet
 from courses.serializers import ElectivesSetSerializer
-from courses.models import ElectivesSet, ElectiveCourse
+from search.base import MockedESTestCase
 
 
 class WagtailSerializerTests(MockedESTestCase):

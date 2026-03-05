@@ -5,11 +5,9 @@ from celery import group
 
 from dashboard.models import ProgramEnrollment
 from exams.api import authorize_for_latest_passed_course
-from exams.models import (
-    ExamRun,
-)
+from exams.models import ExamRun
 from micromasters.celery import app
-from micromasters.utils import now_in_utc, chunks
+from micromasters.utils import chunks, now_in_utc
 
 log = logging.getLogger(__name__)
 

@@ -4,31 +4,20 @@ Functions for ES indexing
 import logging
 
 from django.conf import settings
-from opensearchpy.helpers import bulk
 from opensearchpy.exceptions import NotFoundError
+from opensearchpy.helpers import bulk
 
+from dashboard.serializers import UserProgramSearchSerializer
+from micromasters.utils import chunks, dict_with_keys
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
-from dashboard.serializers import UserProgramSearchSerializer
-from micromasters.utils import (
-    chunks,
-    dict_with_keys,
-)
-from search.connection import (
-    ALL_INDEX_TYPES,
-    get_aliases,
-    get_default_alias,
-    get_conn,
-    make_alias_name,
-    PERCOLATE_INDEX_TYPE,
-    PRIVATE_ENROLLMENT_INDEX_TYPE,
-    PUBLIC_ENROLLMENT_INDEX_TYPE, make_backing_index_name,
-)
-from search.exceptions import ReindexException
-from search.util import (
-    fix_nested_filter,
-    open_json_stream,
-)
+from search.connection import (ALL_INDEX_TYPES, PERCOLATE_INDEX_TYPE,
+                               PRIVATE_ENROLLMENT_INDEX_TYPE,
+                               PUBLIC_ENROLLMENT_INDEX_TYPE, get_aliases,
+                               get_conn, get_default_alias, make_alias_name,
+                               make_backing_index_name)
+from search.exceptions import IndexTypeException, ReindexException
+from search.util import fix_nested_filter, open_json_stream
 
 log = logging.getLogger(__name__)
 
@@ -220,7 +209,7 @@ PERCOLATE_MAPPING = {
         }
 }
 
-INDEX_WILDCARD = '{index_name}_*'.format(index_name=settings.OPENSEARCH_INDEX)
+INDEX_WILDCARD = f'{settings.OPENSEARCH_INDEX}_*'
 
 
 def _index_chunk(chunk, *, index):
@@ -243,9 +232,7 @@ def _index_chunk(chunk, *, index):
         index=index,
     )
     if len(errors) > 0:
-        raise ReindexException("Error during bulk insert: {errors}".format(
-            errors=errors
-        ))
+        raise ReindexException(f"Error during bulk insert: {errors}")
 
     refresh_index(index)
     return insert_count
@@ -411,7 +398,7 @@ def index_program_enrolled_users(
     # Serialize to a temporary file so we don't serialize twice (serializing is expensive)
     with open_json_stream() as json_stream:
         json_stream.write_stream(
-            (document for document in _get_private_documents(program_enrollments))
+            document for document in _get_private_documents(program_enrollments)
         )
 
         for index in public_indices:
@@ -517,7 +504,7 @@ def clear_and_create_index(index_name, *, index_type, skip_mapping=False):
     elif index_type == PUBLIC_ENROLLMENT_INDEX_TYPE:
         mapping = PUBLIC_ENROLLMENT_MAPPING
     else:
-        raise Exception("Unknown index type")
+        raise IndexTypeException("Unknown index type")
 
     conn = get_conn(verify=False)
     if conn.indices.exists(index_name):

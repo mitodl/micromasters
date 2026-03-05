@@ -3,9 +3,9 @@ Tests for the search view
 """
 import ddt
 from django.conf import settings
-from django.urls import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
+from django.urls import reverse
 from factory.django import mute_signals
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -17,10 +17,7 @@ from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
 from profiles.models import Profile
 from roles.models import Role
-from roles.roles import (
-    Instructor,
-    Staff,
-)
+from roles.roles import Instructor, Staff
 from search.base import ESTestCase
 
 
@@ -30,7 +27,7 @@ class SearchTests(ESTestCase, APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(SearchTests, cls).setUpTestData()
+        super().setUpTestData()
         # create some students
         with mute_signals(post_save):
             cls.students = [(ProfileFactory.create(filled_out=True)).user for _ in range(30)]
@@ -86,7 +83,7 @@ class SearchTests(ESTestCase, APITestCase):
         """
         Helper function to extract the program ids in a list of opensearch hits.
         """
-        return list(set(hit['_source']['program']['id'] for hit in hits))
+        return list({hit['_source']['program']['id'] for hit in hits})
 
     def test_default_page_size(self):
         """Assert the default page size"""

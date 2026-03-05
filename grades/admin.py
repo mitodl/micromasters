@@ -96,13 +96,15 @@ class MicromastersCourseCertificateAdmin(admin.ModelAdmin):
         'user__email',
     )
 
+    @admin.display(
+        description='User'
+    )
     def user_username(self, obj):  # pylint: disable=missing-docstring
         return obj.user.username
 
     def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    user_username.short_description = 'User'
 
 
 class MicromastersProgramCertificateAdmin(admin.ModelAdmin):
@@ -116,13 +118,15 @@ class MicromastersProgramCertificateAdmin(admin.ModelAdmin):
         'user__email',
     )
 
+    @admin.display(
+        description='User'
+    )
     def user_username(self, obj):  # pylint: disable=missing-docstring
         return obj.user.username
 
     def has_add_permission(self, *agrs, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    user_username.short_description = 'User'
 
 
 class MicromastersProgramCommendationAdmin(admin.ModelAdmin):
@@ -137,13 +141,15 @@ class MicromastersProgramCommendationAdmin(admin.ModelAdmin):
         'user__email',
     )
 
+    @admin.display(
+        description='User'
+    )
     def user_username(self, obj):  # pylint: disable=missing-docstring
         return obj.user.username
 
     def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, signature-differs
         return False
 
-    user_username.short_description = 'User'
 
 
 admin.site.register(models.FinalGrade, FinalGradeAdmin)

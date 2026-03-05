@@ -3,10 +3,9 @@ Pytest configuration file for the entire micromasters app
 """
 # pylint: disable=redefined-outer-name
 import warnings
-from unittest.mock import patch
 from types import SimpleNamespace
+from unittest.mock import patch
 
-from django.utils.deprecation import RemovedInDjango30Warning
 import pytest
 
 from search import tasks
@@ -21,6 +20,7 @@ def warnings_as_errors():
     try:
         warnings.resetwarnings()
         warnings.simplefilter('error')
+        warnings.filterwarnings("ignore", category=ResourceWarning)
         # For celery
         warnings.simplefilter('ignore', category=ImportWarning)
         warnings.filterwarnings(
@@ -44,6 +44,11 @@ def warnings_as_errors():
             ),
             category=DeprecationWarning
         )
+        warnings.filterwarnings(
+            "ignore",
+            message="Converter 'drf_format_suffix' is already registered",
+            category=DeprecationWarning,
+        )
         # For compatibility modules in various libraries
         warnings.filterwarnings(
             "ignore",
@@ -55,8 +60,6 @@ def warnings_as_errors():
             category=UserWarning,
             message='Failed to load HostKeys',
         )
-        # For Django 3.0 compatibility, which we don't care about yet
-        warnings.filterwarnings("ignore", category=RemovedInDjango30Warning)
 
         yield
     finally:
@@ -64,11 +67,8 @@ def warnings_as_errors():
 
 
 @pytest.fixture(autouse=True)
-def settings_defaults(settings):
-    """
-    Sets default settings to safe defaults
-    """
-    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
+def settings_defaults(settings):  # pylint: disable=unused-argument
+    """No-op fixture for settings defaults, kept for consistency"""
 
 
 @pytest.fixture(scope='function')
@@ -83,7 +83,7 @@ def mocked_opensearch_module_patcher(settings):
         # This looks for functions starting with _ because those are the functions which are imported
         # from indexing_api. The _ lets it prevent name collisions.
         if callable(val) and name.startswith("_"):
-            patchers.append(patch('search.tasks.{0}'.format(name), autospec=True))
+            patchers.append(patch(f'search.tasks.{name}', autospec=True))
     for patcher in patchers:
         mock = patcher.start()
         mock.name = patcher.attribute
@@ -104,18 +104,6 @@ def mocked_opensearch(mocked_opensearch_module_patcher):
     for mock in mocked_opensearch_module_patcher.patcher_mocks:
         mock.reset_mock()
     return mocked_opensearch_module_patcher
-
-
-@pytest.fixture()
-def discussion_settings(settings):
-    """Set discussion-specific settings"""
-    settings.OPEN_DISCUSSIONS_JWT_SECRET = 'secret'
-    settings.OPEN_DISCUSSIONS_COOKIE_NAME = 'jwt_cookie'
-    settings.OPEN_DISCUSSIONS_COOKIE_DOMAIN = 'localhost'
-    settings.OPEN_DISCUSSIONS_REDIRECT_URL = 'http://localhost/'
-    settings.OPEN_DISCUSSIONS_BASE_URL = 'http://localhost/'
-    settings.OPEN_DISCUSSIONS_API_USERNAME = 'mitodl'
-    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = True
 
 
 @pytest.fixture()

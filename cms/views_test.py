@@ -1,9 +1,8 @@
 """
 Test end to end django views.
 """
-from django.urls import reverse
 import pytest
-
+from django.urls import reverse
 
 pytestmark = [pytest.mark.django_db]
 

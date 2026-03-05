@@ -3,16 +3,16 @@ Tests for exam tasks
 """
 from unittest.mock import patch
 
-from ddt import ddt, data
+from ddt import data, ddt
 
 from dashboard.factories import ProgramEnrollmentFactory
+from courses.factories import create_program
 from exams.factories import (
     ExamRunFactory,
 )
 from exams.tasks import (
     authorize_exam_runs,
     authorize_enrollment_for_exam_run)
-from financialaid.api_test import create_program
 from search.base import MockedESTestCase
 
 

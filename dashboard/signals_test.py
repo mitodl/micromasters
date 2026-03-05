@@ -6,7 +6,7 @@ from unittest.mock import patch
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import ProgramFactory, CourseFactory
+from courses.factories import CourseFactory, ProgramFactory
 from dashboard.models import ProgramEnrollment
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase

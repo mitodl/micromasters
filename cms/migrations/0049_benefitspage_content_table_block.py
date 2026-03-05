@@ -2,8 +2,8 @@
 
 from django.db import migrations
 import wagtail.contrib.table_block.blocks
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -17,12 +17,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="benefitspage",
             name="content",
-            field=wagtail.core.fields.StreamField(
+            field=wagtail.fields.StreamField(
                 [
-                    ("rich_text", wagtail.core.blocks.RichTextBlock()),
+                    ("rich_text", wagtail.blocks.RichTextBlock()),
                     (
                         "image_with_link",
-                        wagtail.core.blocks.StructBlock(
+                        wagtail.blocks.StructBlock(
                             [
                                 (
                                     "image",
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                                 ),
                                 (
                                     "link",
-                                    wagtail.core.blocks.URLBlock(
+                                    wagtail.blocks.URLBlock(
                                         help_text="Absolute URL to the image, like https://example.com/some_image.jpg",
                                         label="Link",
                                         required=True,
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                                 ),
                                 (
                                     "align",
-                                    wagtail.core.blocks.ChoiceBlock(
+                                    wagtail.blocks.ChoiceBlock(
                                         choices=[
                                             ("center", "Center"),
                                             ("right", "Right"),
@@ -53,11 +53,11 @@ class Migration(migrations.Migration):
                                 ),
                                 (
                                     "width",
-                                    wagtail.core.blocks.IntegerBlock(required=False),
+                                    wagtail.blocks.IntegerBlock(required=False),
                                 ),
                                 (
                                     "height",
-                                    wagtail.core.blocks.IntegerBlock(required=False),
+                                    wagtail.blocks.IntegerBlock(required=False),
                                 ),
                             ],
                             blank=True,

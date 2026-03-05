@@ -4,12 +4,11 @@ Tests for util functions
 from io import BytesIO
 from unittest import TestCase
 from unittest.mock import patch
-import ddt
 
+import ddt
 from django.db.models.signals import post_save
 from django.test import TestCase as DjangoTestCase
 from factory.django import mute_signals
-
 from factory.fuzzy import FuzzyInteger
 from PIL import Image
 
@@ -70,10 +69,10 @@ class ImageTests(TestCase):
         """
         name = 'name'
         ext = '.jpg'
-        filename = '{name}{ext}'.format(name=name, ext=ext)
+        filename = f'{name}{ext}'
         url = util.profile_image_upload_uri(None, filename)
-        assert url.startswith('profile/{name}-'.format(name=name))
-        assert url.endswith('{ext}'.format(ext=ext))
+        assert url.startswith(f'profile/{name}-')
+        assert url.endswith(f'{ext}')
 
     def test_small(self):
         """
@@ -81,16 +80,16 @@ class ImageTests(TestCase):
         """
         name = 'name'
         ext = '.jpg'
-        filename = '{name}{ext}'.format(name=name, ext=ext)
+        filename = f'{name}{ext}'
         url = util.profile_image_upload_uri_small(None, filename)
-        assert url.startswith('profile/{name}-'.format(name=name))
-        assert url.endswith('_small{ext}'.format(ext=ext))
+        assert url.startswith(f'profile/{name}-')
+        assert url.endswith(f'_small{ext}')
 
     def test_too_long_name(self):
         """
         A name which is too long should get truncated to 100 characters
         """
-        filename = '{}.jpg'.format('a' * 150)
+        filename = f"{'a' * 150}.jpg"
         full_path = util.profile_image_upload_uri(None, filename)
         assert len(full_path) == 100
         assert full_path.startswith("profile/")
@@ -100,7 +99,7 @@ class ImageTests(TestCase):
         """
         A name which is too long should get truncated to 100 characters
         """
-        filename = '{}.jpg'.format('a' * 150)
+        filename = f"{'a' * 150}.jpg"
         with self.assertRaises(ValueError) as ex:
             util._generate_upload_to_uri("x"*150)(None, filename)  # pylint: disable=protected-access
         assert ex.exception.args[0].startswith("path is longer than max length even without name")
@@ -162,7 +161,7 @@ class FullNameTests(DjangoTestCase):
         first = "Tester"
         last = "KK"
         profile = SocialProfileFactory.create(first_name=first, last_name=last)
-        assert util.full_name(profile.user) == "{} {}".format(first, last)
+        assert util.full_name(profile.user) == f"{first} {last}"
 
     def test_full_name_when_last_name_empty(self):
         """
@@ -171,7 +170,7 @@ class FullNameTests(DjangoTestCase):
         first = "Tester"
         last = ""
         profile = SocialProfileFactory.create(first_name=first, last_name=last)
-        assert util.full_name(profile.user) == "{name} ".format(name=first)
+        assert util.full_name(profile.user) == f"{first} "
 
     def test_full_name_when_first_name_empty(self):
         """
@@ -180,7 +179,7 @@ class FullNameTests(DjangoTestCase):
         first = ""
         last = "Tester"
         profile = SocialProfileFactory.create(first_name=first, last_name=last)
-        assert util.full_name(profile.user) == "{} {}".format(profile.user.username, last)
+        assert util.full_name(profile.user) == f"{profile.user.username} {last}"
 
 
 @ddt.ddt

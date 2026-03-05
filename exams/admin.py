@@ -1,4 +1,3 @@
-
 """
 Admin for the grades app
 """

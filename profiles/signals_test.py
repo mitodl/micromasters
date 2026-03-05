@@ -2,12 +2,14 @@
 Tests for signals
 """
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 
 from profiles.models import Profile
 from search.base import MockedESTestCase
 
 
+User = get_user_model()
 class SignalProfilesTest(MockedESTestCase):
     """
     Test class for signals that creates a profile whenever a user is created

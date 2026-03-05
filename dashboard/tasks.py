@@ -1,31 +1,18 @@
 """
 Periodic task that updates user data.
 """
-from datetime import (
-    datetime,
-    timedelta,
-)
 import logging
+from datetime import datetime, timedelta
 
+import pytz
 from celery import group
 from django.conf import settings
-import pytz
 
 from backends.constants import COURSEWARE_BACKENDS
-from dashboard.api import (
-    calculate_users_to_refresh_in_bulk,
-    refresh_user_data,
-)
+from dashboard.api import calculate_users_to_refresh_in_bulk, refresh_user_data
 from micromasters.celery import app
-from micromasters.locks import (
-    Lock,
-    release_lock,
-)
-from micromasters.utils import (
-    chunks,
-    now_in_utc,
-)
-
+from micromasters.locks import Lock, release_lock
+from micromasters.utils import chunks, now_in_utc
 
 log = logging.getLogger(__name__)
 

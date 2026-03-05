@@ -2,21 +2,19 @@
 Tests for the dashboard permissions
 """
 from unittest.mock import Mock
-from django.http import Http404
-from django.db.models.signals import post_save
-from factory.django import mute_signals
+
 import ddt
+from django.db.models.signals import post_save
+from django.http import Http404
+from factory.django import mute_signals
 
 from courses.factories import ProgramFactory
-from micromasters.factories import SocialUserFactory
 from dashboard.models import ProgramEnrollment
 from dashboard.permissions import CanReadIfStaffOrSelf
-from search.base import MockedESTestCase
+from micromasters.factories import SocialUserFactory
 from roles.models import Role
-from roles.roles import (
-    Instructor,
-    Staff,
-)
+from roles.roles import Instructor, Staff
+from search.base import MockedESTestCase
 
 
 @ddt.ddt

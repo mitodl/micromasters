@@ -13,6 +13,7 @@ from courses.factories import (
     ProgramFactory,
     CourseFactory,
     CourseRunFactory,
+    create_program,
 )
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.factories import (
@@ -26,13 +27,6 @@ from dashboard.serializers import (
     UnEnrollProgramsSerializer
 )
 from dashboard.utils import MMTrack
-from ecommerce.factories import (
-    OrderFactory,
-    LineFactory,
-)
-from financialaid.api_test import (
-    create_program,
-)
 from profiles.factories import (
     EducationFactory,
     EmploymentFactory,
@@ -57,7 +51,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         """
         fake = faker.Factory.create()
         course = CourseFactory.create(program=program)
-        course_run_params = dict(before_now=True, after_now=False, tzinfo=pytz.utc)
+        course_run_params = {"before_now": True, "after_now": False, "tzinfo": pytz.utc}
         course_runs = [
             CourseRunFactory.create(
                 course=course,
@@ -67,7 +61,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
                 end_date=fake.date_time_this_year(**course_run_params),
             ) for _ in range(num_course_runs)
         ]
-        factory_kwargs = dict(user=user)
+        factory_kwargs = {"user": user}
         if data is not None:
             factory_kwargs['data'] = data
         return [CachedEnrollmentFactory.create(course_run=course_run, **factory_kwargs) for course_run in course_runs]
@@ -128,8 +122,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         cls.fa_enrollments = cls._generate_cached_enrollments(cls.user, cls.fa_program, num_course_runs=2)
         cls.current_grades = []
         for i, enrollment in enumerate(cls.fa_enrollments):
-            order = OrderFactory.create(user=cls.user, status='fulfilled')
-            LineFactory.create(order=order, course_key=enrollment.course_run.edx_course_key)
             cls.current_grades.append(
                 CachedCurrentGradeFactory.create(
                     user=cls.user,
@@ -141,11 +133,13 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
                     }
                 )
             )
+            # Create FinalGrade with course_run_paid_on_edx=True to indicate payment
             FinalGradeFactory.create(
                 user=cls.user,
                 course_run=enrollment.course_run,
                 grade=cls.current_grades_vals[i],
                 passed=True,
+                course_run_paid_on_edx=True,
             )
         fa_cached_edx_data = CachedEdxUserData(cls.user, program=cls.fa_program)
         fa_mmtrack = MMTrack(cls.user, cls.fa_program, fa_cached_edx_data)
@@ -174,27 +168,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         }
         serialized_enrollments = UserProgramSearchSerializer.serialize(self.program_enrollment)
         assert serialized_enrollments == expected_values
-
-    def test_full_program_user_serialization_financial_aid(self):
-        """
-        Tests that full ProgramEnrollment serialization works as expected
-        for financial aid programs.
-        the difference with test_full_program_user_serialization
-        is that the grade is calculated using the current grades
-        """
-        self.profile.refresh_from_db()
-        expected_result = {
-            'id': self.fa_program.id,
-            'enrollments': self.fa_serialized_enrollments,
-            'courses': self.fa_serialized_course_enrollments,
-            'course_runs': self.semester_enrollments,
-            'grade_average': 95,
-            'is_learner': True,
-            'num_courses_passed': 1,
-            'total_courses': 2
-        }
-        serialized_enrollments = UserProgramSearchSerializer.serialize(self.fa_program_enrollment)
-        assert serialized_enrollments == expected_result
 
     def test_full_program_user_serialization_staff(self):
         """
@@ -296,7 +269,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
             serialized_enrollments (list): A list of serialized enrollments
             courses (iterable): An iterable of Course objects
         """
-        return all([cls.is_course_serialized(serialized_enrollments, course) for course in courses])
+        return all(cls.is_course_serialized(serialized_enrollments, course) for course in courses)
 
     @classmethod
     def verified_enroll(cls, user, course_run):
@@ -317,15 +290,15 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
         cls.non_fa_program = ProgramFactory.create()
         _, course_runs = cls.generate_course_with_runs(
             cls.non_fa_program,
-            course_params=dict(title='Non FA Course 1')
+            course_params={"title": 'Non FA Course 1'}
         )
         cls.non_fa_enrollments = [cls.verified_enroll(cls.user, course_runs[0])]
         cls.non_fa_program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=cls.non_fa_program)
         # Create FA program data
-        cls.fa_program = ProgramFactory.create(financial_aid_availability=False)
+        cls.fa_program = ProgramFactory.create()
         _, course_runs = cls.generate_course_with_runs(
             cls.fa_program,
-            course_params=dict(title='FA Course 1')
+            course_params={"title": 'FA Course 1'}
         )
         cls.fa_enrollments = [cls.verified_enroll(cls.user, course_runs[0])]
         cls.fa_program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=cls.fa_program)
@@ -352,7 +325,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
             # Generate a new course with only unverified course run enrollments
             unver_course, unver_course_runs = self.generate_course_with_runs(
                 program,
-                course_params=dict(title='Unverified Course'),
+                course_params={"title": 'Unverified Course'},
                 course_run_count=2
             )
             for course_run in unver_course_runs:

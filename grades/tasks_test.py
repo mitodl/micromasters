@@ -2,24 +2,20 @@
 Tests for grades tasks
 """
 from datetime import timedelta
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from django.core.cache import caches
 from django_redis import get_redis_connection
 
 from courses.factories import CourseRunFactory
-from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory
+from dashboard.factories import (CachedCurrentGradeFactory,
+                                 CachedEnrollmentFactory)
 from grades import tasks
 from grades.api import CACHE_KEY_FAILED_USERS_BASE_STR
-from grades.models import (
-    CourseRunGradingStatus,
-    FinalGrade,
-    FinalGradeStatus,
-)
+from grades.models import CourseRunGradingStatus, FinalGrade, FinalGradeStatus
 from micromasters.factories import UserFactory
 from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
-
 
 cache_redis = caches['redis']
 

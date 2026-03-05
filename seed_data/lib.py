@@ -4,32 +4,24 @@ Library functions for interacting with test data
 import re
 from datetime import timedelta
 
-from django.db import transaction
+from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
-from django.contrib.auth.models import User
 
-from courses.models import Program, Course, CourseRun
+from courses.models import Course, CourseRun, Program
 from dashboard.api_edx_cache import CachedEdxDataApi
-from dashboard.models import CachedCertificate, CachedEnrollment, CachedCurrentGrade, UserCacheRefreshTime
+from dashboard.models import (CachedCertificate, CachedCurrentGrade,
+                              CachedEnrollment, UserCacheRefreshTime)
 from grades.models import FinalGrade, FinalGradeStatus
-from ecommerce.models import Line, Order
-from micromasters.utils import (
-    remove_falsey_values,
-    now_in_utc,
-)
-from seed_data.management.commands import (
-    DEFAULT_GRADE,
-    FAKE_PROGRAM_DESC_PREFIX,
-    PASSING_GRADE,
-    DEFAULT_PRICE,
-)
-from seed_data.utils import (
-    create_active_date_range,
-    create_future_date_range,
-    create_past_date_range,
-    future_date,
-    accepts_or_calculates_now,
-)
+from micromasters.utils import now_in_utc
+from seed_data.management.commands import (DEFAULT_GRADE,
+                                           FAKE_PROGRAM_DESC_PREFIX,
+                                           PASSING_GRADE)
+from seed_data.utils import (accepts_or_calculates_now,
+                             create_active_date_range,
+                             create_future_date_range, create_past_date_range,
+                             future_date)
+
+User = get_user_model()
 
 
 def fake_programs_query():
@@ -49,25 +41,19 @@ class ModelFinder:
         relevant error if more or less than one record was found
         """
         if not params:
-            raise Exception(
-                "No parameters given for {} records. Accepted parameters: [{}]".format(
-                    cls.model_cls.__name__,
-                    cls.param_keys
-                )
+            raise Exception(  # pylint: disable=broad-exception-raised
+                f"No parameters given for {cls.model_cls.__name__} records. Accepted parameters: [{cls.param_keys}]"
             )
         if len(objects) == 0:
-            raise Exception(
-                "No {} found with the given params ({})".format(
-                    cls.model_cls.__name__,
-                    params
-                )
+            raise Exception(  # pylint: disable=broad-exception-raised
+                f"No {cls.model_cls.__name__} found with the given params ({params})"
             )
         if len(objects) > 1:
             exc_text = (
                 "Multiple {} records found with the given params ({}). These parameters need to "
                 "be specific enough to match a single record.\n{}"
             )
-            raise Exception(
+            raise Exception(  # pylint: disable=broad-exception-raised
                 exc_text.format(
                     cls.model_cls.__name__,
                     params,
@@ -187,7 +173,7 @@ class CachedHandler:
 
     def get_or_create(self, course_run, data=None):
         """Gets or creates a cached edX object for a given User and CourseRun"""
-        defaults = dict(data=data)
+        defaults = {"data": data}
         return self.model_cls.objects.get_or_create(user=self.user, course_run=course_run, defaults=defaults)
 
     def exists(self, course_run):
@@ -288,7 +274,7 @@ def clear_dashboard_data(user, course=None, course_run=None, models=None):
     for cached_model_handler in handlers:
         cached_model_handler(user).clear_all(course=course, course_run=course_run)
     # Delete FinalGrade records
-    final_grade_params = dict(user=user)
+    final_grade_params = {"user": user}
     if course:
         final_grade_params['course_run__course'] = course
     if course_run:
@@ -375,11 +361,11 @@ def set_course_run_to_past_graded(user, course_run, grade, upgradeable=False, no
     # Create enrollment if it doesn't exist
     CachedEnrollmentHandler(user).set_or_create(course_run)
     # Create final grade
-    final_grade_defaults = dict(
-        grade=grade,
-        passed=grade >= PASSING_GRADE,
-        status=FinalGradeStatus.COMPLETE
-    )
+    final_grade_defaults = {
+        'grade': grade,
+        'passed': grade >= PASSING_GRADE,
+        'status': FinalGradeStatus.COMPLETE
+    }
     FinalGrade.objects.update_or_create(
         user=user,
         course_run=course_run,
@@ -390,53 +376,34 @@ def set_course_run_to_past_graded(user, course_run, grade, upgradeable=False, no
 
 def clear_course_payment_data(user, course=None, course_run=None):
     """
-    Clears all course payment data (Order/Line) for a given User and an associated Course or CourseRun.
-    This will be a no-op with any Course/CourseRun that is not part of an FA-enabled program.
+    Clears all course payment data for a given User and an associated Course or CourseRun.
+    Note: Payments were discontinued in 2021. This function now only handles non-payment verification.
     """
-    program = None
     course_run_params = {}
     final_grade_params = {}
     if course:
-        program = course.program
         course_run_params['course'] = course
         final_grade_params['course_run__course'] = course
     elif course_run:
-        program = course_run.course.program
         course_run_params['id'] = course_run.id
         final_grade_params['course_run'] = course_run
-    if program.financial_aid_availability:
-        course_keys = CourseRun.objects.filter(**course_run_params).values_list("edx_course_key", flat=True)
-        Order.objects.filter(
-            user=user,
-            line__course_key__in=remove_falsey_values(course_keys)
-        ).delete()
-    else:
-        if course_run:
-            CachedEnrollmentHandler(user).set_or_create(course_run, verified=False)
-        FinalGrade.objects.filter(user=user, **final_grade_params).update(course_run_paid_on_edx=False)
+
+    if course_run:
+        CachedEnrollmentHandler(user).set_or_create(course_run, verified=False)
+    FinalGrade.objects.filter(user=user, **final_grade_params).update(course_run_paid_on_edx=False)
 
 
-def add_paid_order_for_course(user, course_run, price=None):
+def add_paid_order_for_course(user, course_run, price=None):  # pylint: disable=unused-argument
     """
-    Adds an Order and Line for a FA-enabled CourseRun and a User
+    Previously added an Order and Line for a FA-enabled CourseRun and a User.
+    Now a no-op as payments were discontinued in 2021.
     """
-    course_price_value = price or course_run.course.program.price
-    order = Order.objects.create(user=user, status=Order.FULFILLED, total_price_paid=course_price_value)
-    Line.objects.create(order=order, course_key=course_run.edx_course_key, price=course_price_value)
 
 
 def set_course_run_to_paid(user, course_run):
     """Ensures that a User will be considered as having paid for a CourseRun"""
-    if course_run.course.program.financial_aid_availability:
-        with transaction.atomic():
-            is_already_paid = Line.objects.filter(
-                course_key=course_run.edx_course_key, order__user=user, order__status=Order.FULFILLED
-            ).exists()
-            if not is_already_paid:
-                add_paid_order_for_course(user, course_run, price=DEFAULT_PRICE)
-    else:
-        CachedEnrollmentHandler(user).set_or_create(course_run, verified=True)
-        FinalGrade.objects.filter(user=user, course_run=course_run).update(course_run_paid_on_edx=True)
+    CachedEnrollmentHandler(user).set_or_create(course_run, verified=True)
+    FinalGrade.objects.filter(user=user, course_run=course_run).update(course_run_paid_on_edx=True)
     return course_run
 
 
@@ -457,14 +424,14 @@ def update_fake_course_run_edx_key(user, course_run):
     year = start_date.strftime('%Y')
     month = start_date.strftime('%B')
     short_month = month[:3]
-    course_run.edx_course_key = re.sub(r'\w{3}_\d{4}$', '{}_{}'.format(short_month, year), course_run.edx_course_key)
-    course_run.title = re.sub(r'\w+ \d{4}$', '{} {}'.format(month, year), course_run.title)
+    course_run.edx_course_key = re.sub(r'\w{3}_\d{4}$', f'{short_month}_{year}', course_run.edx_course_key)
+    course_run.title = re.sub(r'\w+ \d{4}$', f'{month} {year}', course_run.title)
     try:
         course_run.save()
     except IntegrityError:
         # If another course run already has this edx key, just tack on the pk to the end
-        course_run.edx_course_key = '{}({})'.format(course_run.edx_course_key, course_run.pk)
-        course_run.title = '{} ({})'.format(course_run.title, course_run.pk)
+        course_run.edx_course_key = f'{course_run.edx_course_key}({course_run.pk})'
+        course_run.title = f'{course_run.title} ({course_run.pk})'
         course_run.save()
     update_cached_edx_data_for_run(user, course_run)
     return course_run

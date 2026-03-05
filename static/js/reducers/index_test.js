@@ -26,20 +26,10 @@ import {
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
   RECEIVE_PATCH_USER_PROFILE_FAILURE
 } from "../actions/profile"
-import {
-  checkout,
-  REQUEST_CHECKOUT,
-  RECEIVE_CHECKOUT_SUCCESS,
-  RECEIVE_CHECKOUT_FAILURE,
-  FETCH_FAILURE,
-  FETCH_SUCCESS
-} from "../actions"
+import { FETCH_FAILURE, FETCH_SUCCESS } from "../actions"
 
 import * as api from "../lib/api"
-import {
-  USER_PROFILE_RESPONSE,
-  CYBERSOURCE_CHECKOUT_RESPONSE
-} from "../test_constants"
+import { USER_PROFILE_RESPONSE } from "../test_constants"
 import { ALL_ERRORS_VISIBLE } from "../constants"
 import rootReducer, { INITIAL_PROFILES_STATE } from "../reducers"
 
@@ -284,47 +274,6 @@ describe("reducers", () => {
         [UPDATE_PROFILE_VALIDATION]
       ).then(profileState => {
         assert.deepEqual(profileState["jane"], undefined)
-      })
-    })
-  })
-
-  describe("checkout reducers", () => {
-    let checkoutStub
-
-    beforeEach(() => {
-      dispatchThen = store.createDispatchThen(state => state.checkout)
-      checkoutStub = sandbox.stub(api, "checkout")
-    })
-
-    it("should have an empty default state", () => {
-      return dispatchThen({ type: "unknown" }, ["unknown"]).then(state => {
-        assert.deepEqual(state, {})
-      })
-    })
-
-    it("should POST a checkout successfully", () => {
-      checkoutStub.returns(Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE))
-
-      return dispatchThen(checkout("course_id"), [
-        REQUEST_CHECKOUT,
-        RECEIVE_CHECKOUT_SUCCESS
-      ]).then(checkoutState => {
-        assert.equal(checkoutState.fetchStatus, FETCH_SUCCESS)
-        assert.equal(checkoutStub.callCount, 1)
-        assert.deepEqual(checkoutStub.args[0], ["course_id"])
-      })
-    })
-
-    it("should fail to checkout if API call fails", () => {
-      checkoutStub.returns(Promise.reject())
-
-      return dispatchThen(checkout("course_id"), [
-        REQUEST_CHECKOUT,
-        RECEIVE_CHECKOUT_FAILURE
-      ]).then(checkoutState => {
-        assert.equal(checkoutState.fetchStatus, FETCH_FAILURE)
-        assert.equal(checkoutStub.callCount, 1)
-        assert.deepEqual(checkoutStub.args[0], ["course_id"])
       })
     })
   })

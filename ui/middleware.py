@@ -1,6 +1,6 @@
 """Common MicroMasters middleware"""
-from django.conf import settings
 from django import shortcuts
+from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
 
 from ui.utils import FeatureFlag
@@ -22,10 +22,7 @@ class QueryStringFeatureFlagMiddleware(MiddlewareMixin):
         Returns:
             str: the full key value
         """
-        return '{prefix}_FEATURE_{suffix}'.format(
-            prefix=settings.MIDDLEWARE_FEATURE_FLAG_QS_PREFIX,
-            suffix=suffix,
-        )
+        return f'{settings.MIDDLEWARE_FEATURE_FLAG_QS_PREFIX}_FEATURE_{suffix}'
 
     @classmethod
     def encode_feature_flags(cls, data):
@@ -87,7 +84,7 @@ class CookieFeatureFlagMiddleware(MiddlewareMixin):
         Returns:
             set: the set of feature values in the value
         """
-        return set(member for member in FeatureFlag if member.value & value)
+        return {member for member in FeatureFlag if member.value & value}
 
     @classmethod
     def get_feature_flags(cls, request):

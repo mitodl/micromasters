@@ -8,10 +8,9 @@ from django.core.exceptions import MultipleObjectsReturned
 from testfixtures import LogCapture
 
 from backends.edxorg import EdxOrgOAuth2
-
-from profiles.api import get_social_username, get_social_auth
-from profiles.factories import SocialProfileFactory
 from micromasters.factories import UserSocialAuthFactory
+from profiles.api import get_social_auth, get_social_username
+from profiles.factories import SocialProfileFactory
 from search.base import MockedESTestCase
 
 

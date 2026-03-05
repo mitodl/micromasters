@@ -18,8 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
         courses = Course.objects.filter(
-            program__live=True,
-            program__financial_aid_availability=True
+            program__live=True
         )
         for course in courses:
             if course.has_frozen_runs() and course.has_exam:

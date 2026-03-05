@@ -27,15 +27,15 @@ class UserFinderTests(MockedESTestCase):
             UserFinder.find(email='email1@example.com'),
             UserFinder.find(email='email1'),
         ]
-        assert all([self.user == found_user for found_user in found_users])
+        assert all(self.user == found_user for found_user in found_users)
 
     def test_user_finder_failure(self):
         """Tests that UserFinder will fail with unspecific/incorrect parameters"""
         failing_search_param_sets = [
-            dict(username='username'),
-            dict(email='email'),
-            dict(username='nonexistent_user'),
-            dict(nonsense_param='value'),
+            {"username": 'username'},
+            {"email": 'email'},
+            {"username": 'nonexistent_user'},
+            {"nonsense_param": 'value'},
         ]
         for param_set in failing_search_param_sets:
             with self.assertRaises(Exception):
@@ -57,7 +57,7 @@ class CourseFinderTests(MockedESTestCase):
             CourseFinder.find(course_title='Lvl 100'),
             CourseFinder.find(program_title='program1', course_level='100')
         ]
-        assert all([course == found_course for found_course in found_courses])
+        assert all(course == found_course for found_course in found_courses)
 
 
 class CourseRunFinderTests(MockedESTestCase):
@@ -73,4 +73,4 @@ class CourseRunFinderTests(MockedESTestCase):
             CourseRunFinder.find(course_run_key='coursekey1'),
             CourseRunFinder.find(course_run_key='key1')
         ]
-        assert all([course_run == found_course_run for found_course_run in found_course_runs])
+        assert all(course_run == found_course_run for found_course_run in found_course_runs)

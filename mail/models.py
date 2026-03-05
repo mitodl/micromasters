@@ -1,26 +1,15 @@
 """
 Models for mail
 """
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.db import models
 
-from financialaid.models import FinancialAid
 from micromasters.models import TimestampedModel
 from search.models import PercolateQuery
 
 
-class FinancialAidEmailAudit(TimestampedModel):
-    """
-    Audit table for the Financial Aid
-    """
-    acting_user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    financial_aid = models.ForeignKey(FinancialAid, null=True, on_delete=models.SET_NULL)
-    to_email = models.TextField(null=False)
-    from_email = models.TextField(null=False)
-    email_subject = models.TextField(null=False, blank=True)
-    email_body = models.TextField(null=False, blank=True)
-
-
+User = get_user_model()
 class AutomaticEmail(TimestampedModel):
     """
     Stores information for an automatically sent email
@@ -34,7 +23,7 @@ class AutomaticEmail(TimestampedModel):
 
     def __str__(self):
         """String representation of AutomaticEmail"""
-        return "AutomaticEmail sender={}, subject={}".format(self.sender_name, self.email_subject)
+        return f"AutomaticEmail sender={self.sender_name}, subject={self.email_subject}"
 
 
 class SentAutomaticEmail(TimestampedModel):
@@ -60,10 +49,7 @@ class SentAutomaticEmail(TimestampedModel):
         unique_together = ('user', 'automatic_email')
 
     def __str__(self):
-        return "SentAutomaticEmail for user={user} and automatic_email={automatic_email}".format(
-            user=self.user,
-            automatic_email=self.automatic_email,
-        )
+        return f"SentAutomaticEmail for user={self.user} and automatic_email={self.automatic_email}"
 
 
 class PartnerSchool(models.Model):

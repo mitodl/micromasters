@@ -1,25 +1,13 @@
 """Views for courses"""
-from rest_framework.mixins import (
-    RetrieveModelMixin,
-    UpdateModelMixin,
-)
+from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
 from rest_framework.viewsets import GenericViewSet
 
-from roles.roles import (
-    Instructor,
-    Staff,
-)
 from profiles.constants import USERNAME_RE_PARTIAL
 from profiles.models import Profile
-from profiles.serializers import (
-    ProfileSerializer,
-    ProfileFilledOutSerializer,
-    ProfileLimitedSerializer,
-)
-from profiles.permissions import (
-    CanEditIfOwner,
-    CanSeeIfNotPrivate,
-)
+from profiles.permissions import CanEditIfOwner, CanSeeIfNotPrivate
+from profiles.serializers import (ProfileFilledOutSerializer,
+                                  ProfileLimitedSerializer, ProfileSerializer)
+from roles.roles import Instructor, Staff
 
 
 class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):

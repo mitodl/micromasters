@@ -9,12 +9,10 @@ from unittest import mock
 from django.conf import settings
 from django.test import TestCase
 
-
 REQUIRED_SETTINGS = {
     "MAILGUN_URL": "mailgun.fake.url",
     "MAILGUN_KEY": "fake_mailgun_key",
     "OPENSEARCH_INDEX": "fake_esindex",
-    "OPEN_DISCUSSIONS_SITE_KEY": "fake.key",
 }
 
 

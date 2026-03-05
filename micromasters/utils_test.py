@@ -12,7 +12,6 @@ import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.template import RequestContext
 from django.test import (
-    override_settings,
     RequestFactory,
 )
 import pytz
@@ -21,13 +20,6 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
 from courses.factories import CourseRunFactory
-from ecommerce.factories import (
-    ReceiptFactory,
-)
-from ecommerce.models import Order
-from financialaid.factories import (
-    FinancialAidFactory,
-)
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from micromasters.utils import (
     as_datetime,
@@ -35,7 +27,7 @@ from micromasters.utils import (
     custom_exception_handler,
     dict_with_keys,
     first_matching_item,
-    get_field_names,
+    generate_hash_32,
     is_near_now,
     is_subset_dict,
     now_in_utc,
@@ -44,7 +36,7 @@ from micromasters.utils import (
     serialize_model_object,
     pop_keys_from_dict,
     pop_matching_keys_from_dict,
-    generate_md5, merge_strings,
+    merge_strings,
 )
 from search.base import MockedESTestCase
 
@@ -84,7 +76,7 @@ class ExceptionHandlerTest(MockedESTestCase):
         exp = exception_to_raise('improperly configured')
         resp = custom_exception_handler(exp, self.context)
         assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert resp.data == ['{0}: improperly configured'.format(exception_to_raise.__name__)]
+        assert resp.data == [f'{exception_to_raise.__name__}: improperly configured']
         mock_sentry.assert_called_once_with()
 
     @patch('sentry_sdk.capture_exception', autospec=True)
@@ -113,41 +105,17 @@ class SerializerTests(MockedESTestCase):
     """
     Tests for serialize_model
     """
-    def test_jsonfield(self):
-        """
-        Test a model with a JSONField is handled correctly
-        """
-        with override_settings(CYBERSOURCE_SECURITY_KEY='asdf'):
-            receipt = ReceiptFactory.create()
-            assert serialize_model_object(receipt) == {
-                'created_at': format_as_iso8601(receipt.created_at),
-                'data': receipt.data,
-                'id': receipt.id,
-                'modified_at': format_as_iso8601(receipt.modified_at),
-                'order': receipt.order.id,
-            }
-
     def test_datetime(self):
         """
         Test that a model with a datetime and date field is handled correctly
         """
-        financial_aid = FinancialAidFactory.create(justification=None)
-        assert serialize_model_object(financial_aid) == {
-            'country_of_income': financial_aid.country_of_income,
-            'country_of_residence': financial_aid.country_of_residence,
-            'created_on': format_as_iso8601(financial_aid.created_on),
-            'date_documents_sent': financial_aid.date_documents_sent.isoformat(),
-            'date_exchange_rate': format_as_iso8601(financial_aid.date_exchange_rate),
-            'id': financial_aid.id,
-            'income_usd': financial_aid.income_usd,
-            'justification': None,
-            'original_currency': financial_aid.original_currency,
-            'original_income': financial_aid.original_income,
-            'status': financial_aid.status,
-            'tier_program': financial_aid.tier_program.id,
-            'updated_on': format_as_iso8601(financial_aid.updated_on),
-            'user': financial_aid.user.id,
-        }
+        course_run = CourseRunFactory.create()
+        # Test that serialize_model_object works with datetime fields
+        serialized = serialize_model_object(course_run)
+        assert serialized['id'] == course_run.id
+        assert serialized['start_date'] == format_as_iso8601(course_run.start_date)
+        assert serialized['end_date'] == format_as_iso8601(course_run.end_date)
+        assert serialized['enrollment_start'] == format_as_iso8601(course_run.enrollment_start)
 
     def test_decimal(self):
         """
@@ -171,25 +139,6 @@ class SerializerTests(MockedESTestCase):
             'upgrade_deadline': format_as_iso8601(course_run.upgrade_deadline),
             'courseware_backend': 'edxorg',
             'is_discontinued': course_run.is_discontinued,
-        }
-
-
-class FieldNamesTests(unittest.TestCase):
-    """
-    Tests for get_field_names
-    """
-
-    def test_get_field_names(self):
-        """
-        Assert that get_field_names does not include related fields
-        """
-        assert set(get_field_names(Order)) == {
-            'user',
-            'status',
-            'total_price_paid',
-            'created_at',
-            'modified_at',
-            'reference_number',
         }
 
 
@@ -320,13 +269,13 @@ def test_now_in_utc():
 
 def test_pop_keys_from_dict():
     """pop_keys_from_dict should remove keys from a source dict and return a dict of removed key-values"""
-    orig_dict = dict(a=1, b=2, c=3, d=4)
+    orig_dict = {"a": 1, "b": 2, "c": 3, "d": 4}
     new_dict = pop_keys_from_dict(orig_dict, ['a', 'd'])
-    assert new_dict == dict(a=1, d=4)
-    assert orig_dict == dict(b=2, c=3)
+    assert new_dict == {"a": 1, "d": 4}
+    assert orig_dict == {"b": 2, "c": 3}
     new_dict = pop_keys_from_dict(orig_dict, ['non-existent key'])
     assert new_dict == {}
-    assert orig_dict == dict(b=2, c=3)
+    assert orig_dict == {"b": 2, "c": 3}
 
 
 def test_pop_matching_keys_from_dict():
@@ -334,23 +283,23 @@ def test_pop_matching_keys_from_dict():
     test_pop_matching_keys_from_dict should remove matching keys from a source dict and return a dict
     of removed key-values
     """
-    orig_dict = dict(a=1, b=2, c=3, d=4)
+    orig_dict = {"a": 1, "b": 2, "c": 3, "d": 4}
     new_dict = pop_matching_keys_from_dict(orig_dict, lambda k: k in ['a', 'd'])
-    assert new_dict == dict(a=1, d=4)
-    assert orig_dict == dict(b=2, c=3)
+    assert new_dict == {"a": 1, "d": 4}
+    assert orig_dict == {"b": 2, "c": 3}
     new_dict = pop_matching_keys_from_dict(orig_dict, lambda k: k == 'non-existent key')
     assert new_dict == {}
-    assert orig_dict == dict(b=2, c=3)
+    assert orig_dict == {"b": 2, "c": 3}
 
 
-def test_generate_md5():
-    """Test that generate_md5 generates an MD5 hash"""
-    bytes_to_hash = 'abc'.encode('utf-8')
-    md5_hash = generate_md5(bytes_to_hash)
-    assert isinstance(md5_hash, str)
-    assert len(md5_hash) == 32
-    repeat_md5_hash = generate_md5(bytes_to_hash)
-    assert md5_hash == repeat_md5_hash
+def test_generate_hash_32():
+    """Test that generate_hash_32 returns a stable 32-char hash"""
+    bytes_to_hash = b'abc'
+    digest = generate_hash_32(bytes_to_hash)
+    assert isinstance(digest, str)
+    assert len(digest) == 32
+    repeat_digest = generate_hash_32(bytes_to_hash)
+    assert digest == repeat_digest
 
 
 @pytest.mark.parametrize(

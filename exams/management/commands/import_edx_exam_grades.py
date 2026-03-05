@@ -1,18 +1,17 @@
 """
 Import proctored exam grades from edx
 """
-import csv
 import argparse
-from django.contrib.auth.models import User
+import csv
 
 from django.core.management import BaseCommand, CommandError
+from social_django.models import UserSocialAuth
 
 from courses.models import Course
-from exams.models import ExamRun, ExamAuthorization
-from exams.constants import EXAM_GRADE_PASS, BACKEND_MITX_ONLINE
+from exams.constants import BACKEND_MITX_ONLINE, EXAM_GRADE_PASS
+from exams.models import ExamAuthorization, ExamRun
 from grades.models import ProctoredExamGrade
 from micromasters.utils import now_in_utc
-from social_django.models import UserSocialAuth
 
 
 class Command(BaseCommand):
@@ -34,7 +33,7 @@ class Command(BaseCommand):
                 user_social_auth = UserSocialAuth.objects.get(uid=row['username'], provider=BACKEND_MITX_ONLINE)
             except UserSocialAuth.DoesNotExist:
                 self.stdout.write(
-                    self.style.ERROR('Could not find social auth for user for username {}'.format(row['username']))
+                    self.style.ERROR(f"Could not find social auth for user for username {row['username']}")
                 )
                 continue
             user = user_social_auth.user
@@ -44,7 +43,7 @@ class Command(BaseCommand):
                 course = Course.objects.get(id=course_id)
             except Course.DoesNotExist:
                 raise CommandError(
-                    'Could not find a course with number "{}"'.format(course_id)
+                    f'Could not find a course with number "{course_id}"'
                 )
             # should pick the latest past exam run
             now = now_in_utc()
@@ -54,7 +53,7 @@ class Command(BaseCommand):
             ).order_by('-date_last_schedulable').first()
             if exam_run is None:
                 raise CommandError(
-                    'There are no eligible exam runs for course "{}"'.format(course.title)
+                    f'There are no eligible exam runs for course "{course.title}"'
                 )
             try:
                 exam_authorization = ExamAuthorization.objects.get(user=user, exam_run=exam_run)
@@ -106,8 +105,8 @@ class Command(BaseCommand):
                     existing_grades += 1
 
         result_messages = [
-            'Total exam grades created: {}'.format(grade_count),
-            'Total number of modified grades: {}'.format(existing_grades)
+            f'Total exam grades created: {grade_count}',
+            f'Total number of modified grades: {existing_grades}'
         ]
 
         self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))

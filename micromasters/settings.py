@@ -4,25 +4,21 @@ Django settings for MicroMasters.
 import logging
 import os
 import platform
-from urllib.parse import urljoin
 from pathlib import Path
-from django.core.exceptions import ImproperlyConfigured
+from urllib.parse import urljoin
 
 import dj_database_url
 from celery.schedules import crontab
-from micromasters.envs import (
-    get_any,
-    get_bool,
-    get_int,
-    get_list_of_str,
-    get_string,
-)
+from django.core.exceptions import ImproperlyConfigured
 
+from micromasters.envs import (get_any, get_bool, get_int, get_list_of_str,
+                               get_string)
 from micromasters.sentry import init_sentry
 
+VERSION = "0.0.0"  # Default version
 version_file = Path(os.getcwd()) / "VERSION"
-if version_file.is_file:
-    with open(version_file, mode="r", encoding="UTF-8") as file:
+if version_file.is_file():
+    with open(version_file, encoding="UTF-8") as file:
         VERSION = file.readline().strip()
 
 # initialize Sentry before doing anything else so we capture any config errors
@@ -68,10 +64,10 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
-        'IGNORE': [
-            r'.+\.hot-update\.+',
-            r'.+\.js\.map'
-        ]
+        # Disable ignore filtering for compatibility with our stats format (dict chunks).
+        # Support both legacy 'IGNORE' and newer 'ignores' keys.
+        'ignores': [],
+        'IGNORE': []
     }
 }
 
@@ -89,7 +85,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
-    'server_status',
     'social_django',
 
     # WAGTAIL
@@ -106,7 +101,7 @@ INSTALLED_APPS = (
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
     'modelcluster',
     'taggit',
 
@@ -115,8 +110,6 @@ INSTALLED_APPS = (
 
     # Hijack
     'hijack',
-    'compat',
-    'hijack_admin',
 
     # other third party APPS
     'rolepermissions',
@@ -128,7 +121,6 @@ INSTALLED_APPS = (
     'cms',
     'courses',
     'dashboard',
-    'discussions',
     'ecommerce',
     'exams',
     'financialaid',
@@ -231,7 +223,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR + '/templates/'
+            f"{BASE_DIR}/templates/"
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -260,7 +252,7 @@ WSGI_APPLICATION = 'micromasters.wsgi.application'
 DEFAULT_DATABASE_CONFIG = dj_database_url.parse(
     get_string(
         'DATABASE_URL',
-        'sqlite:///{0}'.format(os.path.join(BASE_DIR, 'db.sqlite3'))
+        f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}"
     )
 )
 DEFAULT_DATABASE_CONFIG['CONN_MAX_AGE'] = get_int('MICROMASTERS_DB_CONN_MAX_AGE', 0)
@@ -288,8 +280,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -299,10 +289,11 @@ USE_TZ = True
 # Serve static files with dj-static
 STATIC_URL = '/static/'
 CLOUDFRONT_DIST = get_string('CLOUDFRONT_DIST', None)
+AWS_S3_CUSTOM_DOMAIN = None
 if CLOUDFRONT_DIST:
-    STATIC_URL = urljoin('https://{dist}.cloudfront.net'.format(dist=CLOUDFRONT_DIST), STATIC_URL)
+    STATIC_URL = urljoin(f'https://{CLOUDFRONT_DIST}.cloudfront.net', STATIC_URL)
     # Configure Django Storages to use Cloudfront distribution for S3 assets
-    AWS_S3_CUSTOM_DOMAIN = '{dist}.cloudfront.net'.format(dist=CLOUDFRONT_DIST)
+    AWS_S3_CUSTOM_DOMAIN = f'{CLOUDFRONT_DIST}.cloudfront.net'
 
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = (
@@ -333,7 +324,6 @@ EMAIL_HOST_PASSWORD = get_string('MICROMASTERS_EMAIL_PASSWORD', '')
 EMAIL_USE_TLS = get_bool('MICROMASTERS_EMAIL_TLS', False)
 EMAIL_SUPPORT = get_string('MICROMASTERS_SUPPORT_EMAIL', 'support@example.com')
 DEFAULT_FROM_EMAIL = get_string('MICROMASTERS_FROM_EMAIL', 'webmaster@localhost')
-ECOMMERCE_EMAIL = get_string('MICROMASTERS_ECOMMERCE_EMAIL', 'support@example.com')
 MAILGUN_URL = get_string('MAILGUN_URL', None)
 if not MAILGUN_URL:
     raise ImproperlyConfigured("MAILGUN_URL not set")
@@ -443,6 +433,9 @@ LOGGING = {
 CORS_ORIGIN_WHITELIST = get_list_of_str("MICROMASTERS_CORS_ORIGIN_WHITELIST", [])
 CORS_ALLOW_CREDENTIALS = True
 
+# Finance program specific message for course status Enrollment by Eligibility
+ENROLLMENT_BY_ELIGIBILITY_COURSES = get_list_of_str('ENROLLMENT_BY_ELIGIBILITY_COURSES', [ "FIN.CFx" ])
+
 # server-status
 STATUS_TOKEN = get_string("STATUS_TOKEN", "")
 HEALTH_CHECK = ['CELERY', 'REDIS', 'POSTGRES', 'OPEN_SEARCH']
@@ -461,14 +454,19 @@ HIJACK_LOGOUT_REDIRECT_URL = '/admin/auth/user'
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = get_int('WAGTAILIMAGES_MAX_UPLOAD_SIZE', 20971620)  # default 25 MB
+WAGTAILADMIN_BASE_URL = SITE_BASE_URL
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 MEDIA_ROOT = get_string('MEDIA_ROOT', '/var/media/')
 MEDIA_URL = '/media/'
 MICROMASTERS_USE_S3 = get_bool('MICROMASTERS_USE_S3', False)
-AWS_ACCESS_KEY_ID = get_string('AWS_ACCESS_KEY_ID', False)
-AWS_SECRET_ACCESS_KEY = get_string('AWS_SECRET_ACCESS_KEY', False)
-AWS_STORAGE_BUCKET_NAME = get_string('AWS_STORAGE_BUCKET_NAME', False)
+AWS_ACCESS_KEY_ID = get_string('AWS_ACCESS_KEY_ID', None)
+AWS_SECRET_ACCESS_KEY = get_string('AWS_SECRET_ACCESS_KEY', None)
+AWS_STORAGE_BUCKET_NAME = get_string('AWS_STORAGE_BUCKET_NAME', None)
 AWS_S3_FILE_OVERWRITE = get_bool('AWS_S3_FILE_OVERWRITE', False)
-AWS_QUERYSTRING_AUTH = get_string('AWS_QUERYSTRING_AUTH', False)
+AWS_QUERYSTRING_AUTH = get_bool('AWS_QUERYSTRING_AUTH', False)
+# Additional S3 settings for django-storages
+AWS_DEFAULT_ACL = get_string('AWS_DEFAULT_ACL', None)  # None means use bucket's default ACL
+AWS_S3_REGION_NAME = get_string('AWS_S3_REGION_NAME', None)  # e.g., 'us-east-1'
 # Provide nice validation of the configuration
 if (
         MICROMASTERS_USE_S3 and
@@ -481,8 +479,39 @@ if (
         'AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, or '
         'AWS_STORAGE_BUCKET_NAME'
     )
+
+# Configure Django Storages for S3
 if MICROMASTERS_USE_S3:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "file_overwrite": AWS_S3_FILE_OVERWRITE,
+                "querystring_auth": AWS_QUERYSTRING_AUTH,
+                "default_acl": AWS_DEFAULT_ACL,
+                "custom_domain": AWS_S3_CUSTOM_DOMAIN if CLOUDFRONT_DIST else None,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "static",  # Store static files in a 'static' folder in the bucket
+                "file_overwrite": True,  # Overwrite static files on each collectstatic
+                "querystring_auth": False,  # Don't add auth query params to static file URLs
+                "default_acl": "public-read",  # Make static files publicly readable
+                "custom_domain": AWS_S3_CUSTOM_DOMAIN if CLOUDFRONT_DIST else None,
+            },
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 # Celery
 USE_CELERY = True
@@ -497,35 +526,18 @@ CELERY_RESULT_BACKEND = get_string(
 CELERY_TASK_ALWAYS_EAGER = get_bool("CELERY_TASK_ALWAYS_EAGER", False) or get_bool("CELERY_ALWAYS_EAGER", False)
 CELERY_TASK_EAGER_PROPAGATES = (get_bool("CELERY_TASK_EAGER_PROPAGATES", True) or
                                 get_bool("CELERY_EAGER_PROPAGATES_EXCEPTIONS", True))
-CRONTAB_DISCUSSIONS_SYNC = get_string("CRONTAB_DISCUSSIONS_SYNC", None)
 CELERY_BEAT_SCHEDULE = {
     'batch-update-user-data-every-friday-every-6-hrs': {
         'task': 'dashboard.tasks.batch_update_user_data',
         'schedule': crontab(minute=0, hour='*/6', day_of_week=5)
     },
-    'update-currency-exchange-rates-every-24-hrs': {
-        'task': 'financialaid.tasks.sync_currency_exchange_rates',
-        'schedule': crontab(minute=0, hour='3')
-    },
     'authorize_exam_runs-every-1-hrs': {
         'task': 'exams.tasks.authorize_exam_runs',
         'schedule': crontab(minute=0, hour='*')
     },
-    'generate-mm-course-certificates-every-1-hrs': {
-        'task': 'grades.tasks.generate_course_certificates_for_fa_students',
-        'schedule': crontab(minute=0, hour='*')
-    },
-    'discussions-sync-memberships-every-minute': {
-        'task': 'discussions.tasks.sync_channel_memberships',
-        'schedule': crontab(*CRONTAB_DISCUSSIONS_SYNC.split()) if CRONTAB_DISCUSSIONS_SYNC else crontab(minute='*', hour='*')
-    },
     'freeze-final-grades-every-24-hrs-few-times': {
         'task': 'grades.tasks.find_course_runs_and_freeze_grades',
         'schedule': crontab(minute='*/15', hour='16')
-    },
-    'create-combined-final-grade-every-1-hrs': {
-        'task': 'grades.tasks.create_combined_final_grades',
-        'schedule': crontab(minute=40, hour='*')
     },
 }
 CELERY_TASK_SERIALIZER = 'json'
@@ -583,30 +595,9 @@ ROLEPERMISSIONS_MODULE = 'roles.roles'
 EDX_BATCH_UPDATES_ENABLED = get_bool("EDX_BATCH_UPDATES_ENABLED", True)
 UPDATE_EDX_DATA_FOR_DEDP_PROGRAM_USERS = get_bool("UPDATE_EDX_DATA_FOR_DEDP_PROGRAM_USERS", False)
 
-# Cybersource
-CYBERSOURCE_ACCESS_KEY = get_string("CYBERSOURCE_ACCESS_KEY", None)
-CYBERSOURCE_SECURITY_KEY = get_string("CYBERSOURCE_SECURITY_KEY", None)
-CYBERSOURCE_SECURE_ACCEPTANCE_URL = get_string("CYBERSOURCE_SECURE_ACCEPTANCE_URL", None)
-CYBERSOURCE_PROFILE_ID = get_string("CYBERSOURCE_PROFILE_ID", None)
-CYBERSOURCE_REFERENCE_PREFIX = get_string("CYBERSOURCE_REFERENCE_PREFIX", None)
-
 # Open Exchange Rates
 OPEN_EXCHANGE_RATES_URL = get_string("OPEN_EXCHANGE_RATES_URL", "https://openexchangerates.org/api/")
 OPEN_EXCHANGE_RATES_APP_ID = get_string("OPEN_EXCHANGE_RATES_APP_ID", "")
-
-# Open Discussions
-OPEN_DISCUSSIONS_API_USERNAME = get_string('OPEN_DISCUSSIONS_API_USERNAME', None)
-OPEN_DISCUSSIONS_BASE_URL = get_string('OPEN_DISCUSSIONS_BASE_URL', None)
-OPEN_DISCUSSIONS_COOKIE_DOMAIN = get_string('OPEN_DISCUSSIONS_COOKIE_DOMAIN', None)
-OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA = get_int('OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA', 60*60)
-OPEN_DISCUSSIONS_COOKIE_NAME = get_string('OPEN_DISCUSSIONS_COOKIE_NAME', None)
-OPEN_DISCUSSIONS_JWT_SECRET = get_string('OPEN_DISCUSSIONS_JWT_SECRET', None)
-OPEN_DISCUSSIONS_REDIRECT_URL = get_string('OPEN_DISCUSSIONS_REDIRECT_URL', None)
-OPEN_DISCUSSIONS_REDIRECT_COMPLETE_URL = get_string('OPEN_DISCUSSIONS_REDIRECT_COMPLETE_URL', '/')
-OPEN_DISCUSSIONS_SITE_KEY = get_string('OPEN_DISCUSSIONS_SITE_KEY', None)
-
-if not OPEN_DISCUSSIONS_SITE_KEY:
-    raise ImproperlyConfigured("OPEN_DISCUSSIONS_SITE_KEY must be specified")
 
 
 # features flags

@@ -4,7 +4,7 @@ Serializers for courses
 from rest_framework import serializers
 
 from cms.models import ProgramPage
-from courses.models import Course, Program, CourseRun
+from courses.models import Course, CourseRun, Program
 from courses.serializers import TopicSerializer
 from micromasters.utils import first_matching_item
 

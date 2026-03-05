@@ -1,8 +1,9 @@
 """URLs for courses and programs"""
 
-from django.conf.urls import url
+from django.urls import re_path
+
 from cms.api import api_router
 
 urlpatterns = [
-    url('api/v0/wagtail/', api_router.urls),
+    re_path('api/v0/wagtail/', api_router.urls),
 ]

@@ -2,8 +2,8 @@
 Permission classes for search views
 """
 
-from rolepermissions.checkers import has_permission
 from rest_framework.permissions import BasePermission
+from rolepermissions.checkers import has_permission
 
 from roles.roles import Permissions
 

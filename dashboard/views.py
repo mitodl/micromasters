@@ -4,32 +4,31 @@ Views for dashboard REST APIs
 import logging
 from urllib.parse import urljoin
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.urls import reverse
-from requests.exceptions import HTTPError
-from rest_framework import (
-    authentication,
-    permissions,
-    status,
-)
-from rest_framework.exceptions import ValidationError
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.generics import get_object_or_404
 from edx_api.client import EdxApi
+from requests.exceptions import HTTPError
+from rest_framework import authentication, permissions, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from backends import utils
-from backends.constants import COURSEWARE_BACKEND_URL, BACKEND_MITX_ONLINE
+from backends.constants import BACKEND_MITX_ONLINE, COURSEWARE_BACKEND_URL
 from courses.models import CourseRun
+from dashboard.api import (get_user_program_info,
+                           is_user_enrolled_in_exam_course)
+from dashboard.api_edx_cache import CachedEdxDataApi
+from dashboard.models import ProgramEnrollment
 from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.serializers import UnEnrollProgramsSerializer
-from dashboard.models import ProgramEnrollment
-from dashboard.api import get_user_program_info, is_user_enrolled_in_exam_course
-from dashboard.api_edx_cache import CachedEdxDataApi
-from exams.models import ExamRun, ExamAuthorization
+from exams.models import ExamAuthorization, ExamRun
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from profiles.api import get_social_auth
 
+User = get_user_model()
 log = logging.getLogger(__name__)
 
 
@@ -167,7 +166,7 @@ class UserExamEnrollment(APIView):
         ).exists():
             raise ValidationError('user is not authorized for exam run')
 
-        url = urljoin(COURSEWARE_BACKEND_URL[provider], '/courses/{}/'.format(edx_exam_course_id))
+        url = urljoin(COURSEWARE_BACKEND_URL[provider], f'/courses/{edx_exam_course_id}/')
         # get the credentials for the current user for edX
         user_social = get_social_auth(request.user, provider)
         try:
@@ -283,11 +282,11 @@ class ToggelProgramEnrollmentShareHash(APIView):
                     data={
                         "share_hash": share_hash,
                         "absolute_path": request.build_absolute_uri(
-                            reverse("shared_grade_records", kwargs=dict(
-                                    enrollment_id=data.get("enrollment_id"),
-                                    record_share_hash=share_hash
+                            reverse("shared_grade_records", kwargs={
+                                    "enrollment_id": data.get("enrollment_id"),
+                                    "record_share_hash": share_hash
+                            }
                                 )
-                            )
                         )
                     }
                 )

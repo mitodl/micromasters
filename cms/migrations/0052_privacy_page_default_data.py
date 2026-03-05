@@ -7,7 +7,7 @@ from django.db import migrations
 from django.db.migrations.operations.special import RunPython
 from django.utils.text import slugify
 
-from wagtail.core.blocks import StreamValue
+from wagtail.blocks import StreamValue
 
 
 def _get_introduction_data():

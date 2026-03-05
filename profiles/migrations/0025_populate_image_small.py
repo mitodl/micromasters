@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from uuid import uuid4
 
 from django.db import migrations, models
@@ -18,7 +16,7 @@ def populate_image_small(apps, schema_editor):
         if profile.image and not profile.image_small:
             try:
                 thumbnail = make_thumbnail(profile.image.file, IMAGE_SMALL_MAX_DIMENSION)
-                profile.image_small.save("{}.jpg".format(uuid4().hex), thumbnail)
+                profile.image_small.save(f"{uuid4().hex}.jpg", thumbnail)
             except OSError:
                 pass
 

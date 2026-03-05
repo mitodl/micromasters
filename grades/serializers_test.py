@@ -1,9 +1,9 @@
 """
 Tests for serializers module
 """
-from search.base import MockedESTestCase
 from grades.factories import ProctoredExamGradeFactory
 from grades.serializers import ProctoredExamGradeSerializer
+from search.base import MockedESTestCase
 
 
 class ProctExamSerializerTest(MockedESTestCase):

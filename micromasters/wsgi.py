@@ -1,16 +1,17 @@
 """
-WSGI config for ui app.
+WSGI config for micromasters app.
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+Exposes the WSGI callable as a module-level variable named ``application``.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
+https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/
 """
 import os
 
 from django.core.wsgi import get_wsgi_application
-from dj_static import Cling
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "micromasters.settings")
 
-application = Cling(get_wsgi_application())  # pylint: disable=invalid-name
+# In modern Django deployments we rely on the web server (nginx/uwsgi) for static files.
+# Remove dj_static Cling wrapper, which is not needed and not compatible with newer versions.
+application = get_wsgi_application()  # pylint: disable=invalid-name

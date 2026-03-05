@@ -2,33 +2,17 @@
 import datetime
 import uuid
 
-from factory import (
-    SubFactory,
-    Faker,
-    LazyAttribute,
-)
+from factory import Faker, LazyAttribute, SubFactory
 from factory.django import DjangoModelFactory
-from factory.fuzzy import (
-    FuzzyFloat,
-    FuzzyDateTime,
-    FuzzyText,
-)
+from factory.fuzzy import FuzzyDateTime, FuzzyFloat, FuzzyText
 
-from courses.factories import (
-    CourseFactory,
-    CourseRunFactory,
-    ProgramFactory,
-)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
+from exams.constants import EXAM_GRADE_FAIL, EXAM_GRADE_PASS
 from exams.factories import ExamRunFactory
-from exams.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
 from grades.constants import FinalGradeStatus
-from grades.models import (
-    FinalGrade,
-    ProctoredExamGrade,
-    MicromastersCourseCertificate,
-    MicromastersProgramCertificate,
-    MicromastersProgramCommendation,
-)
+from grades.models import (FinalGrade, MicromastersCourseCertificate,
+                           MicromastersProgramCertificate,
+                           MicromastersProgramCommendation, ProctoredExamGrade)
 from micromasters.factories import UserFactory
 from micromasters.utils import now_in_utc
 
@@ -42,7 +26,7 @@ class FinalGradeFactory(DjangoModelFactory):
     status = FinalGradeStatus.COMPLETE
     course_run_paid_on_edx = Faker('boolean')
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
+    class Meta:  # pylint: disable=missing-docstring,too-few-public-methods
         model = FinalGrade
 
 
@@ -61,7 +45,7 @@ class ProctoredExamGradeFactory(DjangoModelFactory):
     passed = Faker('boolean')
     percentage_grade = FuzzyFloat(low=0, high=1)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
+    class Meta:  # pylint: disable=missing-docstring,too-few-public-methods
         model = ProctoredExamGrade
 
 
@@ -71,7 +55,7 @@ class MicromastersCourseCertificateFactory(DjangoModelFactory):
     course = SubFactory(CourseFactory)
     hash = uuid.uuid4().hex
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
+    class Meta:  # pylint: disable=missing-docstring,too-few-public-methods
         model = MicromastersCourseCertificate
 
 
@@ -82,7 +66,7 @@ class MicromastersProgramCertificateFactory(DjangoModelFactory):
     program = SubFactory(ProgramFactory)
     hash = uuid.uuid4().hex
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
+    class Meta:  # pylint: disable=missing-docstring,too-few-public-methods
         model = MicromastersProgramCertificate
 
 
@@ -92,5 +76,5 @@ class MicromastersProgramCommendationFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     program = SubFactory(ProgramFactory)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
+    class Meta:  # pylint: disable=missing-docstring,too-few-public-methods
         model = MicromastersProgramCommendation

@@ -3,10 +3,7 @@ Tests for exam models
 """
 from unittest import TestCase
 
-from exams.models import (
-    ExamAuthorization,
-    ExamProfile,
-)
+from exams.models import ExamAuthorization, ExamProfile
 
 
 class ExamProfileTest(TestCase):

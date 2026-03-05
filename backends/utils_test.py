@@ -2,10 +2,7 @@
 Tests for the utils
 """
 from datetime import timedelta
-from unittest.mock import (
-    MagicMock,
-    patch,
-)
+from unittest.mock import MagicMock, patch
 
 import pytest
 from requests.exceptions import HTTPError
@@ -16,6 +13,7 @@ from backends.edxorg import EdxOrgOAuth2
 from micromasters.utils import now_in_utc
 from profiles.factories import UserFactory
 from search.base import MockedESTestCase
+
 # pylint: disable=protected-access
 
 
@@ -30,13 +28,13 @@ class RefreshTest(MockedESTestCase):
 
     @classmethod
     def setUpTestData(cls):
-        super(RefreshTest, cls).setUpTestData()
+        super().setUpTestData()
         # create an user
         cls.user = UserFactory.create()
         # create a social auth for the user
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
-            uid="{}_edx".format(cls.user.username),
+            uid=f"{cls.user.username}_edx",
             extra_data=social_extra_data
         )
 
@@ -144,7 +142,7 @@ def test_has_social_auth():
     assert utils.has_social_auth(user, BACKEND_EDX_ORG) is False
     user.social_auth.create(
         provider=BACKEND_EDX_ORG,
-        uid="{}_edx".format(user.username),
+        uid=f"{user.username}_edx",
         extra_data=social_extra_data
     )
     assert utils.has_social_auth(user, BACKEND_EDX_ORG) is True

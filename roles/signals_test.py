@@ -3,15 +3,12 @@ Tests for signals
 """
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from rolepermissions.checkers import (
-    has_role,
-    has_permission,
-    has_object_permission,
-)
+from rolepermissions.checkers import (has_object_permission, has_permission,
+                                      has_role)
 
 from courses.factories import ProgramFactory
-from roles.models import Role
 from micromasters.factories import UserFactory
+from roles.models import Role
 from search.base import MockedESTestCase
 
 

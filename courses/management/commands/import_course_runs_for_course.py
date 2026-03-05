@@ -8,8 +8,8 @@ You can specify a course by its readable ID, e.g. `MITx+14.100x`.
 
 from django.core.management import BaseCommand
 
-from courses.mit_learn_api import sync_mit_learn_courseruns_for_course, \
-    fetch_course_from_mit_learn
+from courses.mit_learn_api import (fetch_course_from_mit_learn,
+                                   sync_mit_learn_courseruns_for_course)
 from courses.models import Course
 
 
@@ -59,8 +59,9 @@ class Command(BaseCommand):
                 f"Updating course runs for {course_id}: {course.title}"
             )
         )
+        enrollment_url = raw_course.get("enrollment_url", "")
 
-        course_runs_created = sync_mit_learn_courseruns_for_course(course, raw_courseruns=raw_course["runs"])
+        course_runs_created = sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns=raw_course["runs"])
         self.stdout.write(self.style.SUCCESS(f"{course_runs_created} course runs created"))
 
         return None

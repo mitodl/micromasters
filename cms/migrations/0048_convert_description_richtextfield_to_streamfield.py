@@ -4,11 +4,11 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 from django.db import migrations
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
-from wagtail.core.rich_text import RichText
+from wagtail.rich_text import RichText
 
 
 def page_to_streamfield(page):
@@ -106,17 +106,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='benefitspage',
             name='content',
-            field=wagtail.core.fields.StreamField([('rich_text', wagtail.core.blocks.RichTextBlock()), ('image_with_link', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(help_text='The image to display.', label='Image', required=True)), ('link', wagtail.core.blocks.URLBlock(help_text='Absolute URL to the image, like https://example.com/some_image.jpg', label='Link', required=True)), ('align', wagtail.core.blocks.ChoiceBlock(choices=[('center', 'Center'), ('right', 'Right'), ('left', 'Left')], max_length=10)), ('width', wagtail.core.blocks.IntegerBlock(required=False)), ('height', wagtail.core.blocks.IntegerBlock(required=False))], blank=True, help_text='Upload an image with a clickable link'))], blank=True, help_text='The content of the benefits page'),
+            field=wagtail.fields.StreamField([('rich_text', wagtail.blocks.RichTextBlock()), ('image_with_link', wagtail.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(help_text='The image to display.', label='Image', required=True)), ('link', wagtail.blocks.URLBlock(help_text='Absolute URL to the image, like https://example.com/some_image.jpg', label='Link', required=True)), ('align', wagtail.blocks.ChoiceBlock(choices=[('center', 'Center'), ('right', 'Right'), ('left', 'Left')], max_length=10)), ('width', wagtail.blocks.IntegerBlock(required=False)), ('height', wagtail.blocks.IntegerBlock(required=False))], blank=True, help_text='Upload an image with a clickable link'))], blank=True, help_text='The content of the benefits page'),
         ),
         migrations.AlterField(
             model_name='benefitspage',
             name='description',
-            field=wagtail.core.fields.StreamField([('paragraph', wagtail.core.blocks.RichTextBlock(blank=True)), ('image_with_link', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(help_text='The image to display.', label='Image', required=True)), ('link', wagtail.core.blocks.URLBlock(help_text='Absolute URL to the image, like https://example.com/some_image.jpg', label='Link', required=True)), ('align', wagtail.core.blocks.ChoiceBlock(choices=[('center', 'Center'), ('right', 'Right'), ('left', 'Left')], max_length=10)), ('width', wagtail.core.blocks.IntegerBlock(required=False)), ('height', wagtail.core.blocks.IntegerBlock(required=False))], blank=True, help_text='Upload an image with a clickable link'))], blank=True, help_text='The description shown on the benefits page'),
+            field=wagtail.fields.StreamField([('paragraph', wagtail.blocks.RichTextBlock(blank=True)), ('image_with_link', wagtail.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(help_text='The image to display.', label='Image', required=True)), ('link', wagtail.blocks.URLBlock(help_text='Absolute URL to the image, like https://example.com/some_image.jpg', label='Link', required=True)), ('align', wagtail.blocks.ChoiceBlock(choices=[('center', 'Center'), ('right', 'Right'), ('left', 'Left')], max_length=10)), ('width', wagtail.blocks.IntegerBlock(required=False)), ('height', wagtail.blocks.IntegerBlock(required=False))], blank=True, help_text='Upload an image with a clickable link'))], blank=True, help_text='The description shown on the benefits page'),
         ),
         migrations.AlterField(
             model_name='programpage',
             name='description',
-            field=wagtail.core.fields.StreamField([('paragraph', wagtail.core.blocks.RichTextBlock(blank=True)), ('image_with_link', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(help_text='The image to display.', label='Image', required=True)), ('link', wagtail.core.blocks.URLBlock(help_text='Absolute URL to the image, like https://example.com/some_image.jpg', label='Link', required=True)), ('align', wagtail.core.blocks.ChoiceBlock(choices=[('center', 'Center'), ('right', 'Right'), ('left', 'Left')], max_length=10)), ('width', wagtail.core.blocks.IntegerBlock(required=False)), ('height', wagtail.core.blocks.IntegerBlock(required=False))], blank=True, help_text='Upload an image with a clickable link'))], blank=True, help_text='The description shown on the program page'),
+            field=wagtail.fields.StreamField([('paragraph', wagtail.blocks.RichTextBlock(blank=True)), ('image_with_link', wagtail.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock(help_text='The image to display.', label='Image', required=True)), ('link', wagtail.blocks.URLBlock(help_text='Absolute URL to the image, like https://example.com/some_image.jpg', label='Link', required=True)), ('align', wagtail.blocks.ChoiceBlock(choices=[('center', 'Center'), ('right', 'Right'), ('left', 'Left')], max_length=10)), ('width', wagtail.blocks.IntegerBlock(required=False)), ('height', wagtail.blocks.IntegerBlock(required=False))], blank=True, help_text='Upload an image with a clickable link'))], blank=True, help_text='The description shown on the program page'),
         ),
         migrations.RunPython(convert_to_streamfield, convert_to_richtext ),
     ]

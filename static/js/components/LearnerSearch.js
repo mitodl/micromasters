@@ -45,11 +45,7 @@ import type { Option } from "../flow/generalTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
 import type { SearchSortItem } from "../flow/searchTypes"
 import type { Profile } from "../flow/profileTypes"
-import {
-  canCreateChannelProgram,
-  canMessageLearnersProgram,
-  hasStaffForProgram
-} from "../lib/roles"
+import { canMessageLearnersProgram, hasStaffForProgram } from "../lib/roles"
 import CustomRefinementListFilter from "./search/CustomRefinementListFilter"
 
 export const makeTranslations: () => Object = () => {
@@ -135,7 +131,6 @@ export default class LearnerSearch extends SearchkitComponent {
     checkFilterVisibility: (s: string) => boolean,
     setFilterVisibility: (s: string, v: boolean) => void,
     openSearchResultEmailComposer: (searchkit: Object) => void,
-    openChannelCreateDialog: (searchkit: Object) => void,
     openLearnerEmailComposer: (profile: Profile) => void,
     children: React$Element<*>[],
     currentProgramEnrollment: AvailableProgram
@@ -164,16 +159,12 @@ export default class LearnerSearch extends SearchkitComponent {
   renderSearchHeader = (): React$Element<*> | null => {
     const {
       openSearchResultEmailComposer,
-      openChannelCreateDialog,
       currentProgramEnrollment
     } = this.props
     const canEmailLearners = canMessageLearnersProgram(
       currentProgramEnrollment,
       SETTINGS.roles
     )
-    const canCreateChannel =
-      SETTINGS.FEATURES.DISCUSSIONS_CREATE_CHANNEL_UI &&
-      canCreateChannelProgram(currentProgramEnrollment, SETTINGS.roles)
 
     if (_.isNull(this.getResults())) {
       return null
@@ -191,15 +182,6 @@ export default class LearnerSearch extends SearchkitComponent {
               ])}
             >
               Email Selected
-            </button>
-          ) : null}
-          {canCreateChannel ? (
-            <button
-              id="create-channel-selected"
-              className="mdl-button minor-action"
-              onClick={R.partial(openChannelCreateDialog, [this.searchkit])}
-            >
-              New Channel
             </button>
           ) : null}
           <HitsStats component={HitsCount} />
@@ -303,24 +285,6 @@ export default class LearnerSearch extends SearchkitComponent {
               title="Final Grade in Selected Course"
             />
           </div>
-        ) : null}
-        {isStaff ? (
-          <FilterVisibilityToggle
-            {...this.props}
-            filterName="payment_status"
-            title="Payment Status"
-          >
-            <NestedAggregatingMenuFilter
-              field="program.courses.payment_status"
-              fieldOptions={{
-                type:    "nested",
-                options: { path: "program.courses" }
-              }}
-              title=""
-              orderKey="_term"
-              id="payment_status"
-            />
-          </FilterVisibilityToggle>
         ) : null}
         <FilterVisibilityToggle
           {...this.props}

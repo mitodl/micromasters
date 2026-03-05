@@ -1,19 +1,11 @@
 """Unit tests for ui middleware"""
-from unittest.mock import (
-    Mock,
-    patch,
-)
+from unittest.mock import Mock, patch
 
 import ddt
-from django.test import (
-    override_settings,
-    TestCase,
-)
+from django.test import TestCase, override_settings
 
-from ui.middleware import (
-    CookieFeatureFlagMiddleware,
-    QueryStringFeatureFlagMiddleware,
-)
+from ui.middleware import (CookieFeatureFlagMiddleware,
+                           QueryStringFeatureFlagMiddleware)
 from ui.utils import FeatureFlag
 
 FEATURE_FLAG_COOKIE_NAME = 'TEST_COOKIE'
@@ -30,7 +22,7 @@ FEATURE_FLAG_COOKIE_MAX_AGE_SECONDS = 60
 class QueryStringFeatureFlagMiddlewareTest(TestCase):
     """Test QueryStringFeatureFlagMiddleware"""
     def setUp(self):
-        self.middleware = QueryStringFeatureFlagMiddleware()
+        self.middleware = QueryStringFeatureFlagMiddleware(get_response=Mock())
 
     def test_get_flag_key(self):
         assert self.middleware.get_flag_key('EXAMS') == 'ZZ_FEATURE_EXAMS'
@@ -93,11 +85,11 @@ class QueryStringFeatureFlagMiddlewareTest(TestCase):
 class CookieFeatureFlagMiddlewareTest(TestCase):
     """Test QueryStringFeatureFlagMiddleware"""
     def setUp(self):
-        self.middleware = CookieFeatureFlagMiddleware()
+        self.middleware = CookieFeatureFlagMiddleware(get_response=Mock())
 
     def test_decode_feature_flags(self):
         assert self.middleware.decode_feature_flags(0) == set()
-        assert self.middleware.decode_feature_flags(1) == set([FeatureFlag.EXAMS])
+        assert self.middleware.decode_feature_flags(1) == {FeatureFlag.EXAMS}
 
     def test_process_request_valid_cookie(self):
         request = Mock()
@@ -106,7 +98,7 @@ class CookieFeatureFlagMiddlewareTest(TestCase):
         }
         request.get_signed_cookie.return_value = 1
         assert self.middleware.process_request(request) is None
-        assert request.mm_feature_flags == set([FeatureFlag.EXAMS])
+        assert request.mm_feature_flags == {FeatureFlag.EXAMS}
         request.get_signed_cookie.assert_called_once_with(FEATURE_FLAG_COOKIE_NAME)
 
     def test_process_request_invalid_cookie(self):

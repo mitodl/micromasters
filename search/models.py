@@ -1,7 +1,7 @@
 """Models related to search"""
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models import JSONField
 
 from micromasters.models import TimestampedModel
 
@@ -9,11 +9,9 @@ from micromasters.models import TimestampedModel
 class PercolateQuery(TimestampedModel):
     """An opensearch query used in percolate"""
     AUTOMATIC_EMAIL_TYPE = 'automatic_email_type'
-    DISCUSSION_CHANNEL_TYPE = 'discussion_channel_type'
 
     SOURCE_TYPES = [
         AUTOMATIC_EMAIL_TYPE,
-        DISCUSSION_CHANNEL_TYPE,
     ]
 
     original_query = JSONField()
@@ -22,7 +20,7 @@ class PercolateQuery(TimestampedModel):
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Percolate query {}: {}".format(self.id, self.query)
+        return f"Percolate query {self.id}: {self.query}"
 
 
 class PercolateQueryMembership(TimestampedModel):
@@ -39,7 +37,7 @@ class PercolateQueryMembership(TimestampedModel):
     needs_update = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Percolate query membership: user: {}, query: {}".format(self.user_id, self.query_id)
+        return f"Percolate query membership: user: {self.user_id}, query: {self.query_id}"
 
     class Meta:
         unique_together = (('user', 'query'),)

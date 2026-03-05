@@ -3,17 +3,11 @@ Permission classes for profiles
 """
 from django.http import Http404
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import (
-    BasePermission,
-    SAFE_METHODS,
-)
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
-from roles.roles import (
-    Instructor,
-    Staff,
-)
-from profiles.models import Profile
 from dashboard.models import ProgramEnrollment
+from profiles.models import Profile
+from roles.roles import Instructor, Staff
 
 
 class CanEditIfOwner(BasePermission):

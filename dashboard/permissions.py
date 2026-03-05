@@ -1,17 +1,16 @@
 """
 Permission classes for the dashboard
 """
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.http import Http404
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import BasePermission
 
-from roles.roles import (
-    Instructor,
-    Staff,
-)
+from roles.roles import Instructor, Staff
 
 
+User = get_user_model()
 class CanReadIfStaffOrSelf(BasePermission):
     """
     Only staff on a program the learner is enrolled in can

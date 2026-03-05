@@ -6,7 +6,8 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 from dashboard.models import ProgramEnrollment
-from search.tasks import index_program_enrolled_users, remove_program_enrolled_user
+from search.tasks import (index_program_enrolled_users,
+                          remove_program_enrolled_user)
 
 
 @receiver(post_save, sender=ProgramEnrollment, dispatch_uid="programenrollment_post_save")

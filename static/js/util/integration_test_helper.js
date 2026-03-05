@@ -9,7 +9,6 @@ import fetchMock from "fetch-mock"
 
 import * as api from "../lib/api"
 import * as djangoFetch from "redux-hammock/django_csrf_fetch"
-import * as authFetch from "../lib/auth"
 import {
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
@@ -56,11 +55,6 @@ export default class IntegrationTestHelper {
       "fetchJSONWithCSRF"
     )
 
-    this.fetchJSONWithAuthStub = this.sandbox.stub(
-      authFetch,
-      "fetchJSONWithAuthToken"
-    )
-
     this.listenForActions = this.store.createListenForActions()
     this.dispatchThen = this.store.createDispatchThen()
 
@@ -79,11 +73,6 @@ export default class IntegrationTestHelper {
     )
     this.programLearnersStub.returns(Promise.resolve(PROGRAM_LEARNERS_RESPONSE))
 
-    this.discussionsFrontpageStub = this.fetchJSONWithAuthStub.withArgs(
-      "http://open.discussions/api/v0/frontpage/"
-    )
-    this.discussionsFrontpageStub.returns(Promise.resolve([]))
-
     this.couponsStub = this.sandbox.stub(api, "getCoupons")
     this.couponsStub.returns(Promise.resolve([]))
     this.profileGetStub = this.sandbox.stub(api, "getUserProfile")
@@ -94,10 +83,6 @@ export default class IntegrationTestHelper {
     this.programsGetStub.returns(Promise.resolve(PROGRAMS))
     this.attachCouponStub = this.sandbox.stub(api, "attachCoupon")
     this.attachCouponStub.returns(Promise.resolve(ATTACH_COUPON_RESPONSE))
-    this.skipFinancialAidStub = this.sandbox.stub(api, "skipFinancialAid")
-    this.skipFinancialAidStub.returns(Promise.resolve())
-    this.addFinancialAidStub = this.sandbox.stub(api, "addFinancialAid")
-    this.addFinancialAidStub.returns(Promise.resolve())
     this.sendSearchResultMail = this.sandbox.stub(api, "sendSearchResultMail")
     this.sendSearchResultMail.returns(Promise.resolve())
     this.sendCourseTeamMail = this.sandbox.stub(api, "sendCourseTeamMail")

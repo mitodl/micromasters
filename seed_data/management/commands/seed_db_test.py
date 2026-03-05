@@ -1,23 +1,20 @@
 """
 Tests for library functions used by seed_db and alter_data commands
 """
+from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
-from django.contrib.auth.models import User
 from factory.django import mute_signals
 
+from courses.factories import CourseRunFactory, ProgramFactory
+from courses.models import ElectiveCourse, Program
 from dashboard.models import CachedEnrollment
-from courses.factories import ProgramFactory, CourseRunFactory
-from courses.models import Program, ElectiveCourse
-from seed_data.management.commands.seed_db import (
-    MODEL_DEFAULTS,
-    FAKE_USER_USERNAME_PREFIX,
-    compile_model_data,
-    deserialize_model_data,
-    deserialize_program_data_list,
-    deserialize_user_data,
-    deserialize_course_data,
-    deserialize_elective_data)
 from search.base import MockedESTestCase
+from seed_data.management.commands.seed_db import (
+    FAKE_USER_USERNAME_PREFIX, MODEL_DEFAULTS, compile_model_data,
+    deserialize_course_data, deserialize_elective_data, deserialize_model_data,
+    deserialize_program_data_list, deserialize_user_data)
+
+User = get_user_model()
 
 
 class SeedDBUtilityTests(MockedESTestCase):
@@ -109,7 +106,6 @@ class SeedDBDeserializationTests(MockedESTestCase):
         "title": "Digital Learning",
         "price": 1000,
         "description": "Learn stuff about digital learning.",
-        "financial_aid_availability": True,
         "num_required_courses": 1,
         "courses": [
             {
@@ -186,7 +182,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
         new_program = new_course_run.course.program
         with mute_signals(post_save):
             user = deserialize_user_data(self.USER_DATA, [new_program])
-        assert user.username == '{}mario.medina'.format(FAKE_USER_USERNAME_PREFIX)
+        assert user.username == f'{FAKE_USER_USERNAME_PREFIX}mario.medina'
         assert user.profile.first_name == 'Mario'
         assert user.profile.date_of_birth == '1961-04-29'
         assert CachedEnrollment.objects.filter(user=user, course_run=new_course_run).count() == 1
@@ -206,7 +202,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
         assert Program.objects.count() == 1
         assert len(programs) == 1
         program = programs[0]
-        for program_key in ('title', 'description', 'financial_aid_availability'):
+        for program_key in ('title', 'description'):
             assert getattr(program, program_key) == self.PROGRAM_DATA[program_key]
         assert program.live is True
 
@@ -221,6 +217,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
                 assert getattr(run, key) == self.PROGRAM_DATA['courses'][0]['course_runs'][i][key]
 
     def test_deserialize_elective_set(self):
+        """Test deserializing elective set data"""
         new_program = ProgramFactory.create()
         elective_set = deserialize_elective_data(new_program, self.ELECTIVE_DATA)
         assert elective_set.title == 'ELECTIVE'

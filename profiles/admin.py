@@ -7,6 +7,7 @@ from django.contrib import admin
 from .models import Profile
 
 
+@admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     """Admin for Profile"""
     model = Profile
@@ -27,5 +28,3 @@ class ProfileAdmin(admin.ModelAdmin):
         'user__is_active',
     ]
     raw_id_fields = ('user',)
-
-admin.site.register(Profile, ProfileAdmin)

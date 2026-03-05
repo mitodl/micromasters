@@ -2,13 +2,13 @@ name: CI
 on: [push]
 jobs:
   python-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     services:
       # Label used to access the service container
       db:
         # Docker Hub image
-        image: postgres:12.7
+        image: postgres:16
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -23,48 +23,59 @@ jobs:
           - 5432:5432
       
       redis:
-        image: redis:5.0.8
+        image: redis:5.0.14
         ports:
           - 6379:6379
 
       opensearch:
-        image: opensearchproject/opensearch:1.2.4
+        image: opensearchproject/opensearch:1.3.20
         env:
           network.host: "0.0.0.0"
           http.cors.enabled: "true"
           http.cors.allow-origin: "*"
           rest.action.multi.allow_explicit_index: "false"
           ES_JAVA_OPTS: -Xms512m -Xmx512m"
+          cluster.max_shards_per_node: "10000"
         ports:
           - 9200:9200
   
-    strategy:
-      matrix:
-        opensearch-version: [1.2]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Apt update
+        run: sudo apt-get update -y
 
       - name: Apt install
         run: cat Aptfile | sudo xargs apt-get install
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.9.1"
+          enable-cache: true
 
-      - id: cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/test_reqirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Install Python
+        run: uv python install 3.11
 
       - name: Install dependencies
-        run: pip install -r requirements.txt -r test_requirements.txt
+        run: uv sync --locked
 
       - name: Lint
-        run: pylint ./**/*.py
+        run: uv run pylint ./**/*.py
+        env:
+          DEBUG: 'False'
+          NODE_ENV: 'production'
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+          MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
+          MICROMASTERS_DB_DISABLE_SSL: 'True'
+          OPENSEARCH_URL: localhost:9200
+          OPENSEARCH_INDEX: testindex
+          CELERY_TASK_ALWAYS_EAGER: 'True'
+          BROKER_URL: redis://localhost:6379/4
+          CELERY_RESULT_BACKEND: redis://localhost:6379/4
+          MAILGUN_URL: https://api.mailgun.net/v3/fake.mailgun.org
+          MAILGUN_KEY: fake_mailgun_key
+          OPEN_DISCUSSIONS_SITE_KEY: fake_discussions_key
+          DJANGO_SETTINGS_MODULE: micromasters.settings
 
       # You must also add the Configure sysctl limits step, otherwise Opensearch will not be able to boot.
       - name: Configure sysctl limits
@@ -74,17 +85,37 @@ jobs:
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
 
-      - name: Runs Opensearch
-        uses: ankane/setup-opensearch@v1
-        with:
-          opensearch-version: ${{ matrix.opensearch-version }}
+      - name: Run OpenSearch (Docker)
+        run: |
+          docker run -d --name opensearch-run-step \
+            -p 9200:9200 -p 9601:9600 \
+            -e "discovery.type=single-node" \
+            -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" \
+            -e "DISABLE_SECURITY_PLUGIN=true" \
+            opensearchproject/opensearch:1.2.4
+          echo "Waiting for OpenSearch to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:9200 >/dev/null; then
+              echo "OpenSearch is ready"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Configure OpenSearch
+        run: |
+          curl -s -XPUT http://localhost:9200/_cluster/settings \
+            -H 'Content-Type: application/json' \
+            -d '{"transient": {"cluster.max_shards_per_node": "10000"}}'
 
       - name: Tests
         run: |
           export MEDIA_ROOT="$(mktemp -d)"
           sudo mkdir /var/media 
           sudo chown -R $USER:$USER /var/media
-          tox
+          uv run pytest
+          ./scripts/test/detect_missing_migrations.sh
+          ./scripts/test/no_auto_migrations.sh
         env:
           DEBUG: 'False'
           NODE_ENV: 'production'
@@ -92,39 +123,35 @@ jobs:
           MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
           MICROMASTERS_DB_DISABLE_SSL: 'True'
           OPENSEARCH_URL: localhost:9200
+          OPENSEARCH_INDEX: testindex
           CELERY_TASK_ALWAYS_EAGER: 'True'
           BROKER_URL: redis://localhost:6379/4
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
+          DJANGO_SETTINGS_MODULE: micromasters.settings
+          MAILGUN_URL: https://api.mailgun.net/v3/fake.mailgun.org
+          MAILGUN_KEY: fake_mailgun_key
+          OPEN_DISCUSSIONS_SITE_KEY: mm_test
+          SENTRY_DSN: ''
+          DISABLE_WEBPACK_LOADER_STATS: 'True'
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
   
   javascript-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up NodeJS
-        uses: actions/setup-node@v2-beta
+        uses: actions/setup-node@v5
         with:
           node-version: "14.18.2"
+          cache: 'yarn'
 
       - name: Set up environment
         run: sudo apt-get install libelf1
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - uses: actions/cache@v4
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -151,6 +178,6 @@ jobs:
         run: node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --bail
 
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           file: coverage/lcov.info

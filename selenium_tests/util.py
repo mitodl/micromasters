@@ -1,23 +1,21 @@
 """
 Utility functionality for the selenium test suite
 """
-import os
-from base64 import b64encode
-import socket
 import json
-from urllib.parse import (
-    ParseResult,
-    urlparse,
-)
-from subprocess import check_call, check_output, DEVNULL
+import os
+import socket
+from base64 import b64encode
+from subprocess import DEVNULL, check_call, check_output
+from urllib.parse import ParseResult, urlparse
+
 import requests
 from django.conf import settings
 from django.db import connection
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from micromasters.utils import now_in_utc
 
+from micromasters.utils import now_in_utc
 
 DEFAULT_PASSWORD = 'pass'
 DEFAULT_RETRY_COUNT = 3
@@ -145,33 +143,27 @@ class Browser:
         if filename is None:
             if filename_prefix:
                 filename_prefix += '_'
-            filename = '{}{}'.format(filename_prefix, now_in_utc().strftime('%Y_%m_%d_%H_%M_%S_%f'))
+            filename = f"{filename_prefix}{now_in_utc().strftime('%Y_%m_%d_%H_%M_%S_%f')}"
         repo_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        full_filename = os.path.join(repo_root, "{}.png".format(filename))
+        full_filename = os.path.join(repo_root, f"{filename}.png")
         self.driver.save_screenshot(full_filename)
-        print("PNG screenshot for {filename} output to {full_filename}".format(
-            filename=filename,
-            full_filename=full_filename,
-        ))
+        print(f"PNG screenshot for {filename} output to {full_filename}")
         if output_base64:
             # Can be useful for travis where we don't have access to build artifacts
             with open(full_filename, 'rb') as f:
-                print("Screenshot as base64: {}".format(b64encode(f.read())))
+                print(f"Screenshot as base64: {b64encode(f.read())}")
 
     def store_api_results(self, username, filename=None):
         """Helper method to save certain GET REST API responses"""
         sessionid = self.driver.get_cookie('sessionid')['value']
         for endpoint_url, endpoint_name in [
-                ("/api/v0/dashboard/{}/".format(username), 'dashboard'),
+                (f"/api/v0/dashboard/{username}/", 'dashboard'),
                 ("/api/v0/coupons/", 'coupons'),
-                ("/api/v0/course_prices/{}/".format(username), 'course_prices'),
+                (f"/api/v0/course_prices/{username}/", 'course_prices'),
         ]:
             absolute_url = make_absolute_url(endpoint_url, self.live_server_url)
-            api_json = requests.get(absolute_url, cookies={'sessionid': sessionid}).json()
-            with open("{filename}.{api_name}.json".format(
-                filename=filename,
-                api_name=endpoint_name,
-            ), 'w') as f:
+            api_json = requests.get(absolute_url, cookies={'sessionid': sessionid}, timeout=30).json()
+            with open(f"{filename}.{endpoint_name}.json", 'w', encoding='utf-8') as f:
                 json.dump(api_json, f, indent="    ")
 
 
@@ -194,7 +186,7 @@ def make_absolute_url(relative_url, absolute_base):
     host = socket.gethostbyname(socket.gethostname())
     return ParseResult(
         absolute_pieces.scheme,
-        "{host}:{port}".format(host=host, port=absolute_pieces.port),
+        f"{host}:{absolute_pieces.port}",
         relative_pieces.path,
         relative_pieces.params,
         relative_pieces.query,
@@ -226,7 +218,7 @@ class DatabaseLoader:
         self.db_settings = db_settings or settings.DATABASES['default']
         self.db_name = self.db_settings['NAME']
         if self.db_name[0:5] != 'test_':
-            raise Exception(
+            raise Exception(  # pylint: disable=broad-exception-raised
                 "The test suite is attempting to use the database '{}'."
                 "The test database should have a name that begins with 'test_'. Exiting...".format(self.db_name)
             )
@@ -248,10 +240,7 @@ class DatabaseLoader:
         Returns:
             bytes: utf8-encoded create statement
         """
-        return """CREATE DATABASE {to_db} TEMPLATE {from_db}""".format(
-            from_db=from_db,
-            to_db=to_db,
-        ).encode('utf-8')
+        return f"""CREATE DATABASE {to_db} TEMPLATE {from_db}""".encode('utf-8')
 
     def has_backup(self, db_cursor):
         """
@@ -263,7 +252,7 @@ class DatabaseLoader:
         Returns:
             bool: Whether or not the backup db exists
         """
-        db_cursor.execute("SELECT 1 FROM pg_database WHERE datname='{}'".format(self.db_backup_name))
+        db_cursor.execute(f"SELECT 1 FROM pg_database WHERE datname='{self.db_backup_name}'")
         return db_cursor.fetchone() is not None
 
     def create_backup(self, db_cursor):
@@ -273,7 +262,7 @@ class DatabaseLoader:
         Args:
             db_cursor (django.db.connection.cursor): A database cursor
         """
-        db_cursor.execute('DROP DATABASE IF EXISTS {to_db};'.format(to_db=self.db_backup_name))
+        db_cursor.execute(f'DROP DATABASE IF EXISTS {self.db_backup_name};')
         db_cursor.execute(self._db_copy_sql(self.db_name, self.db_backup_name))
 
     def load_backup(self):
@@ -291,7 +280,7 @@ class DatabaseLoader:
         Args:
             db_cursor (django.db.connection.cursor): A database cursor
         """
-        db_cursor.execute('DROP DATABASE IF EXISTS {to_db};'.format(to_db=self.db_backup_name))
+        db_cursor.execute(f'DROP DATABASE IF EXISTS {self.db_backup_name};')
 
 
 def should_load_from_existing_db(database_loader, cursor, *, config):

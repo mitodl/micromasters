@@ -3,12 +3,15 @@ Retire user from MM
 """
 import logging
 from argparse import RawTextHelpFormatter
-from django.contrib.auth.models import User
+
+from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand, CommandError
 from django.db.models import Q
 from social_django.models import UserSocialAuth
 
 from dashboard.models import ProgramEnrollment
+
+User = get_user_model()
 
 log = logging.getLogger(__name__)
 
@@ -35,13 +38,12 @@ For multiple users, add arg `--user` for each user i.e:\n
         """
         create parser to add new line in help text.
         """
-        parser = super(Command, self).create_parser(prog_name, subcommand)
+        parser = super().create_parser(prog_name, subcommand)
         parser.formatter_class = RawTextHelpFormatter
         return parser
 
     def add_arguments(self, parser):
         """create args"""
-        # pylint: disable=expression-not-assigned
         parser.add_argument(
             '-u',
             '--user',
@@ -49,7 +51,7 @@ For multiple users, add arg `--user` for each user i.e:\n
             default=[],
             dest='users',
             help="Single or multiple user name"
-        ),
+        )
 
     def display_messages(self, message, log_messages, is_error=False):
         """

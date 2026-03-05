@@ -6,11 +6,8 @@ from datetime import timedelta
 import pytest
 
 from backends.constants import COURSEWARE_BACKENDS
-from dashboard.tasks import (
-    batch_update_user_data,
-    batch_update_user_data_subtasks,
-    LOCK_ID,
-)
+from dashboard.tasks import (LOCK_ID, batch_update_user_data,
+                             batch_update_user_data_subtasks)
 from micromasters.factories import SocialUserFactory
 from micromasters.utils import is_near_now, now_in_utc
 

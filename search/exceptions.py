@@ -26,3 +26,9 @@ class RetryException(Exception):
     """
     A special exception used to signal that celery can retry this task
     """
+
+
+class IndexTypeException(Exception):
+    """
+    Exception raised when an unknown index type is encountered
+    """

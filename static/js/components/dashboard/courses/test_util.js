@@ -60,10 +60,6 @@ export const makeRunCanUpgrade = (run: CourseRun) => {
   run.status = STATUS_CAN_UPGRADE
 }
 
-export const makeRunPaid = (run: CourseRun) => {
-  run.has_paid = true
-}
-
 export const makeRunPassed = (run: CourseRun) => {
   run.status = STATUS_PASSED
 }

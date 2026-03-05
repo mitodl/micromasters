@@ -6,16 +6,10 @@ from unittest.mock import Mock
 
 from cms.factories import ProgramPageFactory
 from cms.models import HomePage
-from courses.factories import (
-    CourseFactory,
-    CourseRunFactory,
-    ProgramFactory,
-)
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 from courses.models import ElectiveCourse, ElectivesSet
-from courses.serializers import (
-    CourseSerializer,
-    ProgramSerializer,
-    CourseRunSerializer, ElectivesSetSerializer)
+from courses.serializers import (CourseRunSerializer, CourseSerializer,
+                                 ElectivesSetSerializer, ProgramSerializer)
 from dashboard.models import ProgramEnrollment
 from profiles.factories import UserFactory
 from search.base import MockedESTestCase

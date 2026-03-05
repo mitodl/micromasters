@@ -4,16 +4,11 @@ Signals for the micromasters app
 
 import logging
 
-from django.db.models.signals import (
-    pre_save,
-    post_save,
-    post_delete,
-)
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from rolepermissions.roles import assign_role, remove_role
 
 from roles.models import Role
-
 
 log = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 """
 Utility functions for CMS models
 """
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import parse_qs, urlparse
 
 
 def get_coupon_code(request):

@@ -3,33 +3,36 @@ Celery tasks for search
 """
 import logging
 
-from django.conf import settings
 import celery
 from celery.exceptions import Ignore
-# The imports which are prefixed with _ are mocked to be ignored in MockedESTestCase
+from django.conf import settings
 
 from dashboard.models import ProgramEnrollment
 from mail.api import send_automatic_emails as _send_automatic_emails
 from micromasters.celery import app
-from micromasters.utils import merge_strings, chunks
+from micromasters.utils import chunks, merge_strings
 from search import api
-from search.api import (
-    document_needs_updating as _document_needs_updating,
-    update_percolate_memberships as _update_percolate_memberships,
-)
+from search.api import document_needs_updating as _document_needs_updating
 from search.connection import get_conn, make_alias_name
 from search.exceptions import ReindexException, RetryException
-from search.indexing_api import (
-    refresh_all_default_indices as _refresh_all_default_indices,
-    index_program_enrolled_users as _index_program_enrolled_users,
-    remove_program_enrolled_user as _remove_program_enrolled_user,
-    index_percolate_queries as _index_percolate_queries,
-    delete_percolate_query as _delete_percolate_query,
-    _index_chunks, _get_percolate_documents,
-    refresh_index, create_backing_indices, delete_backing_indices,
-
-)
+from search.indexing_api import (_get_percolate_documents, _index_chunks,
+                                 create_backing_indices,
+                                 delete_backing_indices)
+from search.indexing_api import \
+    delete_percolate_query as _delete_percolate_query
+from search.indexing_api import \
+    index_percolate_queries as _index_percolate_queries
+from search.indexing_api import \
+    index_program_enrolled_users as _index_program_enrolled_users
+from search.indexing_api import \
+    refresh_all_default_indices as _refresh_all_default_indices
+from search.indexing_api import refresh_index
+from search.indexing_api import \
+    remove_program_enrolled_user as _remove_program_enrolled_user
 from search.models import PercolateQuery
+
+# The imports which are prefixed with _ are mocked to be ignored in MockedESTestCase
+
 
 
 log = logging.getLogger(__name__)
@@ -42,23 +45,12 @@ def post_indexing_handler(program_enrollments):
     Args:
         program_enrollments (list of ProgramEnrollment): A list of ProgramEnrollments
     """
-    feature_sync_user = settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False)
-
-    if not feature_sync_user:
-        log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
-
     _refresh_all_default_indices()
     for program_enrollment in program_enrollments:
         try:
             _send_automatic_emails(program_enrollment)
         except:  # pylint: disable=bare-except
             log.exception("Error sending automatic email for enrollment %s", program_enrollment)
-
-        # only update for discussion queries for now
-        try:
-            _update_percolate_memberships(program_enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
-        except:  # pylint: disable=bare-except
-            log.exception("Error syncing %s to channels", program_enrollment.user)
 
 
 @app.task

@@ -2,41 +2,29 @@
 Management commands that can be used to fine-tune course/program data
 (and associated enrollments/grades/etc) for a user.
 """
+import json
+import shlex
 from collections import namedtuple
 from decimal import Decimal
-import json
 from functools import wraps
-import shlex
 
 from django.core.management import BaseCommand, CommandError
 
 from courses.models import CourseRun
 from grades.models import FinalGrade
-from seed_data.management.commands import DEFAULT_GRADE, DEFAULT_FAILED_GRADE
-from seed_data.utils import (
-    accepts_or_calculates_now,
-    filter_dict_by_key_set,
-    filter_dict_none_values,
-    localized_datetime
-)
-from seed_data.lib import (
-    CACHED_HANDLERS,
-    CourseFinder,
-    CourseRunFinder,
-    UserFinder,
-    CachedEnrollmentHandler,
-    CachedCurrentGradeHandler,
-    set_course_run_to_past_graded,
-    set_course_run_current,
-    set_course_run_future,
-    set_course_run_to_paid,
-    set_course_run_payment_status,
-    clear_dashboard_data,
-    is_fake_program_course_run,
-    update_fake_course_run_edx_key,
-    ensure_cached_data_freshness,
-)
-
+from seed_data.lib import (CACHED_HANDLERS, CachedCurrentGradeHandler,
+                           CachedEnrollmentHandler, CourseFinder,
+                           CourseRunFinder, UserFinder, clear_dashboard_data,
+                           ensure_cached_data_freshness,
+                           is_fake_program_course_run, set_course_run_current,
+                           set_course_run_future,
+                           set_course_run_payment_status,
+                           set_course_run_to_paid,
+                           set_course_run_to_past_graded,
+                           update_fake_course_run_edx_key)
+from seed_data.management.commands import DEFAULT_FAILED_GRADE, DEFAULT_GRADE
+from seed_data.utils import (accepts_or_calculates_now, filter_dict_by_key_set,
+                             filter_dict_none_values, localized_datetime)
 
 ExampleCommand = namedtuple('ExampleCommand', ['text', 'command', 'args'])
 
@@ -140,7 +128,7 @@ USAGE_DETAILS = ("""
 {commands}""".format(commands="".join([EXAMPLE_COMMAND_TEMPLATE.format(
     text=command.text,
     command=command.command,
-    args=" ".join(shlex.quote(arg) for arg in command.args),
+    args=shlex.join(command.args),
 ) for command in EXAMPLE_COMMANDS])))
 
 NEW_COURSE_RUN_PREFIX = 'new-course-run'
@@ -254,7 +242,7 @@ def set_to_offered(user=None, course_run=None, now=None,  # pylint: disable=unus
                    in_future=False, fuzzy=False):
     """Sets a course run to be in the present or future, and unenrolled for a user"""
     if fuzzy:
-        fuzzy_date_string = 'Spring {}'.format(now.year + 1)
+        fuzzy_date_string = f'Spring {now.year + 1}'
         course_run.fuzzy_start_date = fuzzy_date_string
         course_run.fuzzy_enrollment_start_date = fuzzy_date_string
         course_run.start_date = None
@@ -316,7 +304,7 @@ def get_past_ungraded_course_run(user=None, course=None, now=None):
         if not (CachedCurrentGradeHandler(user).exists(past_run) or
                 FinalGrade.objects.filter(user=user, course_run=past_run).exists()):
             return past_run
-    raise CommandError("Can't find past run that isn't already passed/failed for Course '{}'".format(course.title))
+    raise CommandError(f"Can't find past run that isn't already passed/failed for Course '{course.title}'")
 
 
 def _formatted_datetime(dt):
@@ -390,19 +378,19 @@ class Command(BaseCommand):
         for finder_cls in {CourseFinder, CourseRunFinder, UserFinder}:
             for param_key in finder_cls.param_keys:
                 parser.add_argument(
-                    '--{}'.format(param_key.replace('_', '-')),
+                    f"--{param_key.replace('_', '-')}",
                     dest=param_key,
                     action='store',
-                    help="Parameter to find a specific {}".format(finder_cls.model_cls.__name__)
+                    help=f"Parameter to find a specific {finder_cls.model_cls.__name__}"
                 )
         # Add arguments for making more specific changes to course states
         for arg_name, arg_props in ADDITIONAL_PARAMS.items():
             parser.add_argument(
-                '--{}'.format(arg_name.replace('_', '-')),
+                f"--{arg_name.replace('_', '-')}",
                 dest=arg_name,
                 action='store_true' if arg_props['type'] == bool else 'store',
                 default=None,
-                help="{} (Only relevant to certain course actions)".format(arg_props['help'])
+                help=f"{arg_props['help']} (Only relevant to certain course actions)"
             )
 
     @staticmethod

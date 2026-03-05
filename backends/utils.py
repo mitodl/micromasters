@@ -1,12 +1,12 @@
 """
 Utility functions for the backends
 """
-from datetime import datetime, timedelta
 import logging
+from datetime import datetime, timedelta
+
 import pytz
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-
 from requests.exceptions import HTTPError
 from social_django.utils import load_strategy
 
@@ -27,8 +27,7 @@ def _send_refresh_request(user_social):
     except HTTPError as exc:
         if exc.response.status_code in (400, 401,):
             raise InvalidCredentialStored(
-                message='Received a {} status code from the OAUTH server'.format(
-                    exc.response.status_code),
+                message=f'Received a {exc.response.status_code} status code from the OAUTH server',
                 http_status_code=exc.response.status_code
             )
         raise

@@ -4,6 +4,30 @@ Release Notes
 Version 0.247.0
 ---------------
 
+- chore(deps): update opensearchproject/opensearch docker tag to v1.3.20 (#5478)
+- chore(deps): update nginx docker tag to v1.29 (#5476)
+- chore(deps): update dependency pytest-mock to v3.15.1 (#5475)
+- chore(deps): update dependency pytest-django to v4.12.0 (#5474)
+- chore(deps): update dependency pytest-cov to v2.12.1 (#5473)
+- fix(deps): update dependency edx-opaque-keys to v0.4.4 (#5470)
+- fix(deps): update dependency django-role-permissions to v2.2.1 (#5469)
+- chore(deps): update redis docker tag to v5.0.14 (#5468)
+- fix: Add python version file for Heroku
+- fix: Remove runtime.txt after switch to uv for Heroku buildpack compatibility
+- chore: migrate from poetry/pip to uv for dependency management (#5467)
+- fix: header logo link (#5466)
+- Remove ecommerce and Cybersource payment processing code (#5447)
+- For FIN.CFx always show same status Enrollment by Eligibility (#5465)
+- chore: remove newrelic (#5463)
+- chore: upgrade newrelic version for python 3.11 compatibility (#5461)
+- fix: wagtail migration breaking on RC (#5456)
+- chore: upgrade django to v52 and wagtail to v7 (#5443)
+- fix: node build sentry issue (#5449)
+- fix: heroku npm build (#5445)
+- security: disable yarn postinstall scripts (#5432)
+- Remove Open Discussions integration (#5442)
+- Fix deprecated GitHub Actions causing workflow failures (#5434)
+- Add enrollment_url for course runs (#5438)
 - adding import_course command and course run sync (#5429)
 - update
 

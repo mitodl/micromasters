@@ -85,7 +85,7 @@ def _generate_upload_to_uri(suffix=""):
             name='',
         )
         if len(path_without_name) >= IMAGE_PATH_MAX_LENGTH:
-            raise ValueError("path is longer than max length even without name: {}".format(path_without_name))
+            raise ValueError(f"path is longer than max length even without name: {path_without_name}")
 
         max_name_length = IMAGE_PATH_MAX_LENGTH - len(path_without_name)
         full_path = path_format.format(
@@ -153,7 +153,10 @@ def make_thumbnail(full_size_image, max_dimension):
             A jpeg image which is a thumbnail of full_size_image
     """
     pil_image = Image.open(full_size_image)
-    pil_image.thumbnail(shrink_dimensions(pil_image.width, pil_image.height, max_dimension), Image.ANTIALIAS)
+    pil_image.thumbnail(
+        shrink_dimensions(pil_image.width, pil_image.height, max_dimension),
+        Image.Resampling.LANCZOS
+    )
     buffer = BytesIO()
     pil_image.convert('RGB').save(buffer, "JPEG", quality=90)
     buffer.seek(0)
@@ -175,12 +178,9 @@ def full_name(user):
 
     profile = user.profile
     first = profile.first_name or profile.user.username
-    last = " {}".format(profile.last_name or '')
+    last = f" {profile.last_name or ''}"
 
-    return "{first_name}{last_name}".format(
-        first_name=first,
-        last_name=last
-    )
+    return f"{first}{last}"
 
 
 @contextmanager
@@ -189,7 +189,8 @@ def make_temp_image_file(*, width=500, height=500):
     Create a temporary PNG image to test image uploads
     """
     with NamedTemporaryFile(suffix=".png") as image_file:
-        image = Image.new('RGBA', size=(width, height), color=(256, 0, 0))
+        # Color channels must be in 0-255; use a valid solid red.
+        image = Image.new('RGBA', size=(width, height), color=(255, 0, 0, 255))
         image.save(image_file, 'png')
         image_file.seek(0)
         yield image_file
