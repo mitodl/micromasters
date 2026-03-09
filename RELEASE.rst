@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.247.0
+Version 0.247.0 (Released March 09, 2026)
 ---------------
 
 - chore(deps): update opensearchproject/opensearch docker tag to v1.3.20 (#5478)
