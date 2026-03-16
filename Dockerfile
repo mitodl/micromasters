@@ -56,4 +56,4 @@ RUN uv sync --frozen --no-install-project
 
 EXPOSE 8079
 ENV PORT=8079
-CMD uwsgi uwsgi.ini
+CMD ["uwsgi", "uwsgi.ini"]
