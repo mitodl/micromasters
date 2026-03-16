@@ -53,6 +53,7 @@ dependencies = [
     "django-filter>=23.0",
     "willow[heif]>=1.8",
     "sqlparse>=0.5",
+    "granian>=2.7.2",
 ]
 
 [tool.uv]
