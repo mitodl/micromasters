@@ -39,7 +39,7 @@ RUN uv sync --frozen --no-install-project --no-dev
 
 FROM uv AS code
 
-COPY . /src
+COPY --chown=mitodl:mitodl . /src
 
 # Set pip cache folder, as it is breaking pip when it is on a shared volume
 ENV XDG_CACHE_HOME=/tmp/.cache
