@@ -8,7 +8,7 @@ COPY apt.txt /tmp/apt.txt
 RUN apt-get update && \
     apt-get install --no-install-recommends -y $(grep -vE "^\s*#" apt.txt | tr "\n" " ") libpq-dev postgresql-client && \
     apt-get clean && \
-    apt-get purge -y && \
+    apt-get autoremove -y --purge && \
     rm -rf /var/lib/apt/lists/*
 
 FROM base AS system
