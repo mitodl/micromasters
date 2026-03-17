@@ -4,3 +4,4 @@ curl
 libjpeg-dev
 zlib1g-dev
 net-tools
+build-essential
