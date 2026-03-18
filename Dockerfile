@@ -37,6 +37,12 @@ USER mitodl
 WORKDIR /src
 RUN uv sync --frozen --no-install-project --no-dev
 
+FROM node:14.18.2 AS node_builder
+COPY . /src
+WORKDIR /src
+RUN yarn install --immutable
+RUN node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --bail
+
 FROM uv AS code
 
 COPY --chown=mitodl:mitodl . /src
@@ -45,6 +51,9 @@ COPY --chown=mitodl:mitodl . /src
 ENV XDG_CACHE_HOME=/tmp/.cache
 
 FROM code AS production
+
+COPY --from=node_builder --chown=mitodl:mitodl /src/static/bundles /src/static/bundles
+COPY --from=node_builder --chown=mitodl:mitodl /src/webpack-stats.json /src/webpack-stats.json
 
 EXPOSE 8079
 ENV PORT=8079
