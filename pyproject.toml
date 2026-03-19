@@ -42,7 +42,7 @@ dependencies = [
     "six>=1.11.0",
     "robohash==2.0.0",
     "tornado>=6.0",
-    "urllib3==1.26.5",
+    "urllib3==1.26.20",
     "uwsgi",
     "wagtail>=7.0,<8.0",
     "flaky==3.7.0",
