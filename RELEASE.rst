@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.248.0
+Version 0.248.0 (Released March 19, 2026)
 ---------------
 
 - Added a webpack step to the dockerfile.
