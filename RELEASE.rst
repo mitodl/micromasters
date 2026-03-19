@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+Version 0.248.0
+---------------
+
+- Added a webpack step to the dockerfile.
+- Potential fix for pull request finding
+- Potential fix for pull request finding
+- Potential fix for pull request finding
+- Add granian to this project.
+- Updates to the dockerfile to make it production ready.
+
 Version 0.247.0 (Released March 09, 2026)
 ---------------
 
