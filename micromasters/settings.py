@@ -56,6 +56,15 @@ else:
 
 SECURE_SSL_REDIRECT = get_bool('MICROMASTERS_SECURE_SSL_REDIRECT', True)
 
+# Trust the X-Forwarded-Host header from Fastly so that OAuth redirect URIs
+# and other absolute URLs are built using the public-facing hostname rather
+# than the internal application hostname.
+USE_X_FORWARDED_HOST = get_bool('USE_X_FORWARDED_HOST', True)
+
+# Tell Django that Fastly terminates TLS and forwards requests as HTTP,
+# so that absolute URLs (e.g. OAuth redirect URIs) use https://.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 CSRF_TRUSTED_ORIGINS = get_list_of_str('CSRF_TRUSTED_ORIGINS', [])
 
 
