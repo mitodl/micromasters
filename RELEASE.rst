@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.248.1
+Version 0.248.1 (Released March 26, 2026)
 ---------------
 
 - Load CSRF_TRUSTED_ORIGINS from environment
