@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.248.2
+---------------
+
+- Use X-Forwarded-Host for OAuth redirect URIs behind Fastly
+
 Version 0.248.1 (Released March 26, 2026)
 ---------------
 
