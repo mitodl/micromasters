@@ -5,7 +5,7 @@ from django.utils.text import slugify
 
 
 TRADEMARK_ATTRIBUTION_TEXT = (
-    "<p><em>MIT is an authorized licensee of the MicroMasters mark, "
+    "<p><em>MIT is an authorized licensee of the MicroMasters\u00ae mark, "
     "which is a registered trademark of Axim Collaborative.</em></p>"
 )
 
@@ -56,7 +56,7 @@ def add_trademark_attribution(apps, schema_editor):
         heading = value.get("heading", "")
         if slugify(heading) == SECTION_6_SLUG:
             detail = value.get("detail", "")
-            if "authorized licensee" not in detail:
+            if TRADEMARK_ATTRIBUTION_TEXT not in detail:
                 value["detail"] = detail + TRADEMARK_ATTRIBUTION_TEXT
                 updated = True
             break
