@@ -77,7 +77,7 @@ def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
     platform_code = raw_course.get("platform", {}).get("code")
     num_created = 0
     for raw_courserun in raw_course_runs:
-        log.info(f"Syncing course run: {raw_courserun.get('run_id')}")
+        log.info("Syncing course run: %s", raw_courserun.get("run_id"))
         run_defaults = {
             "title": raw_courserun.get("title", ""),
             "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get(
@@ -96,7 +96,7 @@ def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
         )
         if created:
             num_created += 1
-            log.info(f"Created course run: {course_run.edx_course_key} for course {course.title}")
+            log.info("Created course run: %s for course %s", course_run.edx_course_key, course.title)
         else:
-            log.info(f"Updated course run: {course_run.edx_course_key} for course {course.title}")
+            log.info("Updated course run: %s for course %s", course_run.edx_course_key, course.title)
     return num_created

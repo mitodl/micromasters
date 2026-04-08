@@ -10,7 +10,9 @@ from django.contrib.auth import get_user_model
 from django.core.cache import caches
 from django_redis import get_redis_connection
 
-from courses.mit_learn_api import sync_mit_learn_courseruns_for_course, fetch_course_from_mit_learn
+from courses.mit_learn_api import (MITLearnAPIError,
+                                   fetch_course_from_mit_learn,
+                                   sync_mit_learn_courseruns_for_course)
 from courses.models import CourseRun, Course
 from grades import api
 from grades.models import CourseRunGradingStatus
@@ -145,11 +147,15 @@ def freeze_users_final_grade_async(user_ids, course_run_id):
 def sync_course_run_info_from_learn():
     """
     Sync course run info from the learn API.
-    Exclude Finance courses
     """
-    for course in Course.objects.exclude(program__title="Finance"):
+    for course in Course.objects.all():
         course_id = course.edx_key
-        raw_course = fetch_course_from_mit_learn(course_id)
-        sync_mit_learn_courseruns_for_course(course, raw_course)
+        try:
+            raw_course = fetch_course_from_mit_learn(course_id)
+            if not raw_course:
+                continue
+            sync_mit_learn_courseruns_for_course(course, raw_course)
+        except MITLearnAPIError:
+            log.exception('Error syncing MIT Learn course data for course "%s"', course_id)
 
 
