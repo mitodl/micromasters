@@ -1,6 +1,7 @@
 """
 MIT Learn API integration module.
 """
+import logging
 from typing import Any
 from urllib.parse import urlencode
 
@@ -8,6 +9,8 @@ import requests
 from django.utils.dateparse import parse_datetime
 
 from courses.models import CourseRun
+
+log = logging.getLogger(__name__)
 
 
 class MITLearnAPIError(Exception):
@@ -53,36 +56,40 @@ def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
 
 
 
-def sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def sync_mit_learn_courseruns_for_course(course, raw_course) -> list[dict[str, Any]]:
     """
     Process and normalize raw course data from MIT Learn API, but only for courses that already exist in the database.
 
     Args:
-        raw_courses (List[Dict[str, Any]]): Raw course data from the API.
+        raw_course (Dict): Raw course data from the API.
         course (Course): Course object to which the course runs belong.
-        enrollment_url (str): Enrollment URL to set for each course run.
 
     Returns:
         List[Dict[str, Any]]: List of dicts with course and course run info for existing courses only.
     """
 
     num_created = 0
-    for raw_courserun in raw_courseruns:
-        print("Syncing course run:", raw_courserun.get("run_id"))
+    for raw_courserun in raw_course["runs"]:
+        log.info("Syncing course run:", raw_courserun.get("run_id"))
         run_defaults = {
             "title": raw_courserun.get("title", ""),
-            "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get("enrollment_start") else None,
-            "enrollment_end": parse_datetime(raw_courserun.get("enrollment_end")) if raw_courserun.get("enrollment_end") else None,
+            "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get(
+                "enrollment_start") else None,
+            "enrollment_end": parse_datetime(raw_courserun.get("enrollment_end")) if raw_courserun.get(
+                "enrollment_end") else None,
             "start_date": parse_datetime(raw_courserun.get("start_date")) if raw_courserun.get("start_date") else None,
-            "end_date": parse_datetime(raw_courserun.get("end_date"))if raw_courserun.get("end_date") else None,
-            "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get("upgrade_deadline") else None,
-            "courseware_backend": raw_courserun.get("courseware_backend", ""),
-            "enrollment_url": enrollment_url,
+            "end_date": parse_datetime(raw_courserun.get("end_date")) if raw_courserun.get("end_date") else None,
+            "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get(
+                "upgrade_deadline") else None,
+            "courseware_backend": "edxorg" if raw_course["platform"]["code"] == "edx" else "mitxonline",
+            "enrollment_url": raw_courserun.get("url", ""),
         }
         course_run, created = CourseRun.objects.update_or_create(
             course=course, edx_course_key=raw_courserun["run_id"], defaults=run_defaults
         )
         if created:
             num_created += 1
-            print(f"Created course run: {course_run.edx_course_key} for course {course.title}")
+            log.info(f"Created course run: {course_run.edx_course_key} for course {course.title}")
+        else:
+            log.info(f"Updated course run: {course_run.edx_course_key} for course {course.title}")
     return num_created

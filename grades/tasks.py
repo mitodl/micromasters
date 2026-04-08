@@ -10,7 +10,8 @@ from django.contrib.auth import get_user_model
 from django.core.cache import caches
 from django_redis import get_redis_connection
 
-from courses.models import CourseRun
+from courses.mit_learn_api import sync_mit_learn_courseruns_for_course, fetch_course_from_mit_learn
+from courses.models import CourseRun, Course
 from grades import api
 from grades.models import CourseRunGradingStatus
 from micromasters.celery import app
@@ -139,3 +140,15 @@ def freeze_users_final_grade_async(user_ids, course_run_id):
                 'Impossible to freeze final grade for user "%s" in course %s',
                 user.username, course_run.edx_course_key
             )
+
+def sync_course_run_info_from_learn():
+    """
+    Sync course run info from the learn API.
+    Exclude Finance courses
+    """
+    for course in Course.objects.exclude(program__title="Finance"):
+        course_id = course.edx_key
+        raw_course = fetch_course_from_mit_learn(course_id)
+        sync_mit_learn_courseruns_for_course(course, raw_course)
+
+

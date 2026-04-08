@@ -550,6 +550,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'grades.tasks.find_course_runs_and_freeze_grades',
         'schedule': crontab(minute='*/15', hour='16')
     },
+    'sync-course-run-info-once-a-day': {
+        'task': 'grades.tasks.sync_course_run_info_from_learn',
+        'schedule': crontab(minute='0', hour='2')
+    },
 }
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
