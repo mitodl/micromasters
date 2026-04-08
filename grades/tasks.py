@@ -141,6 +141,7 @@ def freeze_users_final_grade_async(user_ids, course_run_id):
                 user.username, course_run.edx_course_key
             )
 
+@app.task
 def sync_course_run_info_from_learn():
     """
     Sync course run info from the learn API.

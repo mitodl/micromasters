@@ -43,7 +43,7 @@ def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
         data = response.json()
     except ValueError:
         raise MITLearnAPIError("Invalid JSON response from MIT Learn API.")
-    for course in data["results"]:
+    for course in data.get("results", []):
         if course["readable_id"] == course_id:
             return course
 
@@ -52,25 +52,32 @@ def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
 
 
 
-
-
-
-
-def sync_mit_learn_courseruns_for_course(course, raw_course) -> list[dict[str, Any]]:
+def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
     """
-    Process and normalize raw course data from MIT Learn API, but only for courses that already exist in the database.
+    Process raw course data from MIT Learn API and update or create course runs,
+    but only for courses that already exist in the database.
 
     Args:
-        raw_course (Dict): Raw course data from the API.
+        raw_course (dict): Raw course data from the API.
         course (Course): Course object to which the course runs belong.
 
     Returns:
-        List[Dict[str, Any]]: List of dicts with course and course run info for existing courses only.
+        int: The number of course runs created.
     """
 
+    if not raw_course:
+        log.warning("Skipping MIT Learn sync for course %s: no API payload returned", course.edx_key)
+        return 0
+
+    raw_course_runs = raw_course.get("runs")
+    if raw_course_runs is None:
+        log.warning("Skipping MIT Learn sync for course %s: API payload missing runs", course.edx_key)
+        return 0
+
+    platform_code = raw_course.get("platform", {}).get("code")
     num_created = 0
-    for raw_courserun in raw_course["runs"]:
-        log.info("Syncing course run:", raw_courserun.get("run_id"))
+    for raw_courserun in raw_course_runs:
+        log.info(f"Syncing course run: {raw_courserun.get('run_id')}")
         run_defaults = {
             "title": raw_courserun.get("title", ""),
             "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get(
@@ -81,7 +88,7 @@ def sync_mit_learn_courseruns_for_course(course, raw_course) -> list[dict[str, A
             "end_date": parse_datetime(raw_courserun.get("end_date")) if raw_courserun.get("end_date") else None,
             "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get(
                 "upgrade_deadline") else None,
-            "courseware_backend": "edxorg" if raw_course["platform"]["code"] == "edx" else "mitxonline",
+            "courseware_backend": "edxorg" if platform_code == "edx" else "mitxonline",
             "enrollment_url": raw_courserun.get("url", ""),
         }
         course_run, created = CourseRun.objects.update_or_create(
