@@ -77,7 +77,16 @@ def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
     platform_code = raw_course.get("platform", {}).get("code")
     num_created = 0
     for raw_courserun in raw_course_runs:
-        log.info("Syncing course run: %s", raw_courserun.get("run_id"))
+        run_id = raw_courserun.get("run_id")
+        if not run_id:
+            log.error(
+                "Skipping MIT Learn course run for course %s: missing run_id (title=%s)",
+                course.edx_key,
+                raw_courserun.get("title", "")
+            )
+            continue
+
+        log.info("Syncing course run: %s", run_id)
         run_defaults = {
             "title": raw_courserun.get("title", ""),
             "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get(
@@ -92,7 +101,7 @@ def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
             "enrollment_url": raw_courserun.get("url", ""),
         }
         course_run, created = CourseRun.objects.update_or_create(
-            course=course, edx_course_key=raw_courserun["run_id"], defaults=run_defaults
+            course=course, edx_course_key=run_id, defaults=run_defaults
         )
         if created:
             num_created += 1
