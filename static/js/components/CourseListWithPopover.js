@@ -21,7 +21,8 @@ function populateElectivesList(electiveSet) {
         <h3 className="elective">{electiveSet.title}</h3>
         <h2 className="required-completion">
           (Complete {electiveSet.required_number} of{" "}
-          {electiveSet.courses.length})
+          {electiveSet.courses.length}
+          {electiveSet.title === "PUBLIC POLICY ELECTIVES" ? ", one elective must be advanced" : ""})
         </h2>
         <hr className="solid-elective" />
         <div id="course-list-elective">
