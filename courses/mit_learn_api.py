@@ -8,6 +8,7 @@ from urllib.parse import urlencode
 import requests
 from django.utils.dateparse import parse_datetime
 
+from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from courses.models import CourseRun
 
 log = logging.getLogger(__name__)
@@ -16,7 +17,39 @@ log = logging.getLogger(__name__)
 class MITLearnAPIError(Exception):
     """Custom exception for MIT Learn API errors."""
 
+
 LEARN_API_COURSES_LIST_URL = "https://api.learn.mit.edu/api/v1/courses/"
+
+EDX_PLATFORM_CODES = {"edx", "edxorg"}
+MITXONLINE_PLATFORM_CODES = {"mitxonline"}
+
+
+def get_courseware_backend(platform_code, course_key):
+    """Map a MIT Learn platform code to a courseware backend with safe fallback."""
+    normalized_platform_code = (platform_code or "").strip().lower()
+
+    if not normalized_platform_code:
+        log.warning(
+            "MIT Learn payload for course %s is missing platform.code; defaulting courseware_backend to %s",
+            course_key,
+            BACKEND_MITX_ONLINE,
+        )
+        return BACKEND_MITX_ONLINE
+
+    if normalized_platform_code in EDX_PLATFORM_CODES:
+        return BACKEND_EDX_ORG
+
+    if normalized_platform_code in MITXONLINE_PLATFORM_CODES:
+        return BACKEND_MITX_ONLINE
+
+    log.warning(
+        "MIT Learn payload for course %s returned unexpected platform.code=%r; defaulting courseware_backend to %s",
+        course_key,
+        platform_code,
+        BACKEND_MITX_ONLINE,
+    )
+    return BACKEND_MITX_ONLINE
+
 
 def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
     """
@@ -74,7 +107,10 @@ def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
         log.warning("Skipping MIT Learn sync for course %s: API payload missing runs", course.edx_key)
         return 0
 
-    platform_code = raw_course.get("platform", {}).get("code")
+    courseware_backend = get_courseware_backend(
+        raw_course.get("platform", {}).get("code"),
+        course.edx_key,
+    )
     num_created = 0
     for raw_courserun in raw_course_runs:
         run_id = raw_courserun.get("run_id")
@@ -97,7 +133,7 @@ def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
             "end_date": parse_datetime(raw_courserun.get("end_date")) if raw_courserun.get("end_date") else None,
             "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get(
                 "upgrade_deadline") else None,
-            "courseware_backend": "edxorg" if platform_code == "edx" else "mitxonline",
+            "courseware_backend": courseware_backend,
             "enrollment_url": raw_courserun.get("url", ""),
         }
         course_run, created = CourseRun.objects.update_or_create(
