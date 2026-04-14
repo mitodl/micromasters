@@ -45,6 +45,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.ERROR(f"Course {course_id} not found in MIT Learn API.")
             )
+            return None
 
         try:
             course = Course.objects.get(edx_key=course_id)
