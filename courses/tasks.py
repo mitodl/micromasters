@@ -1,4 +1,6 @@
-
+"""
+Tasks for the courses app
+"""
 import logging
 
 from courses.mit_learn_api import (MITLearnAPIError,
