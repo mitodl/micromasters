@@ -1,0 +1,11 @@
+[
+  "cms/serializers.py:64:30:ORM002",
+  "cms/serializers.py:71:12:ORM002",
+  "courses/catalog_serializers.py:102:17:ORM002",
+  "courses/catalog_serializers.py:113:17:ORM002",
+  "courses/catalog_serializers.py:124:17:ORM002",
+  "courses/serializers.py:105:27:ORM001",
+  "courses/serializers.py:106:19:ORM001",
+  "courses/serializers.py:55:15:ORM001",
+  "micromasters/serializers.py:75:20:ORM002"
+]
