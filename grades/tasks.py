@@ -10,10 +10,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import caches
 from django_redis import get_redis_connection
 
-from courses.mit_learn_api import (MITLearnAPIError,
-                                   fetch_course_from_mit_learn,
-                                   sync_mit_learn_courseruns_for_course)
-from courses.models import CourseRun, Course
+from courses.models import CourseRun
 from grades import api
 from grades.models import CourseRunGradingStatus
 from micromasters.celery import app
@@ -142,20 +139,3 @@ def freeze_users_final_grade_async(user_ids, course_run_id):
                 'Impossible to freeze final grade for user "%s" in course %s',
                 user.username, course_run.edx_course_key
             )
-
-@app.task
-def sync_course_run_info_from_learn():
-    """
-    Sync course run info from the learn API.
-    """
-    for course in Course.objects.all():
-        if not course.edx_key:
-            continue
-        course_id = course.edx_key
-        try:
-            raw_course = fetch_course_from_mit_learn(course_id)
-            if not raw_course:
-                continue
-            sync_mit_learn_courseruns_for_course(course, raw_course)
-        except MITLearnAPIError:
-            log.exception('Error syncing MIT Learn course data for course "%s"', course_id)

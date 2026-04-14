@@ -41,7 +41,7 @@ class Command(BaseCommand):
             )
         raw_course = fetch_course_from_mit_learn(course_id)
 
-        if raw_course is None:
+        if not raw_course:
             self.stdout.write(
                 self.style.ERROR(f"Course {course_id} not found in MIT Learn API.")
             )
@@ -59,11 +59,6 @@ class Command(BaseCommand):
                 f"Updating course runs for {course_id}: {course.title}"
             )
         )
-        if not raw_course:
-            self.stdout.write(
-                self.style.ERROR(f"Course {course_id} not found.")
-            )
-            return None
 
         course_runs_created = sync_mit_learn_courseruns_for_course(course, raw_course)
         self.stdout.write(
