@@ -149,3 +149,5 @@ export const COURSE_ACTION_CALCULATE_PRICE = "CALCULATE_PRICE"
 export const GRADE_DETAIL_DIALOG = "GRADE_DETAIL_DIALOG"
 
 export const RECIPIENT_VARIABLE_NAMES = ["PreferredName", "Email"]
+
+export const EXTRA_ELECTIVE_REQUIREMENT_TITLES = ["public policy electives"]
