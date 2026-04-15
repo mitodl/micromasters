@@ -6,6 +6,7 @@ import type {
   ProgramPageCourse,
   ProgramPageElectiveSet
 } from "../flow/programTypes"
+import { EXTRA_ELECTIVE_REQUIREMENT_TITLES } from "../constants"
 
 const listItems = courses => {
   return courses.map((course, index) => (
@@ -21,7 +22,13 @@ function populateElectivesList(electiveSet) {
         <h3 className="elective">{electiveSet.title}</h3>
         <h2 className="required-completion">
           (Complete {electiveSet.required_number} of{" "}
-          {electiveSet.courses.length})
+          {electiveSet.courses.length}
+          {EXTRA_ELECTIVE_REQUIREMENT_TITLES.includes(
+            electiveSet.title.toLowerCase()
+          )
+            ? ", one elective must be advanced"
+            : ""}
+          )
         </h2>
         <hr className="solid-elective" />
         <div id="course-list-elective">
