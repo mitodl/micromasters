@@ -36,15 +36,17 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.ERROR("You must provide a course_id to import all the associated course runs.")
             )
+            return None
         self.stdout.write(
                 self.style.SUCCESS(f"Fetching course run data from MIT Learn API for course {course_id}")
             )
         raw_course = fetch_course_from_mit_learn(course_id)
 
-        if raw_course is None:
+        if not raw_course:
             self.stdout.write(
                 self.style.ERROR(f"Course {course_id} not found in MIT Learn API.")
             )
+            return None
 
         try:
             course = Course.objects.get(edx_key=course_id)
@@ -59,9 +61,11 @@ class Command(BaseCommand):
                 f"Updating course runs for {course_id}: {course.title}"
             )
         )
-        enrollment_url = raw_course.get("enrollment_url", "")
 
-        course_runs_created = sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns=raw_course["runs"])
-        self.stdout.write(self.style.SUCCESS(f"{course_runs_created} course runs created"))
+        course_runs_created = sync_mit_learn_courseruns_for_course(course, raw_course)
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"{course_runs_created} course runs created")
+        )
 
         return None

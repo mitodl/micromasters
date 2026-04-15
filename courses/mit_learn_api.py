@@ -1,19 +1,55 @@
 """
 MIT Learn API integration module.
 """
+import logging
 from typing import Any
 from urllib.parse import urlencode
 
 import requests
 from django.utils.dateparse import parse_datetime
 
+from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from courses.models import CourseRun
+
+log = logging.getLogger(__name__)
 
 
 class MITLearnAPIError(Exception):
     """Custom exception for MIT Learn API errors."""
 
+
 LEARN_API_COURSES_LIST_URL = "https://api.learn.mit.edu/api/v1/courses/"
+
+EDX_PLATFORM_CODES = {"edx", "edxorg"}
+MITXONLINE_PLATFORM_CODES = {"mitxonline"}
+
+
+def get_courseware_backend(platform_code, course_key):
+    """Map a MIT Learn platform code to a courseware backend with safe fallback."""
+    normalized_platform_code = (platform_code or "").strip().lower()
+
+    if not normalized_platform_code:
+        log.warning(
+            "MIT Learn payload for course %s is missing platform.code; defaulting courseware_backend to %s",
+            course_key,
+            BACKEND_MITX_ONLINE,
+        )
+        return BACKEND_MITX_ONLINE
+
+    if normalized_platform_code in EDX_PLATFORM_CODES:
+        return BACKEND_EDX_ORG
+
+    if normalized_platform_code in MITXONLINE_PLATFORM_CODES:
+        return BACKEND_MITX_ONLINE
+
+    log.warning(
+        "MIT Learn payload for course %s returned unexpected platform.code=%r; defaulting courseware_backend to %s",
+        course_key,
+        platform_code,
+        BACKEND_MITX_ONLINE,
+    )
+    return BACKEND_MITX_ONLINE
+
 
 def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
     """
@@ -40,7 +76,7 @@ def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
         data = response.json()
     except ValueError:
         raise MITLearnAPIError("Invalid JSON response from MIT Learn API.")
-    for course in data["results"]:
+    for course in data.get("results", []):
         if course["readable_id"] == course_id:
             return course
 
@@ -49,40 +85,63 @@ def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
 
 
 
-
-
-
-
-def sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
     """
-    Process and normalize raw course data from MIT Learn API, but only for courses that already exist in the database.
+    Process raw course data from MIT Learn API and update or create course runs,
+    but only for courses that already exist in the database.
 
     Args:
-        raw_courses (List[Dict[str, Any]]): Raw course data from the API.
+        raw_course (dict): Raw course data from the API.
         course (Course): Course object to which the course runs belong.
-        enrollment_url (str): Enrollment URL to set for each course run.
 
     Returns:
-        List[Dict[str, Any]]: List of dicts with course and course run info for existing courses only.
+        int: The number of course runs created.
     """
 
+    if not raw_course:
+        log.warning("Skipping MIT Learn sync for course %s: no API payload returned", course.edx_key)
+        return 0
+
+    raw_course_runs = raw_course.get("runs")
+    if raw_course_runs is None:
+        log.warning("Skipping MIT Learn sync for course %s: API payload missing runs", course.edx_key)
+        return 0
+
+    courseware_backend = get_courseware_backend(
+        raw_course.get("platform", {}).get("code"),
+        course.edx_key,
+    )
     num_created = 0
-    for raw_courserun in raw_courseruns:
-        print("Syncing course run:", raw_courserun.get("run_id"))
+    for raw_courserun in raw_course_runs:
+        run_id = raw_courserun.get("run_id")
+        if not run_id:
+            log.error(
+                "Skipping MIT Learn course run for course %s: missing run_id (title=%s)",
+                course.edx_key,
+                raw_courserun.get("title", "")
+            )
+            continue
+
+        log.info("Syncing course run: %s", run_id)
         run_defaults = {
             "title": raw_courserun.get("title", ""),
-            "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get("enrollment_start") else None,
-            "enrollment_end": parse_datetime(raw_courserun.get("enrollment_end")) if raw_courserun.get("enrollment_end") else None,
+            "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get(
+                "enrollment_start") else None,
+            "enrollment_end": parse_datetime(raw_courserun.get("enrollment_end")) if raw_courserun.get(
+                "enrollment_end") else None,
             "start_date": parse_datetime(raw_courserun.get("start_date")) if raw_courserun.get("start_date") else None,
-            "end_date": parse_datetime(raw_courserun.get("end_date"))if raw_courserun.get("end_date") else None,
-            "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get("upgrade_deadline") else None,
-            "courseware_backend": raw_courserun.get("courseware_backend", ""),
-            "enrollment_url": enrollment_url,
+            "end_date": parse_datetime(raw_courserun.get("end_date")) if raw_courserun.get("end_date") else None,
+            "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get(
+                "upgrade_deadline") else None,
+            "courseware_backend": courseware_backend,
+            "enrollment_url": raw_courserun.get("url", ""),
         }
         course_run, created = CourseRun.objects.update_or_create(
-            course=course, edx_course_key=raw_courserun["run_id"], defaults=run_defaults
+            course=course, edx_course_key=run_id, defaults=run_defaults
         )
         if created:
             num_created += 1
-            print(f"Created course run: {course_run.edx_course_key} for course {course.title}")
+            log.info("Created course run: %s for course %s", course_run.edx_course_key, course.title)
+        else:
+            log.info("Updated course run: %s for course %s", course_run.edx_course_key, course.title)
     return num_created
