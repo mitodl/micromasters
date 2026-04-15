@@ -1,6 +1,20 @@
 Release Notes
 =============
 
+Version 0.249.0
+---------------
+
+- Add scheduled task to sync course runs (#5501)
+- Update dependency pillow to v12.2.0 [SECURITY] (#5504)
+- Update dependency django to v5.2.13 [SECURITY] (#5502)
+- fix(deps): update dependency pyjwt to v2.12.0 [security] (#5493)
+- chore(deps): update dependency wagtail to v7.3.1 [security] (#5492)
+- chore(deps): update dependency tornado to v6.5.5 [security] (#5491)
+- chore(deps): update dependency django to v5.2.12 [security] (#5490)
+- fix(deps): update dependency celery to v5.6.3 (#5488)
+- fix(deps): update dependency boto3 to v1.42.78 (#5487)
+- chore(deps): update dependency requests to v2.33.0 [security] (#5485)
+
 Version 0.248.2 (Released March 26, 2026)
 ---------------
 
