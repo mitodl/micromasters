@@ -36,6 +36,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.ERROR("You must provide a course_id to import all the associated course runs.")
             )
+            return None
         self.stdout.write(
                 self.style.SUCCESS(f"Fetching course run data from MIT Learn API for course {course_id}")
             )
