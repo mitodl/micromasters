@@ -153,4 +153,3 @@ class MITLearnAPITests(MockedESTestCase):
             "WARNING:courses.mit_learn_api:MIT Learn payload for course MITx+5 returned unexpected "
             "platform.code='FutureX'; defaulting courseware_backend to mitxonline"
         ]
-
