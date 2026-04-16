@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.249.0
+Version 0.249.0 (Released April 16, 2026)
 ---------------
 
 - Adding celery-redbeat package.
