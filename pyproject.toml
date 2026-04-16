@@ -54,6 +54,7 @@ dependencies = [
     "willow[heif]>=1.8",
     "sqlparse>=0.5",
     "granian>=2.7.2",
+    "celery-redbeat>=2.3.3",
 ]
 
 [tool.uv]
