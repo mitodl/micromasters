@@ -1,6 +1,6 @@
 [project]
 name = "micromasters"
-version = "0.0.1"
+version = "2026.04.16.1"
 requires-python = ">=3.11"
 dependencies = [
     "django>=5.2,<5.3",
@@ -89,3 +89,4 @@ push = false
 
 [tool.bumpver.file_patterns]
 "micromasters/settings.py" = ['VERSION = "{version}"']
+"pyproject.toml" = ['version = "{version}"']
