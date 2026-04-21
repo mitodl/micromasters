@@ -80,13 +80,35 @@ dev = [
     "semantic-version",
 ]
 
-[tool.bumpver]
-current_version = "2026.04.16.1"
-version_pattern = "YYYY.0M.0D.INC1"
+[tool.bumpversion]
 commit = false
 tag = false
-push = false
+parse = "(?P<release>(?:[1-9][0-9]{3})\\.(?:1[0-2]|0[1-9])\\.(?:3[0-1]|[1-2][0-9]|0[1-9]))\\.(?P<build>\\d+)"
+serialize = ["{release}.{build}"]
 
-[tool.bumpver.file_patterns]
-"micromasters/settings.py" = ['VERSION = "{version}"']
-"pyproject.toml" = ['version = "{version}"']
+[tool.bumpversion.parts.release]
+calver_format = "{YYYY}.{0M}.{0D}"
+
+[tool.bumpversion.parts.build]
+first_value = "1"
+
+[[tool.bumpversion.files]]
+filename = "micromasters/settings.py"
+search = 'VERSION = "{current_version}"'
+replace = 'VERSION = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "uv.lock"
+search = """
+name = "micromasters"
+version = "{current_version}"
+source = {{ virtual = "." }}"""
+replace = """
+name = "micromasters"
+version = "{new_version}"
+source = {{ virtual = "." }}"""
