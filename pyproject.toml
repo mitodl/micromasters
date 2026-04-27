@@ -1,6 +1,6 @@
 [project]
 name = "micromasters"
-version = "2026.04.16.1"
+version = "2026.4.16.1"
 requires-python = ">=3.11"
 dependencies = [
     "django>=5.2,<5.3",
@@ -83,11 +83,11 @@ dev = [
 [tool.bumpversion]
 commit = false
 tag = false
-parse = "(?P<release>(?:[1-9][0-9]{3})\\.(?:1[0-2]|0[1-9])\\.(?:3[0-1]|[1-2][0-9]|0[1-9]))\\.(?P<build>\\d+)"
+parse = "(?P<release>(?:[1-9][0-9]{3})\\.(?:1[0-2]|[1-9])\\.(?:3[0-1]|[12][0-9]|[1-9]))\\.(?P<build>\\d+)"
 serialize = ["{release}.{build}"]
 
 [tool.bumpversion.parts.release]
-calver_format = "{YYYY}.{0M}.{0D}"
+calver_format = "{YYYY}.{MM}.{DD}"
 
 [tool.bumpversion.parts.build]
 first_value = "1"
