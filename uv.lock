@@ -1202,7 +1202,7 @@ wheels = [
 
 [[package]]
 name = "micromasters"
-version = "0.0.1"
+version = "2026.4.16.1"
 source = { virtual = "." }
 dependencies = [
     { name = "boto3" },

@@ -15,7 +15,7 @@ from micromasters.envs import (get_any, get_bool, get_int, get_list_of_str,
                                get_string)
 from micromasters.sentry import init_sentry
 
-VERSION = "0.0.0"  # Default version
+VERSION = "2026.4.16.1"  # Default version
 version_file = Path(os.getcwd()) / "VERSION"
 if version_file.is_file():
     with open(version_file, encoding="UTF-8") as file:
