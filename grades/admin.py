@@ -19,6 +19,7 @@ class FinalGradeAdmin(admin.ModelAdmin):
     )
 
     def get_edx_course_key(self, obj):
+        """Return the edX course key for the related course run."""
         return obj.course_run.edx_course_key
 
     get_edx_course_key.short_description = 'Edx Course Key'
