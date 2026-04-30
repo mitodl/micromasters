@@ -10,7 +10,7 @@ from micromasters.utils import get_field_names
 class FinalGradeAdmin(admin.ModelAdmin):
     """Admin for FinalGrade"""
     model = models.FinalGrade
-    list_display = ('id', 'grade', 'user', 'get_edx_course_key', 'course_run')
+    list_display = ('id', 'grade', 'user', 'get_edx_course_key', 'course_run',)
     list_filter = ('course_run',)
     ordering = ('course_run',)
     raw_id_fields = ('user',)
