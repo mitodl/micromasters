@@ -106,7 +106,7 @@
     "react-virtualized-select": "^3.0.1",
     "redux": "^4.0.4",
     "redux-actions": "^2.0.1",
-    "redux-asserts": "^0.0.11",
+    "redux-asserts": "^0.0.12",
     "redux-hammock": "^0.3.3",
     "redux-localstorage": "^1.0.0-rc5",
     "redux-localstorage-filter": "^0.1.1",
