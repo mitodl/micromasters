@@ -1,4 +1,4 @@
-FROM node:14.18.2-bullseye
+FROM node:14.18.2-bullseye@sha256:4522c89e65c887a917d220cf759342552efa24a1cdfe2d50203890a0ef22205c
 
 LABEL maintainer "ODL DevOps <mitx-devops@mit.edu>"
 
