@@ -20,7 +20,7 @@ x-environment:
 
 services:
   db:
-    image: postgres:16
+    image: postgres:16@sha256:71e27bf60b70bded003791b5573f8b808365613f341df20ffcf0c1ed7bc13ddf
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_USER=postgres
@@ -30,12 +30,12 @@ services:
       - "5432"
 
   redis:
-    image: redis:5.0.14
+    image: redis:5.0.14@sha256:fc5ecd863862f89f04334b7cbb57e93c9790478ea8188a49f6e57b0967d38c75
     ports:
       - "6379"
 
   opensearch-node1:
-    image: opensearchproject/opensearch:1.3.20
+    image: opensearchproject/opensearch:1.3.20@sha256:0ecf20d1ec1b682fa1cf36c74900b547bd1d7da5817a14edf4236472e110863e
     container_name: opensearch-node1
     environment:
       - cluster.name=opensearch-cluster
@@ -59,7 +59,7 @@ services:
       - 9600:9600 # required for Performance Analyzer
 
   nginx:
-    image: nginx:1.29
+    image: nginx:1.29@sha256:6e23479198b998e5e25921dff8455837c7636a67111a04a635cf1bb363d199dc
     ports:
       - "8079:8079"
     links:
@@ -123,7 +123,7 @@ services:
       - sftp
 
   sftp:
-    image: atmoz/sftp
+    image: atmoz/sftp@sha256:0960390462a4441dbb63698d7c185b76a41ffcee7b78ff4adf275f3e66f9c475
     ports:
         - "2022:22"
     command: odl:123:1001:1001:results,results/topvue
