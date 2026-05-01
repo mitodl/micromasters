@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.249.1
+---------------
+
+- List Final Grades with edx_course_key (#5510)
+
 Version 0.249.0 (Released April 16, 2026)
 ---------------
 
