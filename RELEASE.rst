@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+Version 0.250.0
+---------------
+
+- Update DEDP and SCM to Login to MIT Learn (#5518)
+- Update link on DEDP Program page (#5517)
+- Update dependency pyjwt to v2.13.0 [SECURITY] (#5516)
+- Update dependency wagtail to v7.3.2 [SECURITY] (#5515)
+- Update dependency django to v5.2.14 [SECURITY] (#5514)
+- Add select_related to FinalGrade admin list view (#5512)
+- Update dependency granian to v2.7.4 [SECURITY] (#5513)
+
 Version 0.249.1 (Released May 05, 2026)
 ---------------
 
