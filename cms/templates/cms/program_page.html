@@ -65,7 +65,11 @@
         {% else %}
             {% if page.program.id == 2 %}
                 <a href="https://learn.mit.edu/programs/program-v1:MITx+DEDP" class="mdl-button hero-button mdl-cell--hide-phone">
-                  ENROLL ON LEARN
+                  Enroll on MIT Learn
+                </a>
+            {% elif page.program.id == 1 %}
+                <a href="https://learn.mit.edu/programs/program-v1:MITxT+SCM" class="mdl-button hero-button mdl-cell--hide-phone">
+                  Enroll on MIT Learn
                 </a>
             {% else %}
               {% if not authenticated %}
