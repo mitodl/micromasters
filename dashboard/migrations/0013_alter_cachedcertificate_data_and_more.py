@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0012_mitxonline_cache'),
+        ("dashboard", "0012_mitxonline_cache"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cachedcertificate',
-            name='data',
+            model_name="cachedcertificate",
+            name="data",
             field=models.JSONField(),
         ),
         migrations.AlterField(
-            model_name='cachedcurrentgrade',
-            name='data',
+            model_name="cachedcurrentgrade",
+            name="data",
             field=models.JSONField(),
         ),
         migrations.AlterField(
-            model_name='cachedenrollment',
-            name='data',
+            model_name="cachedenrollment",
+            name="data",
             field=models.JSONField(),
         ),
     ]

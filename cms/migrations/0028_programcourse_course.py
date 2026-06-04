@@ -5,16 +5,20 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0025_remove_unused_fields'),
-        ('cms', '0027_semesterdate'),
+        ("courses", "0025_remove_unused_fields"),
+        ("cms", "0027_semesterdate"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programcourse',
-            name='course',
-            field=models.OneToOneField(help_text='The course for this ProgramCourse', null=True, on_delete=django.db.models.deletion.SET_NULL, to='courses.Course'),
+            model_name="programcourse",
+            name="course",
+            field=models.OneToOneField(
+                help_text="The course for this ProgramCourse",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="courses.Course",
+            ),
         ),
     ]

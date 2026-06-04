@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0019_courserun_default_ordering'),
+        ("courses", "0019_courserun_default_ordering"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='courserun',
-            name='freeze_grade_date',
+            model_name="courserun",
+            name="freeze_grade_date",
             field=models.DateTimeField(blank=True, db_index=True, null=True),
         ),
     ]

@@ -17,7 +17,7 @@ describe("SocialAuthReauthenticateDialog", () => {
         <SocialAuthReauthenticateDialog
           invalidBackendCredentials={invalidBackendCredentials}
         />
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
     )
       .find(SocialAuthReauthenticateDialog)
       .children()
@@ -47,18 +47,15 @@ describe("SocialAuthReauthenticateDialog", () => {
 
         it("should have a description of what the learner needs to do", () => {
           const wrapper = renderDialog([invalidAuth])
-          const text = wrapper
-            .find(Grid)
-            .at(0)
-            .text()
+          const text = wrapper.find(Grid).at(0).text()
           assert.equal(
             text,
             `Your account is linked to ${String(
-              backendLabel
-            )}, but this link is no longer active. Continue to log in with your account and relink it to your current MicroMasters account.`
+              backendLabel,
+            )}, but this link is no longer active. Continue to log in with your account and relink it to your current MicroMasters account.`,
           )
         })
       })
-    }
+    },
   )
 })

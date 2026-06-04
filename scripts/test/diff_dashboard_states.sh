@@ -9,16 +9,14 @@ BRANCH2=$1
 shift 1
 
 # verify the branch exists
-if ! git rev-parse --verify $BRANCH2 > /dev/null
-then
-  echo "$BRANCH2 is not a valid branch"
-  exit 1
+if ! git rev-parse --verify $BRANCH2 >/dev/null; then
+	echo "$BRANCH2 is not a valid branch"
+	exit 1
 fi
 
-if ! type "magick" > /dev/null
-then
-  echo "ImageMagick is not installed"
-  exit 1
+if ! type "magick" >/dev/null; then
+	echo "ImageMagick is not installed"
+	exit 1
 fi
 
 set -e -o pipefail
@@ -43,10 +41,10 @@ mkdir -p "$DIFFOUT"
 
 set +e # imagemagick returns nonzero codes, so ignore them
 
-for f1 in $OUT1/*.png ; do
-  fname=$(basename $f1)
-  echo "Diffing: $fname"
-  magick compare "$OUT1/$fname" "$OUT2/$fname" "$DIFFOUT/$fname"
+for f1 in $OUT1/*.png; do
+	fname=$(basename $f1)
+	echo "Diffing: $fname"
+	magick compare "$OUT1/$fname" "$OUT2/$fname" "$DIFFOUT/$fname"
 done
 
 # imagemagick returns 1

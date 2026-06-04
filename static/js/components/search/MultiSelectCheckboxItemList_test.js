@@ -11,25 +11,25 @@ describe("MultiSelectCheckboxItemList", () => {
   let searchKit
   const items = [
     {
-      label:     "Item 1",
-      key:       "item_1",
-      doc_count: 5
+      label: "Item 1",
+      key: "item_1",
+      doc_count: 5,
     },
     {
-      label:     "Item 2",
-      key:       "item_2",
-      doc_count: 4
-    }
+      label: "Item 2",
+      key: "item_2",
+      doc_count: 4,
+    },
   ]
   const props = {
-    mod:         "sk-item-list",
-    disabled:    false,
-    className:   "test",
-    setItems:    sinon.stub(),
-    items:       items,
-    toggleItem:  sinon.stub(),
-    translate:   sinon.stub(),
-    multiselect: true
+    mod: "sk-item-list",
+    disabled: false,
+    className: "test",
+    setItems: sinon.stub(),
+    items: items,
+    toggleItem: sinon.stub(),
+    translate: sinon.stub(),
+    multiselect: true,
   }
 
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe("MultiSelectCheckboxItemList", () => {
     mount(
       <SearchkitProvider searchkit={searchKit}>
         <MultiSelectCheckboxItemList {...props} />
-      </SearchkitProvider>
+      </SearchkitProvider>,
     )
 
   it("renders select all", () => {

@@ -5,44 +5,51 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0001_initial'),
+        ("financialaid", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='tierprogram',
-            old_name='value',
-            new_name='discount_amount',
+            model_name="tierprogram",
+            old_name="value",
+            new_name="discount_amount",
         ),
         migrations.RemoveField(
-            model_name='financialaid',
-            name='exchange_rate',
+            model_name="financialaid",
+            name="exchange_rate",
         ),
         migrations.RemoveField(
-            model_name='financialaid',
-            name='program',
+            model_name="financialaid",
+            name="program",
         ),
         migrations.RemoveField(
-            model_name='financialaid',
-            name='tier',
+            model_name="financialaid",
+            name="tier",
         ),
         migrations.AddField(
-            model_name='financialaid',
-            name='tier_program',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='financialaid.TierProgram'),
+            model_name="financialaid",
+            name="tier_program",
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="financialaid.TierProgram",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='tierprogram',
-            name='income_threshold',
+            model_name="tierprogram",
+            name="income_threshold",
             field=models.IntegerField(default=None),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='tierprogram',
-            name='program',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tier_programs', to='courses.Program'),
+            model_name="tierprogram",
+            name="program",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tier_programs",
+                to="courses.Program",
+            ),
         ),
     ]

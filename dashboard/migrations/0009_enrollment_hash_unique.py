@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0008_programenrollment_hash'),
+        ("dashboard", "0008_programenrollment_hash"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='programenrollment',
-            name='hash',
+            model_name="programenrollment",
+            name="hash",
             field=models.CharField(max_length=32, unique=True),
         ),
     ]

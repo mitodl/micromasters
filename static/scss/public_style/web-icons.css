@@ -1,22 +1,29 @@
 @font-face {
-  font-family: 'Web Icons';
+  font-family: "Web Icons";
   font-style: normal;
   font-weight: normal;
 
   src: url(/static/scss/public_style/web-icons.eot?v=0.2.3);
-  src: url(/static/scss/public_style/web-icons.eot?#iefix&v=0.2.3) format('embedded-opentype'), url(/static/scss/public_style/web-icons.woff2?v=0.2.3) format('woff2'), url(/static/scss/public_style/web-icons.woff?v=0.2.3) format('woff'), url(/static/scss/public_style/web-icons.ttf?v=0.2.3) format('truetype'), url(/static/scss/public_style/web-icons.svg?v=0.2.3#/static/scss/public_style/web-icons) format('svg');
+  src:
+    url(/static/scss/public_style/web-icons.eot?#iefix&v=0.2.3)
+      format("embedded-opentype"),
+    url(/static/scss/public_style/web-icons.woff2?v=0.2.3) format("woff2"),
+    url(/static/scss/public_style/web-icons.woff?v=0.2.3) format("woff"),
+    url(/static/scss/public_style/web-icons.ttf?v=0.2.3) format("truetype"),
+    url(/static/scss/public_style/web-icons.svg?v=0.2.3#/static/scss/public_style/web-icons)
+      format("svg");
 }
 [class^="wb-"],
 [class*=" wb-"] {
   position: relative;
   display: inline-block;
-  font-family: 'Web Icons';
+  font-family: "Web Icons";
   font-style: normal;
   font-weight: normal;
   -webkit-transform: translate(0, 0);
-      -ms-transform: translate(0, 0);
-       -o-transform: translate(0, 0);
-          transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
+  transform: translate(0, 0);
 
   text-rendering: auto;
   speak: none;

@@ -67,20 +67,16 @@ def fix_nested_filter(query, parent_key):
         dict: An updated Opensearch query with filter replaced with query
     """
     if isinstance(query, dict):
-        if 'filter' in query and parent_key == 'nested':
+        if "filter" in query and parent_key == "nested":
             copy = dict(query)
-            if 'query' in copy:
+            if "query" in copy:
                 raise ValueError("Unexpected 'query' found")
-            copy['query'] = copy['filter']
-            del copy['filter']
+            copy["query"] = copy["filter"]
+            del copy["filter"]
             return copy
         else:
-            return {
-                key: fix_nested_filter(value, key) for key, value in query.items()
-            }
+            return {key: fix_nested_filter(value, key) for key, value in query.items()}
     elif isinstance(query, list):
-        return [
-            fix_nested_filter(piece, key) for key, piece in enumerate(query)
-        ]
+        return [fix_nested_filter(piece, key) for key, piece in enumerate(query)]
     else:
         return query

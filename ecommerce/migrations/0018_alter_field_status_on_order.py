@@ -4,15 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ecommerce', '0017_remove_course_price'),
+        ("ecommerce", "0017_remove_course_price"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.CharField(choices=[('created', 'created'), ('fulfilled', 'fulfilled'), ('failed', 'failed'), ('refunded', 'refunded'), ('partially_refunded', 'partially_refunded')], db_index=True, default='created', max_length=30),
+            model_name="order",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("created", "created"),
+                    ("fulfilled", "fulfilled"),
+                    ("failed", "failed"),
+                    ("refunded", "refunded"),
+                    ("partially_refunded", "partially_refunded"),
+                ],
+                db_index=True,
+                default="created",
+                max_length=30,
+            ),
         ),
     ]

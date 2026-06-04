@@ -8,11 +8,15 @@ from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 from exams.constants import EXAM_GRADE_FAIL, EXAM_GRADE_PASS
 from grades.constants import FinalGradeStatus
 from grades.factories import ProctoredExamGradeFactory
-from grades.models import (CourseRunGradingAlreadyCompleteError,
-                           CourseRunGradingStatus, FinalGrade,
-                           MicromastersCourseCertificate,
-                           MicromastersProgramCertificate,
-                           MicromastersProgramCommendation, ProctoredExamGrade)
+from grades.models import (
+    CourseRunGradingAlreadyCompleteError,
+    CourseRunGradingStatus,
+    FinalGrade,
+    MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
+    MicromastersProgramCommendation,
+    ProctoredExamGrade,
+)
 from micromasters.factories import UserFactory
 from search.base import MockedESTestCase
 
@@ -21,6 +25,7 @@ class FinalGradeModelTests(MockedESTestCase):
     """
     Tests for final grade model
     """
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -48,7 +53,10 @@ class FinalGradeModelTests(MockedESTestCase):
         assert self.grade1.grade == 1.5
 
         # it fails also to create the grades from scratch
-        for val in (-0.5, -1.3, ):
+        for val in (
+            -0.5,
+            -1.3,
+        ):
             with self.assertRaises(ValidationError):
                 FinalGrade.objects.create(
                     user=self.user2,
@@ -71,13 +79,18 @@ class CourseRunGradingStatusTests(MockedESTestCase):
     """
     Tests for CourseRunGradingStatus methods
     """
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
         cls.course_run_pending = CourseRunFactory.create()
         cls.course_run_complete = CourseRunFactory.create()
         cls.course_run_no_status = CourseRunFactory.create()
-        cls.all_runs = (cls.course_run_pending, cls.course_run_complete, cls.course_run_no_status, )
+        cls.all_runs = (
+            cls.course_run_pending,
+            cls.course_run_complete,
+            cls.course_run_no_status,
+        )
         CourseRunGradingStatus.objects.create(
             course_run=cls.course_run_pending,
             status=FinalGradeStatus.PENDING,
@@ -110,7 +123,10 @@ class CourseRunGradingStatusTests(MockedESTestCase):
 
     def test_create_pending(self):
         """tests for create_pending"""
-        for course_run in (self.course_run_pending, self.course_run_no_status, ):
+        for course_run in (
+            self.course_run_pending,
+            self.course_run_no_status,
+        ):
             fg_status = CourseRunGradingStatus.create_pending(course_run)
             assert fg_status.status == FinalGradeStatus.PENDING
             assert fg_status.course_run == course_run
@@ -131,13 +147,13 @@ class ProctoredExamGradeTests(MockedESTestCase):
             user=user,
             course=course,
             exam_run__course=course,
-            exam_run__eligibility_past=True
+            exam_run__eligibility_past=True,
         )
         ProctoredExamGradeFactory.create(
             user=user,
             course=course,
             exam_run__course=course,
-            exam_run__eligibility_future=True
+            exam_run__eligibility_future=True,
         )
         grades = ProctoredExamGrade.for_user_course(user, course)
 
@@ -178,7 +194,9 @@ class MicromastersCourseCertificateTests(MockedESTestCase):
         """Test that MicromastersCourseCertificate auto-generates a hash when none is provided"""
         user = UserFactory.create()
         course = CourseFactory.create()
-        mm_certificate = MicromastersCourseCertificate.objects.create(user=user, course=course)
+        mm_certificate = MicromastersCourseCertificate.objects.create(
+            user=user, course=course
+        )
         assert len(mm_certificate.hash) == 32
 
 
@@ -190,7 +208,9 @@ class MicromastersProgramCertificateTests(MockedESTestCase):
         user = UserFactory.create()
         program = ProgramFactory.create()
 
-        mm_certificate = MicromastersProgramCertificate.objects.create(user=user, program=program)
+        mm_certificate = MicromastersProgramCertificate.objects.create(
+            user=user, program=program
+        )
         assert len(mm_certificate.hash) == 32
 
 
@@ -203,6 +223,10 @@ class MicromastersProgramCommendationTests(MockedESTestCase):
         user_1 = UserFactory.create()
         program = ProgramFactory.create()
 
-        letter = MicromastersProgramCommendation.objects.create(user=user, program=program)
-        letter_1 = MicromastersProgramCommendation.objects.create(user=user_1, program=program)
+        letter = MicromastersProgramCommendation.objects.create(
+            user=user, program=program
+        )
+        letter_1 = MicromastersProgramCommendation.objects.create(
+            user=user_1, program=program
+        )
         assert letter.uuid != letter_1.uuid

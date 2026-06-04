@@ -6,8 +6,8 @@ from django.db import migrations
 
 
 def populate_exam_run_fk(apps, schema_editor):
-    ProctoredExamGrade = apps.get_model('grades', 'ProctoredExamGrade')
-    ExamAuthorization = apps.get_model('exams', 'ExamAuthorization')
+    ProctoredExamGrade = apps.get_model("grades", "ProctoredExamGrade")
+    ExamAuthorization = apps.get_model("exams", "ExamAuthorization")
     style = color_style()
     fake_exam_grades = []
 
@@ -25,7 +25,7 @@ def populate_exam_run_fk(apps, schema_editor):
     for fake_exam_grade in fake_exam_grades:
         sys.stdout.write(
             style.ERROR(
-                '\nInvalid client_authorization_id {} for ProctoredExamGrade {}'.format(
+                "\nInvalid client_authorization_id {} for ProctoredExamGrade {}".format(
                     fake_exam_grade.client_authorization_id, fake_exam_grade.id
                 )
             )
@@ -33,11 +33,8 @@ def populate_exam_run_fk(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0007_populate_exam_run_fk'),
+        ("grades", "0007_populate_exam_run_fk"),
     ]
 
-    operations = [
-        migrations.RunPython(populate_exam_run_fk, migrations.RunPython.noop)
-    ]
+    operations = [migrations.RunPython(populate_exam_run_fk, migrations.RunPython.noop)]

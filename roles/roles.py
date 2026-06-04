@@ -9,10 +9,11 @@ class Permissions:
     """
     All MicroMasters custom permissions
     """
-    CAN_ADVANCE_SEARCH = 'can_advance_search'
-    CAN_EDIT_CMS = 'can_edit_cms'
-    CAN_MESSAGE_LEARNERS = 'can_message_learners'
-    CAN_CREATE_FORUMS = 'can_create_forums'
+
+    CAN_ADVANCE_SEARCH = "can_advance_search"
+    CAN_EDIT_CMS = "can_edit_cms"
+    CAN_MESSAGE_LEARNERS = "can_message_learners"
+    CAN_CREATE_FORUMS = "can_create_forums"
 
 
 class Staff(AbstractUserRole):
@@ -22,7 +23,8 @@ class Staff(AbstractUserRole):
     The `ROLE_ID` attribute is create formal relationship
     by this definition of roles and their assignment to the users.
     """
-    ROLE_ID = 'staff'
+
+    ROLE_ID = "staff"
 
     available_permissions = {
         Permissions.CAN_ADVANCE_SEARCH: True,
@@ -39,7 +41,8 @@ class Instructor(AbstractUserRole):
     The `ROLE_ID` attribute is create formal relationship
     by this definition of roles and their assignment to the users.
     """
-    ROLE_ID = 'instructor'
+
+    ROLE_ID = "instructor"
 
     available_permissions = {
         Permissions.CAN_ADVANCE_SEARCH: True,

@@ -7,21 +7,29 @@ from factory.fuzzy import FuzzyText
 from wagtail.images.models import Image
 from wagtail.images.tests.utils import get_test_image_file
 
-from cms.models import (CourseCertificateSignatories, HomePage, InfoLinks,
-                        ProgramCertificateSignatories, ProgramCourse,
-                        ProgramFaculty, ProgramLetterSignatory, ProgramPage,
-                        SemesterDate)
+from cms.models import (
+    CourseCertificateSignatories,
+    HomePage,
+    InfoLinks,
+    ProgramCertificateSignatories,
+    ProgramCourse,
+    ProgramFaculty,
+    ProgramLetterSignatory,
+    ProgramPage,
+    SemesterDate,
+)
 from courses.factories import CourseFactory, ProgramFactory
 
 
 class ImageFactory(DjangoModelFactory):
     """Factory for Wagtail images"""
+
     class Meta:
         model = Image
 
-    title = factory.Faker('file_name', extension="jpg")
-    width = factory.Faker('pyint')
-    height = factory.Faker('pyint')
+    title = factory.Faker("file_name", extension="jpg")
+    width = factory.Faker("pyint")
+    height = factory.Faker("pyint")
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
@@ -39,16 +47,17 @@ class ImageFactory(DjangoModelFactory):
 
 class ProgramPageFactory(DjangoModelFactory):
     """Factory for ProgramPage"""
+
     class Meta:
         model = ProgramPage
 
-    title = factory.Faker('sentence', nb_words=4)
+    title = factory.Faker("sentence", nb_words=4)
     # StreamField expects a list/dict structure; use empty stream by default
     description = []
     program = factory.SubFactory(ProgramFactory)
-    faculty_description = factory.Faker('paragraph')
-    program_contact_email = factory.Faker('email')
-    title_over_image = factory.Faker('sentence')
+    faculty_description = factory.Faker("paragraph")
+    program_contact_email = factory.Faker("email")
+    title_over_image = factory.Faker("sentence")
     thumbnail_image = None
 
     @classmethod
@@ -69,23 +78,25 @@ class ProgramPageFactory(DjangoModelFactory):
 
 class ProgramCourseFactory(DjangoModelFactory):
     """Factory for ProgramCourse"""
+
     class Meta:
         model = ProgramCourse
 
-    title = factory.Faker('sentence', nb_words=4)
+    title = factory.Faker("sentence", nb_words=4)
     program_page = factory.SubFactory(ProgramPageFactory)
     course = factory.SubFactory(CourseFactory)
-    description = factory.Faker('sentence', nb_words=4)
+    description = factory.Faker("sentence", nb_words=4)
 
 
 class FacultyFactory(DjangoModelFactory):
     """Factory for program faculty"""
+
     class Meta:
         model = ProgramFaculty
 
-    name = factory.Faker('name')
+    name = factory.Faker("name")
     title = "Ph.D"
-    short_bio = factory.Faker('text')
+    short_bio = factory.Faker("text")
 
     program_page = factory.SubFactory(ProgramPageFactory)
     image = factory.SubFactory(ImageFactory)
@@ -93,22 +104,24 @@ class FacultyFactory(DjangoModelFactory):
 
 class InfoLinksFactory(DjangoModelFactory):
     """Factory for more info links"""
+
     class Meta:
         model = InfoLinks
 
-    url = factory.Faker('url')
-    title_url = factory.Faker('text')
+    url = factory.Faker("url")
+    title_url = factory.Faker("text")
     program_page = factory.SubFactory(ProgramPageFactory)
 
 
 class SemesterDateFactory(DjangoModelFactory):
     """Factory for semester dates"""
+
     class Meta:
         model = SemesterDate
 
     program_page = factory.SubFactory(ProgramPageFactory)
-    semester_name = FuzzyText(prefix='Semester ')
-    start_date = factory.Faker('date_time_this_month')
+    semester_name = FuzzyText(prefix="Semester ")
+    start_date = factory.Faker("date_time_this_month")
 
 
 class CourseCertificateSignatoriesFactory(DjangoModelFactory):
@@ -119,10 +132,10 @@ class CourseCertificateSignatoriesFactory(DjangoModelFactory):
 
     program_page = factory.SubFactory(ProgramPageFactory)
     course = factory.SubFactory(CourseFactory)
-    name = factory.Faker('name')
-    title_line_1 = factory.Faker('text')
-    title_line_2 = factory.Faker('text')
-    organization = factory.Faker('text')
+    name = factory.Faker("name")
+    title_line_1 = factory.Faker("text")
+    title_line_2 = factory.Faker("text")
+    organization = factory.Faker("text")
     signature_image = factory.SubFactory(ImageFactory)
 
 
@@ -133,10 +146,10 @@ class ProgramCertificateSignatoriesFactory(DjangoModelFactory):
         model = ProgramCertificateSignatories
 
     program_page = factory.SubFactory(ProgramPageFactory)
-    name = factory.Faker('name')
-    title_line_1 = factory.Faker('text')
-    title_line_2 = factory.Faker('text')
-    organization = factory.Faker('text')
+    name = factory.Faker("name")
+    title_line_1 = factory.Faker("text")
+    title_line_2 = factory.Faker("text")
+    organization = factory.Faker("text")
     signature_image = factory.SubFactory(ImageFactory)
 
 
@@ -147,7 +160,7 @@ class ProgramLetterSignatoryFactory(DjangoModelFactory):
         model = ProgramLetterSignatory
 
     program_page = factory.SubFactory(ProgramPageFactory)
-    name = factory.Faker('name')
-    title_line_1 = factory.Faker('text')
-    title_line_2 = factory.Faker('text')
+    name = factory.Faker("name")
+    title_line_1 = factory.Faker("text")
+    title_line_2 = factory.Faker("text")
     signature_image = factory.SubFactory(ImageFactory)

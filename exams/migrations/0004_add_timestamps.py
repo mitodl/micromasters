@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0003_examauthorization_exam_taken'),
+        ("exams", "0003_examauthorization_exam_taken"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='examprofile',
-            name='created_on',
+            model_name="examprofile",
+            name="created_on",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AddField(
-            model_name='examprofile',
-            name='updated_on',
+            model_name="examprofile",
+            name="updated_on",
             field=models.DateTimeField(auto_now=True, null=True),
         ),
     ]

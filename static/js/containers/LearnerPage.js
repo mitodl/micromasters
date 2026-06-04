@@ -11,7 +11,7 @@ import { clearProfile } from "../actions/profile"
 import {
   profileFormContainer,
   mapStateToProfileProps,
-  childrenWithProps
+  childrenWithProps,
 } from "./ProfileFormContainer"
 import ErrorMessage from "../components/ErrorMessage"
 import { fetchDashboard, clearDashboard } from "../actions/dashboard"
@@ -30,20 +30,20 @@ import { gradeDetailPopupKey } from "../components/dashboard/courses/Grades"
 
 const notFetchingOrFetched = R.compose(
   R.not,
-  R.contains(R.__, [FETCH_PROCESSING, FETCH_SUCCESS, FETCH_FAILURE])
+  R.contains(R.__, [FETCH_PROCESSING, FETCH_SUCCESS, FETCH_FAILURE]),
 )
 
 type LearnerPageProps = ProfileContainerProps & {
   dashboard: DashboardsState,
   email: AllEmailsState,
-  openEmailComposer: (emailType: string, emailOpenParams: any) => void
+  openEmailComposer: (emailType: string, emailOpenParams: any) => void,
 }
 
 class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   componentDidMount() {
     const {
       params: { username },
-      fetchProfile
+      fetchProfile,
     } = this.props
     fetchProfile(username)
     this.fetchDashboard()
@@ -52,7 +52,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   componentDidUpdate() {
     const {
       params: { username },
-      fetchProfile
+      fetchProfile,
     } = this.props
     fetchProfile(username)
     this.fetchDashboard()
@@ -61,7 +61,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   componentWillUnmount() {
     const {
       dispatch,
-      params: { username }
+      params: { username },
     } = this.props
     if (!SETTINGS.user || SETTINGS.user.username !== username) {
       // don't erase the user's own profile from the state
@@ -73,23 +73,23 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   getFocusedDashboard() {
     const {
       dashboard,
-      params: { username }
+      params: { username },
     } = this.props
     return S.filter(
       () => hasAnyStaffRole(SETTINGS.roles),
-      getDashboard(username, dashboard)
+      getDashboard(username, dashboard),
     )
   }
 
   fetchDashboard() {
     const {
       dispatch,
-      params: { username }
+      params: { username },
     } = this.props
 
     R.compose(
       S.map(() => dispatch(fetchDashboard(username))),
-      S.filter(R.propSatisfies(notFetchingOrFetched, "fetchStatus"))
+      S.filter(R.propSatisfies(notFetchingOrFetched, "fetchStatus")),
     )(this.getFocusedDashboard())
   }
 
@@ -98,13 +98,13 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       hasAnyStaffRole(SETTINGS.roles),
       R.isNil(SETTINGS.user)
         ? R.F()
-        : R.equals(R.prop("username", SETTINGS.user), username)
+        : R.equals(R.prop("username", SETTINGS.user), username),
     )
 
   getDocumentTitle = () => {
     const {
       params: { username },
-      profiles
+      profiles,
     } = this.props
     const profilePath = [username, "profile"]
 
@@ -116,7 +116,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   setShowGradeDetailDialog = (
     open: boolean,
     gradeType: GradeType,
-    courseTitle: string
+    courseTitle: string,
   ) => {
     const { dispatch } = this.props
     if (open) {
@@ -133,7 +133,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       children,
       profileProps,
       email,
-      openEmailComposer
+      openEmailComposer,
     } = this.props
 
     let profile = {}
@@ -145,14 +145,14 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       loaded = profiles[username].getStatus !== FETCH_PROCESSING
 
       const props = {
-        dashboard:                S.maybe({}, R.identity, this.getFocusedDashboard()),
-        email:                    email,
+        dashboard: S.maybe({}, R.identity, this.getFocusedDashboard()),
+        email: email,
         openLearnerEmailComposer: R.partial(
           openEmailComposer(LEARNER_EMAIL_TYPE),
-          [profile.profile]
+          [profile.profile],
         ),
         setShowGradeDetailDialog: this.setShowGradeDetailDialog,
-        ...profileProps(profile)
+        ...profileProps(profile),
       }
       toRender = childrenWithProps(children, props)
     }
@@ -171,20 +171,20 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     dashboard: state.dashboard,
-    prices:    state.prices,
-    coupons:   state.coupons,
-    email:     state.email,
-    ...mapStateToProfileProps(state)
+    prices: state.prices,
+    coupons: state.coupons,
+    email: state.email,
+    ...mapStateToProfileProps(state),
   }
 }
 
 export default R.compose(
   connect(mapStateToProps),
   withEmailDialog({
-    [LEARNER_EMAIL_TYPE]: LEARNER_EMAIL_CONFIG
+    [LEARNER_EMAIL_TYPE]: LEARNER_EMAIL_CONFIG,
   }),
-  profileFormContainer
+  profileFormContainer,
 )(LearnerPage)

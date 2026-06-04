@@ -8,27 +8,32 @@ from exams import models
 
 class ExamRunAdmin(admin.ModelAdmin):
     """Admin for ExamRun"""
+
     model = models.ExamRun
     list_display = (
-        'id',
-        'course',
-        'semester',
-        'exam_series_code',
-        'date_first_schedulable',
-        'date_last_schedulable',
-        'date_first_eligible',
-        'date_last_eligible',
-        'authorized',
+        "id",
+        "course",
+        "semester",
+        "exam_series_code",
+        "date_first_schedulable",
+        "date_last_schedulable",
+        "date_first_eligible",
+        "date_last_eligible",
+        "authorized",
     )
-    list_filter = ('course__title', 'course__program__title', 'semester', )
-    ordering = ('-date_first_eligible',)
-    readonly_fields = ('authorized',)
+    list_filter = (
+        "course__title",
+        "course__program__title",
+        "semester",
+    )
+    ordering = ("-date_first_eligible",)
+    readonly_fields = ("authorized",)
 
     def get_readonly_fields(self, request, obj=None):
         """Conditionally determine readonly fields"""
         if not self.is_modifiable(obj):
             # exam_series_code cannot be changed due to Pearson requirement
-            return self.readonly_fields + ('exam_series_code',)
+            return self.readonly_fields + ("exam_series_code",)
         return self.readonly_fields
 
     def has_delete_permission(self, request, obj=None):
@@ -42,7 +47,9 @@ class ExamRunAdmin(admin.ModelAdmin):
         Returns:
             bool: True if the run can be modified/deleted
         """
-        return exam_run is None or exam_run.id is None or not exam_run.has_authorizations
+        return (
+            exam_run is None or exam_run.id is None or not exam_run.has_authorizations
+        )
 
 
 class ExamAuthorizationAdmin(admin.ModelAdmin):
@@ -50,25 +57,25 @@ class ExamAuthorizationAdmin(admin.ModelAdmin):
 
     model = models.ExamAuthorization
     list_display = (
-        'id',
-        'user_email',
-        'course_number',
-        'exam_run_id',
-        'exam_coupon_url',
-        'exam_taken',
-        'exam_no_show',
+        "id",
+        "user_email",
+        "course_number",
+        "exam_run_id",
+        "exam_coupon_url",
+        "exam_taken",
+        "exam_no_show",
     )
     list_filter = (
-        'exam_run__id',
-        'course__course_number',
-        'course__title',
+        "exam_run__id",
+        "course__course_number",
+        "course__title",
     )
     search_fields = (
-        'exam_run__id',
-        'course__course_number',
-        'user__email',
+        "exam_run__id",
+        "course__course_number",
+        "user__email",
     )
-    raw_id_fields = ('user',)
+    raw_id_fields = ("user",)
 
     def user_email(self, obj):
         """Getter for the User foreign-key element email"""
@@ -85,17 +92,18 @@ class ExamAuthorizationAdmin(admin.ModelAdmin):
 
 class ExamRunCouponAdmin(admin.ModelAdmin):
     """Admin for ExamRunCoupon"""
+
     model = models.ExamRunCoupon
     list_display = (
-        'id',
-        'is_taken',
-        'course_title',
-        'coupon_url',
-        'expiration_date',
+        "id",
+        "is_taken",
+        "course_title",
+        "coupon_url",
+        "expiration_date",
     )
     list_filter = (
-        'is_taken',
-        'course__title',
+        "is_taken",
+        "course__title",
     )
 
     def course_title(self, obj):

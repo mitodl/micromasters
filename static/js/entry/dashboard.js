@@ -29,7 +29,7 @@ if (SETTINGS.gaTrackingID) {
 
 const rootEl = document.getElementById("dashboard")
 
-const renderApp = Component => {
+const renderApp = (Component) => {
   ReactDOM.render(
     <AppContainer>
       <Component
@@ -39,7 +39,7 @@ const renderApp = Component => {
         routes={routes}
       />
     </AppContainer>,
-    rootEl
+    rootEl,
   )
 }
 

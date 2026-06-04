@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0049_benefitspage_content_table_block'),
+        ("cms", "0049_benefitspage_content_table_block"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='programpage',
-            name='program_subscribe_link',
-            field=models.URLField(blank=True, help_text="A url for Learn More button, if none the button won't display.", null=True),
+            model_name="programpage",
+            name="program_subscribe_link",
+            field=models.URLField(
+                blank=True,
+                help_text="A url for Learn More button, if none the button won't display.",
+                null=True,
+            ),
         ),
     ]

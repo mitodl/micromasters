@@ -15,12 +15,12 @@ import type { GradeType } from "../../containers/DashboardPage"
 import type { CouponPrices, Coupon } from "../../flow/couponTypes"
 import {
   STATUS_PENDING_ENROLLMENT,
-  COURSE_ACTION_ENROLL
+  COURSE_ACTION_ENROLL,
 } from "../../constants"
 import {
   courseStartDateMessage,
   userIsEnrolled,
-  hasEnrolledInAnyRun
+  hasEnrolledInAnyRun,
 } from "./courses/util"
 import { isEnrollableRun } from "./courses/util"
 
@@ -33,7 +33,7 @@ export default class CourseRow extends React.Component {
     addCourseEnrollment: (courseId: string) => Promise<*>,
     openCourseContactDialog: (
       course: Course,
-      canContactCourseTeam: boolean
+      canContactCourseTeam: boolean,
     ) => void,
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
@@ -43,7 +43,7 @@ export default class CourseRow extends React.Component {
     ui: UIState,
     setShowExpandedCourseStatus: (n: number) => void,
     setShowGradeDetailDialog: (b: boolean, t: GradeType, title: string) => void,
-    showStaffView: boolean
+    showStaffView: boolean,
   }
 
   // $FlowFixMe: CourseRun is sometimes an empty object
@@ -65,7 +65,7 @@ export default class CourseRow extends React.Component {
 
   courseAction = (
     run: CourseRun,
-    actionType: string
+    actionType: string,
   ): React$Element<*> | null => {
     const {
       now,
@@ -73,7 +73,7 @@ export default class CourseRow extends React.Component {
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
       setCalculatePriceDialogVisibility,
-      showStaffView
+      showStaffView,
     } = this.props
 
     if (showStaffView) {
@@ -127,7 +127,7 @@ export default class CourseRow extends React.Component {
       setShowGradeDetailDialog,
       setExamEnrollmentDialogVisibility,
       setSelectedExamCouponCourse,
-      showStaffView
+      showStaffView,
     } = this.props
 
     return (
@@ -142,7 +142,7 @@ export default class CourseRow extends React.Component {
           course={course}
           openCourseContactDialog={R.partial(openCourseContactDialog, [
             course,
-            hasEnrolledInAnyRun(course)
+            hasEnrolledInAnyRun(course),
           ])}
           showStaffView={showStaffView}
         />

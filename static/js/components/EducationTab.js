@@ -18,7 +18,7 @@ class EducationTab extends React.Component {
     ui: UIState,
     saveProfile: SaveProfileFunc,
     addProgramEnrollment: (p: number) => void,
-    dispatch: Function
+    dispatch: Function,
   }
 
   // eslint-disable-next-line require-jsdoc

@@ -12,8 +12,9 @@ class UserProgramSearchSerializer:
     """
     Provides functions for serializing a ProgramEnrollment for the ES index
     """
-    PAID_STATUS = 'Paid'
-    UNPAID_STATUS = 'Auditing'
+
+    PAID_STATUS = "Paid"
+    UNPAID_STATUS = "Auditing"
 
     @classmethod
     def serialize_enrollments(cls, mmtrack):
@@ -30,9 +31,14 @@ class UserProgramSearchSerializer:
         for course_run in mmtrack.get_all_enrolled_course_runs():
             course_title = course_run.course.title
             # If any course run for this course was verified/paid, count it as verified
-            if course_title not in serialized_enrollments_map or \
-                    serialized_enrollments_map[course_title]['payment_status'] == cls.UNPAID_STATUS:
-                serialized_enrollments_map[course_title] = cls.serialize_enrollment_with_semester(mmtrack, course_run)
+            if (
+                course_title not in serialized_enrollments_map
+                or serialized_enrollments_map[course_title]["payment_status"]
+                == cls.UNPAID_STATUS
+            ):
+                serialized_enrollments_map[
+                    course_title
+                ] = cls.serialize_enrollment_with_semester(mmtrack, course_run)
         return list(serialized_enrollments_map.values())
 
     @classmethod
@@ -47,15 +53,19 @@ class UserProgramSearchSerializer:
             dict: Serialized course enrollment
         """
         course_title = course_run.course.title
-        payment_status = cls.PAID_STATUS if mmtrack.has_verified_enrollment(course_run.edx_course_key) else cls.UNPAID_STATUS
+        payment_status = (
+            cls.PAID_STATUS
+            if mmtrack.has_verified_enrollment(course_run.edx_course_key)
+            else cls.UNPAID_STATUS
+        )
 
         final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
         semester = cls.serialize_semester(course_run)
         return {
-            'final_grade': final_grade.grade_percent if final_grade else None,
-            'semester': semester,
-            'course_title': course_title,
-            'payment_status': payment_status,
+            "final_grade": final_grade.grade_percent if final_grade else None,
+            "semester": semester,
+            "course_title": course_title,
+            "payment_status": payment_status,
         }
 
     @classmethod
@@ -73,9 +83,14 @@ class UserProgramSearchSerializer:
         for course_run in mmtrack.get_all_enrolled_course_runs():
             course_title = course_run.course.title
             # If any course run for this course was verified/paid, count it as verified
-            if course_title not in serialized_enrollments_map or \
-                    serialized_enrollments_map[course_title]['payment_status'] == cls.UNPAID_STATUS:
-                serialized_enrollments_map[course_title] = cls.serialize_enrollment(mmtrack, course_run)
+            if (
+                course_title not in serialized_enrollments_map
+                or serialized_enrollments_map[course_title]["payment_status"]
+                == cls.UNPAID_STATUS
+            ):
+                serialized_enrollments_map[course_title] = cls.serialize_enrollment(
+                    mmtrack, course_run
+                )
         return list(serialized_enrollments_map.values())
 
     @classmethod
@@ -90,13 +105,17 @@ class UserProgramSearchSerializer:
             dict: Serialized course enrollment
         """
         course_title = course_run.course.title
-        payment_status = cls.PAID_STATUS if mmtrack.has_verified_enrollment(course_run.edx_course_key) else cls.UNPAID_STATUS
+        payment_status = (
+            cls.PAID_STATUS
+            if mmtrack.has_verified_enrollment(course_run.edx_course_key)
+            else cls.UNPAID_STATUS
+        )
 
         final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
         return {
-            'final_grade': final_grade.grade_percent if final_grade else None,
-            'course_title': course_title,
-            'payment_status': payment_status,
+            "final_grade": final_grade.grade_percent if final_grade else None,
+            "course_title": course_title,
+            "payment_status": payment_status,
         }
 
     @classmethod
@@ -110,7 +129,8 @@ class UserProgramSearchSerializer:
             list: Serialized all semester enrollments
         """
         return [
-            {'semester': cls.serialize_semester(course_run)} for course_run in mmtrack.get_all_enrolled_course_runs()
+            {"semester": cls.serialize_semester(course_run)}
+            for course_run in mmtrack.get_all_enrolled_course_runs()
         ]
 
     @classmethod
@@ -125,7 +145,7 @@ class UserProgramSearchSerializer:
         """
         year_season_tuple = get_year_season_from_course_run(course_run)
         if year_season_tuple:
-            return f'{year_season_tuple[0]} - {year_season_tuple[1]}'
+            return f"{year_season_tuple[0]} - {year_season_tuple[1]}"
         return None
 
     @classmethod
@@ -138,22 +158,23 @@ class UserProgramSearchSerializer:
         mmtrack = get_mmtrack(user, program)
 
         return {
-            'id': program.id,
-            'enrollments': cls.serialize_enrollments(mmtrack),
-            'courses': cls.serialize_course_enrollments(mmtrack),
-            'course_runs': cls.serialize_course_runs_enrolled(mmtrack),
-            'grade_average': mmtrack.calculate_final_grade_average(),
-            'is_learner': is_learner(user, program),
-            'num_courses_passed': mmtrack.count_courses_passed(),
-            'total_courses': program.course_set.count()
+            "id": program.id,
+            "enrollments": cls.serialize_enrollments(mmtrack),
+            "courses": cls.serialize_course_enrollments(mmtrack),
+            "course_runs": cls.serialize_course_runs_enrolled(mmtrack),
+            "grade_average": mmtrack.calculate_final_grade_average(),
+            "is_learner": is_learner(user, program),
+            "num_courses_passed": mmtrack.count_courses_passed(),
+            "total_courses": program.course_set.count(),
         }
 
 
 class UnEnrollProgramsSerializer(serializers.Serializer):
     """Serialize list of numbers"""
+
     program_ids = serializers.ListField(child=serializers.IntegerField())
 
     def get_program_ids(self):
         """return list of program ids extracted from payload"""
         self.is_valid(raise_exception=True)
-        return self.data['program_ids']
+        return self.data["program_ids"]

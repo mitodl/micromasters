@@ -12,6 +12,7 @@ class Command(BaseCommand):
     """
     For each program enrollment checks if the user passed the program and generates commendation letters for them.
     """
+
     help = "Finds users that have passed all courses in programs and generates commendation letters for them."
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
@@ -20,9 +21,12 @@ class Command(BaseCommand):
             if not program.has_frozen_grades_for_all_courses():
                 self.stdout.write(
                     "Program '{}' has courses without frozen grades. Skipping program letter generation...".format(
-                        program.title)
+                        program.title
+                    )
                 )
                 continue
-            enrollments = ProgramEnrollment.objects.filter(program=program).select_related('user')
+            enrollments = ProgramEnrollment.objects.filter(
+                program=program
+            ).select_related("user")
             for enrollment in enrollments:
                 generate_program_letter(enrollment.user, program)

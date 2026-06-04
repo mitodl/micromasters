@@ -5,15 +5,18 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0043_programpage_program_letter_footer_text'),
+        ("cms", "0043_programpage_program_letter_footer_text"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programpage',
-            name='program_letter_header_text',
-            field=wagtail.fields.RichTextField(blank=True, help_text='Header text that will appear next to the logo.', null=True),
+            model_name="programpage",
+            name="program_letter_header_text",
+            field=wagtail.fields.RichTextField(
+                blank=True,
+                help_text="Header text that will appear next to the logo.",
+                null=True,
+            ),
         ),
     ]

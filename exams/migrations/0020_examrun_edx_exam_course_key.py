@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0019_examauthorization_exam_coupon'),
+        ("exams", "0019_examauthorization_exam_coupon"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='examrun',
-            name='edx_exam_course_key',
+            model_name="examrun",
+            name="edx_exam_course_key",
             field=models.CharField(blank=True, max_length=255, null=True, unique=True),
         ),
     ]

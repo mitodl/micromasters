@@ -7,25 +7,57 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
-        ('wagtailimages', '0021_image_file_hash'),
-        ('cms', '0038_programpage_program_subscribe_link'),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("wagtailimages", "0021_image_file_hash"),
+        ("cms", "0038_programpage_program_subscribe_link"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BenefitsPage',
+            name="BenefitsPage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('description', wagtail.fields.RichTextField(blank=True, help_text='The description shown on the benefits page')),
-                ('content', wagtail.fields.StreamField([('rich_text', wagtail.blocks.RichTextBlock())], blank=True, help_text='The content of the benefits page')),
-                ('background_image', models.ForeignKey(blank=True, help_text='The hero image on the benefits page', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                (
+                    "description",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        help_text="The description shown on the benefits page",
+                    ),
+                ),
+                (
+                    "content",
+                    wagtail.fields.StreamField(
+                        [("rich_text", wagtail.blocks.RichTextBlock())],
+                        blank=True,
+                        help_text="The content of the benefits page",
+                    ),
+                ),
+                (
+                    "background_image",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="The hero image on the benefits page",
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="wagtailimages.Image",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
     ]

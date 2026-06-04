@@ -7,7 +7,7 @@ import Select from "react-select"
 import ProgramEnrollmentDialog from "./ProgramEnrollmentDialog"
 import type {
   AvailableProgram,
-  AvailablePrograms
+  AvailablePrograms,
 } from "../flow/enrollmentTypes"
 import type { Option } from "../flow/generalTypes"
 
@@ -26,7 +26,7 @@ export default class ProgramSelector extends React.Component {
     setEnrollDialogError: (error: ?string) => void,
     setEnrollDialogVisibility: (open: boolean) => void,
     setEnrollSelectedProgram: (programId: ?number) => void,
-    selectorVisibility: boolean
+    selectorVisibility: boolean,
   }
 
   selectEnrollment = (option: Option): void => {
@@ -35,14 +35,14 @@ export default class ProgramSelector extends React.Component {
       setCurrentProgramEnrollment,
       setEnrollDialogError,
       setEnrollDialogVisibility,
-      setEnrollSelectedProgram
+      setEnrollSelectedProgram,
     } = this.props
     if (option.value === ENROLL_SENTINEL) {
       setEnrollDialogVisibility(true)
       setEnrollSelectedProgram(null)
       setEnrollDialogError(null)
     } else {
-      const selected = programs.find(program => program.id === option.value)
+      const selected = programs.find((program) => program.id === option.value)
       if (selected) {
         setCurrentProgramEnrollment(selected)
       }
@@ -58,17 +58,19 @@ export default class ProgramSelector extends React.Component {
     }
 
     const sortedPrograms = _.sortBy(programs, "title")
-    const enrolledPrograms = sortedPrograms.filter(program => program.enrolled)
+    const enrolledPrograms = sortedPrograms.filter(
+      (program) => program.enrolled,
+    )
     const unenrolledPrograms = sortedPrograms.filter(
-      program => !program.enrolled
+      (program) => !program.enrolled,
     )
     const unselected = enrolledPrograms.filter(
-      enrollment => enrollment.id !== currentId
+      (enrollment) => enrollment.id !== currentId,
     )
 
-    const options = unselected.map(enrollment => ({
+    const options = unselected.map((enrollment) => ({
       value: enrollment.id,
-      label: enrollment.title
+      label: enrollment.title,
     }))
     if (unenrolledPrograms.length > 0) {
       options.push({ label: "Enroll in a new program", value: ENROLL_SENTINEL })
@@ -88,14 +90,14 @@ export default class ProgramSelector extends React.Component {
       setEnrollDialogError,
       setEnrollDialogVisibility,
       setEnrollSelectedProgram,
-      selectorVisibility
+      selectorVisibility,
     } = this.props
     let currentId
     if (!_.isNil(currentProgramEnrollment)) {
       currentId = currentProgramEnrollment.id
     }
 
-    const selected = programs.find(enrollment => enrollment.id === currentId)
+    const selected = programs.find((enrollment) => enrollment.id === currentId)
     const options = this.makeOptions()
 
     if (!SETTINGS.user) {

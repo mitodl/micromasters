@@ -7,46 +7,98 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailimages', '0021_image_file_hash'),
-        ('cms', '0036_add_renderer_in_table_block'),
+        ("wagtailimages", "0021_image_file_hash"),
+        ("cms", "0036_add_renderer_in_table_block"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProgramLetterSignatory',
+            name="ProgramLetterSignatory",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('name', models.CharField(help_text='Full name of the signatory', max_length=255)),
-                ('title_line_1', models.TextField(help_text='Signatory title (e.g.: Associate Professor)')),
-                ('title_line_2', models.TextField(blank=True, help_text='Signatory title (optional second line)')),
-                ('organization', models.CharField(default='Massachusetts Institute of Technology', help_text='Name of the organization where the signatory holds the given title.', max_length=255)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="Full name of the signatory", max_length=255
+                    ),
+                ),
+                (
+                    "title_line_1",
+                    models.TextField(
+                        help_text="Signatory title (e.g.: Associate Professor)"
+                    ),
+                ),
+                (
+                    "title_line_2",
+                    models.TextField(
+                        blank=True, help_text="Signatory title (optional second line)"
+                    ),
+                ),
+                (
+                    "organization",
+                    models.CharField(
+                        default="Massachusetts Institute of Technology",
+                        help_text="Name of the organization where the signatory holds the given title.",
+                        max_length=255,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='programpage',
-            name='program_letter_logo',
-            field=models.ForeignKey(blank=True, help_text='The logo that will appear at the top of the program congratulation letter.', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image'),
+            model_name="programpage",
+            name="program_letter_logo",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="The logo that will appear at the top of the program congratulation letter.",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="wagtailimages.Image",
+            ),
         ),
         migrations.AddField(
-            model_name='programpage',
-            name='program_letter_text',
-            field=wagtail.fields.RichTextField(blank=True, help_text='Text that will appear on the program congratulation letter.', null=True),
+            model_name="programpage",
+            name="program_letter_text",
+            field=wagtail.fields.RichTextField(
+                blank=True,
+                help_text="Text that will appear on the program congratulation letter.",
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='programlettersignatory',
-            name='program_page',
-            field=modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='program_letter_signatories', to='cms.ProgramPage'),
+            model_name="programlettersignatory",
+            name="program_page",
+            field=modelcluster.fields.ParentalKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="program_letter_signatories",
+                to="cms.ProgramPage",
+            ),
         ),
         migrations.AddField(
-            model_name='programlettersignatory',
-            name='signature_image',
-            field=models.ForeignKey(help_text='Signature image.', on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailimages.Image'),
+            model_name="programlettersignatory",
+            name="signature_image",
+            field=models.ForeignKey(
+                help_text="Signature image.",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailimages.Image",
+            ),
         ),
     ]

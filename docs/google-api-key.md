@@ -37,9 +37,9 @@ can use that compromised API key.
 You need to give your API key permissions to access the various Google APIs
 used by this project. At this point, that consists of the following APIs:
 
-* [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/start)
-* [Google Places API Web Service](https://developers.google.com/places/web-service/)
-* [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/)
+- [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/start)
+- [Google Places API Web Service](https://developers.google.com/places/web-service/)
+- [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/)
 
 Go to the "Credentials" section of the API console. For each API listed above,
 type in the name of the API in the search box, click on the result,

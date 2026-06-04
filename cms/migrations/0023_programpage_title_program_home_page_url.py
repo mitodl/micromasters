@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0022_add_categorized_faqs_page'),
+        ("cms", "0022_add_categorized_faqs_page"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programpage',
-            name='title_program_home_page_url',
-            field=models.TextField(blank=True, help_text='The text for the link to an external homepage.'),
+            model_name="programpage",
+            name="title_program_home_page_url",
+            field=models.TextField(
+                blank=True, help_text="The text for the link to an external homepage."
+            ),
         ),
     ]

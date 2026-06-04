@@ -12,7 +12,7 @@ import configureTestStore from "redux-asserts"
 import rootReducer from "../reducers"
 import {
   setSelectedSchool,
-  setSendDialogVisibility
+  setSendDialogVisibility,
 } from "../actions/send_grades_dialog"
 import ReactTestUtils from "react-dom/test-utils"
 import * as api from "../lib/api"
@@ -40,7 +40,7 @@ describe("SendGradesDialog", () => {
         <Provider store={store}>
           <SendGradesDialog />
         </Provider>
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
     )
     return (document.querySelector(".send-dialog"): any)
   }
@@ -66,7 +66,7 @@ describe("SendGradesDialog", () => {
     store.dispatch(setSendDialogVisibility(true))
     const dialogText = renderDialog()
     ReactTestUtils.Simulate.click(
-      dialogText.querySelector(".close-send-dialog")
+      dialogText.querySelector(".close-send-dialog"),
     )
     assert.isFalse(store.getState().sendDialog.sendDialogVisibility)
   })

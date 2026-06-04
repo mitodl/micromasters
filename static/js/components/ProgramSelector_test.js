@@ -25,19 +25,19 @@ describe("ProgramSelector", () => {
     sandbox.restore()
   })
 
-  const renderProgramSelector = props => {
+  const renderProgramSelector = (props) => {
     return shallow(
       <ProgramSelector
         programs={programs}
         currentProgramEnrollment={selectedEnrollment}
         {...props}
-      />
+      />,
     )
   }
 
   it("renders an empty div if there are no program enrollments", () => {
     const wrapper = renderProgramSelector({
-      programs: []
+      programs: [],
     })
     assert.lengthOf(wrapper.find("div").children(), 0)
   })
@@ -51,7 +51,7 @@ describe("ProgramSelector", () => {
     const wrapper = renderProgramSelector()
     const selectProps = wrapper.find(Select).props()
 
-    const enrollments = programs.filter(program => program.enrolled)
+    const enrollments = programs.filter((program) => program.enrolled)
     const sortedEnrollments = _.sortBy(enrollments, "title")
     // make sure we are testing sorting meaningfully
     assert.notDeepEqual(sortedEnrollments, enrollments)
@@ -59,25 +59,25 @@ describe("ProgramSelector", () => {
     const options = selectProps["options"]
     // include 'Enroll in a new program' which comes at the end if user can enroll in a new program
     const expectedEnrollments = sortedEnrollments
-      .filter(program => program.id !== selectedEnrollment.id)
-      .map(program => ({
+      .filter((program) => program.id !== selectedEnrollment.id)
+      .map((program) => ({
         label: program.title,
-        value: program.id
+        value: program.id,
       }))
       .concat({
         label: "Enroll in a new program",
-        value: "enroll"
+        value: "enroll",
       })
     assert.deepEqual(options, expectedEnrollments)
   })
 
   it("does not render the 'Enroll in a new program' option if there is not at least one available program", () => {
-    const allEnrollments = programs.map(program => ({
+    const allEnrollments = programs.map((program) => ({
       ...program,
-      enrolled: true
+      enrolled: true,
     }))
     const wrapper = renderProgramSelector({
-      programs: allEnrollments
+      programs: allEnrollments,
     })
     const selectProps = wrapper.find(Select).props()
     const sortedEnrollments = _.sortBy(allEnrollments, "title")
@@ -87,10 +87,10 @@ describe("ProgramSelector", () => {
     const options = selectProps["options"]
     // include 'Enroll in a new program' which comes at the end if user can enroll in a new program
     const expectedEnrollments = sortedEnrollments
-      .filter(program => program.id !== selectedEnrollment.id)
-      .map(program => ({
+      .filter((program) => program.id !== selectedEnrollment.id)
+      .map((program) => ({
         label: program.title,
-        value: program.id
+        value: program.id,
       }))
     assert.deepEqual(options, expectedEnrollments)
   })
@@ -102,7 +102,7 @@ describe("ProgramSelector", () => {
     const wrapper = renderProgramSelector({
       setEnrollDialogError,
       setEnrollDialogVisibility,
-      setEnrollSelectedProgram
+      setEnrollSelectedProgram,
     })
     const onChange = wrapper.find(Select).props()["onChange"]
     onChange({ value: "enroll" })
@@ -115,7 +115,7 @@ describe("ProgramSelector", () => {
     const setCurrentProgramEnrollment = sandbox.stub()
 
     const wrapper = renderProgramSelector({
-      setCurrentProgramEnrollment
+      setCurrentProgramEnrollment,
     })
     const onChange = wrapper.find(Select).props()["onChange"]
     onChange({ value: unenrolled.id })

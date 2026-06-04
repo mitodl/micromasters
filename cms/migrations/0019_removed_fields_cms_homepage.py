@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0018_update_programfaculty'),
+        ("cms", "0018_update_programfaculty"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='homepage',
-            name='title_background',
+            model_name="homepage",
+            name="title_background",
         ),
     ]

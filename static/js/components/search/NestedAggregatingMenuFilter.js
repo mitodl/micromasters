@@ -5,7 +5,7 @@ import {
   FilterBucket,
   AggsContainer,
   CardinalityMetric,
-  MenuFilter
+  MenuFilter,
 } from "searchkit"
 import _ from "lodash"
 import { NestedAccessorMixin } from "./util"
@@ -29,13 +29,13 @@ const INNER_TERMS_AGG_KEY = "nested_terms"
  */
 function ReverseNestedTermsBucket(key, field, options) {
   const reverseNestedAgg = AggsContainer(REVERSE_NESTED_AGG_KEY, {
-    reverse_nested: {}
+    reverse_nested: {},
   })
   return TermsBucket(key, field, options, reverseNestedAgg)
 }
 
 export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
-  FacetAccessor
+  FacetAccessor,
 ) {
   /**
    * Overrides buildOwnQuery in FacetAccessor
@@ -55,9 +55,9 @@ export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
           this.createAggFilter(query),
           ...this.fieldContext.wrapAggregations(
             this.getTermsBucket(query),
-            CardinalityMetric(`${this.key}_count`, this.key)
-          )
-        )
+            CardinalityMetric(`${this.key}_count`, this.key),
+          ),
+        ),
       )
     }
   }
@@ -72,7 +72,7 @@ export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
     const baseAggsPath = [
       this.uuid,
       this.fieldContext.getAggregationPath(),
-      this.key
+      this.key,
     ]
     const aggs = this.getAggregations(baseAggsPath.concat(["buckets"]), [])
     if (aggs.length > 0) {
@@ -80,7 +80,7 @@ export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
     } else {
       return this.getAggregations(
         baseAggsPath.concat([INNER_TERMS_AGG_KEY, "buckets"]),
-        []
+        [],
       )
     }
   }
@@ -102,23 +102,22 @@ export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
    * Gets the appropriate terms bucket for this element's agg query.
    */
   getTermsBucket(query) {
-    const otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(
-      query
-    )
+    const otherAppliedFiltersOnPath =
+      this.createFilterForOtherElementsOnPath(query)
     const termsKey = otherAppliedFiltersOnPath ? INNER_TERMS_AGG_KEY : this.key
     const termsBucket = ReverseNestedTermsBucket(
       termsKey,
       this.key,
       _.omitBy(
         {
-          size:          this.size,
-          order:         this.getOrder(),
-          include:       this.options.include,
-          exclude:       this.options.exclude,
-          min_doc_count: this.options.min_doc_count
+          size: this.size,
+          order: this.getOrder(),
+          include: this.options.include,
+          exclude: this.options.exclude,
+          min_doc_count: this.options.min_doc_count,
         },
-        _.isUndefined
-      )
+        _.isUndefined,
+      ),
     )
 
     if (otherAppliedFiltersOnPath) {
@@ -143,7 +142,7 @@ export default class NestedAggregatingMenuFilter extends MenuFilter {
   defineAccessor() {
     return new NestedAggregatingFacetAccessor(
       this.props.field,
-      this.getAccessorOptions()
+      this.getAccessorOptions(),
     )
   }
 
@@ -156,11 +155,11 @@ export default class NestedAggregatingMenuFilter extends MenuFilter {
    */
   getItems() {
     const items = super.getItems()
-    return items.map(item => ({
+    return items.map((item) => ({
       ...item,
       doc_count: item[REVERSE_NESTED_AGG_KEY]
         ? item[REVERSE_NESTED_AGG_KEY].doc_count
-        : item.doc_count
+        : item.doc_count,
     }))
   }
 }

@@ -3,7 +3,7 @@ import React from "react"
 import Dialog from "@material-ui/core/Dialog"
 import IconButton from "@material-ui/core/IconButton"
 
-const dialogTitle = setDialogVisibility => (
+const dialogTitle = (setDialogVisibility) => (
   <div className="title">
     <div className="text" key={1}>
       Income Verification Instructions
@@ -19,12 +19,12 @@ const dialogTitle = setDialogVisibility => (
 
 type DocsInstructions = {
   open: boolean,
-  setDialogVisibility: (v: boolean) => void
+  setDialogVisibility: (v: boolean) => void,
 }
 
 const DocsInstructionsDialog = ({
   open,
-  setDialogVisibility
+  setDialogVisibility,
 }: DocsInstructions) => (
   // onRequestClose is not used below because an extra click or touch event causes material-ui
   // to close the dialog right after opening it. See https://github.com/JedWatson/react-select/issues/532

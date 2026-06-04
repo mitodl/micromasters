@@ -7,15 +7,26 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0033_remove_programpage_external_program_page_url'),
+        ("cms", "0033_remove_programpage_external_program_page_url"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='programtabpage',
-            name='content',
-            field=wagtail.fields.StreamField([('rich_text', wagtail.blocks.RichTextBlock()), ('course_table', wagtail.contrib.table_block.blocks.TableBlock(table_options={'startCols': 2, 'startRows': 3}))], blank=True, help_text='The content of this tab on the program page'),
+            model_name="programtabpage",
+            name="content",
+            field=wagtail.fields.StreamField(
+                [
+                    ("rich_text", wagtail.blocks.RichTextBlock()),
+                    (
+                        "course_table",
+                        wagtail.contrib.table_block.blocks.TableBlock(
+                            table_options={"startCols": 2, "startRows": 3}
+                        ),
+                    ),
+                ],
+                blank=True,
+                help_text="The content of this tab on the program page",
+            ),
         ),
     ]

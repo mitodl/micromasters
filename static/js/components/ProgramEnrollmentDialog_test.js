@@ -31,7 +31,7 @@ describe("ProgramEnrollmentDialog", () => {
         programs={PROGRAMS}
         visibility={true}
         {...props}
-      />
+      />,
     )
   }
 
@@ -49,17 +49,16 @@ describe("ProgramEnrollmentDialog", () => {
   for (const [uiAction, funcName, propName, value] of [
     ["setEnrollProgramDialogError", "setError", "error", "error"],
     ["setEnrollProgramDialogVisibility", "setVisibility", "visibility", true],
-    ["setEnrollSelectedProgram", "setSelectedProgram", "selectedProgram", 3]
+    ["setEnrollSelectedProgram", "setSelectedProgram", "selectedProgram", 3],
   ]) {
     it(`dispatches ${funcName}`, () => {
       const stub = helper.sandbox.spy(uiActions, uiAction)
       return helper
         .renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS)
         .then(([wrapper]) => {
-          const handler = wrapper
-            .find(ProgramEnrollmentDialog)
-            .at(0)
-            .props()[funcName]
+          const handler = wrapper.find(ProgramEnrollmentDialog).at(0).props()[
+            funcName
+          ]
           handler(value)
           assert(stub.calledWith(value))
         })
@@ -71,10 +70,9 @@ describe("ProgramEnrollmentDialog", () => {
       return helper
         .renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS)
         .then(([wrapper]) => {
-          const actual = wrapper
-            .find(ProgramEnrollmentDialog)
-            .at(0)
-            .props()[propName]
+          const actual = wrapper.find(ProgramEnrollmentDialog).at(0).props()[
+            propName
+          ]
           assert.equal(actual, value)
         })
     })
@@ -99,7 +97,7 @@ describe("ProgramEnrollmentDialog", () => {
     const enrollment = PROGRAMS[0]
     const stub = helper.sandbox.stub()
     const wrapper = renderEnrollmentDialog({
-      setSelectedProgram: stub
+      setSelectedProgram: stub,
     })
     wrapper
       .find(Select)
@@ -113,7 +111,7 @@ describe("ProgramEnrollmentDialog", () => {
     const enrollStub = helper.sandbox.stub()
     const wrapper = renderEnrollmentDialog({
       enrollInProgram: enrollStub,
-      selectedProgram: selectedEnrollment
+      selectedProgram: selectedEnrollment,
     })
     const button = wrapper.find(".enroll-button")
     button.props().onClick()
@@ -123,7 +121,7 @@ describe("ProgramEnrollmentDialog", () => {
   for (const activity of [true, false]) {
     it(`spins the save button spinner depending on activity=${activity.toString()}`, () => {
       const wrapper = renderEnrollmentDialog({
-        fetchAddStatus: activity ? FETCH_PROCESSING : undefined
+        fetchAddStatus: activity ? FETCH_PROCESSING : undefined,
       })
       const button = wrapper.find(".enroll-button")
       assert.equal(button.name(), "SpinnerButton")
@@ -134,7 +132,7 @@ describe("ProgramEnrollmentDialog", () => {
   it("shows an error if the user didn't select any program when they click enroll", () => {
     const stub = helper.sandbox.stub()
     const wrapper = renderEnrollmentDialog({
-      setError: stub
+      setError: stub,
     })
     const button = wrapper.find(".enroll-button")
     button.props().onClick()
@@ -144,7 +142,7 @@ describe("ProgramEnrollmentDialog", () => {
   it("clears the dialog when the user clicks cancel", () => {
     const stub = helper.sandbox.stub()
     const wrapper = renderEnrollmentDialog({
-      setVisibility: stub
+      setVisibility: stub,
     })
     const button = wrapper.find(".cancel-button")
     button.props().onClick()
@@ -153,29 +151,29 @@ describe("ProgramEnrollmentDialog", () => {
 
   it("only shows programs which the user is not already enrolled in", () => {
     const enrollmentLookup = new Map(
-      PROGRAMS.map(enrollment => [enrollment.id, null])
+      PROGRAMS.map((enrollment) => [enrollment.id, null]),
     )
     let unenrolledPrograms = DASHBOARD_RESPONSE.programs.filter(
-      program => !enrollmentLookup.has(program.id)
+      (program) => !enrollmentLookup.has(program.id),
     )
     unenrolledPrograms = _.sortBy(unenrolledPrograms, "title")
-    unenrolledPrograms = unenrolledPrograms.map(program => ({
+    unenrolledPrograms = unenrolledPrograms.map((program) => ({
       title: program.title,
-      id:    program.id
+      id: program.id,
     }))
 
     const selectedEnrollment = PROGRAMS[0]
 
     const wrapper = renderEnrollmentDialog({
-      visibility:      false,
-      selectedProgram: selectedEnrollment
+      visibility: false,
+      selectedProgram: selectedEnrollment,
     })
 
-    const list = wrapper.find(MenuItem).map(menuItem => {
+    const list = wrapper.find(MenuItem).map((menuItem) => {
       const props = menuItem.props()
       return {
         title: props.primaryText,
-        id:    props.value
+        id: props.value,
       }
     })
 
@@ -187,7 +185,7 @@ describe("ProgramEnrollmentDialog", () => {
 
     const wrapper = renderEnrollmentDialog({
       selectedProgram: selectedEnrollment,
-      visibility:      false
+      visibility: false,
     })
     const select = wrapper.find(Select)
     assert.equal(select.props().value, selectedEnrollment)

@@ -7,7 +7,7 @@ import {
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-  COUPON_AMOUNT_TYPE_FIXED_PRICE
+  COUPON_AMOUNT_TYPE_FIXED_PRICE,
 } from "../constants"
 
 export type Coupon = {
@@ -20,26 +20,26 @@ export type Coupon = {
     | COUPON_AMOUNT_TYPE_FIXED_DISCOUNT
     | COUPON_AMOUNT_TYPE_FIXED_PRICE,
   program_id: number,
-  object_id: number // either program id, course id, or run id (different than the course key)
+  object_id: number, // either program id, course id, or run id (different than the course key)
 }
 
 export type Coupons = Array<Coupon>
 
 export type AttachCouponResponse = {
   message: string,
-  coupon: Coupon
+  coupon: Coupon,
 }
 
 export type CouponPrice = {
   price: Decimal,
-  coupon: ?Coupon
+  coupon: ?Coupon,
 }
 
 export type CouponPrices = {
   pricesInclCouponByRun: Map<number, CouponPrice>,
   pricesInclCouponByCourse: Map<number, CouponPrice>,
   pricesInclCouponByProgram: Map<number, CouponPrice>,
-  pricesExclCouponByProgram: Map<number, CouponPrice>
+  pricesExclCouponByProgram: Map<number, CouponPrice>,
 }
 
 export type CouponObject = Course | Program

@@ -31,7 +31,9 @@ def webpack_dev_server_url(request):
     """
     Get the full URL where the webpack dev server should be running
     """
-    return f'http://{webpack_dev_server_host(request)}:{settings.WEBPACK_DEV_SERVER_PORT}'
+    return (
+        f"http://{webpack_dev_server_host(request)}:{settings.WEBPACK_DEV_SERVER_PORT}"
+    )
 
 
 def dict_with_keys(dictionary, keys):
@@ -86,8 +88,8 @@ def load_json_from_file(project_rel_filepath):
     """
     Loads JSON data from a file
     """
-    path = f'{settings.BASE_DIR}/{project_rel_filepath}'
-    with open(path, encoding='utf-8') as f:
+    path = f"{settings.BASE_DIR}/{project_rel_filepath}"
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -112,7 +114,7 @@ def custom_exception_handler(exc, context):
         formatted_exception_string = f"{type(exc).__name__}: {str(exc)}"
         return Response(
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            data=[formatted_exception_string]
+            data=[formatted_exception_string],
         )
     return None
 
@@ -128,9 +130,9 @@ def serialize_model_object(obj):
             A representation of the model
     """
     # serialize works on iterables so we need to wrap object in a list, then unwrap it
-    data = json.loads(serialize('json', [obj]))[0]
-    serialized = data['fields']
-    serialized['id'] = data['pk']
+    data = json.loads(serialize("json", [obj]))[0]
+    serialized = data["fields"]
+    serialized["id"] = data["pk"]
     return serialized
 
 
@@ -145,7 +147,9 @@ def get_field_names(model):
             A list of field names
     """
     return [
-        field.name for field in model._meta.get_fields() if not field.auto_created  # pylint: disable=protected-access
+        field.name
+        for field in model._meta.get_fields()
+        if not field.auto_created  # pylint: disable=protected-access
     ]
 
 
@@ -254,7 +258,9 @@ def as_datetime(date):
     Returns:
         datetime.datetime: A datetime object for midnight of that date, UTC
     """
-    return datetime.datetime.combine(date, datetime.datetime.min.time()).replace(tzinfo=pytz.utc)
+    return datetime.datetime.combine(date, datetime.datetime.min.time()).replace(
+        tzinfo=pytz.utc
+    )
 
 
 def now_in_utc():

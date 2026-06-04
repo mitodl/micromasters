@@ -12,19 +12,19 @@ import { withEmailDialog } from "./hoc"
 import {
   EMAIL_COMPOSITION_DIALOG,
   LEARNER_EMAIL_TYPE,
-  AUTOMATIC_EMAIL_ADMIN_TYPE
+  AUTOMATIC_EMAIL_ADMIN_TYPE,
 } from "./constants"
 import {
   LEARNER_EMAIL_CONFIG,
   AUTOMATIC_EMAIL_ADMIN_CONFIG,
   convertEmailEdit,
   getFilters,
-  findFilters
+  findFilters,
 } from "./lib"
 import {
   START_EMAIL_EDIT,
   UPDATE_EMAIL_VALIDATION,
-  INITIATE_SEND_EMAIL
+  INITIATE_SEND_EMAIL,
 } from "../../actions/email"
 import { SHOW_DIALOG } from "../../actions/ui"
 import { INITIAL_EMAIL_STATE } from "../../reducers/email"
@@ -46,29 +46,29 @@ describe("Specific email config", () => {
   const wrapContainerComponent = (component, emailKey, emailConfig) =>
     R.compose(
       withEmailDialog({
-        [emailKey]: emailConfig
-      })
+        [emailKey]: emailConfig,
+      }),
     )(component)
 
   const renderTestComponentWithDialog = (
     Component,
     emailKey,
-    { emailState = INITIAL_EMAIL_STATE, dialogVisible = false } = {}
+    { emailState = INITIAL_EMAIL_STATE, dialogVisible = false } = {},
   ) => {
     const fullEmailState = {
       currentlyActive: emailKey,
-      [emailKey]:      emailState
+      [emailKey]: emailState,
     }
     return mount(
       <MuiThemeProvider theme={createMuiTheme()}>
         <Component
           dispatch={helper.store.dispatch}
           ui={{
-            dialogVisibility: { [EMAIL_COMPOSITION_DIALOG]: dialogVisible }
+            dialogVisibility: { [EMAIL_COMPOSITION_DIALOG]: dialogVisible },
           }}
           email={fullEmailState}
         />
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
     )
   }
 
@@ -90,14 +90,14 @@ describe("Specific email config", () => {
 
     const filledOutEmailState = _.merge(R.clone(INITIAL_EMAIL_STATE), {
       params: {
-        studentId:    123,
-        profileImage: "img.jpg"
+        studentId: 123,
+        profileImage: "img.jpg",
       },
       inputs: {
         subject: "subject",
-        body:    "body"
+        body: "body",
       },
-      subheading: "first_name last_name"
+      subheading: "first_name last_name",
     })
 
     class TestContainerPage extends React.Component {
@@ -107,7 +107,7 @@ describe("Specific email config", () => {
           <div>
             <button
               onClick={R.partial(openEmailComposer(LEARNER_EMAIL_TYPE), [
-                profile
+                profile,
               ])}
             >
               Open Email
@@ -120,13 +120,13 @@ describe("Specific email config", () => {
     const wrappedContainerComponent = wrapContainerComponent(
       TestContainerPage,
       LEARNER_EMAIL_TYPE,
-      LEARNER_EMAIL_CONFIG
+      LEARNER_EMAIL_CONFIG,
     )
 
     it("should set the correct parameters when it opens", () => {
       wrapper = renderTestComponentWithDialog(
         wrappedContainerComponent,
-        LEARNER_EMAIL_TYPE
+        LEARNER_EMAIL_TYPE,
       )
       const dialogComponent = wrapper.find("EmailCompositionDialog")
       const emailButton = wrapper.find("button")
@@ -134,7 +134,7 @@ describe("Specific email config", () => {
 
       return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
         emailButton.simulate("click")
-      }).then(state => {
+      }).then((state) => {
         const emailParams = state.email[LEARNER_EMAIL_TYPE].params
         assert.equal(emailParams.studentId, profile.student_id)
         assert.isDefined(emailParams.profileImage)
@@ -145,17 +145,17 @@ describe("Specific email config", () => {
       wrapper = renderTestComponentWithDialog(
         wrappedContainerComponent,
         LEARNER_EMAIL_TYPE,
-        { emailState: filledOutEmailState, dialogVisible: true }
+        { emailState: filledOutEmailState, dialogVisible: true },
       )
       const dialogComponent = wrapper.find("EmailCompositionDialog")
       const renderedSubheading = mount(
-        dialogComponent.props().subheadingRenderer(filledOutEmailState)
+        dialogComponent.props().subheadingRenderer(filledOutEmailState),
       )
 
       assert.equal(renderedSubheading.find("img").prop("src"), "img.jpg")
       assert.include(
         renderedSubheading.html(),
-        "<span>first_name last_name</span>"
+        "<span>first_name last_name</span>",
       )
     })
 
@@ -163,7 +163,7 @@ describe("Specific email config", () => {
       wrapper = renderTestComponentWithDialog(
         wrappedContainerComponent,
         LEARNER_EMAIL_TYPE,
-        { emailState: filledOutEmailState, dialogVisible: true }
+        { emailState: filledOutEmailState, dialogVisible: true },
       )
       const dialogComponent = wrapper.find("EmailCompositionDialog")
 
@@ -171,13 +171,13 @@ describe("Specific email config", () => {
         [UPDATE_EMAIL_VALIDATION, INITIATE_SEND_EMAIL],
         () => {
           dialogComponent.props().closeEmailComposerAndSend()
-        }
+        },
       ).then(() => {
         assert.isTrue(helper.sendLearnerMail.calledOnce)
         assert.deepEqual(helper.sendLearnerMail.firstCall.args, [
           "subject",
           "body",
-          123
+          123,
         ])
       })
     })
@@ -190,19 +190,19 @@ describe("Specific email config", () => {
       const wrapped = wrapContainerComponent(
         TestContainerPage,
         AUTOMATIC_EMAIL_ADMIN_TYPE,
-        AUTOMATIC_EMAIL_ADMIN_CONFIG
+        AUTOMATIC_EMAIL_ADMIN_CONFIG,
       )
       wrapper = renderTestComponentWithDialog(
         wrapped,
         AUTOMATIC_EMAIL_ADMIN_TYPE,
-        { emailState: automaticEmailState, dialogVisible: true }
+        { emailState: automaticEmailState, dialogVisible: true },
       )
       const dialogComponent = wrapper.find("EmailCompositionDialog")
       return listenForActions(
         [UPDATE_EMAIL_VALIDATION, actions.automaticEmails.patch.requestType],
         () => {
           dialogComponent.props().closeEmailComposerAndSend()
-        }
+        },
       ).then(() => {
         assert.isFalse(helper.sendLearnerMail.called)
       })
@@ -212,10 +212,10 @@ describe("Specific email config", () => {
   describe("helper functions", () => {
     describe("convertEmailEdit", () => {
       it("should turn any keys like `email_foo` to be `foo`", () => {
-        [
+        ;[
           [{ email_foo: "a" }, { foo: "a" }],
           [{ email_subject: "a" }, { subject: "a" }],
-          [{ email_body: "a" }, { body: "a" }]
+          [{ email_body: "a" }, { body: "a" }],
         ].forEach(([obj, expectation]) => {
           assert.deepEqual(convertEmailEdit(obj), expectation)
         })
@@ -224,28 +224,28 @@ describe("Specific email config", () => {
       it("it should preserve any other keys", () => {
         const obj = {
           email_subject: "potato",
-          other_field:   "should be here!"
+          other_field: "should be here!",
         }
         const expectation = {
-          subject:     "potato",
-          other_field: "should be here!"
+          subject: "potato",
+          other_field: "should be here!",
         }
         assert.deepEqual(convertEmailEdit(obj), expectation)
       })
 
       it("should transform `subject` and `body` by prefixing `email_`", () => {
-        [
+        ;[
           [{ subject: "a" }, { email_subject: "a" }],
-          [{ body: "a" }, { email_body: "a" }]
+          [{ body: "a" }, { email_body: "a" }],
         ].forEach(([obj, exp]) => assert.deepEqual(convertEmailEdit(obj), exp))
       })
 
       it("should be a symmetric relation (sorta)", () => {
-        [
+        ;[
           { email_subject: "a", no: "way" },
           { email_body: "a", what: "even" },
-          { other_field: "yea..." }
-        ].forEach(obj => {
+          { other_field: "yea..." },
+        ].forEach((obj) => {
           assert.deepEqual(convertEmailEdit(convertEmailEdit(obj)), obj)
         })
       })
@@ -254,10 +254,10 @@ describe("Specific email config", () => {
         const filters = getFilters(JSON.parse(queryFilters))
         assert.deepEqual(filters, [
           {
-            id:    "profile.country",
-            name:  "profile.country",
-            value: "US"
-          }
+            id: "profile.country",
+            name: "profile.country",
+            value: "US",
+          },
         ])
       })
 
@@ -266,10 +266,10 @@ describe("Specific email config", () => {
           const filters = getFilters(JSON.parse(queryFilters))
           assert.deepEqual(filters, [
             {
-              id:    "profile.country",
-              name:  "profile.country",
-              value: "US"
-            }
+              id: "profile.country",
+              name: "profile.country",
+              value: "US",
+            },
           ])
         })
       })
@@ -323,7 +323,7 @@ describe("Specific email config", () => {
           assert.deepEqual(filters, [
             { "program.grade_average": { gte: 0, lte: 81 } },
             { "profile.birth_country": "US" },
-            { "profile.country": "US" }
+            { "profile.country": "US" },
           ])
         })
 
@@ -367,7 +367,7 @@ describe("Specific email config", () => {
           assert.deepEqual(filters, [
             { "program.courses.course_title": "Digital Learning 100" },
             { "program.courses.final_grade": { gte: 0, lte: 89 } },
-            { "program.courses.semester": "2016 - Summer" }
+            { "program.courses.semester": "2016 - Summer" },
           ])
         })
 
@@ -423,7 +423,7 @@ describe("Specific email config", () => {
           assert.deepEqual(filters, [
             { "program.courses.course_title": "Digital Learning 100" },
             { "profile.education.degree_name": "b" },
-            { "profile.work_history.company_name": "Volvo" }
+            { "profile.work_history.company_name": "Volvo" },
           ])
         })
 

@@ -6,7 +6,7 @@ import {
   dateOrderDesc,
   workEntriesByDate,
   educationEntriesByDate,
-  momentCompareDesc
+  momentCompareDesc,
 } from "./sorting"
 import { generateNewWorkHistory, generateNewEducation } from "./util"
 import { HIGH_SCHOOL } from "../constants"
@@ -22,7 +22,7 @@ describe("sorting functions", () => {
         moment("1987-09", "YYYY-MM"),
         moment("1901-03", "YYYY-MM"),
         moment("2001-04", "YYYY-MM"),
-        moment("2016-12", "YYYY-MM")
+        moment("2016-12", "YYYY-MM"),
       ]
       moments.sort(momentCompareDesc)
       const expected = [
@@ -31,24 +31,32 @@ describe("sorting functions", () => {
         "1987-12",
         "1987-09",
         "1986-12",
-        "1901-03"
+        "1901-03",
       ]
-      assert.deepEqual(expected, moments.map(m => m.format("YYYY-MM")))
+      assert.deepEqual(
+        expected,
+        moments.map((m) => m.format("YYYY-MM")),
+      )
     })
   })
 
   describe("dateOrderDesc", () => {
-    const entries = ["1969-01", "1997-01", "1992-01", "1934-01"].map(year => ({
-      end_date: moment(year, format).format(format)
-    }))
+    const entries = ["1969-01", "1997-01", "1992-01", "1934-01"].map(
+      (year) => ({
+        end_date: moment(year, format).format(format),
+      }),
+    )
     const sorted = dateOrderDesc(
       entries.map((entry, index) => [index, entry]),
-      "end_date"
+      "end_date",
     )
     const expected = ["1997-01", "1992-01", "1969-01", "1934-01"]
 
     it("should sort by date, descending", () => {
-      assert.deepEqual(expected, sorted.map(([, entry]) => entry.end_date))
+      assert.deepEqual(
+        expected,
+        sorted.map(([, entry]) => entry.end_date),
+      )
     })
 
     it("should not modify the original array", () => {
@@ -69,7 +77,7 @@ describe("sorting functions", () => {
       ["2001-01", "2012-03"],
       ["1962-12", "1963-11"],
       ["1961-08", "1982-01"],
-      ["2001-12", null]
+      ["2001-12", null],
     ].map(([start, end]) => {
       const entry = generateNewWorkHistory()
       entry.start_date = moment(start, format).format(format)
@@ -94,11 +102,11 @@ describe("sorting functions", () => {
         ["1923-12", null],
         ["2001-01", "2012-03"],
         ["1961-08", "1982-01"],
-        ["1962-12", "1963-11"]
+        ["1962-12", "1963-11"],
       ]
       const actualDateOrder = sorted.map(([, entry]) => [
         entry.start_date,
-        entry.end_date
+        entry.end_date,
       ])
       assert.deepEqual(expectedDateOrder, actualDateOrder)
     })
@@ -117,8 +125,8 @@ describe("sorting functions", () => {
       "2001-01",
       "1962-12",
       "1961-08",
-      "2001-12"
-    ].map(date => {
+      "2001-12",
+    ].map((date) => {
       const entry = generateNewEducation(HIGH_SCHOOL)
       entry.graduation_date = moment(date, format).format(format)
       return entry
@@ -131,11 +139,14 @@ describe("sorting functions", () => {
       "1979-12",
       "1962-12",
       "1961-08",
-      "1923-12"
+      "1923-12",
     ]
 
     it("should sort education entries by date descending", () => {
-      assert.deepEqual(expectation, sorted.map(([, e]) => e.graduation_date))
+      assert.deepEqual(
+        expectation,
+        sorted.map(([, e]) => e.graduation_date),
+      )
     })
 
     it("should return the indices of the sorted entries in the original array", () => {

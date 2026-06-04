@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0011_remove_rejected_choice'),
+        ("financialaid", "0011_remove_rejected_choice"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='financialaid',
-            name='date_documents_sent',
+            model_name="financialaid",
+            name="date_documents_sent",
             field=models.DateField(blank=True, null=True),
         ),
     ]

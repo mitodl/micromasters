@@ -4,9 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0015_remove_final_grade_field'),
+        ("grades", "0015_remove_final_grade_field"),
     ]
 
     operations = [

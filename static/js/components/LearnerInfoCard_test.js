@@ -21,7 +21,7 @@ describe("LearnerInfoCard", () => {
         toggleShowAboutMeDialog={editAboutMeBtnStub}
         openLearnerEmailComposer={() => {}}
         {...props}
-      />
+      />,
     )
 
   beforeEach(() => {
@@ -38,16 +38,16 @@ describe("LearnerInfoCard", () => {
     const wrapper = renderInfoCard()
     assert.equal(
       wrapper.find(".profile-title").text(),
-      getPreferredName(USER_PROFILE_RESPONSE)
+      getPreferredName(USER_PROFILE_RESPONSE),
     )
     assert.equal(
       wrapper.find(".profile-company-name").text(),
-      mstr(getEmployer(USER_PROFILE_RESPONSE))
+      mstr(getEmployer(USER_PROFILE_RESPONSE)),
     )
     assert.equal(wrapper.find("h3").text(), "About Me")
     assert.equal(
       wrapper.find(".bio.placeholder").text(),
-      "Write something about yourself, so others can learn a bit about you."
+      "Write something about yourself, so others can learn a bit about you.",
     )
   })
 
@@ -69,8 +69,8 @@ describe("LearnerInfoCard", () => {
     const wrapper = renderInfoCard({
       profile: {
         ...USER_PROFILE_RESPONSE,
-        username: "xyz"
-      }
+        username: "xyz",
+      },
     })
     assert.equal(wrapper.find(".edit-about-me-holder").children().length, 0)
   })
@@ -79,8 +79,8 @@ describe("LearnerInfoCard", () => {
     const wrapper = renderInfoCard({
       profile: {
         ...USER_PROFILE_RESPONSE,
-        about_me: "Hello world"
-      }
+        about_me: "Hello world",
+      },
     })
     assert.equal(wrapper.find("h3").text(), "About Me")
     assert.equal(wrapper.find(".bio").text(), "Hello world")
@@ -90,12 +90,12 @@ describe("LearnerInfoCard", () => {
     const wrapper = renderInfoCard({
       profile: {
         ...USER_PROFILE_RESPONSE,
-        about_me: "Hello \n world"
-      }
+        about_me: "Hello \n world",
+      },
     })
     assert.equal(
       wrapper.find(".bio").html(),
-      '<div class="bio">Hello \n world</div>'
+      '<div class="bio">Hello \n world</div>',
     )
   })
 
@@ -108,16 +108,16 @@ describe("LearnerInfoCard", () => {
     SETTINGS.user.username = "My user"
     SETTINGS.roles = [
       {
-        role:    "staff",
-        program: 1
-      }
+        role: "staff",
+        program: 1,
+      },
     ]
     const wrapper = renderInfoCard({
       profile: {
         ...USER_PROFILE_RESPONSE,
         first_name: "FIRST",
-        last_name:  "LAST"
-      }
+        last_name: "LAST",
+      },
     })
     assert.equal(wrapper.find(".legal-name").text(), "(Legal name: FIRST LAST)")
   })
@@ -131,15 +131,15 @@ describe("LearnerInfoCard", () => {
     SETTINGS.user.username = "My user"
     SETTINGS.roles = [
       {
-        role:    "staff",
-        program: 1
-      }
+        role: "staff",
+        program: 1,
+      },
     ]
     const wrapper = renderInfoCard({
       profile: {
         ...USER_PROFILE_RESPONSE,
-        student_id: 123
-      }
+        student_id: 123,
+      },
     })
     assert.equal(wrapper.find(".student-id").text(), "(Student Id: 123)")
   })
@@ -151,9 +151,9 @@ describe("LearnerInfoCard", () => {
       SETTINGS.user.username = "My user"
       SETTINGS.roles = [
         {
-          role:    "staff",
-          program: 1
-        }
+          role: "staff",
+          program: 1,
+        },
       ]
     })
 
@@ -161,9 +161,9 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email:       "learner@example.com",
-          email_optin: true
-        }
+          email: "learner@example.com",
+          email_optin: true,
+        },
       })
       assert.include(card.find(".icon-button-link").text(), "Send a Message")
     })
@@ -172,9 +172,9 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email:       "learner@example.com",
-          email_optin: false
-        }
+          email: "learner@example.com",
+          email_optin: false,
+        },
       })
       assert.lengthOf(card.find(".icon-button-link"), 0)
     })
@@ -183,9 +183,9 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email:       null,
-          email_optin: true
-        }
+          email: null,
+          email_optin: true,
+        },
       })
       assert.lengthOf(card.find(".icon-button-link"), 0)
     })
@@ -195,9 +195,9 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email:       "learner@example.com",
-          email_optin: true
-        }
+          email: "learner@example.com",
+          email_optin: true,
+        },
       })
       assert.lengthOf(card.find(".icon-button-link"), 0)
     })
@@ -207,9 +207,9 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email:       "learner@example.com",
-          email_optin: true
-        }
+          email: "learner@example.com",
+          email_optin: true,
+        },
       })
       assert.lengthOf(card.find(".icon-button-link"), 0)
     })

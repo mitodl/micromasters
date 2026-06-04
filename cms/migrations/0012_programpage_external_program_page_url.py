@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0011_programpage_title_over_image'),
+        ("cms", "0011_programpage_title_over_image"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programpage',
-            name='external_program_page_url',
-            field=models.URLField(blank=True, help_text='Use this field to directly link an external web page for this program.', null=True),
+            model_name="programpage",
+            name="external_program_page_url",
+            field=models.URLField(
+                blank=True,
+                help_text="Use this field to directly link an external web page for this program.",
+                null=True,
+            ),
         ),
     ]

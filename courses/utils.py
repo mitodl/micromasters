@@ -6,11 +6,7 @@ import re
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 
-NUMBER_SEASON_MAP = {
-    1: 'Spring',
-    2: 'Summer',
-    3: 'Fall'
-}
+NUMBER_SEASON_MAP = {1: "Spring", 2: "Summer", 3: "Fall"}
 
 
 def parse_edx_key(edx_course_key):
@@ -42,9 +38,9 @@ def get_year_season_from_edx_key(parsed_course_key):
     Returns:
         tuple: (Year, Season number)
     """
-    found = re.search('^[1-3]T[1|2][0-9]{3}$', parsed_course_key)
+    found = re.search("^[1-3]T[1|2][0-9]{3}$", parsed_course_key)
     if found:
-        season_year_tuple = found.group().split('T')
+        season_year_tuple = found.group().split("T")
         return int(season_year_tuple[1]), int(season_year_tuple[0])
     return ()
 
@@ -103,7 +99,7 @@ def format_season_year_for_course_run(course_run):
         str: containing season and year, eg: 'Spring 2018'
     """
     year_season_tuple = get_year_season_from_course_run(course_run)
-    return f'{year_season_tuple[1]} {year_season_tuple[0]}' if year_season_tuple else ''
+    return f"{year_season_tuple[1]} {year_season_tuple[0]}" if year_season_tuple else ""
 
 
 def is_blank(text):

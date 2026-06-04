@@ -8,8 +8,8 @@ def copy_prices(apps, schema_editor):
     """
     Validate CoursePrice then iterate over CoursePrice and populate Program.price
     """
-    Program = apps.get_model('courses', 'Program')
-    CourseRun = apps.get_model('courses', 'CourseRun')
+    Program = apps.get_model("courses", "Program")
+    CourseRun = apps.get_model("courses", "CourseRun")
 
     program_prices = {}
     # Note: we are not filtering on live here because all Programs will require prices and liveness won't matter
@@ -21,20 +21,26 @@ def copy_prices(apps, schema_editor):
         try:
             price = run.courseprice_set.get(is_valid=True).price
         except ObjectDoesNotExist as ex:
-            raise Exception(f"Migration failed due to a price missing for run {run.edx_course_key}") from ex
+            raise Exception(
+                f"Migration failed due to a price missing for run {run.edx_course_key}"
+            ) from ex
         if program.id not in program_prices:
             program_prices[program.id] = price
         elif program_prices[program.id] != price:
-            raise Exception("One run in program {program} had price {price1} but another had price {price2}".format(
-                program=program,
-                price1=program_prices[program.id],
-                price2=price,
-            ))
+            raise Exception(
+                "One run in program {program} had price {price1} but another had price {price2}".format(
+                    program=program,
+                    price1=program_prices[program.id],
+                    price2=price,
+                )
+            )
 
     # Verify that all programs have prices at this point (might be false if a Program doesn't have any runs)
     for program in Program.objects.all():
         if program.id not in program_prices:
-            raise Exception(f"Program {program} does not have a price (probably due to not having any runs)")
+            raise Exception(
+                f"Program {program} does not have a price (probably due to not having any runs)"
+            )
 
     # Now, copy the prices
     for program_id, price in program_prices.items():
@@ -47,31 +53,34 @@ def reverse_copy_prices(apps, schema_editor):
     """
     Create CoursePrice objects for all course runs and populate from Program.price
     """
-    CoursePrice = apps.get_model('ecommerce', 'CoursePrice')
-    CourseRun = apps.get_model('courses', 'CourseRun')
+    CoursePrice = apps.get_model("ecommerce", "CoursePrice")
+    CourseRun = apps.get_model("courses", "CourseRun")
 
     for run in CourseRun.objects.all():
-        CoursePrice.objects.create(price=run.course.program.price, is_valid=True, course_run=run)
+        CoursePrice.objects.create(
+            price=run.course.program.price, is_valid=True, course_run=run
+        )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0022_course_contact_email'),
-        ('ecommerce', '0016_invoice'),
+        ("courses", "0022_course_contact_email"),
+        ("ecommerce", "0016_invoice"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='program',
-            name='price',
-            field=models.DecimalField(decimal_places=2, default=None, max_digits=20, null=True),
+            model_name="program",
+            name="price",
+            field=models.DecimalField(
+                decimal_places=2, default=None, max_digits=20, null=True
+            ),
             preserve_default=False,
         ),
         migrations.RunPython(copy_prices, reverse_code=reverse_copy_prices),
         migrations.AlterField(
-            model_name='program',
-            name='price',
+            model_name="program",
+            name="price",
             field=models.DecimalField(decimal_places=2, default=None, max_digits=20),
             preserve_default=False,
         ),

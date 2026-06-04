@@ -3,7 +3,7 @@ import {
   RangeQuery,
   HistogramBucket,
   FilterBucket,
-  CardinalityMetric
+  CardinalityMetric,
 } from "searchkit"
 import _ from "lodash"
 import { NestedAccessorMixin } from "./util"
@@ -12,7 +12,7 @@ import { EnabledSelectionRangeAccessor } from "./EnabledSelectionRangeFilter"
 const REQUIRED_FILTER_ID = "courses"
 
 class FinalGradeRangeAccessor extends NestedAccessorMixin(
-  EnabledSelectionRangeAccessor
+  EnabledSelectionRangeAccessor,
 ) {
   /**
    * Overrides buildOwnQuery in RangeAccessor
@@ -27,8 +27,8 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
       FilterBucket(
         this.key,
         this.createAggFilter(query),
-        ...this.fieldContext.wrapAggregations(this.getRangeBucket(query))
-      )
+        ...this.fieldContext.wrapAggregations(this.getRangeBucket(query)),
+      ),
     )
   }
 
@@ -42,7 +42,7 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
     const baseAggsPath = [
       this.key,
       this.fieldContext.getAggregationPath(),
-      this.key
+      this.key,
     ]
     const aggs = this.getAggregations(baseAggsPath.concat(["buckets"]), [])
     if (aggs.length > 0) {
@@ -50,7 +50,7 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
     } else {
       return this.getAggregations(
         baseAggsPath.concat([this.key, "buckets"]),
-        []
+        [],
       )
     }
   }
@@ -76,7 +76,7 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
   createQueryFilter(appliedFilterValue) {
     return RangeQuery(this.options.field, {
       gte: appliedFilterValue.min,
-      lte: appliedFilterValue.max
+      lte: appliedFilterValue.max,
     })
   }
 
@@ -84,9 +84,8 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
    * Gets the appropriate range bucket for this element's agg query.
    */
   getRangeBucket(query) {
-    const otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(
-      query
-    )
+    const otherAppliedFiltersOnPath =
+      this.createFilterForOtherElementsOnPath(query)
     const rangeBucket = this.createInnerRangeBucket()
     if (otherAppliedFiltersOnPath) {
       return FilterBucket(this.key, otherAppliedFiltersOnPath, rangeBucket)
@@ -103,12 +102,12 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
     let metric
     if (this.options.loadHistogram) {
       metric = HistogramBucket(this.key, this.options.field, {
-        interval:        this.getInterval(),
-        min_doc_count:   0,
+        interval: this.getInterval(),
+        min_doc_count: 0,
         extended_bounds: {
           min: this.options.min,
-          max: this.options.max
-        }
+          max: this.options.max,
+        },
       })
     } else {
       metric = CardinalityMetric(this.key, this.options.field)
@@ -127,7 +126,7 @@ export default class FinalGradeRangeFilter extends RangeFilter {
       field,
       fieldOptions,
       interval,
-      showHistogram
+      showHistogram,
     } = this.props
     return new FinalGradeRangeAccessor(id, {
       id,
@@ -137,7 +136,7 @@ export default class FinalGradeRangeFilter extends RangeFilter {
       field,
       interval,
       loadHistogram: showHistogram,
-      fieldOptions
+      fieldOptions,
     })
   }
 

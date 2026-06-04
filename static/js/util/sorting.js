@@ -16,7 +16,7 @@ export function momentCompareDesc(a: moment$Moment, b: moment$Moment): number {
 
 export function dateOrderDesc(
   entries: [number, Object][],
-  dateFieldName: string
+  dateFieldName: string,
 ): any {
   const clone = _.clone(entries)
   const sortFunc = ([, a], [, b]) => {
@@ -26,30 +26,30 @@ export function dateOrderDesc(
 }
 
 export function workEntriesByDate(
-  entries: Array<WorkHistoryEntry>
+  entries: Array<WorkHistoryEntry>,
 ): Array<WorkHistoryEntry> {
   const tuples = entries.map((entry, index) => [index, entry])
   const out = []
   out.push(
     ...dateOrderDesc(
       tuples.filter(([, entry]) => entry.end_date === null),
-      "start_date"
-    )
+      "start_date",
+    ),
   )
   out.push(
     ...dateOrderDesc(
       tuples.filter(([, entry]) => entry.end_date !== null),
-      "end_date"
-    )
+      "end_date",
+    ),
   )
   return out
 }
 
 export function educationEntriesByDate(
-  entries: Array<EducationEntry>
+  entries: Array<EducationEntry>,
 ): Array<EducationEntry> {
   return dateOrderDesc(
     entries.map((entry, index) => [index, entry]),
-    "graduation_date"
+    "graduation_date",
   )
 }

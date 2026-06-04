@@ -5,43 +5,48 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ecommerce', '0011_user_coupon'),
+        ("ecommerce", "0011_user_coupon"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='coupon',
-            name='created_on',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="coupon",
+            name="created_on",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='coupon',
-            name='updated_on',
+            model_name="coupon",
+            name="updated_on",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='redeemedcoupon',
-            name='created_on',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="redeemedcoupon",
+            name="created_on",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='redeemedcoupon',
-            name='updated_on',
+            model_name="redeemedcoupon",
+            name="updated_on",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='usercoupon',
-            name='created_on',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="usercoupon",
+            name="created_on",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='usercoupon',
-            name='updated_on',
+            model_name="usercoupon",
+            name="updated_on",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

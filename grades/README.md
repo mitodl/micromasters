@@ -2,8 +2,8 @@
 
 ## How to manually freeze final grades
 
-
 ### Prerequisites
+
 The following documentation assumes you have access to the micromasters heroku production app instance.
 
 To be sure run:
@@ -20,7 +20,6 @@ To be sure go to:
 
 and be sure you can see the admin.
 
-
 You also need the edX course key of the course run you want to freeze: the course key looks like `course-v1:MITx+Analog+Learning+200+Jan_2015` .
 
 ### Check Freeze Date
@@ -30,7 +29,6 @@ To verify it, go to `https://<micromasters_production_url>/admin/courses/courser
 
 Open the details about the course run and verify that the "Freeze grade date" is set and it is in the past.
 Plese note that all the times are UTC.
-
 
 ### Run the freezing
 
@@ -47,7 +45,7 @@ of what went wrong.
 
 If you want to check the status of the freezing run
 
-	python manage.py check_final_grade_freeze_status <edx_course_key>
+    python manage.py check_final_grade_freeze_status <edx_course_key>
 
 This should tell you how many grades have been frozen and how many students had an error.
 
@@ -59,7 +57,6 @@ At that point you can run again
     python manage.py freeze_final_grades <edx_course_key>
 
 to complete the freezing process and clean up the redis cached error lists.
-
 
 ### Something went wrong: now what?
 
@@ -79,7 +76,7 @@ If the workers are empty, then something went really wrong and you should probab
 Another possibility is that there was an unhandled error for just one (or very few) student(s).
 In that case you will find the error in Sentry, but if you want to force the freezing of the course, just run
 
-	python manage.py complete_course_run_freeze <edx_course_key>
+    python manage.py complete_course_run_freeze <edx_course_key>
 
 And this will complete the freezing of the course (but it will not solve the problem for the students who got the error).
 
@@ -111,7 +108,6 @@ Create a final grade for user
     from grades.api import *
     freeze_user_final_grade(user, course_run)
 
-
 ### The grades are frozen, but you changed your mind.
 
 If you need to revert the frozen final grades, open a django ipython shell in production
@@ -131,7 +127,7 @@ and type (being ABSOLUTELY sure of what you are doing):
 
 Overview: After a proctored exam has ended, the course team will deliver a spreadsheet with the grades. They need to be imported into Micromasters.
 
-### Checklist 
+### Checklist
 
 This can be used for creating an issue task at the end of each exam session. Just copy and paste the source markdown:
 
@@ -146,32 +142,31 @@ Detailed explanations below:
 
 ### Receive final exam grades from the course team
 
-The course team will deliver edx exam grades to us via a csv file in dropbox (in order to ensure the file is encrypted at rest with access control). 
-
+The course team will deliver edx exam grades to us via a csv file in dropbox (in order to ensure the file is encrypted at rest with access control).
 
 ### Load grades
 
 Note that users will have usernames from the platform on which they took the exams (e.g. MITx Online). If necessary, use the social_auths to convert the usernames of the exam platform to Micromasters usernames. (See exams/README.md for additional details.)
 
 Steps:
+
 - Copy the spreadsheet to your computer
 - If necessary replace usernames with Micromasters usernames (see note above)
-- Copy the spreadsheet in your pasteboard: 
-   - `cat <.csv file> | pbcopy`
-   - Connect to the Heroku instance for MM
-   - Create a .csv:
-      - `cat > [grades.csv] ENTER`
-      - [paste]
-      - `ENTER`
-      - `control-d` to end the paste
-   - Confirm you have the same number of rows in the new .csv and the original: `wc -l <filename>`
+- Copy the spreadsheet in your pasteboard:
+  - `cat <.csv file> | pbcopy`
+  - Connect to the Heroku instance for MM
+  - Create a .csv:
+    - `cat > [grades.csv] ENTER`
+    - [paste]
+    - `ENTER`
+    - `control-d` to end the paste
+  - Confirm you have the same number of rows in the new .csv and the original: `wc -l <filename>`
 - Run the import command: `python manage.py import_edx_exam_grades [grades.csv]`
-   - This will report:
-      - Errors
-      - Total number of grades created
-      - Total number of grades modified
-      - There may be some issues you can sort out here
-
+  - This will report:
+    - Errors
+    - Total number of grades created
+    - Total number of grades modified
+    - There may be some issues you can sort out here
 
 ### Tally exam grades and confirm with the course team
 
@@ -179,11 +174,9 @@ After grades are imported, share the list of learners and the course exam they p
 
 The course team will confirm if the data matches theirs. Resolve any discrepanies.
 
+### Release exam grades to learners
 
-### Release exam grades to learners 
-
-Now that grades are loaded, we can release them to learners by updating the date/time that grades are available in the exam run admin. 
-
+Now that grades are loaded, we can release them to learners by updating the date/time that grades are available in the exam run admin.
 
 ### Update combined final grades
 
@@ -191,17 +184,17 @@ While there is a signal that creates combined final grades whenever a proctored 
 
 Note that this may take several minutes to run.
 
-
 ### Update certificates
 
-When a learner's fifth and final course certificate is created, it triggers the creation of a program certificate. Course certificates are generated every hour (on the hour), but if you'd like to, you can generate them manually using the `generate_program_certificates` management command. Note: each learner can only earn one Program certificate. 
-
+When a learner's fifth and final course certificate is created, it triggers the creation of a program certificate. Course certificates are generated every hour (on the hour), but if you'd like to, you can generate them manually using the `generate_program_certificates` management command. Note: each learner can only earn one Program certificate.
 
 ## Sync edx current cached grade and FinalGrade
+
 Occasionally, a learner's grade may need to be updated manually. One way this
 could happen is if a learner's MITx Online account was linked to their Micromasters
 account after some grades were frozen. This would result in grades being out of sync,
 since `FinalGrade` doesn't get updated after grades had been frozen.
+
 ```
 from django.contrib.auth.models import User
 user = User.objects.get(username=username)

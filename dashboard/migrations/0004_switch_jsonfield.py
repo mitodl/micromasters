@@ -5,25 +5,24 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0003_current_grade'),
+        ("dashboard", "0003_current_grade"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cachedcertificate',
-            name='data',
+            model_name="cachedcertificate",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(null=True),
         ),
         migrations.AlterField(
-            model_name='cachedcurrentgrade',
-            name='data',
+            model_name="cachedcurrentgrade",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(null=True),
         ),
         migrations.AlterField(
-            model_name='cachedenrollment',
-            name='data',
+            model_name="cachedenrollment",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(null=True),
         ),
     ]

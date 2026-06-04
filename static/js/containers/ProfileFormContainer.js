@@ -12,7 +12,7 @@ import {
   clearProfileEdit,
   fetchUserProfile,
   saveProfile,
-  updateValidationVisibility
+  updateValidationVisibility,
 } from "../actions/profile"
 import {
   setWorkHistoryEdit,
@@ -27,12 +27,12 @@ import {
   setLearnerPageAboutMeDialogVisibility,
   setShowEducationDeleteDialog,
   setShowWorkDeleteDialog,
-  setDeletionIndex
+  setDeletionIndex,
 } from "../actions/ui"
 import { setProgram } from "../actions/ui"
 import {
   createSimpleActionHelpers,
-  createAsyncActionHelpers
+  createAsyncActionHelpers,
 } from "../lib/redux"
 import type { ActionHelpers, AsyncActionHelpers } from "../lib/redux"
 import type { Validator, UIValidator } from "../lib/validation/profile"
@@ -40,7 +40,7 @@ import type { Profile, Profiles, ProfileGetResult } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
 import type {
   AvailableProgram,
-  AvailableProgramsState
+  AvailableProgramsState,
 } from "../flow/enrollmentTypes"
 import type { Program } from "../flow/programTypes"
 import { addProgramEnrollment } from "../actions/programs"
@@ -50,14 +50,14 @@ import { getDisplayName } from "../util/util"
 type UpdateProfile = (
   isEdit: boolean,
   profile: Profile,
-  validator: Validator | UIValidator
+  validator: Validator | UIValidator,
 ) => void
 
 export const mapStateToProfileProps = R.pick([
   "profiles",
   "ui",
   "programs",
-  "currentProgramEnrollment"
+  "currentProgramEnrollment",
 ])
 
 type ProfileContainerParentProps = {
@@ -68,24 +68,26 @@ type ProfileContainerParentProps = {
   ui: UIState,
   params: { [k: string]: string },
   programs: AvailableProgramsState,
-  currentProgramEnrollment: AvailableProgram
+  currentProgramEnrollment: AvailableProgram,
 }
 
 export type ProfileContainerProps = ProfileContainerParentProps & {
   profileProps: Function,
   scrollToError: () => void,
-  fetchProfile: () => void
+  fetchProfile: () => void,
 }
 
 export const childrenWithProps = (children: any, props: Object) => {
-  return React.Children.map(children, child => React.cloneElement(child, props))
+  return React.Children.map(children, (child) =>
+    React.cloneElement(child, props),
+  )
 }
 
 export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
   class ProfileFormContainer extends React.Component<
     *,
     ProfileContainerParentProps,
-    *
+    *,
   > {
     fetchProfile = (username: string): void => {
       const { dispatch, profiles } = this.props
@@ -99,7 +101,7 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
 
     updateProfileValidation = (
       profile: Profile,
-      validator: Validator | UIValidator
+      validator: Validator | UIValidator,
     ): void => {
       const username = SETTINGS.user.username
       const { dispatch, ui } = this.props
@@ -111,7 +113,7 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
       isEdit,
       profile,
       validator,
-      skipValidation = false
+      skipValidation = false,
     ) => {
       const { dispatch } = this.props
       const username = SETTINGS.user.username
@@ -145,7 +147,7 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
       isEdit: boolean,
       validator: Validator | UIValidator,
       profile: Profile,
-      ui: UIState
+      ui: UIState,
     ) {
       const { dispatch } = this.props
       const username = SETTINGS.user.username
@@ -203,18 +205,18 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
         ["setLearnerPageDialogVisibility", setLearnerPageDialogVisibility],
         [
           "setLearnerPageAboutMeDialogVisibility",
-          setLearnerPageAboutMeDialogVisibility
+          setLearnerPageAboutMeDialogVisibility,
         ],
         ["setWorkDialogIndex", setWorkDialogIndex],
         ["setWorkDialogVisibility", setWorkDialogVisibility],
-        ["setWorkHistoryAnswer", setWorkHistoryAnswer]
+        ["setWorkHistoryAnswer", setWorkHistoryAnswer],
       ])
     }
 
     asyncActionHelpers = (): AsyncActionHelpers => {
       const { dispatch } = this.props
       return createAsyncActionHelpers(dispatch, [
-        ["setWorkHistoryEdit", setWorkHistoryEdit]
+        ["setWorkHistoryEdit", setWorkHistoryEdit],
       ])
     }
 
@@ -243,24 +245,24 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
       }
 
       return {
-        addProgramEnrollment:       this.addProgramEnrollment,
-        dispatch:                   dispatch,
-        errors:                     errors,
-        fetchProfile:               this.fetchProfile,
-        profile:                    profile,
-        profilePatchStatus:         patchStatus,
-        uneditedProfile:            uneditedProfile,
-        programs:                   programs.availablePrograms,
-        saveProfile:                this.saveProfile.bind(this, isEdit),
-        currentProgramEnrollment:   currentProgramEnrollment,
-        setProgram:                 this.setProgram,
-        startProfileEdit:           this.startProfileEdit,
-        ui:                         ui,
-        updateProfile:              this.updateProfile.bind(this, isEdit),
-        updateProfileValidation:    this.updateProfileValidation,
+        addProgramEnrollment: this.addProgramEnrollment,
+        dispatch: dispatch,
+        errors: errors,
+        fetchProfile: this.fetchProfile,
+        profile: profile,
+        profilePatchStatus: patchStatus,
+        uneditedProfile: uneditedProfile,
+        programs: programs.availablePrograms,
+        saveProfile: this.saveProfile.bind(this, isEdit),
+        currentProgramEnrollment: currentProgramEnrollment,
+        setProgram: this.setProgram,
+        startProfileEdit: this.startProfileEdit,
+        ui: ui,
+        updateProfile: this.updateProfile.bind(this, isEdit),
+        updateProfileValidation: this.updateProfileValidation,
         updateValidationVisibility: this.updateValidationVisibility,
         ...this.simpleActionHelpers(),
-        ...this.asyncActionHelpers()
+        ...this.asyncActionHelpers(),
       }
     }
 
@@ -277,7 +279,7 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
   }
 
   ProfileFormContainer.displayName = `ProfileFormContainer(${getDisplayName(
-    WrappedComponent
+    WrappedComponent,
   )})`
   return ProfileFormContainer
 }

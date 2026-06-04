@@ -23,20 +23,20 @@ declare var SETTINGS: {
   roles: Array<{ role: string }>,
   partner_schools: Array<[number, string]>,
   hash: string,
-};
+}
 
 // mocha
-declare var it: Function;
-declare var beforeEach: Function;
-declare var afterEach: Function;
-declare var describe: Function;
+declare var it: Function
+declare var beforeEach: Function
+declare var afterEach: Function
+declare var describe: Function
 
 // webpack
-declare var __webpack_public_path__: string; // eslint-disable-line camelcase
+declare var __webpack_public_path__: string // eslint-disable-line camelcase
 
 declare class FormData {
-  get(s: string): any,
-  append(x: any, y: any): void,
+  get(s: string): any;
+  append(x: any, y: any): void;
 }
 
 declare var module: {

@@ -2,12 +2,12 @@
 
 from django.db import migrations
 
-PILOT_SERIES_CODE = 'PILOT'
+PILOT_SERIES_CODE = "PILOT"
 
 
 def populate_exam_run_fk(apps, schema_editor):
-    ExamRun = apps.get_model('exams', 'ExamRun')
-    ProctoredExamGrade = apps.get_model('grades', 'ProctoredExamGrade')
+    ExamRun = apps.get_model("exams", "ExamRun")
+    ProctoredExamGrade = apps.get_model("grades", "ProctoredExamGrade")
 
     pilot_runs = ExamRun.objects.filter(exam_series_code=PILOT_SERIES_CODE)
 
@@ -18,11 +18,8 @@ def populate_exam_run_fk(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0006_add_exam_run_fk'),
+        ("grades", "0006_add_exam_run_fk"),
     ]
 
-    operations = [
-        migrations.RunPython(populate_exam_run_fk, migrations.RunPython.noop)
-    ]
+    operations = [migrations.RunPython(populate_exam_run_fk, migrations.RunPython.noop)]

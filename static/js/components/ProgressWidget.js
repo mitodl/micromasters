@@ -12,7 +12,7 @@ export const circularProgressWidget = (
   strokeWidth: number,
   totalPassedCourses: number,
   totalCourses: number,
-  programLetterUrl: string
+  programLetterUrl: string,
 ): React$Element<*> => {
   const radiusForMeasures = radius - strokeWidth / 2
   const width = radius * 2
@@ -45,8 +45,8 @@ export const circularProgressWidget = (
           r={radiusForMeasures}
           strokeWidth={`${strokeWidth}px`}
           style={{
-            strokeDasharray:  dashArray,
-            strokeDashoffset: dashOffset
+            strokeDasharray: dashArray,
+            strokeDashoffset: dashOffset,
           }}
         />
         <text
@@ -95,7 +95,7 @@ export const programLetterLink = (url: string): React$Element<*> => {
 
 export default class ProgressWidget extends React.Component {
   props: {
-    program: Program
+    program: Program,
   }
 
   renderProgramCertificate() {
@@ -145,7 +145,7 @@ export default class ProgressWidget extends React.Component {
             6,
             program.number_courses_passed,
             program.number_courses_required,
-            program.program_letter_url
+            program.program_letter_url,
           )}
           {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
             program.grade_records_url &&

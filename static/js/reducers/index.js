@@ -16,7 +16,7 @@ import {
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
   RECEIVE_PATCH_USER_PROFILE_FAILURE,
   UPDATE_PROFILE_VALIDATION,
-  UPDATE_VALIDATION_VISIBILITY
+  UPDATE_VALIDATION_VISIBILITY,
 } from "../actions/profile"
 import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
 import { ui } from "./ui"
@@ -36,17 +36,17 @@ import { revokeShareDialog } from "./revoke_shared_records_dialog"
 export const INITIAL_PROFILES_STATE = {}
 export const profiles = (
   state: Profiles = INITIAL_PROFILES_STATE,
-  action: Action<any, null>
+  action: Action<any, null>,
 ) => {
-  const patchProfile = newProfile => {
+  const patchProfile = (newProfile) => {
     const username = action.payload.username
     return {
       ...state,
       [username]: {
         ...{ profile: {} },
         ...state[username],
-        ...newProfile
-      }
+        ...newProfile,
+      },
     }
   }
 
@@ -58,105 +58,105 @@ export const profiles = (
   let profile
 
   switch (action.type) {
-  case REQUEST_GET_USER_PROFILE:
-    return patchProfile({
-      getStatus: FETCH_PROCESSING
-    })
-  case RECEIVE_GET_USER_PROFILE_SUCCESS:
-    return patchProfile({
-      getStatus: FETCH_SUCCESS,
-      profile:   action.payload.profile
-    })
-  case RECEIVE_GET_USER_PROFILE_FAILURE:
-    return patchProfile({
-      getStatus: FETCH_FAILURE,
-      errorInfo: action.payload.errorInfo
-    })
-  case CLEAR_PROFILE: {
-    const clone = { ...state }
-    delete clone[action.payload.username]
-    return clone
-  }
-  case UPDATE_PROFILE:
-    profile = getProfile()
-    if (profile === undefined || profile.edit === undefined) {
-      // caller must have dispatched START_PROFILE_EDIT successfully first
-      return state
+    case REQUEST_GET_USER_PROFILE:
+      return patchProfile({
+        getStatus: FETCH_PROCESSING,
+      })
+    case RECEIVE_GET_USER_PROFILE_SUCCESS:
+      return patchProfile({
+        getStatus: FETCH_SUCCESS,
+        profile: action.payload.profile,
+      })
+    case RECEIVE_GET_USER_PROFILE_FAILURE:
+      return patchProfile({
+        getStatus: FETCH_FAILURE,
+        errorInfo: action.payload.errorInfo,
+      })
+    case CLEAR_PROFILE: {
+      const clone = { ...state }
+      delete clone[action.payload.username]
+      return clone
     }
-    return patchProfile({
-      edit: {
-        ...profile.edit,
-        profile: action.payload.profile
+    case UPDATE_PROFILE:
+      profile = getProfile()
+      if (profile === undefined || profile.edit === undefined) {
+        // caller must have dispatched START_PROFILE_EDIT successfully first
+        return state
       }
-    })
-  case START_PROFILE_EDIT:
-    profile = getProfile()
-    if (profile === undefined || profile.getStatus !== FETCH_SUCCESS) {
-      // ignore attempts to edit if we don't have a valid profile to edit yet
-      return state
-    }
-    return patchProfile({
-      edit: {
-        profile:    profile.profile,
-        errors:     {},
-        visibility: []
+      return patchProfile({
+        edit: {
+          ...profile.edit,
+          profile: action.payload.profile,
+        },
+      })
+    case START_PROFILE_EDIT:
+      profile = getProfile()
+      if (profile === undefined || profile.getStatus !== FETCH_SUCCESS) {
+        // ignore attempts to edit if we don't have a valid profile to edit yet
+        return state
       }
-    })
-  case CLEAR_PROFILE_EDIT:
-    return patchProfile({
-      edit: undefined
-    })
-  case REQUEST_PATCH_USER_PROFILE:
-    return patchProfile({
-      patchStatus: FETCH_PROCESSING
-    })
-  case RECEIVE_PATCH_USER_PROFILE_SUCCESS:
-    return patchProfile({
-      patchStatus: FETCH_SUCCESS,
-      profile:     action.payload.profile
-    })
-  case RECEIVE_PATCH_USER_PROFILE_FAILURE:
-    return patchProfile({
-      patchStatus: FETCH_FAILURE,
-      errorInfo:   action.payload.errorInfo
-    })
-  case UPDATE_PROFILE_VALIDATION:
-    profile = getProfile()
-    if (profile === undefined || profile.edit === undefined) {
-      // caller must have dispatched START_PROFILE_EDIT successfully first
-      return state
-    } else {
-      let errors = {}
-      const visibility = profile.edit.visibility
-      if (R.contains(ALL_ERRORS_VISIBLE, visibility)) {
-        errors = action.payload.errors
+      return patchProfile({
+        edit: {
+          profile: profile.profile,
+          errors: {},
+          visibility: [],
+        },
+      })
+    case CLEAR_PROFILE_EDIT:
+      return patchProfile({
+        edit: undefined,
+      })
+    case REQUEST_PATCH_USER_PROFILE:
+      return patchProfile({
+        patchStatus: FETCH_PROCESSING,
+      })
+    case RECEIVE_PATCH_USER_PROFILE_SUCCESS:
+      return patchProfile({
+        patchStatus: FETCH_SUCCESS,
+        profile: action.payload.profile,
+      })
+    case RECEIVE_PATCH_USER_PROFILE_FAILURE:
+      return patchProfile({
+        patchStatus: FETCH_FAILURE,
+        errorInfo: action.payload.errorInfo,
+      })
+    case UPDATE_PROFILE_VALIDATION:
+      profile = getProfile()
+      if (profile === undefined || profile.edit === undefined) {
+        // caller must have dispatched START_PROFILE_EDIT successfully first
+        return state
       } else {
-        visibility.forEach(keySet => {
-          _.set(errors, keySet, _.get(action.payload.errors, keySet))
+        let errors = {}
+        const visibility = profile.edit.visibility
+        if (R.contains(ALL_ERRORS_VISIBLE, visibility)) {
+          errors = action.payload.errors
+        } else {
+          visibility.forEach((keySet) => {
+            _.set(errors, keySet, _.get(action.payload.errors, keySet))
+          })
+        }
+        return patchProfile({
+          edit: {
+            ...profile.edit,
+            errors,
+          },
         })
       }
-      return patchProfile({
-        edit: {
-          ...profile.edit,
-          errors
-        }
-      })
-    }
-  case UPDATE_VALIDATION_VISIBILITY:
-    profile = getProfile()
-    if (profile === undefined || profile.edit === undefined) {
+    case UPDATE_VALIDATION_VISIBILITY:
+      profile = getProfile()
+      if (profile === undefined || profile.edit === undefined) {
+        return state
+      } else {
+        const visibility = profile.edit.visibility
+        return patchProfile({
+          edit: {
+            ...profile.edit,
+            visibility: R.append(action.payload.keySet, visibility),
+          },
+        })
+      }
+    default:
       return state
-    } else {
-      const visibility = profile.edit.visibility
-      return patchProfile({
-        edit: {
-          ...profile.edit,
-          visibility: R.append(action.payload.keySet, visibility)
-        }
-      })
-    }
-  default:
-    return state
   }
 }
 
@@ -172,5 +172,5 @@ export default combineReducers({
   revokeShareDialog,
   imageUpload,
   coupons,
-  ...reducers
+  ...reducers,
 })

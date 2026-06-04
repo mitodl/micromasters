@@ -19,14 +19,14 @@ export default class LearnerPagePersonalDialog extends React.Component {
     profile: Profile,
     profilePatchStatus: ?string,
     saveProfile: SaveProfileFunc,
-    clearProfileEdit: () => void
+    clearProfileEdit: () => void,
   }
 
   closePersonalDialog = (): void => {
     const {
       setLearnerPageDialogVisibility,
       clearProfileEdit,
-      profile: { username }
+      profile: { username },
     } = this.props
     setLearnerPageDialogVisibility(false)
     clearProfileEdit(username)
@@ -42,7 +42,7 @@ export default class LearnerPagePersonalDialog extends React.Component {
   render() {
     const {
       ui: { learnerPageDialogVisibility },
-      profilePatchStatus
+      profilePatchStatus,
     } = this.props
     const inFlight = profilePatchStatus === FETCH_PROCESSING
 
@@ -50,7 +50,7 @@ export default class LearnerPagePersonalDialog extends React.Component {
       <Dialog
         classes={{
           paper: "dialog personal-dialog",
-          root:  "personal-dialog-wrapper"
+          root: "personal-dialog-wrapper",
         }}
         open={learnerPageDialogVisibility}
         onClose={this.closePersonalDialog}
@@ -63,7 +63,7 @@ export default class LearnerPagePersonalDialog extends React.Component {
           {dialogActions(
             this.closePersonalDialog,
             this.savePersonalInfo,
-            inFlight
+            inFlight,
           )}
         </DialogActions>
       </Dialog>

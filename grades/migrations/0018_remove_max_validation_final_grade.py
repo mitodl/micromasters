@@ -5,15 +5,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0017_micromastersprogramcommendation'),
+        ("grades", "0017_micromastersprogramcommendation"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='finalgrade',
-            name='grade',
-            field=models.FloatField(null=True, validators=[django.core.validators.MinValueValidator(0.0)]),
+            model_name="finalgrade",
+            name="grade",
+            field=models.FloatField(
+                null=True, validators=[django.core.validators.MinValueValidator(0.0)]
+            ),
         ),
     ]

@@ -7,33 +7,33 @@ import {
   UPDATE_EMAIL_VALIDATION,
   INITIATE_SEND_EMAIL,
   SEND_EMAIL_SUCCESS,
-  SEND_EMAIL_FAILURE
+  SEND_EMAIL_FAILURE,
 } from "../actions/email"
 import { FETCH_FAILURE, FETCH_SUCCESS, FETCH_PROCESSING } from "../actions"
 import type { Action } from "../flow/reduxTypes"
 import type {
   AllEmailsState,
   EmailState,
-  EmailInputs
+  EmailInputs,
 } from "../flow/emailTypes"
 
 export const NEW_EMAIL_EDIT: EmailInputs = {
   subject: null,
-  body:    null
+  body: null,
 }
 
 export const INITIAL_EMAIL_STATE: EmailState = {
-  inputs:                  { ...NEW_EMAIL_EDIT },
-  params:                  {},
-  validationErrors:        {},
-  sendError:               {},
-  subheading:              undefined,
+  inputs: { ...NEW_EMAIL_EDIT },
+  params: {},
+  validationErrors: {},
+  sendError: {},
+  subheading: undefined,
   supportsAutomaticEmails: false,
-  filters:                 undefined
+  filters: undefined,
 }
 
 export const INITIAL_ALL_EMAILS_STATE: AllEmailsState = {
-  currentlyActive: null
+  currentlyActive: null,
 }
 
 const getEmailType = (payload: string | Object) =>
@@ -44,7 +44,7 @@ const getEmailType = (payload: string | Object) =>
 function updatedState(
   state: AllEmailsState,
   emailType: string,
-  updateObject: Object
+  updateObject: Object,
 ) {
   const clonedState = _.cloneDeep(state)
   _.merge(clonedState[emailType], updateObject)
@@ -59,42 +59,42 @@ function resetState(state: AllEmailsState, emailType: string) {
 
 export const email = (
   state: AllEmailsState = INITIAL_ALL_EMAILS_STATE,
-  action: Action<any, null>
+  action: Action<any, null>,
 ) => {
   const emailType = getEmailType(action.payload)
 
   switch (action.type) {
-  case START_EMAIL_EDIT:
-    const newState = { ...state } // eslint-disable-line no-case-declarations
-    newState[emailType] = {
-      ...INITIAL_EMAIL_STATE,
-      params:                  action.payload.params || {},
-      subheading:              action.payload.subheading,
-      supportsAutomaticEmails: action.payload.supportsAutomaticEmails,
-      filters:                 action.payload.filters,
-      inputs:                  action.payload.inputs || NEW_EMAIL_EDIT
-    }
-    newState.currentlyActive = emailType
-    return newState
-  case UPDATE_EMAIL_EDIT:
-    return updatedState(state, emailType, { inputs: action.payload.inputs })
-  case CLEAR_EMAIL_EDIT:
-    return resetState(state, emailType)
-  case UPDATE_EMAIL_VALIDATION:
-    return updatedState(state, emailType, {
-      validationErrors: action.payload.errors
-    })
+    case START_EMAIL_EDIT:
+      const newState = { ...state } // eslint-disable-line no-case-declarations
+      newState[emailType] = {
+        ...INITIAL_EMAIL_STATE,
+        params: action.payload.params || {},
+        subheading: action.payload.subheading,
+        supportsAutomaticEmails: action.payload.supportsAutomaticEmails,
+        filters: action.payload.filters,
+        inputs: action.payload.inputs || NEW_EMAIL_EDIT,
+      }
+      newState.currentlyActive = emailType
+      return newState
+    case UPDATE_EMAIL_EDIT:
+      return updatedState(state, emailType, { inputs: action.payload.inputs })
+    case CLEAR_EMAIL_EDIT:
+      return resetState(state, emailType)
+    case UPDATE_EMAIL_VALIDATION:
+      return updatedState(state, emailType, {
+        validationErrors: action.payload.errors,
+      })
 
-  case INITIATE_SEND_EMAIL:
-    return updatedState(state, emailType, { fetchStatus: FETCH_PROCESSING })
-  case SEND_EMAIL_SUCCESS:
-    return updatedState(state, emailType, { fetchStatus: FETCH_SUCCESS })
-  case SEND_EMAIL_FAILURE:
-    return updatedState(state, emailType, {
-      fetchStatus: FETCH_FAILURE,
-      sendError:   action.payload.error
-    })
-  default:
-    return state
+    case INITIATE_SEND_EMAIL:
+      return updatedState(state, emailType, { fetchStatus: FETCH_PROCESSING })
+    case SEND_EMAIL_SUCCESS:
+      return updatedState(state, emailType, { fetchStatus: FETCH_SUCCESS })
+    case SEND_EMAIL_FAILURE:
+      return updatedState(state, emailType, {
+        fetchStatus: FETCH_FAILURE,
+        sendError: action.payload.error,
+      })
+    default:
+      return state
   }
 }

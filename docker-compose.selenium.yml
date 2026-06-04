@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   selenium:
@@ -6,20 +6,20 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      NODE_ENV: 'production'
-      DEV_ENV: 'True'  # necessary to have nginx connect to web container
+      NODE_ENV: "production"
+      DEV_ENV: "True" # necessary to have nginx connect to web container
       DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
-      MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
-      MICROMASTERS_DB_DISABLE_SSL: 'True'
+      MICROMASTERS_SECURE_SSL_REDIRECT: "False"
+      MICROMASTERS_DB_DISABLE_SSL: "True"
       OPENSEARCH_URL: opensearch-node1:9200
-      CELERY_ALWAYS_EAGER: 'False'
+      CELERY_ALWAYS_EAGER: "False"
       BROKER_URL: redis://redis:6379/4
       CELERY_RESULT_BACKEND: redis://redis:6379/4
       DOCKER_HOST: ${DOCKER_HOST:-missing}
       WEBPACK_DEV_SERVER_HOST: ${WEBPACK_DEV_SERVER_HOST:-localhost}
-      OPENSEARCH_INDEX: 'testindex'
-      DEBUG: 'False'
-      OPENSEARCH_DEFAULT_PAGE_SIZE: '5'
+      OPENSEARCH_INDEX: "testindex"
+      DEBUG: "False"
+      OPENSEARCH_DEFAULT_PAGE_SIZE: "5"
       MITXONLINE_BASE_URL: "https://fake-mitxonline.example.com/"
       MITXONLINE_URL: "https://fake-mitxonline.example.com/"
       # To silence ImproperlyConfigured when running tests
@@ -36,7 +36,7 @@ services:
   hub:
     image: selenium/hub:3.141.59-20210607
     environment:
-      GRID_TIMEOUT: '3600'
+      GRID_TIMEOUT: "3600"
     ports:
       - "4444:4444"
 

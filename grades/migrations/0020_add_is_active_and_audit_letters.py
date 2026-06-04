@@ -12,7 +12,9 @@ def deactivate_invalid_program_letters(apps, schema_editor):
     e.g. A program letter is invalid if the program for that user is incomplete
     """
 
-    MicromastersProgramCommendation = apps.get_model('grades', 'MicromastersProgramCommendation')
+    MicromastersProgramCommendation = apps.get_model(
+        "grades", "MicromastersProgramCommendation"
+    )
 
     all_program_letters = MicromastersProgramCommendation.objects.all()
 
@@ -23,21 +25,27 @@ def deactivate_invalid_program_letters(apps, schema_editor):
         is_program_completed = completed_program(user=user, program=program)
         program_letter.is_active = is_program_completed
 
-    MicromastersProgramCommendation.objects.bulk_update(all_program_letters, fields=['is_active'])
+    MicromastersProgramCommendation.objects.bulk_update(
+        all_program_letters, fields=["is_active"]
+    )
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('grades', '0019_client_authorization_id_null'),
+        ("grades", "0019_client_authorization_id_null"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='micromastersprogramcommendation',
-            name='is_active',
-            field=models.BooleanField(default=True, help_text='Indicates whether or not the program letter is active',
-                                      verbose_name='is_active'),
+            model_name="micromastersprogramcommendation",
+            name="is_active",
+            field=models.BooleanField(
+                default=True,
+                help_text="Indicates whether or not the program letter is active",
+                verbose_name="is_active",
+            ),
         ),
-        migrations.RunPython(deactivate_invalid_program_letters, migrations.RunPython.noop)
-
+        migrations.RunPython(
+            deactivate_invalid_program_letters, migrations.RunPython.noop
+        ),
     ]

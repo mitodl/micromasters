@@ -5,7 +5,7 @@ import Popover from "@material-ui/core/Popover"
 import PopoverNullAnimation from "../util/popover_animation"
 import type { ProgramPageCourse } from "../flow/programTypes"
 
-const popoverLink = url =>
+const popoverLink = (url) =>
   url ? (
     <a className="edx-link" href={url}>
       Learn More
@@ -15,12 +15,12 @@ const popoverLink = url =>
 // eslint-disable-next-line require-jsdoc
 export default class CourseListItemWithPopover extends React.Component {
   props: {
-    course: ProgramPageCourse
+    course: ProgramPageCourse,
   }
 
   state = {
-    isOpen:   false,
-    anchorEl: undefined
+    isOpen: false,
+    anchorEl: undefined,
   }
 
   handleClick = (event: Event) => {
@@ -29,22 +29,22 @@ export default class CourseListItemWithPopover extends React.Component {
 
     // eslint-disable-next-line no-invalid-this
     this.setState({
-      isOpen:   true,
-      anchorEl: event.currentTarget
+      isOpen: true,
+      anchorEl: event.currentTarget,
     })
   }
 
   handleRequestClose = () => {
     // eslint-disable-next-line no-invalid-this
     this.setState({
-      isOpen: false
+      isOpen: false,
     })
   }
 
   // eslint-disable-next-line require-jsdoc
   render() {
     const {
-      course: { title, description, url, enrollment_text: enrollmentText }
+      course: { title, description, url, enrollment_text: enrollmentText },
     } = this.props
     const { isOpen, anchorEl } = this.state
 

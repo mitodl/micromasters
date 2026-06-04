@@ -9,27 +9,27 @@ configure({ adapter: new Adapter() })
 
 const _createSettings = () => ({
   user: {
-    username:       "jane",
-    email:          "jane@example.com",
-    first_name:     "Jane",
-    last_name:      "Doe",
-    preferred_name: "JD"
+    username: "jane",
+    email: "jane@example.com",
+    first_name: "Jane",
+    last_name: "Doe",
+    preferred_name: "JD",
   },
-  edx_base_url:        "/edx/",
+  edx_base_url: "/edx/",
   mitxonline_base_url: "/mitxonline/",
-  mitxonline_url:      "/mitxonline/",
-  search_url:          "/",
-  roles:               [],
-  support_email:       "a_real_email@example.com",
-  es_page_size:        40,
-  FEATURES:            {
-    PROGRAM_LEARNERS:      true,
-    PROGRAM_RECORD_LINK:   true,
-    ENABLE_PROGRAM_LETTER: true
+  mitxonline_url: "/mitxonline/",
+  search_url: "/",
+  roles: [],
+  support_email: "a_real_email@example.com",
+  es_page_size: 40,
+  FEATURES: {
+    PROGRAM_LEARNERS: true,
+    PROGRAM_RECORD_LINK: true,
+    ENABLE_PROGRAM_LETTER: true,
   },
   get username() {
     throw new Error("username was removed")
-  }
+  },
 })
 
 global.SETTINGS = _createSettings()
@@ -44,7 +44,7 @@ import fetchMock from "fetch-mock"
 // Mock react-transition-group which is used by material-ui. It causes test failures due to a callback timed to
 // occur after the test has already cleaned up the DOM elements.
 const FakeTransition = ({ children }) => children()
-const FakeCSSTransition = props =>
+const FakeCSSTransition = (props) =>
   props.in ? <FakeTransition>{props.children}</FakeTransition> : null
 // adapted from https://testing-library.com/docs/example-react-transition-group
 // eslint-disable-next-line no-import-assign
@@ -67,7 +67,7 @@ beforeEach(() => {
 
 // cleanup after each test run
 // eslint-disable-next-line mocha/no-top-level-hooks
-afterEach(function() {
+afterEach(function () {
   const node = document.querySelector("#integration_test_div")
   if (node) {
     ReactDOM.unmountComponentAtNode(node)
@@ -88,7 +88,7 @@ afterEach(function() {
 
 // rethrow all unhandled promise errors
 // eslint-disable-next-line no-unused-vars
-process.on("unhandledRejection", reason => {
+process.on("unhandledRejection", (reason) => {
   // throw reason; // uncomment to show promise-related errors
 })
 

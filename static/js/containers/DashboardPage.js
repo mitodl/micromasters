@@ -31,7 +31,7 @@ import {
   setShowExpandedCourseStatus,
   setEnrollProgramDialogError,
   setEnrollProgramDialogVisibility,
-  setEnrollSelectedProgram
+  setEnrollSelectedProgram,
 } from "../actions/ui"
 import { showEnrollPayLaterSuccessMessage } from "../actions/course_enrollments"
 import CourseListCard from "../components/dashboard/CourseListCard"
@@ -56,7 +56,7 @@ import type { DashboardState, ProgramLearners } from "../flow/dashboardTypes"
 import type { AllEmailsState } from "../flow/emailTypes"
 import type {
   AvailableProgram,
-  AvailableProgramsState
+  AvailableProgramsState,
 } from "../flow/enrollmentTypes"
 import type { CouponsState } from "../reducers/coupons"
 import type { ProfileGetResult } from "../flow/profileTypes"
@@ -74,7 +74,7 @@ export const EXAM_GRADE: GradeType = "EXAM_GRADE"
 
 class DashboardPage extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   }
 
   props: {
@@ -88,7 +88,7 @@ class DashboardPage extends React.Component {
     ui: UIState,
     email: AllEmailsState,
     location: Object,
-    openEmailComposer: (emailType: string, emailOpenParams: any) => void
+    openEmailComposer: (emailType: string, emailOpenParams: any) => void,
   }
 
   componentDidMount() {
@@ -103,8 +103,8 @@ class DashboardPage extends React.Component {
     const { dispatch, programLearners } = this.props
     dispatch(clearDashboard(SETTINGS.user.username))
 
-    _.forEach(R.keys(programLearners), id =>
-      dispatch(actions.programLearners.clear(id))
+    _.forEach(R.keys(programLearners), (id) =>
+      dispatch(actions.programLearners.clear(id)),
     )
     dispatch(clearCoupons())
   }
@@ -148,7 +148,7 @@ class DashboardPage extends React.Component {
     const {
       coupons,
       dispatch,
-      location: { query }
+      location: { query },
     } = this.props
 
     if (!query.coupon) {
@@ -185,7 +185,7 @@ class DashboardPage extends React.Component {
     }
 
     dispatch(attachCoupon(query.coupon)).then(
-      result => {
+      (result) => {
         this.setRecentlyAttachedCoupon(result.coupon)
         this.setCouponNotificationVisibility(true)
         this.context.router.push("/dashboard/")
@@ -193,13 +193,13 @@ class DashboardPage extends React.Component {
       () => {
         dispatch(
           setToastMessage({
-            title:   "Coupon failed",
+            title: "Coupon failed",
             message: "This coupon code is invalid or does not exist.",
-            icon:    TOAST_FAILURE
-          })
+            icon: TOAST_FAILURE,
+          }),
         )
         this.context.router.push("/dashboard/")
-      }
+      },
     )
   }
 
@@ -209,16 +209,16 @@ class DashboardPage extends React.Component {
       return undefined
     }
     return dashboard.programs.find(
-      program => program.id === currentProgramEnrollment.id
+      (program) => program.id === currentProgramEnrollment.id,
     )
   }
 
-  setConfirmSkipDialogVisibility = bool => {
+  setConfirmSkipDialogVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setConfirmSkipDialogVisibility(bool))
   }
 
-  setExamEnrollmentDialogVisibility = bool => {
+  setExamEnrollmentDialogVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setExamEnrollmentDialogVisibility(bool))
   }
@@ -234,10 +234,10 @@ class DashboardPage extends React.Component {
         dispatch(
           setToastMessage({
             message: "Failed to add course enrollment.",
-            icon:    TOAST_FAILURE
-          })
+            icon: TOAST_FAILURE,
+          }),
         )
-      }
+      },
     )
   }
 
@@ -254,19 +254,19 @@ class DashboardPage extends React.Component {
         dispatch(
           setToastMessage({
             message: "Failed to add exam enrollment.",
-            icon:    TOAST_FAILURE
-          })
+            icon: TOAST_FAILURE,
+          }),
         )
-      }
+      },
     )
   }
 
-  setDocsInstructionsVisibility = bool => {
+  setDocsInstructionsVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setDocsInstructionsVisibility(bool))
   }
 
-  setCouponNotificationVisibility = bool => {
+  setCouponNotificationVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setCouponNotificationVisibility(bool))
   }
@@ -276,7 +276,7 @@ class DashboardPage extends React.Component {
     dispatch(setRecentlyAttachedCoupon(coupon))
   }
 
-  setEnrollCourseDialogVisibility = bool => {
+  setEnrollCourseDialogVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setEnrollCourseDialogVisibility(bool))
   }
@@ -291,7 +291,7 @@ class DashboardPage extends React.Component {
     dispatch(setSelectedExamCouponCourse(courseId))
   }
 
-  setCalculatePriceDialogVisibility = bool => {
+  setCalculatePriceDialogVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setCalculatePriceDialogVisibility(bool))
   }
@@ -303,7 +303,7 @@ class DashboardPage extends React.Component {
   setShowGradeDetailDialog = (
     open: boolean,
     gradeType: GradeType,
-    courseTitle: string
+    courseTitle: string,
   ) => {
     const { dispatch } = this.props
     if (open) {
@@ -325,15 +325,15 @@ class DashboardPage extends React.Component {
       return null
     }
     const couponProgram = programs.availablePrograms.find(
-      program => program.id === coupon.program_id
+      (program) => program.id === coupon.program_id,
     )
     let couponCourse = null
     if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
       const dashboardCouponProgram: Program = (dashboard.programs.find(
-        program => program.id === coupon.program_id
+        (program) => program.id === coupon.program_id,
       ): any)
       couponCourse = dashboardCouponProgram.courses.find(
-        course => course.id === coupon.object_id
+        (course) => course.id === coupon.object_id,
       )
     }
     return (
@@ -357,7 +357,7 @@ class DashboardPage extends React.Component {
     let course = null
     if (ui.selectedExamCouponCourse) {
       course = program.courses.find(
-        course => course.id === ui.selectedExamCouponCourse
+        (course) => course.id === ui.selectedExamCouponCourse,
       )
     }
     if (!course) {
@@ -383,8 +383,8 @@ class DashboardPage extends React.Component {
     if (!courseRun) {
       return null
     }
-    const course = program.courses.find(course =>
-      R.contains(courseRun.id, R.pluck("id", course.runs))
+    const course = program.courses.find((course) =>
+      R.contains(courseRun.id, R.pluck("id", course.runs)),
     )
     if (!course) {
       return null
@@ -438,9 +438,9 @@ class DashboardPage extends React.Component {
     let learnersInProgramCard
     if (
       R.pathSatisfies(
-        count => count > 0,
+        (count) => count > 0,
         [programID, "data", "learners_count"],
-        programLearners
+        programLearners,
       )
     ) {
       learnersInProgramCard = (
@@ -480,8 +480,8 @@ class DashboardPage extends React.Component {
       ui: {
         enrollProgramDialogError,
         enrollProgramDialogVisibility,
-        enrollSelectedProgram
-      }
+        enrollSelectedProgram,
+      },
     } = this.props
 
     return (
@@ -513,7 +513,7 @@ class DashboardPage extends React.Component {
   renderPageContent = (): React$Element<*> => {
     const {
       profile: { profile },
-      ui
+      ui,
     } = this.props
     const program = this.getCurrentlyEnrolledProgram()
 
@@ -523,10 +523,10 @@ class DashboardPage extends React.Component {
 
     // Upgrades are discontinued, so coupon prices are empty
     const couponPrices = {
-      pricesInclCouponByRun:     new Map(),
-      pricesInclCouponByCourse:  new Map(),
+      pricesInclCouponByRun: new Map(),
+      pricesInclCouponByCourse: new Map(),
       pricesInclCouponByProgram: new Map(),
-      pricesExclCouponByProgram: new Map()
+      pricesExclCouponByProgram: new Map(),
     }
 
     return (
@@ -600,28 +600,28 @@ class DashboardPage extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   let profile = {
-    profile: {}
+    profile: {},
   }
   if (SETTINGS.user && state.profiles[SETTINGS.user.username] !== undefined) {
     profile = state.profiles[SETTINGS.user.username]
   }
   return {
-    profile:                  profile,
-    dashboard:                getOwnDashboard(state),
-    programLearners:          state.programLearners,
-    programs:                 state.programs,
+    profile: profile,
+    dashboard: getOwnDashboard(state),
+    programLearners: state.programLearners,
+    programs: state.programs,
     currentProgramEnrollment: state.currentProgramEnrollment,
-    ui:                       state.ui,
-    email:                    state.email,
-    coupons:                  state.coupons
+    ui: state.ui,
+    email: state.email,
+    coupons: state.coupons,
   }
 }
 
 export default R.compose(
   connect(mapStateToProps),
   withEmailDialog({
-    [COURSE_EMAIL_TYPE]: COURSE_TEAM_EMAIL_CONFIG
-  })
+    [COURSE_EMAIL_TYPE]: COURSE_TEAM_EMAIL_CONFIG,
+  }),
 )(DashboardPage)

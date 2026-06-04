@@ -77,7 +77,9 @@
   .wrapper-accomplishment-title .accomplishment-title,
   .wrapper-accomplishment-statement .accomplishment-recipient,
   .wrapper-accomplishment-statement .accomplishment-course,
-  .wrapper-accomplishment-statement .wrapper-accomplishment-orgs .organization-name,
+  .wrapper-accomplishment-statement
+    .wrapper-accomplishment-orgs
+    .organization-name,
   .accomplishment-stamps .title,
   .signatory .signatory-name,
   .banner-user .message-title {
@@ -172,7 +174,9 @@
 
   .wrapper-accomplishment-statement .accomplishment-recipient,
   .wrapper-accomplishment-statement .accomplishment-course,
-  .wrapper-accomplishment-statement .wrapper-accomplishment-statement .wrapper-accomplishment-statement {
+  .wrapper-accomplishment-statement
+    .wrapper-accomplishment-statement
+    .wrapper-accomplishment-statement {
     margin: 0 !important;
   }
 
@@ -199,12 +203,16 @@
 
   .wrapper-accomplishment-statement .accomplishment-recipient,
   .wrapper-accomplishment-statement .accomplishment-course,
-  .wrapper-accomplishment-statement .wrapper-accomplishment-statement .wrapper-accomplishment-statement,
+  .wrapper-accomplishment-statement
+    .wrapper-accomplishment-statement
+    .wrapper-accomplishment-statement,
   .wrapper-accomplishment-title .accomplishment-title,
   .wrapper-accomplishment-orgs,
   .accomplishment-statement .accomplishment-recipient,
   .accomplishment-statement .accomplishment-course,
-  .accomplishment-statement .accomplishment-statement .accomplishment-statement {
+  .accomplishment-statement
+    .accomplishment-statement
+    .accomplishment-statement {
     margin-bottom: 1.5rem !important;
   }
 
@@ -225,7 +233,6 @@
   }
 
   @media (max-width: 576px) {
-
     h3,
     .wrapper-accomplishment-statement .accomplishment-course,
     .wrapper-accomplishment-statement {
@@ -292,44 +299,66 @@
     height: 100px;
   }
 
-  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3),
-  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3)~.wrapper-organization {
+  .wrapper-accomplishment-orgs
+    .wrapper-organization:first-child:nth-last-child(3),
+  .wrapper-accomplishment-orgs
+    .wrapper-organization:first-child:nth-last-child(3)
+    ~ .wrapper-organization {
     display: block;
     margin: 2.5rem auto;
   }
 
   @media (min-width: 768px) {
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3),
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3)~.wrapper-organization {
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(3),
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(3)
+      ~ .wrapper-organization {
       display: inline-block;
       max-width: 32%;
       margin: 0;
       vertical-align: middle;
     }
 
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3) .organization,
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3)~.wrapper-organization .organization {
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(3)
+      .organization,
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(3)
+      ~ .wrapper-organization
+      .organization {
       margin-left: 2.5rem;
     }
   }
 
-  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2),
-  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2)~.wrapper-organization {
+  .wrapper-accomplishment-orgs
+    .wrapper-organization:first-child:nth-last-child(2),
+  .wrapper-accomplishment-orgs
+    .wrapper-organization:first-child:nth-last-child(2)
+    ~ .wrapper-organization {
     display: block;
     margin: 2.5rem auto;
   }
 
   @media (min-width: 768px) {
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2),
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2)~.wrapper-organization {
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(2),
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(2)
+      ~ .wrapper-organization {
       display: inline-block;
       max-width: 48%;
       margin: 0;
       vertical-align: middle;
     }
 
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2) .organization,
-    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2)~.wrapper-organization .organization {
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(2)
+      .organization,
+    .wrapper-accomplishment-orgs
+      .wrapper-organization:first-child:nth-last-child(2)
+      ~ .wrapper-organization
+      .organization {
       margin-left: 2.5rem;
     }
   }
@@ -457,7 +486,9 @@
 
   .accomplishment-statement .accomplishment-recipient,
   .accomplishment-statement .accomplishment-course,
-  .accomplishment-statement .accomplishment-statement .accomplishment-statement {
+  .accomplishment-statement
+    .accomplishment-statement
+    .accomplishment-statement {
     display: block;
   }
 
@@ -639,7 +670,10 @@
       margin-left: -16px;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-title.verified
+      .accomplishment-title {
       position: relative;
       width: 100%;
       padding-right: 16px;
@@ -650,7 +684,10 @@
       vertical-align: middle;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title-program {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-title.verified
+      .accomplishment-title-program {
       position: relative;
       width: 100%;
       padding-right: 16px;
@@ -661,16 +698,27 @@
       vertical-align: middle;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title img {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-title.verified
+      .accomplishment-title
+      img {
       max-width: 25% !important;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title-program img {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-title.verified
+      .accomplishment-title-program
+      img {
       max-width: 300px !important;
       max-height: 150px !important;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title .accomplishment-title {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-title
+      .accomplishment-title {
       position: relative;
       width: 100%;
       padding-right: 16px;
@@ -681,7 +729,10 @@
       vertical-align: middle;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title .accomplishment-title-program {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-title
+      .accomplishment-title-program {
       position: relative;
       width: 100%;
       padding-right: 16px;
@@ -705,11 +756,17 @@
       margin-bottom: 25px !important;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-orgs .organization img {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-orgs
+      .organization
+      img {
       max-width: 220px !important;
     }
 
-    .accomplishment .accomplishment-rendering .wrapper-accomplishment-statement {
+    .accomplishment
+      .accomplishment-rendering
+      .wrapper-accomplishment-statement {
       display: flex;
       flex-wrap: wrap;
       margin-right: -16px;

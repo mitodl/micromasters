@@ -5,21 +5,34 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0002_rename_course_to_courserun'),
+        ("courses", "0002_rename_course_to_courserun"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('thumbnail', models.ImageField(blank=True, null=True, upload_to='')),
-                ('description', models.TextField(blank=True, null=True)),
-                ('prerequisites', models.TextField(blank=True, null=True)),
-                ('program', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.Program')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("thumbnail", models.ImageField(blank=True, null=True, upload_to="")),
+                ("description", models.TextField(blank=True, null=True)),
+                ("prerequisites", models.TextField(blank=True, null=True)),
+                (
+                    "program",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.Program",
+                    ),
+                ),
             ],
         ),
     ]

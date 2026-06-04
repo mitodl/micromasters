@@ -24,7 +24,7 @@ import {
   CLEAR_PROFILE_EDIT,
   REQUEST_PATCH_USER_PROFILE,
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-  RECEIVE_PATCH_USER_PROFILE_FAILURE
+  RECEIVE_PATCH_USER_PROFILE_FAILURE,
 } from "../actions/profile"
 import { FETCH_FAILURE, FETCH_SUCCESS } from "../actions"
 
@@ -49,13 +49,13 @@ describe("reducers", () => {
   describe("profile reducers", () => {
     let getUserProfileStub, patchUserProfileStub
     beforeEach(() => {
-      dispatchThen = store.createDispatchThen(state => state.profiles)
+      dispatchThen = store.createDispatchThen((state) => state.profiles)
       getUserProfileStub = sandbox.stub(api, "getUserProfile")
       patchUserProfileStub = sandbox.stub(api, "patchUserProfile")
     })
 
     it("should have initial state", () => {
-      return dispatchThen({ type: "unknown" }, ["unknown"]).then(state => {
+      return dispatchThen({ type: "unknown" }, ["unknown"]).then((state) => {
         assert.deepEqual(state, INITIAL_PROFILES_STATE)
       })
     })
@@ -67,17 +67,17 @@ describe("reducers", () => {
 
       return dispatchThen(fetchUserProfile("jane"), [
         REQUEST_GET_USER_PROFILE,
-        RECEIVE_GET_USER_PROFILE_SUCCESS
-      ]).then(profileState => {
+        RECEIVE_GET_USER_PROFILE_SUCCESS,
+      ]).then((profileState) => {
         assert.deepEqual(profileState["jane"].profile, USER_PROFILE_RESPONSE)
         assert.equal(profileState["jane"].getStatus, FETCH_SUCCESS)
 
         assert.ok(getUserProfileStub.calledWith("jane"))
 
         return dispatchThen(clearProfile("jane"), [CLEAR_PROFILE]).then(
-          state => {
+          (state) => {
             assert.deepEqual(state, INITIAL_PROFILES_STATE)
-          }
+          },
         )
       })
     })
@@ -85,7 +85,7 @@ describe("reducers", () => {
     it("should fail to fetch user profile", () => {
       const errorInfo = {
         errorStatusCode: 404,
-        detail:          "not found"
+        detail: "not found",
       }
       getUserProfileStub
         .withArgs(SETTINGS.user.username)
@@ -93,8 +93,8 @@ describe("reducers", () => {
 
       return dispatchThen(fetchUserProfile("jane"), [
         REQUEST_GET_USER_PROFILE,
-        RECEIVE_GET_USER_PROFILE_FAILURE
-      ]).then(profileState => {
+        RECEIVE_GET_USER_PROFILE_FAILURE,
+      ]).then((profileState) => {
         assert.equal(profileState["jane"].getStatus, FETCH_FAILURE)
         assert.deepEqual(profileState["jane"].errorInfo, errorInfo)
         assert.ok(getUserProfileStub.calledWith("jane"))
@@ -104,7 +104,7 @@ describe("reducers", () => {
     it("should patch the profile successfully", () => {
       const updatedProfile = {
         ...USER_PROFILE_RESPONSE,
-        change: true
+        change: true,
       }
       patchUserProfileStub
         .withArgs(SETTINGS.user.username)
@@ -112,13 +112,13 @@ describe("reducers", () => {
 
       return dispatchThen(saveProfile("jane", USER_PROFILE_RESPONSE), [
         REQUEST_PATCH_USER_PROFILE,
-        RECEIVE_PATCH_USER_PROFILE_SUCCESS
-      ]).then(profileState => {
+        RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+      ]).then((profileState) => {
         assert.equal(profileState["jane"].patchStatus, FETCH_SUCCESS)
         assert.deepEqual(profileState["jane"].profile, updatedProfile)
 
         assert.ok(
-          patchUserProfileStub.calledWith("jane", USER_PROFILE_RESPONSE)
+          patchUserProfileStub.calledWith("jane", USER_PROFILE_RESPONSE),
         )
       })
     })
@@ -131,12 +131,12 @@ describe("reducers", () => {
 
       return dispatchThen(saveProfile("jane", USER_PROFILE_RESPONSE), [
         REQUEST_PATCH_USER_PROFILE,
-        RECEIVE_PATCH_USER_PROFILE_FAILURE
-      ]).then(profileState => {
+        RECEIVE_PATCH_USER_PROFILE_FAILURE,
+      ]).then((profileState) => {
         assert.equal(profileState["jane"].patchStatus, FETCH_FAILURE)
         assert.deepEqual(profileState["jane"].errorInfo, errorInfo)
         assert.ok(
-          patchUserProfileStub.calledWith("jane", USER_PROFILE_RESPONSE)
+          patchUserProfileStub.calledWith("jane", USER_PROFILE_RESPONSE),
         )
       })
     })
@@ -144,56 +144,59 @@ describe("reducers", () => {
     it("should start editing the profile, update the copy, then clear it", () => {
       // populate a profile
       store.dispatch(
-        receiveGetUserProfileSuccess("jane", _.cloneDeep(USER_PROFILE_RESPONSE))
+        receiveGetUserProfileSuccess(
+          "jane",
+          _.cloneDeep(USER_PROFILE_RESPONSE),
+        ),
       )
       return dispatchThen(startProfileEdit("jane"), [START_PROFILE_EDIT]).then(
-        profileState => {
+        (profileState) => {
           assert.deepEqual(profileState["jane"].edit, {
-            profile:    USER_PROFILE_RESPONSE,
-            errors:     {},
-            visibility: []
+            profile: USER_PROFILE_RESPONSE,
+            errors: {},
+            visibility: [],
           })
 
           const newProfile = {
             ...USER_PROFILE_RESPONSE,
-            newField: true
+            newField: true,
           }
 
           return dispatchThen(updateProfile("jane", newProfile), [
-            UPDATE_PROFILE
-          ]).then(profileState => {
+            UPDATE_PROFILE,
+          ]).then((profileState) => {
             assert.deepEqual(profileState["jane"].edit, {
-              profile:    newProfile,
-              errors:     {},
-              visibility: []
+              profile: newProfile,
+              errors: {},
+              visibility: [],
             })
 
             return dispatchThen(clearProfileEdit("jane"), [
-              CLEAR_PROFILE_EDIT
-            ]).then(profileState => {
+              CLEAR_PROFILE_EDIT,
+            ]).then((profileState) => {
               assert.deepEqual(profileState["jane"].edit, undefined)
             })
           })
-        }
+        },
       )
     })
 
     it("should start editing the profile, and validate it", () => {
       // populate a profile
       store.dispatch(
-        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE)
+        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE),
       )
       store.dispatch(startProfileEdit("jane"))
       store.dispatch(updateValidationVisibility("jane", ALL_ERRORS_VISIBLE))
 
       const errors = { error: "I am an error" }
       return dispatchThen(updateProfileValidation("jane", errors), [
-        UPDATE_PROFILE_VALIDATION
-      ]).then(profileState => {
+        UPDATE_PROFILE_VALIDATION,
+      ]).then((profileState) => {
         assert.deepEqual(profileState["jane"].edit, {
-          profile:    USER_PROFILE_RESPONSE,
-          errors:     errors,
-          visibility: [ALL_ERRORS_VISIBLE]
+          profile: USER_PROFILE_RESPONSE,
+          errors: errors,
+          visibility: [ALL_ERRORS_VISIBLE],
         })
       })
     })
@@ -201,14 +204,14 @@ describe("reducers", () => {
     it("should validate an existing profile successfully", () => {
       // populate a profile
       store.dispatch(
-        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE)
+        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE),
       )
       store.dispatch(startProfileEdit("jane"))
       store.dispatch(updateValidationVisibility("jane", ALL_ERRORS_VISIBLE))
 
       return dispatchThen(updateProfileValidation("jane", {}), [
-        UPDATE_PROFILE_VALIDATION
-      ]).then(profileState => {
+        UPDATE_PROFILE_VALIDATION,
+      ]).then((profileState) => {
         assert.deepEqual(profileState["jane"].edit.errors, {})
       })
     })
@@ -216,16 +219,16 @@ describe("reducers", () => {
     it("should validate an existing profile with validation errors", () => {
       // populate a profile
       store.dispatch(
-        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE)
+        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE),
       )
       store.dispatch(startProfileEdit("jane"))
       store.dispatch(updateValidationVisibility("jane", ALL_ERRORS_VISIBLE))
       const errors = {
-        first_name: "Given name is required"
+        first_name: "Given name is required",
       }
       return dispatchThen(updateProfileValidation("jane", errors), [
-        UPDATE_PROFILE_VALIDATION
-      ]).then(profileState => {
+        UPDATE_PROFILE_VALIDATION,
+      ]).then((profileState) => {
         assert.deepEqual(profileState["jane"].edit.errors, errors)
       })
     })
@@ -234,36 +237,36 @@ describe("reducers", () => {
       const errors = {
         work_history: [
           {
-            position: "Position is required"
-          }
-        ]
+            position: "Position is required",
+          },
+        ],
       }
 
       // populate a profile
       store.dispatch(
-        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE)
+        receiveGetUserProfileSuccess("jane", USER_PROFILE_RESPONSE),
       )
       store.dispatch(startProfileEdit("jane"))
       store.dispatch(updateValidationVisibility("jane", ALL_ERRORS_VISIBLE))
       return dispatchThen(updateProfileValidation("jane", errors), [
-        UPDATE_PROFILE_VALIDATION
-      ]).then(profileState => {
+        UPDATE_PROFILE_VALIDATION,
+      ]).then((profileState) => {
         assert.deepEqual(profileState["jane"].edit.errors, errors)
       })
     })
 
     it("can't edit a profile if we never get it successfully", () => {
       return dispatchThen(startProfileEdit("jane"), [START_PROFILE_EDIT]).then(
-        profileState => {
+        (profileState) => {
           assert.deepEqual(profileState["jane"], undefined)
-        }
+        },
       )
     })
 
     it("can't edit a profile if edit doesn't exist", () => {
       return dispatchThen(updateProfile("jane", USER_PROFILE_RESPONSE), [
-        UPDATE_PROFILE
-      ]).then(profileState => {
+        UPDATE_PROFILE,
+      ]).then((profileState) => {
         assert.deepEqual(profileState["jane"], undefined)
       })
     })
@@ -271,8 +274,8 @@ describe("reducers", () => {
     it("can't validate a profile's edits if edit doesn't exist", () => {
       return dispatchThen(
         updateProfileValidation("jane", { error: "an error" }),
-        [UPDATE_PROFILE_VALIDATION]
-      ).then(profileState => {
+        [UPDATE_PROFILE_VALIDATION],
+      ).then((profileState) => {
         assert.deepEqual(profileState["jane"], undefined)
       })
     })

@@ -15,9 +15,9 @@ describe("CheckboxItem", () => {
   beforeEach(() => {
     props = {
       onClick: sinon.stub(),
-      label:   "2016 - Summer",
-      active:  false,
-      count:   42
+      label: "2016 - Summer",
+      active: false,
+      count: 42,
     }
   })
 

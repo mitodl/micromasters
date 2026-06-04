@@ -17,7 +17,7 @@ if (RadioGroup.propTypes) {
 export default class AutomaticEmailOptions extends React.Component {
   props: {
     sendAutomaticEmails?: boolean,
-    setSendAutomaticEmails: (b: boolean) => void
+    setSendAutomaticEmails: (b: boolean) => void,
   }
 
   handleRadioClick = (event: any): void => {

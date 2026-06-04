@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 def migrate_source_type(apps, schema_editor):
-    PercolateQuery = apps.get_model('search', 'PercolateQuery')
+    PercolateQuery = apps.get_model("search", "PercolateQuery")
     # Normalize any legacy rows using the removed discussion_channel_type
-    PercolateQuery.objects.filter(source_type='discussion_channel_type').update(
-        source_type='automatic_email_type'
+    PercolateQuery.objects.filter(source_type="discussion_channel_type").update(
+        source_type="automatic_email_type"
     )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('search', '0005_percolatequery_is_deleted'),
+        ("search", "0005_percolatequery_is_deleted"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='percolatequery',
-            name='source_type',
+            model_name="percolatequery",
+            name="source_type",
             field=models.CharField(
-                choices=[('automatic_email_type', 'automatic_email_type')],
+                choices=[("automatic_email_type", "automatic_email_type")],
                 max_length=255,
             ),
         ),

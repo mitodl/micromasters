@@ -18,10 +18,13 @@ from courses.models import Program
 from dashboard.models import ProgramEnrollment
 from profiles.models import Profile
 from roles.api import get_advance_searchable_program_ids
-from search.connection import (PERCOLATE_INDEX_TYPE,
-                               PRIVATE_ENROLLMENT_INDEX_TYPE,
-                               PUBLIC_ENROLLMENT_INDEX_TYPE, get_conn,
-                               get_default_alias)
+from search.connection import (
+    PERCOLATE_INDEX_TYPE,
+    PRIVATE_ENROLLMENT_INDEX_TYPE,
+    PUBLIC_ENROLLMENT_INDEX_TYPE,
+    get_conn,
+    get_default_alias,
+)
 from search.exceptions import NoProgramAccessException, PercolateException
 from search.indexing_api import serialize_program_enrolled_user
 from search.models import PercolateQuery, PercolateQueryMembership
@@ -90,9 +93,13 @@ def get_searchable_programs(user, staff_program_ids):
     # filter only to the staff programs or enrolled programs
     # NOTE: this has an accepted limitation that if you are staff on any program,
     # you can't use search on non-staff programs
-    return set(Program.objects.filter(
-        Query(id__in=staff_program_ids) if staff_program_ids else Query(programenrollment__user=user)
-    ).distinct())
+    return set(
+        Program.objects.filter(
+            Query(id__in=staff_program_ids)
+            if staff_program_ids
+            else Query(programenrollment__user=user)
+        ).distinct()
+    )
 
 
 def create_program_limit_query(user, staff_program_ids, filter_on_email_optin=False):
@@ -115,19 +122,18 @@ def create_program_limit_query(user, staff_program_ids, filter_on_email_optin=Fa
     if not users_allowed_programs:
         raise NoProgramAccessException()
 
-    must = [
-        Q('term', **{'program.is_learner': True})
-    ]
+    must = [Q("term", **{"program.is_learner": True})]
 
     if filter_on_email_optin:
-        must.append(Q('term', **{'profile.email_optin': True}))
+        must.append(Q("term", **{"profile.email_optin": True}))
 
     # no matter what the query is, limit the programs to the allowed ones
     # if this is a superset of what searchkit sends, this will not impact the result
     return Q(
-        'bool',
+        "bool",
         should=[
-            Q('term', **{'program.id': program.id}) for program in users_allowed_programs
+            Q("term", **{"program.id": program.id})
+            for program in users_allowed_programs
         ],
         # require that at least one program id matches the user's allowed programs
         minimum_should_match=1,
@@ -150,7 +156,11 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     """
     staff_program_ids = get_advance_searchable_program_ids(user)
     is_advance_search_capable = bool(staff_program_ids)
-    index_type = PRIVATE_ENROLLMENT_INDEX_TYPE if is_advance_search_capable else PUBLIC_ENROLLMENT_INDEX_TYPE
+    index_type = (
+        PRIVATE_ENROLLMENT_INDEX_TYPE
+        if is_advance_search_capable
+        else PUBLIC_ENROLLMENT_INDEX_TYPE
+    )
     index = get_default_alias(index_type)
     search_obj = Search(index=index)
     # Update from search params first so our server-side filtering will overwrite it if necessary
@@ -160,30 +170,34 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     if not is_advance_search_capable:
         # Learners can't search for other learners with privacy set to private
         search_obj = search_obj.filter(
-            ~Q('term', **{'profile.account_privacy': Profile.PRIVATE})  # pylint: disable=invalid-unary-operand-type
+            ~Q(
+                "term", **{"profile.account_privacy": Profile.PRIVATE}
+            )  # pylint: disable=invalid-unary-operand-type
         )
 
     # Limit results to one of the programs the user is staff on
-    search_obj = search_obj.filter(create_program_limit_query(
-        user,
-        staff_program_ids,
-        filter_on_email_optin=filter_on_email_optin
-    ))
-    # Filter so that only filled_out profiles are seen
     search_obj = search_obj.filter(
-        Q('term', **{'profile.filled_out': True})
+        create_program_limit_query(
+            user, staff_program_ids, filter_on_email_optin=filter_on_email_optin
+        )
     )
+    # Filter so that only filled_out profiles are seen
+    search_obj = search_obj.filter(Q("term", **{"profile.filled_out": True}))
     # Force size to be the one we set on the server
-    update_dict = {'size': settings.OPENSEARCH_DEFAULT_PAGE_SIZE}
-    if search_param_dict is not None and search_param_dict.get('from') is not None:
-        update_dict['from'] = search_param_dict['from']
+    update_dict = {"size": settings.OPENSEARCH_DEFAULT_PAGE_SIZE}
+    if search_param_dict is not None and search_param_dict.get("from") is not None:
+        update_dict["from"] = search_param_dict["from"]
     search_obj.update_from_dict(update_dict)
 
     return search_obj
 
 
-def prepare_and_execute_search(user, search_param_dict=None, search_func=execute_search,
-                               filter_on_email_optin=False):
+def prepare_and_execute_search(
+    user,
+    search_param_dict=None,
+    search_func=execute_search,
+    filter_on_email_optin=False,
+):
     """
     Prepares a Search object and executes the search against ES
 
@@ -219,7 +233,7 @@ def search_for_field(search_obj, field_name):
     # Maintaining a consistent sort on '_doc' will help prevent bugs where the
     # index is altered during the loop.
     # This also limits the query to only return the field value.
-    search_obj = search_obj.sort('_doc').source(includes=[field_name])
+    search_obj = search_obj.sort("_doc").source(includes=[field_name])
     search_results = scan_search(search_obj)
     # add the field value for every search result hit to the set
     for hit in search_results:
@@ -254,7 +268,9 @@ def search_percolate_queries(program_enrollment_id, source_type):
     """
     enrollment = ProgramEnrollment.objects.get(id=program_enrollment_id)
     result_ids = _search_percolate_queries(enrollment)
-    return PercolateQuery.objects.filter(id__in=result_ids, source_type=source_type).exclude(is_deleted=True)
+    return PercolateQuery.objects.filter(
+        id__in=result_ids, source_type=source_type
+    ).exclude(is_deleted=True)
 
 
 def _search_percolate_queries(program_enrollment):
@@ -274,23 +290,16 @@ def _search_percolate_queries(program_enrollment):
         return []
     # We don't need this to search for percolator queries and
     # it causes a dynamic mapping failure so we need to remove it
-    del doc['_id']
+    del doc["_id"]
 
-    body = {
-        "query": {
-            "percolate": {
-                "field": "query",
-                "document": doc
-            }
-        }
-    }
+    body = {"query": {"percolate": {"field": "query", "document": doc}}}
 
     result = conn.search(index=percolate_index, body=body)
-    failures = result.get('_shards', {}).get('failures', [])
+    failures = result.get("_shards", {}).get("failures", [])
     if len(failures) > 0:
         raise PercolateException(f"Failed to percolate: {failures}")
 
-    return [int(row['_id']) for row in result['hits']['hits']]
+    return [int(row["_id"]) for row in result["hits"]["hits"]]
 
 
 def adjust_search_for_percolator(search):
@@ -309,14 +318,14 @@ def adjust_search_for_percolator(search):
         Search: updated search object
     """
     search_dict = search.to_dict()
-    if 'post_filter' in search_dict:
-        search = search.filter(search_dict['post_filter'])
+    if "post_filter" in search_dict:
+        search = search.filter(search_dict["post_filter"])
 
     # Remove all other keys besides query
     updated_search_dict = {}
     search_dict = search.to_dict()
-    if 'query' in search_dict:
-        updated_search_dict['query'] = search_dict['query']
+    if "query" in search_dict:
+        updated_search_dict["query"] = search_dict["query"]
     updated_search = Search(index=search._index)  # pylint: disable=protected-access
     updated_search.update_from_dict(updated_search_dict)
     return updated_search
@@ -340,8 +349,8 @@ def document_needs_updating(enrollment):
     except NotFoundError:
         return True
     serialized_enrollment = serialize_program_enrolled_user(enrollment)
-    del serialized_enrollment['_id']
-    source = document['_source']
+    del serialized_enrollment["_id"]
+    source = document["_source"]
 
     if serialized_enrollment != source:
         # Convert OrderedDict to dict
@@ -363,15 +372,16 @@ def update_percolate_memberships(user, source_type):
         source_type (str): The type of the percolate query to filter on
     """
     # ensure we have a membership for each of the queries so we can acquire a lock on them
-    percolate_queries = list(PercolateQuery.objects.filter(source_type=source_type).exclude(is_deleted=True))
-    membership_ids = _ensure_memberships_for_queries(
-        percolate_queries,
-        user
+    percolate_queries = list(
+        PercolateQuery.objects.filter(source_type=source_type).exclude(is_deleted=True)
     )
+    membership_ids = _ensure_memberships_for_queries(percolate_queries, user)
 
     # if there are no percolate queries or memberships then there's nothing to do
     if membership_ids:
-        _update_memberships([query.id for query in percolate_queries], membership_ids, user)
+        _update_memberships(
+            [query.id for query in percolate_queries], membership_ids, user
+        )
 
 
 def _ensure_memberships_for_queries(percolate_queries, user):
@@ -384,7 +394,9 @@ def _ensure_memberships_for_queries(percolate_queries, user):
     """
     membership_ids = []
     for query in percolate_queries:
-        membership, _ = PercolateQueryMembership.objects.get_or_create(query=query, user=user)
+        membership, _ = PercolateQueryMembership.objects.get_or_create(
+            query=query, user=user
+        )
         membership_ids.append(membership.id)
 
     return membership_ids
@@ -402,7 +414,9 @@ def _update_memberships(percolate_query_ids, membership_ids, user, force_save=Fa
     """
 
     with transaction.atomic():
-        memberships = PercolateQueryMembership.objects.filter(id__in=membership_ids).select_for_update()
+        memberships = PercolateQueryMembership.objects.filter(
+            id__in=membership_ids
+        ).select_for_update()
 
         # limit the query_ids to the queries we are trying to update
         query_ids = set()

@@ -13,11 +13,11 @@ import {
   formatAction,
   formatMessage,
   formatDate,
-  calculateMessages
+  calculateMessages,
 } from "./StatusMessages"
 import {
   makeCourse,
-  makeProctoredExamResult
+  makeProctoredExamResult,
 } from "../../../factories/dashboard"
 import {
   makeRunCurrent,
@@ -28,7 +28,7 @@ import {
   makeRunOverdue,
   makeRunFailed,
   makeRunCanUpgrade,
-  makeRunMissedDeadline
+  makeRunMissedDeadline,
 } from "./test_util"
 import { assertIsJust, assertIsNothing } from "../../../lib/test_utils"
 import {
@@ -36,7 +36,7 @@ import {
   DASHBOARD_FORMAT,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_MISSED_DEADLINE,
-  COURSE_ACTION_ENROLL
+  COURSE_ACTION_ENROLL,
 } from "../../../constants"
 
 describe("Course Status Messages", () => {
@@ -44,7 +44,7 @@ describe("Course Status Messages", () => {
 
   beforeEach(() => {
     message = {
-      message: <div>TEST MESSAGE</div>
+      message: <div>TEST MESSAGE</div>,
     }
   })
 
@@ -54,7 +54,7 @@ describe("Course Status Messages", () => {
       assert.equal(renderedMessage.props().className, "status-message cols")
       assert.equal(
         renderedMessage.find(".message.first-col").text(),
-        "TEST MESSAGE"
+        "TEST MESSAGE",
       )
     })
 
@@ -68,7 +68,7 @@ describe("Course Status Messages", () => {
   describe("formatAction", () => {
     it("should just wrap an action in a div", () => {
       const action = shallow(
-        formatAction({ action: <button>button!</button>, message: "test" })
+        formatAction({ action: <button>button!</button>, message: "test" }),
       )
       assert.equal(action.type(), "div")
       assert.equal(action.props().className, "second-col")
@@ -84,14 +84,14 @@ describe("Course Status Messages", () => {
       sandbox = sinon.sandbox.create()
 
       calculateMessagesProps = {
-        courseAction:                      sandbox.stub(),
-        firstRun:                          course.runs[0],
-        course:                            course,
-        expandedStatuses:                  new Set(),
-        setShowExpandedCourseStatus:       sandbox.stub(),
+        courseAction: sandbox.stub(),
+        firstRun: course.runs[0],
+        course: course,
+        expandedStatuses: new Set(),
+        setShowExpandedCourseStatus: sandbox.stub(),
         setExamEnrollmentDialogVisibility: sandbox.stub(),
-        setSelectedExamCouponCourse:       sandbox.stub(),
-        coupon:                            undefined
+        setSelectedExamCouponCourse: sandbox.stub(),
+        coupon: undefined,
       }
       calculateMessagesProps.courseAction.returns("course action was called")
     })
@@ -105,23 +105,23 @@ describe("Course Status Messages", () => {
       makeRunCurrent(course.runs[0])
       makeRunFuture(course.runs[1])
       const [{ message, action }] = calculateMessages(
-        calculateMessagesProps
+        calculateMessagesProps,
       ).value
       const mounted = shallow(message)
       assert.equal(
         mounted.text(),
-        "You're not enrolled in this course yet. You can enroll now, or if you think there is a problem, contact us for help."
+        "You're not enrolled in this course yet. You can enroll now, or if you think there is a problem, contact us for help.",
       )
       assert.equal(
         mounted.find("a").props().href,
-        `mailto:${SETTINGS.support_email}`
+        `mailto:${SETTINGS.support_email}`,
       )
       assert.equal(action, "course action was called")
       assert(
         calculateMessagesProps.courseAction.calledWith(
           course.runs[0],
-          COURSE_ACTION_ENROLL
-        )
+          COURSE_ACTION_ENROLL,
+        ),
       )
     })
 
@@ -130,8 +130,8 @@ describe("Course Status Messages", () => {
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: "Next course starts Fall 2018."
-        }
+          message: "Next course starts Fall 2018.",
+        },
       ])
     })
 
@@ -140,8 +140,8 @@ describe("Course Status Messages", () => {
       makeRunCanUpgrade(course.runs[0])
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: "You are auditing. Upgrades are no longer available."
-        }
+          message: "You are auditing. Upgrades are no longer available.",
+        },
       ])
     })
 
@@ -155,12 +155,12 @@ describe("Course Status Messages", () => {
 
       assert.equal(
         mounted.text(),
-        "You passed this course! View Certificate | Re-enroll"
+        "You passed this course! View Certificate | Re-enroll",
       )
 
       assert.deepEqual(messages[1], {
         message:
-          "You are re-taking this course. Upgrades are no longer available."
+          "You are re-taking this course. Upgrades are no longer available.",
       })
     })
 
@@ -170,8 +170,8 @@ describe("Course Status Messages", () => {
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: "You are auditing. Upgrades are no longer available."
-        }
+          message: "You are auditing. Upgrades are no longer available.",
+        },
       ])
     })
 
@@ -196,8 +196,8 @@ describe("Course Status Messages", () => {
       course.is_passed = true
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: "You passed this course."
-        }
+          message: "You passed this course.",
+        },
       ])
       course.has_exam = true
       course.proctorate_exams_grades = [makeProctoredExamResult()]
@@ -210,20 +210,10 @@ describe("Course Status Messages", () => {
       const mounted = shallow(message)
       assert.equal(
         mounted.text(),
-        "You passed this course! View Certificate | Re-enroll"
+        "You passed this course! View Certificate | Re-enroll",
       )
-      assert.equal(
-        mounted
-          .find("a")
-          .at(0)
-          .props().href,
-        "certificate_url"
-      )
-      mounted
-        .find("a")
-        .at(1)
-        .props()
-        .onClick()
+      assert.equal(mounted.find("a").at(0).props().href, "certificate_url")
+      mounted.find("a").at(1).props().onClick()
       assert(calculateMessagesProps.setShowExpandedCourseStatus.called)
     })
 
@@ -241,16 +231,16 @@ describe("Course Status Messages", () => {
           message:
             `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date}.` +
             ` Enrollment started ${formatDate(
-              course.runs[1].enrollment_start_date
+              course.runs[1].enrollment_start_date,
             )}.`,
-          action: "course action was called"
-        }
+          action: "course action was called",
+        },
       ])
       assert(
         calculateMessagesProps.courseAction.calledWith(
           course.runs[1],
-          COURSE_ACTION_REENROLL
-        )
+          COURSE_ACTION_REENROLL,
+        ),
       )
     })
 
@@ -264,8 +254,8 @@ describe("Course Status Messages", () => {
         {
           message:
             "You missed the upgrade deadline and will not receive MicroMasters credit for this course. " +
-            "There are no future runs of this course scheduled at this time."
-        }
+            "There are no future runs of this course scheduled at this time.",
+        },
       ])
     })
 
@@ -277,23 +267,19 @@ describe("Course Status Messages", () => {
         {
           message:
             "You missed the upgrade deadline and will not receive MicroMasters credit for this course. " +
-            "There are no future runs of this course scheduled at this time."
-        }
+            "There are no future runs of this course scheduled at this time.",
+        },
       ])
     })
 
     for (const nextEnrollmentStart of [
       ["", ""],
       [
-        moment()
-          .add(10, "days")
-          .toISOString(),
-        ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`
-      ]
+        moment().add(10, "days").toISOString(),
+        ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`,
+      ],
     ]) {
-      it(`should nag about missing the upgrade deadline when future re-enrollments and date is ${
-        nextEnrollmentStart[0]
-      }`, () => {
+      it(`should nag about missing the upgrade deadline when future re-enrollments and date is ${nextEnrollmentStart[0]}`, () => {
         makeRunPast(course.runs[0])
         makeRunMissedDeadline(course.runs[0])
         makeRunOverdue(course.runs[0])
@@ -302,17 +288,15 @@ describe("Course Status Messages", () => {
         const date = formatDate(course.runs[1].course_start_date)
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date}.${
-              nextEnrollmentStart[1]
-            }`,
-            action: "course action was called"
-          }
+            message: `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
+            action: "course action was called",
+          },
         ])
         assert(
           calculateMessagesProps.courseAction.calledWith(
             course.runs[1],
-            COURSE_ACTION_REENROLL
-          )
+            COURSE_ACTION_REENROLL,
+          ),
         )
       })
     }
@@ -326,8 +310,8 @@ describe("Course Status Messages", () => {
         {
           message:
             "You missed the upgrade deadline and will not receive MicroMasters credit for this course. " +
-            "There are no future runs of this course scheduled at this time."
-        }
+            "There are no future runs of this course scheduled at this time.",
+        },
       ])
     })
 
@@ -337,8 +321,8 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "The edX course is complete, but upgrades are no longer available."
-        }
+            "The edX course is complete, but upgrades are no longer available.",
+        },
       ])
     })
 
@@ -349,8 +333,8 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "The edX course is complete, but upgrades are no longer available."
-        }
+            "The edX course is complete, but upgrades are no longer available.",
+        },
       ])
     })
 
@@ -362,59 +346,53 @@ describe("Course Status Messages", () => {
         .subtract(10, "days")
         .toISOString()
       const date = formatPrettyDateTimeAmPmTz(
-        parseDateString(course.runs[1].course_start_date)
+        parseDateString(course.runs[1].course_start_date),
       )
       const enrollmentDate = moment(
-        course.runs[1].enrollment_start_date
+        course.runs[1].enrollment_start_date,
       ).format(DASHBOARD_FORMAT)
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
             "You did not pass the course, but you can re-enroll." +
             ` Next course starts ${date}. Enrollment started ${enrollmentDate}.`,
-          action: "course action was called"
-        }
+          action: "course action was called",
+        },
       ])
       assert(
         calculateMessagesProps.courseAction.calledWith(
           course.runs[1],
-          COURSE_ACTION_REENROLL
-        )
+          COURSE_ACTION_REENROLL,
+        ),
       )
     })
 
     for (const nextEnrollmentStart of [
       ["", ""],
       [
-        moment()
-          .add(10, "days")
-          .toISOString(),
-        ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`
-      ]
+        moment().add(10, "days").toISOString(),
+        ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`,
+      ],
     ]) {
-      it(`should inform next enrollment date after failing edx course when date is ${
-        nextEnrollmentStart[0]
-      }`, () => {
+      it(`should inform next enrollment date after failing edx course when date is ${nextEnrollmentStart[0]}`, () => {
         makeRunPast(course.runs[0])
         makeRunFailed(course.runs[0])
         makeRunFuture(course.runs[1])
         course.runs[1].enrollment_start_date = nextEnrollmentStart[0]
         const date = formatPrettyDateTimeAmPmTz(
-          parseDateString(course.runs[1].course_start_date)
+          parseDateString(course.runs[1].course_start_date),
         )
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: `You did not pass the course, but you can re-enroll. Next course starts ${date}.${
-              nextEnrollmentStart[1]
-            }`,
-            action: "course action was called"
-          }
+            message: `You did not pass the course, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
+            action: "course action was called",
+          },
         ])
         assert(
           calculateMessagesProps.courseAction.calledWith(
             course.runs[1],
-            COURSE_ACTION_REENROLL
-          )
+            COURSE_ACTION_REENROLL,
+          ),
         )
       })
     }
@@ -425,8 +403,8 @@ describe("Course Status Messages", () => {
       makeRunFailed(course.runs[0])
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: "You did not pass the course."
-        }
+          message: "You did not pass the course.",
+        },
       ])
     })
 

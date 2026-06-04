@@ -6,21 +6,34 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('dashboard', '0004_switch_jsonfield'),
+        ("dashboard", "0004_switch_jsonfield"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UserCacheRefreshTime',
+            name="UserCacheRefreshTime",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('enrollment', models.DateTimeField(null=True)),
-                ('certificate', models.DateTimeField(null=True)),
-                ('current_grade', models.DateTimeField(null=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("enrollment", models.DateTimeField(null=True)),
+                ("certificate", models.DateTimeField(null=True)),
+                ("current_grade", models.DateTimeField(null=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

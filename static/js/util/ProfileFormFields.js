@@ -6,7 +6,7 @@ import {
   boundDateField,
   boundTextField,
   boundCheckbox,
-  boundTelephoneInput
+  boundTelephoneInput,
 } from "./profile_edit"
 
 export default class ProfileFormFields extends React.Component {
@@ -28,37 +28,37 @@ export default class ProfileFormFields extends React.Component {
 
   defaultInputComponentProps = (): Object => {
     return {
-      profile:                    this.props.profile,
-      updateProfile:              this.props.updateProfile,
-      saveProfile:                this.props.saveProfile,
-      errors:                     this.props.errors,
-      validator:                  this.props.validator,
-      updateValidationVisibility: this.props.updateValidationVisibility
+      profile: this.props.profile,
+      updateProfile: this.props.updateProfile,
+      saveProfile: this.props.saveProfile,
+      errors: this.props.errors,
+      validator: this.props.validator,
+      updateValidationVisibility: this.props.updateValidationVisibility,
     }
   }
 
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   }
 
   static propTypes = {
-    profile:                      PropTypes.object,
-    updateProfile:                PropTypes.func,
-    saveProfile:                  PropTypes.func,
-    errors:                       PropTypes.object,
-    setDeletionIndex:             PropTypes.func,
-    setShowWorkDeleteDialog:      PropTypes.func,
+    profile: PropTypes.object,
+    updateProfile: PropTypes.func,
+    saveProfile: PropTypes.func,
+    errors: PropTypes.object,
+    setDeletionIndex: PropTypes.func,
+    setShowWorkDeleteDialog: PropTypes.func,
     setShowEducationDeleteDialog: PropTypes.func,
-    showSwitch:                   PropTypes.bool,
-    validator:                    PropTypes.func,
-    updateValidationVisibility:   PropTypes.func
+    showSwitch: PropTypes.bool,
+    validator: PropTypes.func,
+    updateValidationVisibility: PropTypes.func,
   }
 
   closeConfirmDeleteDialog = (): void => {
     const {
       setDeletionIndex,
       setShowEducationDeleteDialog,
-      setShowWorkDeleteDialog
+      setShowWorkDeleteDialog,
     } = this.props
     setShowEducationDeleteDialog(false)
     setShowWorkDeleteDialog(false)

@@ -25,6 +25,10 @@ class ExamAuthorizationTest(TestCase):
         """
         Test method ExamAuthorization.__str__ prints correctly
         """
-        auth = ExamAuthorization(id=1, status=ExamProfile.PROFILE_IN_PROGRESS, user_id=2)
+        auth = ExamAuthorization(
+            id=1, status=ExamProfile.PROFILE_IN_PROGRESS, user_id=2
+        )
 
-        assert str(auth) == 'Exam Authorization "1" with status "in-progress" for user 2'
+        assert (
+            str(auth) == 'Exam Authorization "1" with status "in-progress" for user 2'
+        )

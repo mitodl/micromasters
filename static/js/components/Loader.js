@@ -6,7 +6,7 @@ export default class Loader extends React.Component {
   props: {
     loaded: boolean,
     children?: React$Element<*>[],
-    shouldRenderAll?: boolean
+    shouldRenderAll?: boolean,
   }
 
   renderAll = (loaded: boolean, children?: React$Element<*>[]) => [
@@ -19,7 +19,7 @@ export default class Loader extends React.Component {
     </div>,
     <div style={{ display: loaded ? "block" : "none" }} key="content">
       {children}
-    </div>
+    </div>,
   ]
 
   renderLoadedOrSpinner = (loaded: boolean, children?: React$Element<*>[]) =>

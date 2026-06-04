@@ -14,11 +14,11 @@ class ProctoredExamGradeSerializer(ModelSerializer):
     class Meta:
         model = ProctoredExamGrade
         fields = (
-            'exam_date',
-            'passing_score',
-            'score',
-            'grade',
-            'client_authorization_id',
-            'passed',
-            'percentage_grade',
+            "exam_date",
+            "passing_score",
+            "score",
+            "grade",
+            "client_authorization_id",
+            "passed",
+            "percentage_grade",
         )

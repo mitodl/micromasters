@@ -10,22 +10,22 @@ import type { Validator, UIValidator } from "../../lib/validation/profile"
 import type {
   Profile,
   ValidationErrors,
-  UpdateProfileFunc
+  UpdateProfileFunc,
 } from "../../flow/profileTypes"
 
 const stateOption = (stateInfo, code) => ({
   value: code,
-  label: stateInfo.name
+  label: stateInfo.name,
 })
 
-const statesForCountry = code =>
+const statesForCountry = (code) =>
   R.propOr({}, "sub", R.defaultTo({}, iso3166.data[code]))
 
 const stateOptions = R.compose(
   labelSort,
   R.values,
   R.mapObjIndexed(stateOption),
-  statesForCountry
+  statesForCountry,
 )
 
 type StateSelectProps = {
@@ -39,7 +39,7 @@ type StateSelectProps = {
   topMenu: boolean,
   updateProfile: UpdateProfileFunc,
   updateValidationVisibility: (xs: Array<string>) => void,
-  validator: Validator | UIValidator
+  validator: Validator | UIValidator,
 }
 
 export default (props: StateSelectProps) => {

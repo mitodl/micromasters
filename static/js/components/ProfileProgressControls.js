@@ -23,7 +23,7 @@ export default class ProfileProgressControls extends React.Component {
     programIdForEnrollment?: ?number,
     saveProfile: SaveProfileFunc,
     ui: UIState,
-    validator: Validator
+    validator: Validator,
   }
 
   stepBack = (): void => {
@@ -37,7 +37,7 @@ export default class ProfileProgressControls extends React.Component {
       isLastTab,
       validator,
       programIdForEnrollment,
-      addProgramEnrollment
+      addProgramEnrollment,
     } = this.props
 
     saveProfileStep
@@ -94,6 +94,6 @@ export default class ProfileProgressControls extends React.Component {
   }
 
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   }
 }

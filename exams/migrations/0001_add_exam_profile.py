@@ -5,20 +5,46 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('profiles', '0022_truncate_profile_image_uri'),
+        ("profiles", "0022_truncate_profile_image_uri"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ExamProfile',
+            name="ExamProfile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('pending', 'Sync Pending'), ('in-progress', 'Sync in Progress'), ('failed', 'Sync Failed'), ('success', 'Sync Succeeded'), ('invalid', 'Profile Invalid')], max_length=30)),
-                ('profile', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='exam_profile', to='profiles.Profile')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Sync Pending"),
+                            ("in-progress", "Sync in Progress"),
+                            ("failed", "Sync Failed"),
+                            ("success", "Sync Succeeded"),
+                            ("invalid", "Profile Invalid"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                (
+                    "profile",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exam_profile",
+                        to="profiles.Profile",
+                    ),
+                ),
             ],
         ),
     ]

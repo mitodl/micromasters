@@ -11,24 +11,23 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def forwards(apps, schema_editor):
     """load list of countries from file"""
-    countries_file = 'data/countries.csv'
+    countries_file = "data/countries.csv"
     countries_file_path = os.path.join(BASE_DIR, countries_file)
 
     with open(countries_file_path) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             Country.objects.create(
-                name=row['name'],
-                short_code=row['code'],
-                latitude=row['latitude'],
-                longitude=row['longitude']
+                name=row["name"],
+                short_code=row["code"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
             )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0033_list_counties'),
+        ("profiles", "0033_list_counties"),
     ]
 
     operations = [

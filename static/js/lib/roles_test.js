@@ -7,7 +7,7 @@ import {
   canAdvanceSearchProgram,
   canMessageLearnersProgram,
   hasRolePerm,
-  hasPermForProgram
+  hasPermForProgram,
 } from "./roles"
 
 describe("roles library", () => {
@@ -16,15 +16,15 @@ describe("roles library", () => {
   beforeEach(() => {
     roles = [
       {
-        role:        "staff",
-        program:     1,
-        permissions: []
+        role: "staff",
+        program: 1,
+        permissions: [],
       },
       {
-        role:        "student",
-        program:     2,
-        permissions: []
-      }
+        role: "student",
+        program: 2,
+        permissions: [],
+      },
     ]
   })
 

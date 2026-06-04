@@ -5,22 +5,21 @@ from django.db import migrations
 
 
 def forwards(apps, schema_editor):
-    Course = apps.get_model('courses', 'Course')
-    CourseRun = apps.get_model('courses', 'CourseRun')
+    Course = apps.get_model("courses", "Course")
+    CourseRun = apps.get_model("courses", "CourseRun")
 
     for run in CourseRun.objects.filter(course__isnull=True):
-        course, _ = Course.objects.get_or_create(
-            title=run.title, program=run.program)
+        course, _ = Course.objects.get_or_create(title=run.title, program=run.program)
         if run.prerequisites:
             course.prerequisites = run.prerequisites
             course.save()
         run.course = course
         run.save()
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('courses', '0004_courserun_course'),
+        ("courses", "0004_courserun_course"),
     ]
 
     operations = [

@@ -8,7 +8,7 @@ import R from "ramda"
 import { SearchkitManager, SearchkitProvider } from "searchkit"
 
 import FilterVisibilityToggle, {
-  FILTER_ID_ADJUST
+  FILTER_ID_ADJUST,
 } from "./FilterVisibilityToggle"
 import { makeStrippedHtml } from "../../util/util"
 import Icon from "@material-ui/core/Icon"
@@ -26,9 +26,9 @@ describe("FilterVisibilityToggle", () => {
     sandbox = sinon.sandbox.create()
     props = {
       checkFilterVisibility: checkFilterVisibility,
-      setFilterVisibility:   setFilterVisibility,
-      filterName:            filterName,
-      disabled:              false
+      setFilterVisibility: setFilterVisibility,
+      filterName: filterName,
+      disabled: false,
     }
   })
 
@@ -40,7 +40,7 @@ describe("FilterVisibilityToggle", () => {
     return renderFunc(
       <SearchkitProvider searchkit={searchKit}>
         <FilterVisibilityToggle {...props}>{children}</FilterVisibilityToggle>
-      </SearchkitProvider>
+      </SearchkitProvider>,
     )
   })
 
@@ -51,7 +51,7 @@ describe("FilterVisibilityToggle", () => {
     sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns(null)
     const toggle = renderStrippedHtmlToggle(
       props,
-      <div id="test">Test Text</div>
+      <div id="test">Test Text</div>,
     )
     assert.include(toggle, "Test Text")
   })
@@ -74,11 +74,11 @@ describe("FilterVisibilityToggle", () => {
       aggregations: {
         test: {
           doc_count: 10,
-          inner:     {
-            doc_count: 0
-          }
-        }
-      }
+          inner: {
+            doc_count: 0,
+          },
+        },
+      },
     })
     props.disabled = true
     const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
@@ -90,9 +90,9 @@ describe("FilterVisibilityToggle", () => {
     sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns({
       aggregations: {
         test: {
-          doc_count: 0
-        }
-      }
+          doc_count: 0,
+        },
+      },
     })
     const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
     const icon = wrapper.find("i.material-icons")
@@ -103,12 +103,12 @@ describe("FilterVisibilityToggle", () => {
     sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns({
       aggregations: {
         test: {
-          doc_count: 0
-        }
-      }
+          doc_count: 0,
+        },
+      },
     })
     searchKit.state = {
-      test: "value"
+      test: "value",
     }
     const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
     assert.lengthOf(wrapper.find(".title-row"), 1)
@@ -119,11 +119,11 @@ describe("FilterVisibilityToggle", () => {
       aggregations: {
         test: {
           doc_count: 10,
-          inner:     {
-            doc_count: 0
-          }
-        }
-      }
+          inner: {
+            doc_count: 0,
+          },
+        },
+      },
     })
     const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
     const icon = wrapper.find("i.material-icons")
@@ -134,9 +134,9 @@ describe("FilterVisibilityToggle", () => {
     sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns({
       aggregations: {
         test: {
-          doc_count: 9
-        }
-      }
+          doc_count: 9,
+        },
+      },
     })
     const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
     const icon = wrapper.find(".material-icons")
@@ -150,9 +150,9 @@ describe("FilterVisibilityToggle", () => {
       sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns({
         aggregations: {
           [`${value}123`]: {
-            doc_count: 2
-          }
-        }
+            doc_count: 2,
+          },
+        },
       })
       props.filterName = key
       const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>)
@@ -165,9 +165,9 @@ describe("FilterVisibilityToggle", () => {
     sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns({
       aggregations: {
         [`a.b.c.d.e.f456`]: {
-          doc_count: 2
-        }
-      }
+          doc_count: 2,
+        },
+      },
     })
     const key = "a.b.c.d.e.f"
     props.filterName = key
@@ -179,9 +179,9 @@ describe("FilterVisibilityToggle", () => {
     sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns({
       aggregations: {
         other_key: {
-          doc_count: 2
-        }
-      }
+          doc_count: 2,
+        },
+      },
     })
     const key = "a.b.c.d.e.f"
     props.filterName = key

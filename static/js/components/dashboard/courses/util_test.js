@@ -18,7 +18,7 @@ import {
   isEnrollableRun,
   isOfferedInUncertainFuture,
   hasMissedDeadlineCourseRun,
-  hasCanUpgradeCourseRun
+  hasCanUpgradeCourseRun,
 } from "./util"
 import {
   STATUS_PASSED,
@@ -30,7 +30,7 @@ import {
   STATUS_PENDING_ENROLLMENT,
   STATUS_MISSED_DEADLINE,
   STATUS_PAID_BUT_NOT_ENROLLED,
-  DASHBOARD_FORMAT
+  DASHBOARD_FORMAT,
 } from "../../../constants"
 import { assertIsNothing, assertIsJust } from "../../../lib/test_utils"
 
@@ -43,14 +43,12 @@ describe("dashboard course utilities", () => {
     })
 
     it("should show start date, if >10 days away", () => {
-      [10, 11, 15].forEach(days => {
-        const inTheFuture = moment()
-          .add(days, "days")
-          .add(10, "minutes")
+      ;[10, 11, 15].forEach((days) => {
+        const inTheFuture = moment().add(days, "days").add(10, "minutes")
         run.course_start_date = inTheFuture.format()
         assert.equal(
           courseStartDateMessage(run),
-          `Course starts ${inTheFuture.format(DASHBOARD_FORMAT)}`
+          `Course starts ${inTheFuture.format(DASHBOARD_FORMAT)}`,
         )
       })
     })
@@ -67,14 +65,12 @@ describe("dashboard course utilities", () => {
     })
 
     it('should say "started" if the course already started', () => {
-      run.course_start_date = moment()
-        .subtract(2, "days")
-        .format()
+      run.course_start_date = moment().subtract(2, "days").format()
       assert(courseStartDateMessage(run).startsWith("Course started"))
     })
 
     it("should return an empty string if there is no course start date", () => {
-      [null, undefined].forEach(nilVal => {
+      ;[null, undefined].forEach((nilVal) => {
         run.course_start_date = nilVal
         assert.equal(courseStartDateMessage(run), "")
       })
@@ -84,7 +80,7 @@ describe("dashboard course utilities", () => {
   describe("hasPearsonExam", () => {
     it("should check the has_exam property", () => {
       const course = makeCourse(0)
-      ;[true, false].forEach(bool => {
+      ;[true, false].forEach((bool) => {
         course.has_exam = bool
         assert.equal(bool, hasPearsonExam(course))
       })
@@ -97,8 +93,8 @@ describe("dashboard course utilities", () => {
       ;[
         STATUS_OFFERED,
         STATUS_PENDING_ENROLLMENT,
-        STATUS_PAID_BUT_NOT_ENROLLED
-      ].forEach(unenrolledStatus => {
+        STATUS_PAID_BUT_NOT_ENROLLED,
+      ].forEach((unenrolledStatus) => {
         run.status = unenrolledStatus
         assert.isFalse(userIsEnrolled(run))
       })
@@ -108,8 +104,8 @@ describe("dashboard course utilities", () => {
         STATUS_WILL_ATTEND,
         STATUS_CAN_UPGRADE,
         STATUS_CURRENTLY_ENROLLED,
-        STATUS_MISSED_DEADLINE
-      ].forEach(enrolledStatus => {
+        STATUS_MISSED_DEADLINE,
+      ].forEach((enrolledStatus) => {
         run.status = enrolledStatus
         assert.isTrue(userIsEnrolled(run))
       })
@@ -124,47 +120,31 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if the start date passed and the end date is in the future", () => {
-      run.course_start_date = moment()
-        .subtract(5, "days")
-        .format()
-      run.course_end_date = moment()
-        .add(5, "days")
-        .format()
+      run.course_start_date = moment().subtract(5, "days").format()
+      run.course_end_date = moment().add(5, "days").format()
       assert.isTrue(courseCurrentlyInProgress(run))
     })
 
     it("should return true for a future course run", () => {
-      run.course_start_date = moment()
-        .add(5, "days")
-        .format()
-      run.course_end_date = moment()
-        .add(25, "days")
-        .format()
+      run.course_start_date = moment().add(5, "days").format()
+      run.course_end_date = moment().add(25, "days").format()
       assert.isFalse(courseCurrentlyInProgress(run))
     })
 
     it("should return false for a past course run", () => {
-      run.course_start_date = moment()
-        .add(5, "days")
-        .format()
-      run.course_end_date = moment()
-        .add(25, "days")
-        .format()
+      run.course_start_date = moment().add(5, "days").format()
+      run.course_end_date = moment().add(25, "days").format()
       assert.isFalse(courseCurrentlyInProgress(run))
     })
 
     it("should return true if the start date passed and end date is empty", () => {
-      run.course_start_date = moment()
-        .subtract(5, "days")
-        .format()
+      run.course_start_date = moment().subtract(5, "days").format()
       run.course_end_date = ""
       assert.isTrue(courseCurrentlyInProgress(run))
     })
 
     it("should return false for a future course run end date is empty", () => {
-      run.course_start_date = moment()
-        .add(5, "days")
-        .format()
+      run.course_start_date = moment().add(5, "days").format()
       run.course_end_date = ""
       assert.isFalse(courseCurrentlyInProgress(run))
     })
@@ -178,16 +158,12 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if the end date is after the current time", () => {
-      run.course_end_date = moment()
-        .add(5, "days")
-        .format()
+      run.course_end_date = moment().add(5, "days").format()
       assert.isTrue(courseUpcomingOrCurrent(run))
     })
 
     it("should return false otherwise", () => {
-      run.course_end_date = moment()
-        .subtract(5, "days")
-        .format()
+      run.course_end_date = moment().subtract(5, "days").format()
       assert.isFalse(courseUpcomingOrCurrent(run))
     })
 
@@ -197,9 +173,7 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if course ended but status currently-enrolled", () => {
-      run.course_end_date = moment()
-        .subtract(5, "days")
-        .format()
+      run.course_end_date = moment().subtract(5, "days").format()
       run.status = STATUS_CURRENTLY_ENROLLED
       assert.isTrue(courseUpcomingOrCurrent(run))
     })
@@ -213,22 +187,22 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if status is PASSED or MISSED_DEADLINE", () => {
-      [STATUS_PASSED, STATUS_MISSED_DEADLINE].forEach(status => {
+      ;[STATUS_PASSED, STATUS_MISSED_DEADLINE].forEach((status) => {
         run.status = status
         assert.isTrue(isPassedOrMissedDeadline(run))
       })
     })
 
     it("should return false otherwise", () => {
-      [
+      ;[
         STATUS_NOT_PASSED,
         STATUS_OFFERED,
         STATUS_CAN_UPGRADE,
         STATUS_CURRENTLY_ENROLLED,
         STATUS_WILL_ATTEND,
         STATUS_PENDING_ENROLLMENT,
-        STATUS_PAID_BUT_NOT_ENROLLED
-      ].forEach(status => {
+        STATUS_PAID_BUT_NOT_ENROLLED,
+      ].forEach((status) => {
         run.status = status
         assert.isFalse(isPassedOrMissedDeadline(run))
       })
@@ -351,14 +325,14 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if the user has enrolled in any course run", () => {
-      [
+      ;[
         STATUS_PASSED,
         STATUS_NOT_PASSED,
         STATUS_CAN_UPGRADE,
         STATUS_CURRENTLY_ENROLLED,
         STATUS_WILL_ATTEND,
-        STATUS_MISSED_DEADLINE
-      ].forEach(status => {
+        STATUS_MISSED_DEADLINE,
+      ].forEach((status) => {
         course.runs[1].status = status
         assert.isTrue(hasEnrolledInAnyRun(course))
       })
@@ -385,18 +359,8 @@ describe("dashboard course utilities", () => {
     for (const data of [
       ["", false],
       [now.toISOString(), true],
-      [
-        moment()
-          .add(10, "days")
-          .toISOString(),
-        false
-      ],
-      [
-        moment()
-          .subtract(10, "days")
-          .toISOString(),
-        true
-      ]
+      [moment().add(10, "days").toISOString(), false],
+      [moment().subtract(10, "days").toISOString(), true],
     ]) {
       it(`should return ${
         data[1] ? "true" : "false"
@@ -421,12 +385,12 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if course run is offered in fuzzy future", () => {
-      [
+      ;[
         [STATUS_OFFERED, "Fuzzy date", null, true],
         [STATUS_WILL_ATTEND, "Fuzzy date", null, false],
         [STATUS_OFFERED, "Fuzzy date", moment(), false],
         [STATUS_OFFERED, "", null, false],
-        [STATUS_PAID_BUT_NOT_ENROLLED, "Fuzzy date", null, true]
+        [STATUS_PAID_BUT_NOT_ENROLLED, "Fuzzy date", null, true],
       ].forEach(([status, fuzzyDate, startDate, result]) => {
         course.runs[0].status = status
         course.runs[0].fuzzy_start_date = fuzzyDate

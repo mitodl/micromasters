@@ -1,4 +1,4 @@
-from django.db import migrations, models
+from django.db import migrations
 
 
 def forwards_func(apps, schema_editor):
@@ -28,9 +28,8 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0005_usercacherefreshtime'),
+        ("dashboard", "0005_usercacherefreshtime"),
     ]
 
     operations = [

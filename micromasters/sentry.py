@@ -29,8 +29,8 @@ def init_sentry(*, dsn, environment, version, log_level):
         Returns:
             dict or None: returns the modified event or None to filter out the event
         """
-        if 'exc_info' in hint:
-            _, exc_value, _ = hint['exc_info']
+        if "exc_info" in hint:
+            _, exc_value, _ = hint["exc_info"]
             if isinstance(exc_value, SHUTDOWN_ERRORS):
                 # we don't want to report shutdown errors to sentry
                 return None

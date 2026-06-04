@@ -15,9 +15,9 @@ from django.core.exceptions import ImproperlyConfigured
 from search.base import MockedESTestCase
 
 REQUIRED_SETTINGS = {
-    'MAILGUN_URL': 'http://fake.mailgun.url',
-    'MAILGUN_KEY': 'fake_mailgun_key',
-    'OPENSEARCH_INDEX': 'some_index',
+    "MAILGUN_URL": "http://fake.mailgun.url",
+    "MAILGUN_KEY": "fake_mailgun_key",
+    "OPENSEARCH_INDEX": "some_index",
 }
 
 
@@ -32,125 +32,140 @@ class TestSettings(MockedESTestCase):
         Returns:
             dict: dictionary of the newly reloaded settings ``vars``
         """
-        importlib.reload(sys.modules['micromasters.settings'])
+        importlib.reload(sys.modules["micromasters.settings"])
         # Restore settings to original settings after test
-        self.addCleanup(importlib.reload, sys.modules['micromasters.settings'])
-        return vars(sys.modules['micromasters.settings'])
+        self.addCleanup(importlib.reload, sys.modules["micromasters.settings"])
+        return vars(sys.modules["micromasters.settings"])
 
     def test_s3_settings(self):
         """Verify that we enable and configure S3 with a variable"""
         # Unset, we don't do S3
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            'MICROMASTERS_USE_S3': 'False'
-        }, clear=True):
+        with mock.patch.dict(
+            "os.environ",
+            {**REQUIRED_SETTINGS, "MICROMASTERS_USE_S3": "False"},
+            clear=True,
+        ):
             settings_vars = self.reload_settings()
-            storages = settings_vars.get('STORAGES', {})
+            storages = settings_vars.get("STORAGES", {})
             self.assertNotEqual(
-                storages.get('default', {}).get('BACKEND'),
-                'storages.backends.s3boto3.S3Boto3Storage'
+                storages.get("default", {}).get("BACKEND"),
+                "storages.backends.s3boto3.S3Boto3Storage",
             )
 
         with self.assertRaises(ImproperlyConfigured):
-            with mock.patch.dict('os.environ', {
-                **REQUIRED_SETTINGS,
-                'MICROMASTERS_USE_S3': 'True',
-            }, clear=True):
+            with mock.patch.dict(
+                "os.environ",
+                {
+                    **REQUIRED_SETTINGS,
+                    "MICROMASTERS_USE_S3": "True",
+                },
+                clear=True,
+            ):
                 self.reload_settings()
 
         # Verify it all works with it enabled and configured 'properly'
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            'MICROMASTERS_USE_S3': 'True',
-            'AWS_ACCESS_KEY_ID': '1',
-            'AWS_SECRET_ACCESS_KEY': '2',
-            'AWS_STORAGE_BUCKET_NAME': '3',
-        }, clear=True):
+        with mock.patch.dict(
+            "os.environ",
+            {
+                **REQUIRED_SETTINGS,
+                "MICROMASTERS_USE_S3": "True",
+                "AWS_ACCESS_KEY_ID": "1",
+                "AWS_SECRET_ACCESS_KEY": "2",
+                "AWS_STORAGE_BUCKET_NAME": "3",
+            },
+            clear=True,
+        ):
             settings_vars = self.reload_settings()
-            storages = settings_vars.get('STORAGES', {})
+            storages = settings_vars.get("STORAGES", {})
             self.assertEqual(
-                storages.get('default', {}).get('BACKEND'),
-                'storages.backends.s3boto3.S3Boto3Storage'
+                storages.get("default", {}).get("BACKEND"),
+                "storages.backends.s3boto3.S3Boto3Storage",
             )
 
     def test_admin_settings(self):
         """Verify that we configure email with environment variable"""
 
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            'MICROMASTERS_ADMIN_EMAIL': ''
-        }, clear=True):
+        with mock.patch.dict(
+            "os.environ",
+            {**REQUIRED_SETTINGS, "MICROMASTERS_ADMIN_EMAIL": ""},
+            clear=True,
+        ):
             settings_vars = self.reload_settings()
-            self.assertFalse(settings_vars.get('ADMINS', False))
+            self.assertFalse(settings_vars.get("ADMINS", False))
 
-        test_admin_email = 'cuddle_bunnies@example.com'
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            'MICROMASTERS_ADMIN_EMAIL': test_admin_email,
-        }, clear=True):
+        test_admin_email = "cuddle_bunnies@example.com"
+        with mock.patch.dict(
+            "os.environ",
+            {
+                **REQUIRED_SETTINGS,
+                "MICROMASTERS_ADMIN_EMAIL": test_admin_email,
+            },
+            clear=True,
+        ):
             settings_vars = self.reload_settings()
-            self.assertEqual(
-                (('Admins', test_admin_email),),
-                settings_vars['ADMINS']
-            )
+            self.assertEqual((("Admins", test_admin_email),), settings_vars["ADMINS"])
         # Manually set ADMIN to our test setting and verify e-mail
         # goes where we expect
-        settings.ADMINS = (('Admins', test_admin_email),)
-        mail.mail_admins('Test', 'message')
+        settings.ADMINS = (("Admins", test_admin_email),)
+        mail.mail_admins("Test", "message")
         self.assertIn(test_admin_email, mail.outbox[0].to)
 
     def test_db_ssl_enable(self):
         """Verify that we can enable/disable database SSL with a var"""
 
         # Check default state is SSL on
-        with mock.patch.dict('os.environ', REQUIRED_SETTINGS, clear=True):
+        with mock.patch.dict("os.environ", REQUIRED_SETTINGS, clear=True):
             settings_vars = self.reload_settings()
             self.assertEqual(
-                settings_vars['DATABASES']['default']['OPTIONS'],
-                {'sslmode': 'require'}
+                settings_vars["DATABASES"]["default"]["OPTIONS"], {"sslmode": "require"}
             )
 
         # Check enabling the setting explicitly
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            'MICROMASTERS_DB_DISABLE_SSL': 'True'
-        }, clear=True):
+        with mock.patch.dict(
+            "os.environ",
+            {**REQUIRED_SETTINGS, "MICROMASTERS_DB_DISABLE_SSL": "True"},
+            clear=True,
+        ):
             settings_vars = self.reload_settings()
-            self.assertEqual(
-                settings_vars['DATABASES']['default']['OPTIONS'],
-                {}
-            )
+            self.assertEqual(settings_vars["DATABASES"]["default"]["OPTIONS"], {})
 
         # Disable it
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            'MICROMASTERS_DB_DISABLE_SSL': 'False'
-        }, clear=True):
+        with mock.patch.dict(
+            "os.environ",
+            {**REQUIRED_SETTINGS, "MICROMASTERS_DB_DISABLE_SSL": "False"},
+            clear=True,
+        ):
             settings_vars = self.reload_settings()
             self.assertEqual(
-                settings_vars['DATABASES']['default']['OPTIONS'],
-                {'sslmode': 'require'}
+                settings_vars["DATABASES"]["default"]["OPTIONS"], {"sslmode": "require"}
             )
 
     @data(*REQUIRED_SETTINGS.keys())
     def test_required(self, missing_param):
         """An ImproperlyConfigured exception should be raised for each param missing here"""
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            missing_param: '',
-        }, clear=True), self.assertRaises(ImproperlyConfigured):
+        with mock.patch.dict(
+            "os.environ",
+            {
+                **REQUIRED_SETTINGS,
+                missing_param: "",
+            },
+            clear=True,
+        ), self.assertRaises(ImproperlyConfigured):
             self.reload_settings()
 
     def test_opensearch_index_pr_build(self):
         """For PR builds we will use the heroku app name instead of the given OPENSEARCH_INDEX"""
-        index_name = 'heroku_app_name_as_index'
-        with mock.patch.dict('os.environ', {
-            **REQUIRED_SETTINGS,
-            'HEROKU_APP_NAME': index_name,
-            'HEROKU_PARENT_APP_NAME': 'some_name',
-        }):
+        index_name = "heroku_app_name_as_index"
+        with mock.patch.dict(
+            "os.environ",
+            {
+                **REQUIRED_SETTINGS,
+                "HEROKU_APP_NAME": index_name,
+                "HEROKU_PARENT_APP_NAME": "some_name",
+            },
+        ):
             settings_vars = self.reload_settings()
-            assert settings_vars['OPENSEARCH_INDEX'] == index_name
+            assert settings_vars["OPENSEARCH_INDEX"] == index_name
 
     @staticmethod
     def test_semantic_version():

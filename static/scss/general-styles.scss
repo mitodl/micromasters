@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   font-size: inherit;
@@ -6,11 +7,10 @@ html, body {
 
 body {
   background-color: $page-background;
-  font-family: 'Roboto', helvetica, arial, sans-serif !important;
+  font-family: "Roboto", helvetica, arial, sans-serif !important;
   line-height: 1.4em;
   color: $font-black;
 }
-
 
 .card {
   padding: 8px 0 10px 10px;
@@ -31,7 +31,6 @@ body {
     font-size: 16px;
     color: $font-black;
     margin: 0 0 15px;
-
   }
 
   .grid-padding {
@@ -47,9 +46,12 @@ li.menu-item {
   font-size: 14px;
 }
 
-.mdl-shadow--2dp, .mdl-shadow--3dp {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+.mdl-shadow--2dp,
+.mdl-shadow--3dp {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 p {
@@ -61,7 +63,8 @@ a {
   font-weight: inherit;
 }
 
-a:focus, a:hover {
+a:focus,
+a:hover {
   color: $link-hover;
 }
 
@@ -74,7 +77,8 @@ blockquote {
   border: none;
 }
 
-blockquote:before, blockquote:after {
+blockquote:before,
+blockquote:after {
   content: none;
 }
 

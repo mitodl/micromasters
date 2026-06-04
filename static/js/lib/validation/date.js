@@ -16,31 +16,31 @@ const trimLeadingZeros = (length, input) =>
   input.length <= length ? input : R.replace(/^0+/, "", input)
 
 export const sanitizeNumberString = R.curry((length, input) =>
-  R.slice(0, length, trimLeadingZeros(length, digits(String(input))))
+  R.slice(0, length, trimLeadingZeros(length, digits(String(input)))),
 )
 
 /**
  * validate a day input
  */
-export const checkDayRange = ifNil(day => (day > 31 ? Just(31) : Just(day)))
+export const checkDayRange = ifNil((day) => (day > 31 ? Just(31) : Just(day)))
 
 export const validateDay = R.compose(
   checkDayRange,
   filterPositiveInt,
-  sanitizeNumberString(2)
+  sanitizeNumberString(2),
 )
 
 /**
  * Validate a month input
  */
-export const checkMonthRange = ifNil(month =>
-  month > 12 ? Just(12) : Just(month)
+export const checkMonthRange = ifNil((month) =>
+  month > 12 ? Just(12) : Just(month),
 )
 
 export const validateMonth = R.compose(
   checkMonthRange,
   filterPositiveInt,
-  sanitizeNumberString(2)
+  sanitizeNumberString(2),
 )
 
 /**
@@ -69,8 +69,8 @@ export const validateYear = ifNil(
   R.compose(
     validYearInput(moment().year()),
     filterPositiveInt,
-    sanitizeNumberString(4)
-  )
+    sanitizeNumberString(4),
+  ),
 )
 
 /**
@@ -78,12 +78,8 @@ export const validateYear = ifNil(
  */
 export const validateNearFutureYear = ifNil(
   R.compose(
-    validYearInput(
-      moment()
-        .add(10, "years")
-        .year()
-    ),
+    validYearInput(moment().add(10, "years").year()),
     filterPositiveInt,
-    sanitizeNumberString(4)
-  )
+    sanitizeNumberString(4),
+  ),
 )

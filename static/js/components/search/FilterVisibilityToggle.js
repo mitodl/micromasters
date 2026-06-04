@@ -8,8 +8,8 @@ import IconButton from "@material-ui/core/IconButton"
 import { getAppliedFilterValue, matchFieldName } from "./util"
 
 export const FILTER_ID_ADJUST = {
-  courses:  "program.courses.course_title",
-  semester: "program.course_runs.semester"
+  courses: "program.courses.course_title",
+  semester: "program.course_runs.semester",
 }
 
 export default class FilterVisibilityToggle extends SearchkitComponent {
@@ -20,7 +20,7 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
     checkFilterVisibility: (filterName: string) => boolean,
     setFilterVisibility: (filterName: string, visibility: boolean) => void,
     stayVisibleIfFilterApplied: string,
-    children: React$Element<*>
+    children: React$Element<*>,
   }
 
   openClass = (): string => {
@@ -36,7 +36,7 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
   getChildFacetDocCount = (results: Object, resultIdPrefix: string): number => {
     const matchingAggKey = R.compose(
       R.find(matchFieldName(resultIdPrefix)),
-      R.keys
+      R.keys,
     )(results.aggregations)
 
     if (!matchingAggKey) {
@@ -99,11 +99,8 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
   }
 
   toggleFilterVisibility = (): void => {
-    const {
-      filterName,
-      checkFilterVisibility,
-      setFilterVisibility
-    } = this.props
+    const { filterName, checkFilterVisibility, setFilterVisibility } =
+      this.props
     setFilterVisibility(filterName, !checkFilterVisibility(filterName))
   }
 

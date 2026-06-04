@@ -15,7 +15,7 @@ import {
   UPDATE_EMAIL_VALIDATION,
   INITIATE_SEND_EMAIL,
   SEND_EMAIL_SUCCESS,
-  SEND_EMAIL_FAILURE
+  SEND_EMAIL_FAILURE,
 } from "../actions/email"
 import { INITIAL_ALL_EMAILS_STATE, INITIAL_EMAIL_STATE } from "./email"
 import { SEARCH_EMAIL_TYPE } from "../components/email/constants"
@@ -32,7 +32,7 @@ describe("email reducers", () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.email)
+    dispatchThen = store.createDispatchThen((state) => state.email)
   })
 
   afterEach(() => {
@@ -43,12 +43,12 @@ describe("email reducers", () => {
 
   it("should let you start editing an email", () => {
     return dispatchThen(startEmailEdit(emailType), [START_EMAIL_EDIT]).then(
-      state => {
+      (state) => {
         assert.deepEqual(state[emailType], {
           ...initialExpectedEmailState,
-          supportsAutomaticEmails: undefined
+          supportsAutomaticEmails: undefined,
         })
-      }
+      },
     )
   })
 
@@ -58,12 +58,12 @@ describe("email reducers", () => {
     updatedInputs.body = "The body of my email"
     return dispatchThen(
       updateEmailEdit({ type: emailType, inputs: updatedInputs }),
-      [UPDATE_EMAIL_EDIT]
-    ).then(state => {
+      [UPDATE_EMAIL_EDIT],
+    ).then((state) => {
       assert.deepEqual(state[emailType], {
         ...initialExpectedEmailState,
         supportsAutomaticEmails: undefined,
-        inputs:                  updatedInputs
+        inputs: updatedInputs,
       })
     })
   })
@@ -73,8 +73,8 @@ describe("email reducers", () => {
       dispatchThen(clearEmailEdit(emailType), [CLEAR_EMAIL_EDIT]),
       {
         ...INITIAL_ALL_EMAILS_STATE,
-        [emailType]: INITIAL_EMAIL_STATE
-      }
+        [emailType]: INITIAL_EMAIL_STATE,
+      },
     )
   })
 
@@ -83,8 +83,8 @@ describe("email reducers", () => {
     const errors = { subject: "NO SUBJECT" }
     return dispatchThen(
       updateEmailValidation({ type: emailType, errors: errors }),
-      [UPDATE_EMAIL_VALIDATION]
-    ).then(state => {
+      [UPDATE_EMAIL_VALIDATION],
+    ).then((state) => {
       assert.deepEqual(state[emailType].validationErrors, errors)
     })
   })
@@ -112,15 +112,15 @@ describe("email reducers for the sendMail action", () => {
     return helper
       .dispatchThen(
         sendEmail(emailType, helper.sendSearchResultMail, sendEmailArguments),
-        [INITIATE_SEND_EMAIL, SEND_EMAIL_SUCCESS]
+        [INITIATE_SEND_EMAIL, SEND_EMAIL_SUCCESS],
       )
-      .then(state => {
+      .then((state) => {
         assert.equal(state.email[emailType].fetchStatus, FETCH_SUCCESS)
         assert.equal(helper.sendSearchResultMail.callCount, 1)
         assert.deepEqual(helper.sendSearchResultMail.args[0], [
           "subject",
           "body",
-          searchRequest
+          searchRequest,
         ])
       })
   })
@@ -131,9 +131,9 @@ describe("email reducers for the sendMail action", () => {
     return helper
       .dispatchThen(
         sendEmail(emailType, helper.sendSearchResultMail, sendEmailArguments),
-        [INITIATE_SEND_EMAIL, SEND_EMAIL_FAILURE]
+        [INITIATE_SEND_EMAIL, SEND_EMAIL_FAILURE],
       )
-      .then(state => {
+      .then((state) => {
         assert.equal(state.email[emailType].fetchStatus, FETCH_FAILURE)
       })
   })

@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0005_populate_timestamps'),
+        ("exams", "0005_populate_timestamps"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='examprofile',
-            name='created_on',
+            model_name="examprofile",
+            name="created_on",
             field=models.DateTimeField(auto_now_add=True),
         ),
         migrations.AlterField(
-            model_name='examprofile',
-            name='updated_on',
+            model_name="examprofile",
+            name="updated_on",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

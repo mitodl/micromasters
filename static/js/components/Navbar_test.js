@@ -9,28 +9,28 @@ import Navbar from "./Navbar"
 import {
   USER_PROFILE_RESPONSE,
   DASHBOARD_RESPONSE,
-  PROGRAMS
+  PROGRAMS,
 } from "../test_constants"
 
 describe("Navbar", () => {
   const props = {
-    profile:   USER_PROFILE_RESPONSE,
+    profile: USER_PROFILE_RESPONSE,
     dashboard: { programs: DASHBOARD_RESPONSE },
-    programs:  PROGRAMS
+    programs: PROGRAMS,
   }
 
   const renderNavbar = () => shallow(<Navbar {...props} />)
 
   it("has a link to the dashboard if the user has no roles", () => {
     const wrapper = renderNavbar()
-    const hrefs = wrapper.find(Link).map(link => link.props()["to"])
+    const hrefs = wrapper.find(Link).map((link) => link.props()["to"])
     assert.deepEqual(hrefs, [
       "/learner/jane",
       "/learner/jane",
       "/dashboard",
       "/learner/jane",
       "/settings",
-      "/dashboard"
+      "/dashboard",
     ])
   })
 
@@ -38,7 +38,7 @@ describe("Navbar", () => {
     for (const role of ["staff", "instructor"]) {
       SETTINGS.roles = [{ role, permissions: [] }]
       const wrapper = renderNavbar()
-      const hrefs = wrapper.find(Link).map(link => link.props()["to"])
+      const hrefs = wrapper.find(Link).map((link) => link.props()["to"])
       assert.deepEqual(hrefs, [
         "/learner/jane",
         "/learner/jane",
@@ -46,7 +46,7 @@ describe("Navbar", () => {
         "/automaticemails",
         "/learner/jane",
         "/settings",
-        "/learners"
+        "/learners",
       ])
     }
   })
@@ -61,7 +61,7 @@ describe("Navbar", () => {
     const wrapper = renderNavbar()
     assert.isTrue(
       wrapper.find(".menu-icon").exists(),
-      "menu icon should be displayed"
+      "menu icon should be displayed",
     )
   })
 
@@ -70,7 +70,7 @@ describe("Navbar", () => {
     const wrapper = renderNavbar()
     assert.isFalse(
       wrapper.find(".menu-icon").exists(),
-      "menu icon should not be displayed"
+      "menu icon should not be displayed",
     )
   })
 })

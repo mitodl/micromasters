@@ -56,13 +56,13 @@ import {
   showEnrollPayLaterSuccess,
   setShowExpandedCourseStatus,
   setProgramsToUnEnroll,
-  setUnEnrollApiInFlightState
+  setUnEnrollApiInFlightState,
 } from "../actions/ui"
 import { assertCreatedActionHelper } from "./test_util"
 
 describe("generated UI action helpers", () => {
   it("should create all action creators", () => {
-    [
+    ;[
       [clearUI, CLEAR_UI],
       [setWorkDialogVisibility, SET_WORK_DIALOG_VISIBILITY],
       [setWorkDialogIndex, SET_WORK_DIALOG_INDEX],
@@ -91,7 +91,7 @@ describe("generated UI action helpers", () => {
       [showEnrollPayLaterSuccess, SHOW_ENROLL_PAY_LATER_SUCCESS],
       [setShowExpandedCourseStatus, SET_SHOW_EXPANDED_COURSE_STATUS],
       [setProgramsToUnEnroll, SET_PROGRAMS_TO_UNENROLL],
-      [setUnEnrollApiInFlightState, SET_UNENROLL_API_INFLIGHT_STATE]
+      [setUnEnrollApiInFlightState, SET_UNENROLL_API_INFLIGHT_STATE],
     ].forEach(assertCreatedActionHelper)
   })
 })

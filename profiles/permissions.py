@@ -36,16 +36,19 @@ class CanSeeIfNotPrivate(BasePermission):
         """
         Implementation of the permission class.
         """
-        profile = get_object_or_404(Profile, user__username=view.kwargs['user'])
+        profile = get_object_or_404(Profile, user__username=view.kwargs["user"])
 
         if request.user == profile.user:
             return True
 
         # If viewer is instructor or staff in the program, skip this check
-        if not request.user.is_anonymous and request.user.role_set.filter(
+        if (
+            not request.user.is_anonymous
+            and request.user.role_set.filter(
                 role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
                 program__programenrollment__user__profile=profile,
-        ).exists():
+            ).exists()
+        ):
             return True
 
         # private profiles
@@ -56,10 +59,18 @@ class CanSeeIfNotPrivate(BasePermission):
             if request.user.is_anonymous:
                 raise Http404
             # requesting user must have enrollment in one of program where profile user is enroll.
-            program_ids = ProgramEnrollment.objects.filter(user=profile.user).values_list('program__id', flat=True)
-            if not ProgramEnrollment.objects.filter(user=request.user, program__id__in=program_ids).exists():
+            program_ids = ProgramEnrollment.objects.filter(
+                user=profile.user
+            ).values_list("program__id", flat=True)
+            if not ProgramEnrollment.objects.filter(
+                user=request.user, program__id__in=program_ids
+            ).exists():
                 raise Http404
-        elif profile.account_privacy not in [Profile.PRIVATE, Profile.PUBLIC_TO_MM, Profile.PUBLIC]:
+        elif profile.account_privacy not in [
+            Profile.PRIVATE,
+            Profile.PUBLIC_TO_MM,
+            Profile.PUBLIC,
+        ]:
             raise Http404
 
         return True

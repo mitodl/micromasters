@@ -5,49 +5,78 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0024_add_timestamp'),
-        ('exams', '0006_exam_profile_timestamps_not_null'),
+        ("courses", "0024_add_timestamp"),
+        ("exams", "0006_exam_profile_timestamps_not_null"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ExamRun',
+            name="ExamRun",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('exam_series_code', models.CharField(max_length=20)),
-                ('date_first_schedulable', models.DateTimeField()),
-                ('date_last_schedulable', models.DateTimeField()),
-                ('date_first_eligible', models.DateField()),
-                ('date_last_eligible', models.DateField()),
-                ('authorized', models.BooleanField(default=False)),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exam_runs', to='courses.Course')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                ("exam_series_code", models.CharField(max_length=20)),
+                ("date_first_schedulable", models.DateTimeField()),
+                ("date_last_schedulable", models.DateTimeField()),
+                ("date_first_eligible", models.DateField()),
+                ("date_last_eligible", models.DateField()),
+                ("authorized", models.BooleanField(default=False)),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exam_runs",
+                        to="courses.Course",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AlterField(
-            model_name='examauthorization',
-            name='date_first_eligible',
+            model_name="examauthorization",
+            name="date_first_eligible",
             field=models.DateField(null=True),
         ),
         migrations.AlterField(
-            model_name='examauthorization',
-            name='date_last_eligible',
+            model_name="examauthorization",
+            name="date_last_eligible",
             field=models.DateField(null=True),
         ),
         migrations.AlterField(
-            model_name='examauthorization',
-            name='status',
-            field=models.CharField(choices=[('pending', 'Sync Pending'), ('sending', 'Sync Sending'), ('in-progress', 'Sync in Progress'), ('failed', 'Sync Failed'), ('success', 'Sync Suceeded')], default='pending', max_length=30),
+            model_name="examauthorization",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("pending", "Sync Pending"),
+                    ("sending", "Sync Sending"),
+                    ("in-progress", "Sync in Progress"),
+                    ("failed", "Sync Failed"),
+                    ("success", "Sync Suceeded"),
+                ],
+                default="pending",
+                max_length=30,
+            ),
         ),
         migrations.AddField(
-            model_name='examauthorization',
-            name='exam_run',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='exam_authorizations', to='exams.ExamRun'),
+            model_name="examauthorization",
+            name="exam_run",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="exam_authorizations",
+                to="exams.ExamRun",
+            ),
         ),
     ]

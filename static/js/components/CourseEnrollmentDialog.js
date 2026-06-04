@@ -23,7 +23,7 @@ const dialogTitle = (course, setDialogVisibility) => (
 // eslint-disable-next-line require-jsdoc
 export default class CourseEnrollmentDialog extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   }
 
   props: {
@@ -31,7 +31,7 @@ export default class CourseEnrollmentDialog extends React.Component {
     setVisibility: (v: boolean) => void,
     course: Course,
     courseRun: CourseRun,
-    addCourseEnrollment: (courseId: string) => Promise<*>
+    addCourseEnrollment: (courseId: string) => Promise<*>,
   }
 
   handlePayClick = () => {

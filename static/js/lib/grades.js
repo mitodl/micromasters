@@ -8,25 +8,17 @@ import type { Course } from "../flow/programTypes"
 // this modules has some helper functions for calculating
 // and processing grades, mainly for displaying them in the dashboard
 
-const findLargestGrade = key =>
-  R.compose(
-    R.prop(key),
-    R.reduce(R.maxBy(R.prop(key)), { [key]: 0 })
-  )
+const findLargestGrade = (key) =>
+  R.compose(R.prop(key), R.reduce(R.maxBy(R.prop(key)), { [key]: 0 }))
 
-const filterEmpty = S.filter(
-  R.compose(
-    R.not,
-    R.isEmpty
-  )
-)
+const filterEmpty = S.filter(R.compose(R.not, R.isEmpty))
 
 // getLargestExamGrade :: Course -> Maybe Number
 export const getLargestExamGrade = R.compose(
-  S.map(percentage => percentage * 100),
+  S.map((percentage) => percentage * 100),
   S.map(findLargestGrade("percentage_grade")),
   filterEmpty,
-  getm("proctorate_exams_grades")
+  getm("proctorate_exams_grades"),
 )
 
 // getLargestCourseGrade :: Course -> Maybe Number
@@ -34,22 +26,22 @@ export const getLargestCourseGrade = R.compose(
   S.map(findLargestGrade("final_grade")),
   filterEmpty,
   S.map(S.filter(R.has("final_grade"))),
-  getm("runs")
+  getm("runs"),
 )
 
 export const hasPassingExamGrade = R.compose(
   R.any(R.propEq("passed", true)),
-  R.propOr([], "proctorate_exams_grades")
+  R.propOr([], "proctorate_exams_grades"),
 )
 
 export const hasFailingExamGrade = R.compose(
   R.any(R.propEq("passed", false)),
-  R.propOr([], "proctorate_exams_grades")
+  R.propOr([], "proctorate_exams_grades"),
 )
 
 export const hasPassedCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_PASSED)),
-  R.propOr([], "runs")
+  R.propOr([], "runs"),
 )
 
 export const passedCourse = (course: Course): boolean => {

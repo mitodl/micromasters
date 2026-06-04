@@ -4,15 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0010_add_skipped'),
+        ("financialaid", "0010_add_skipped"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='financialaid',
-            name='status',
-            field=models.CharField(choices=[('created', 'created'), ('approved', 'approved'), ('auto-approved', 'auto-approved'), ('pending-docs', 'pending-docs'), ('docs-sent', 'docs-sent'), ('pending-manual-approval', 'pending-manual-approval'), ('skipped', 'skipped')], default='created', max_length=30),
+            model_name="financialaid",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("created", "created"),
+                    ("approved", "approved"),
+                    ("auto-approved", "auto-approved"),
+                    ("pending-docs", "pending-docs"),
+                    ("docs-sent", "docs-sent"),
+                    ("pending-manual-approval", "pending-manual-approval"),
+                    ("skipped", "skipped"),
+                ],
+                default="created",
+                max_length=30,
+            ),
         ),
     ]

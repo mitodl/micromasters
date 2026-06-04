@@ -4,45 +4,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0020_add_is_active_and_audit_letters'),
+        ("grades", "0020_add_is_active_and_audit_letters"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='combinedfinalgradeaudit',
-            name='data_after',
+            model_name="combinedfinalgradeaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='combinedfinalgradeaudit',
-            name='data_before',
+            model_name="combinedfinalgradeaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='finalgradeaudit',
-            name='data_after',
+            model_name="finalgradeaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='finalgradeaudit',
-            name='data_before',
+            model_name="finalgradeaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='proctoredexamgrade',
-            name='row_data',
+            model_name="proctoredexamgrade",
+            name="row_data",
             field=models.JSONField(),
         ),
         migrations.AlterField(
-            model_name='proctoredexamgradeaudit',
-            name='data_after',
+            model_name="proctoredexamgradeaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='proctoredexamgradeaudit',
-            name='data_before',
+            model_name="proctoredexamgradeaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
     ]

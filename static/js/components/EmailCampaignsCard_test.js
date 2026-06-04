@@ -16,10 +16,10 @@ describe("EmailCampaignsCard", () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     emailCardProps = {
-      getEmails:         sandbox.stub(),
-      emailsInFlight:    new Set(),
+      getEmails: sandbox.stub(),
+      emailsInFlight: new Set(),
       toggleEmailActive: sandbox.stub(),
-      openEmailComposer: sandbox.stub()
+      openEmailComposer: sandbox.stub(),
     }
 
     emailCardProps.getEmails.returns(S.Right(GET_AUTOMATIC_EMAILS_RESPONSE))
@@ -36,10 +36,10 @@ describe("EmailCampaignsCard", () => {
 
   it("should render all emails and header text, if Right", () => {
     const cardText = renderCard().text()
-    GET_AUTOMATIC_EMAILS_RESPONSE.forEach(email => {
+    GET_AUTOMATIC_EMAILS_RESPONSE.forEach((email) => {
       assert.include(cardText, email.email_subject)
     })
-    headers.forEach(header => {
+    headers.forEach((header) => {
       assert.include(cardText, header)
     })
   })
@@ -48,35 +48,28 @@ describe("EmailCampaignsCard", () => {
     emailCardProps.getEmails.returns(S.Left(<div>I'm a message</div>))
     const cardText = renderCard().text()
     assert.include(cardText, "I'm a message")
-    headers.forEach(header => {
+    headers.forEach((header) => {
       assert.notInclude(cardText, header)
     })
   })
 
   it("should render a switch, and call toggleEmailActive on click", () => {
     const card = renderCard()
-    card
-      .find(Switch)
-      .first()
-      .props()
-      .onChange()
+    card.find(Switch).first().props().onChange()
     assert(
       emailCardProps.toggleEmailActive.calledWith(
-        GET_AUTOMATIC_EMAILS_RESPONSE[0]
-      )
+        GET_AUTOMATIC_EMAILS_RESPONSE[0],
+      ),
     )
   })
 
   it('should render an "edit" button, and call openEmailComposer with the AutomaticEmail on click', () => {
     const card = renderCard()
-    card
-      .find("a")
-      .first()
-      .simulate("click")
+    card.find("a").first().simulate("click")
     assert(
       emailCardProps.openEmailComposer.calledWith(
-        GET_AUTOMATIC_EMAILS_RESPONSE[0]
-      )
+        GET_AUTOMATIC_EMAILS_RESPONSE[0],
+      ),
     )
   })
 

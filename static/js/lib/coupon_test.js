@@ -8,14 +8,14 @@ import {
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE,
-  COUPON_AMOUNT_TYPE_FIXED_PRICE
+  COUPON_AMOUNT_TYPE_FIXED_PRICE,
 } from "../constants"
 import {
   calculateDiscount,
   calculatePrices,
   makeAmountMessage,
   makeCouponReason,
-  makeCouponMessage
+  makeCouponMessage,
 } from "./coupon"
 import * as couponFuncs from "./coupon"
 import {
@@ -23,7 +23,7 @@ import {
   makeCourseCoupon,
   makeCoursePrices,
   makeDashboard,
-  makeProgram
+  makeProgram,
 } from "../factories/dashboard"
 
 describe("coupon utility functions", () => {
@@ -50,10 +50,10 @@ describe("coupon utility functions", () => {
 
     it("returns an empty set of maps if there are no programs", () => {
       assert.deepEqual(calculatePrices([], [], []), {
-        pricesInclCouponByRun:     new Map(),
-        pricesInclCouponByCourse:  new Map(),
+        pricesInclCouponByRun: new Map(),
+        pricesInclCouponByCourse: new Map(),
         pricesInclCouponByProgram: new Map(),
-        pricesExclCouponByProgram: new Map()
+        pricesExclCouponByProgram: new Map(),
       })
     })
 
@@ -64,17 +64,17 @@ describe("coupon utility functions", () => {
       for (const program of programs) {
         expectedProgramPrices.set(program.id, {
           coupon: null,
-          price:  pricesLookup.get(program.id)
+          price: pricesLookup.get(program.id),
         })
         for (const course of program.courses) {
           expectedCoursePrices.set(course.id, {
             coupon: null,
-            price:  pricesLookup.get(program.id)
+            price: pricesLookup.get(program.id),
           })
           for (const run of course.runs) {
             expectedRunPrices.set(run.id, {
               coupon: null,
-              price:  pricesLookup.get(program.id)
+              price: pricesLookup.get(program.id),
             })
           }
         }
@@ -84,8 +84,8 @@ describe("coupon utility functions", () => {
       assert.deepEqual(prices, {
         pricesExclCouponByProgram: expectedProgramPrices,
         pricesInclCouponByProgram: expectedProgramPrices,
-        pricesInclCouponByCourse:  expectedCoursePrices,
-        pricesInclCouponByRun:     expectedRunPrices
+        pricesInclCouponByCourse: expectedCoursePrices,
+        pricesInclCouponByRun: expectedRunPrices,
       })
     })
 
@@ -97,23 +97,23 @@ describe("coupon utility functions", () => {
       const prices = calculatePrices(programs, coursePrices, [coupon])
 
       assert.deepEqual(prices.pricesInclCouponByProgram.get(program.id), {
-        price:  priceWithCoupon,
-        coupon: coupon
+        price: priceWithCoupon,
+        coupon: coupon,
       })
       assert.deepEqual(prices.pricesExclCouponByProgram.get(program.id), {
-        price:  programPrice,
-        coupon: null
+        price: programPrice,
+        coupon: null,
       })
 
       for (const course of program.courses) {
         assert.deepEqual(prices.pricesInclCouponByCourse.get(course.id), {
-          price:  priceWithCoupon,
-          coupon: coupon
+          price: priceWithCoupon,
+          coupon: coupon,
         })
         for (const run of course.runs) {
           assert.deepEqual(prices.pricesInclCouponByRun.get(run.id), {
-            price:  priceWithCoupon,
-            coupon: coupon
+            price: priceWithCoupon,
+            coupon: coupon,
           })
         }
       }
@@ -130,22 +130,22 @@ describe("coupon utility functions", () => {
       const prices = calculatePrices(programs, coursePrices, [coupon])
 
       assert.deepEqual(prices.pricesInclCouponByProgram.get(program.id), {
-        price:  programPrice,
-        coupon: null
+        price: programPrice,
+        coupon: null,
       })
       assert.deepEqual(prices.pricesExclCouponByProgram.get(program.id), {
-        price:  programPrice,
-        coupon: null
+        price: programPrice,
+        coupon: null,
       })
 
       assert.deepEqual(prices.pricesInclCouponByCourse.get(course.id), {
-        price:  priceWithCoupon,
-        coupon: coupon
+        price: priceWithCoupon,
+        coupon: coupon,
       })
       for (const run of course.runs) {
         assert.deepEqual(prices.pricesInclCouponByRun.get(run.id), {
-          price:  priceWithCoupon,
-          coupon: coupon
+          price: priceWithCoupon,
+          coupon: coupon,
         })
       }
     })
@@ -156,14 +156,14 @@ describe("coupon utility functions", () => {
       const actual1 = calculateDiscount(
         Decimal("123"),
         COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
-        Decimal("50")
+        Decimal("50"),
       )
       const expected1 = Decimal("73")
       assert(actual1.equals(expected1))
       const actual2 = calculateDiscount(
         Decimal("123"),
         COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
-        Decimal("123")
+        Decimal("123"),
       )
       const expected2 = Decimal("0")
       assert(actual2.equals(expected2))
@@ -173,14 +173,14 @@ describe("coupon utility functions", () => {
       const actual1 = calculateDiscount(
         Decimal("123"),
         COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-        Decimal("0.5")
+        Decimal("0.5"),
       )
       const expected1 = Decimal("61.5")
       assert(actual1.equals(expected1))
       const actual2 = calculateDiscount(
         Decimal(123),
         COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-        Decimal(1)
+        Decimal(1),
       )
       const expected2 = Decimal("0")
       assert(actual2.equals(expected2))
@@ -190,14 +190,14 @@ describe("coupon utility functions", () => {
       const actual1 = calculateDiscount(
         Decimal("123"),
         COUPON_AMOUNT_TYPE_FIXED_PRICE,
-        Decimal("50")
+        Decimal("50"),
       )
       const expected1 = Decimal("50")
       assert(actual1.equals(expected1))
       const actual2 = calculateDiscount(
         Decimal("123"),
         COUPON_AMOUNT_TYPE_FIXED_PRICE,
-        Decimal("150")
+        Decimal("150"),
       )
       const expected2 = Decimal("123")
       assert(actual2.equals(expected2))
@@ -207,14 +207,14 @@ describe("coupon utility functions", () => {
       const actual1 = calculateDiscount(
         Decimal("123"),
         COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
-        Decimal("150")
+        Decimal("150"),
       )
       const expected1 = Decimal("0")
       assert(actual1.equals(expected1))
       const actual2 = calculateDiscount(
         Decimal("50"),
         COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
-        Decimal("-50")
+        Decimal("-50"),
       )
       const expected2 = Decimal("50")
       assert(actual2.equals(expected2))
@@ -249,7 +249,7 @@ describe("coupon utility functions", () => {
       coupon.coupon_type = COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE
       assert.equal(
         makeCouponReason(coupon),
-        ", because you have taken it before"
+        ", because you have taken it before",
       )
     })
 
@@ -273,7 +273,7 @@ describe("coupon utility functions", () => {
       const coupon = makeCoupon(makeProgram())
       assert.equal(
         makeCouponMessage(coupon),
-        "You will get $50 off the cost for each course in this program."
+        "You will get $50 off the cost for each course in this program.",
       )
     })
 
@@ -288,7 +288,7 @@ describe("coupon utility functions", () => {
         .returns(", because why not")
       assert.equal(
         makeCouponMessage(coupon),
-        "You will get all of the money off the cost for this course, because why not."
+        "You will get all of the money off the cost for this course, because why not.",
       )
       assert.isTrue(makeAmountMessageStub.calledWith(coupon))
       assert.isTrue(makeCouponTargetMessageStub.calledWith(coupon))
@@ -305,7 +305,7 @@ describe("coupon utility functions", () => {
       coupon.amount_type = COUPON_AMOUNT_TYPE_FIXED_PRICE
       assert.equal(
         makeCouponMessage(coupon),
-        "All courses are set to the discounted price of $50."
+        "All courses are set to the discounted price of $50.",
       )
     })
 
@@ -316,7 +316,7 @@ describe("coupon utility functions", () => {
       coupon.amount_type = COUPON_AMOUNT_TYPE_FIXED_PRICE
       assert.equal(
         makeCouponMessage(coupon),
-        "This course is set to the discounted price of $50."
+        "This course is set to the discounted price of $50.",
       )
     })
   })

@@ -13,7 +13,7 @@ const progressHref = (courseRun: CourseRun) =>
 
 type ProgressType = {
   courseRun: CourseRun,
-  className: string
+  className: string,
 }
 
 // flow disagrees with me here

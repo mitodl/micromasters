@@ -39,31 +39,31 @@ class ExamProfileValidationTests(MockedESTestCase):
         """
         assert validate_profile(self.profile) is True
 
-    @data('address', 'city', 'state_or_territory', 'country', 'phone_number')
+    @data("address", "city", "state_or_territory", "country", "phone_number")
     def test_when_field_is_blank(self, field):
         """
         test validate_profile when a field is empty
         """
-        setattr(self.profile, field, '')
+        setattr(self.profile, field, "")
         self.profile.save()
         assert validate_profile(self.profile) is False
 
-    @data('address', 'city', 'state_or_territory', 'country', 'phone_number')
+    @data("address", "city", "state_or_territory", "country", "phone_number")
     def test_when_field_is_invalid(self, field):
         """
         test validate_profile when a field is invalid
         """
-        setattr(self.profile, field, '汉字')
+        setattr(self.profile, field, "汉字")
         self.profile.save()
         assert validate_profile(self.profile) is False
 
     @data(
-        ('AD', '通州区', True),
-        ('AD', '', True),
-        ('CA', '通州区', False),
-        ('CA', '', False),
-        ('US', '通州区', False),
-        ('US', '', False)
+        ("AD", "通州区", True),
+        ("AD", "", True),
+        ("CA", "通州区", False),
+        ("CA", "", False),
+        ("US", "通州区", False),
+        ("US", "", False),
     )
     @unpack
     def test_postal_code(self, country, postal_code, result):
@@ -76,10 +76,7 @@ class ExamProfileValidationTests(MockedESTestCase):
         assert validate_profile(self.profile) is result
 
     @data(
-        ('汉字', 'Andrew', True),
-        ('', 'Andrew', True),
-        ('汉字', '', False),
-        ('', '', False)
+        ("汉字", "Andrew", True), ("", "Andrew", True), ("汉字", "", False), ("", "", False)
     )
     @unpack
     def test_romanized_name(self, name, romanized_name, result):
@@ -91,7 +88,7 @@ class ExamProfileValidationTests(MockedESTestCase):
         self.profile.save()
         assert validate_profile(self.profile) is result
 
-    @data('汉字', '')
+    @data("汉字", "")
     def test_user_email(self, email):
         """
         test invalid email
@@ -110,17 +107,18 @@ class CorrespondingCourseRunTests(MockedESTestCase):
         (2, True),
         (4, True),
         (5, False),
-
     )
     @unpack
     def test_get_corresponding_course_run(self, weeks, has_course_run):
         """test get_past_recent_exam_run"""
         now = now_in_utc()
-        exam_run = ExamRunFactory.create(date_first_schedulable=now+datetime.timedelta(weeks=weeks))
+        exam_run = ExamRunFactory.create(
+            date_first_schedulable=now + datetime.timedelta(weeks=weeks)
+        )
         expected = CourseRunFactory.create(
             course=exam_run.course,
-            start_date=now-datetime.timedelta(weeks=16),
-            end_date=now
+            start_date=now - datetime.timedelta(weeks=16),
+            end_date=now,
         )
         if has_course_run:
             self.assertEqual(get_corresponding_course_run(exam_run), expected)

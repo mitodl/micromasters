@@ -45,30 +45,30 @@ class UserCanMessageSpecificLearnerPermission(BasePermission):
             return False
 
         sender_user = request.user
-        recipient_enrolled_program_ids = obj.user.programenrollment_set.values_list('program', flat=True)
+        recipient_enrolled_program_ids = obj.user.programenrollment_set.values_list(
+            "program", flat=True
+        )
 
         # If the sender is a staff/instructor in any of the recipients enrolled programs, the
         # sender has permission
         if sender_user.role_set.filter(
-                role__in=[Staff.ROLE_ID, Instructor.ROLE_ID],
-                program__id__in=recipient_enrolled_program_ids
+            role__in=[Staff.ROLE_ID, Instructor.ROLE_ID],
+            program__id__in=recipient_enrolled_program_ids,
         ).exists():
             return True
 
         # If the sender is enrolled in any course run in any of the recipient's enrolled programs, the
         # sender has permission (payments discontinued)
         matching_program_enrollments = (
-            sender_user.programenrollment_set
-            .filter(program__id__in=recipient_enrolled_program_ids)
-            .select_related('program').all()
+            sender_user.programenrollment_set.filter(
+                program__id__in=recipient_enrolled_program_ids
+            )
+            .select_related("program")
+            .all()
         )
         edx_user_data = CachedEdxUserData(sender_user)
         for program_enrollment in matching_program_enrollments:
-            mmtrack = MMTrack(
-                sender_user,
-                program_enrollment.program,
-                edx_user_data
-            )
+            mmtrack = MMTrack(sender_user, program_enrollment.program, edx_user_data)
             if mmtrack.get_all_enrolled_course_runs():
                 return True
 
@@ -97,19 +97,18 @@ class UserCanMessageCourseTeamPermission(BasePermission):
             return False
         # Make sure the user is enrolled in any course run for the given course
         edx_user_data = CachedEdxUserData(user)
-        mmtrack = MMTrack(
-            user,
-            program,
-            edx_user_data
+        mmtrack = MMTrack(user, program, edx_user_data)
+        course_run_keys = obj.courserun_set.values_list("edx_course_key", flat=True)
+        return any(
+            mmtrack.is_enrolled(course_run_key) for course_run_key in course_run_keys
         )
-        course_run_keys = obj.courserun_set.values_list('edx_course_key', flat=True)
-        return any(mmtrack.is_enrolled(course_run_key) for course_run_key in course_run_keys)
 
 
 class MailGunWebHookPermission(BasePermission):
     """
     Verifies HMAC signature for Mailgun webhook
     """
+
     @classmethod
     def verify(cls, token, timestamp, signature):
         """
@@ -124,13 +123,11 @@ class MailGunWebHookPermission(BasePermission):
             boolean: True if signature is valid
         """
         if timestamp is not None and signature is not None and token is not None:
-            key_bytes = bytes(settings.MAILGUN_KEY, 'latin-1')
-            data_bytes = bytes(f'{timestamp}{token}', 'latin-1')
+            key_bytes = bytes(settings.MAILGUN_KEY, "latin-1")
+            data_bytes = bytes(f"{timestamp}{token}", "latin-1")
 
             hmac_digest = hmac.new(
-                key=key_bytes,
-                msg=data_bytes,
-                digestmod=hashlib.sha256
+                key=key_bytes, msg=data_bytes, digestmod=hashlib.sha256
             ).hexdigest()
             return hmac.compare_digest(signature, hmac_digest)
 

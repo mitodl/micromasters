@@ -8,7 +8,7 @@ import {
   hasPassingExamGrade,
   hasFailingExamGrade,
   hasPassedCourseRun,
-  passedCourse
+  passedCourse,
 } from "./grades"
 import {
   STATUS_PASSED,
@@ -19,7 +19,7 @@ import {
   STATUS_WILL_ATTEND,
   STATUS_PENDING_ENROLLMENT,
   STATUS_MISSED_DEADLINE,
-  STATUS_PAID_BUT_NOT_ENROLLED
+  STATUS_PAID_BUT_NOT_ENROLLED,
 } from "../constants"
 
 import { assertIsNothing, assertIsJust } from "./test_utils"
@@ -61,7 +61,7 @@ describe("Grades library", () => {
 
     beforeEach(() => {
       course = {
-        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult)
+        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult),
       }
     })
     it("should return true if the user has any passed exam grades", () => {
@@ -70,7 +70,7 @@ describe("Grades library", () => {
     })
 
     it("should return false otherwise", () => {
-      course.proctorate_exams_grades.forEach(grade => {
+      course.proctorate_exams_grades.forEach((grade) => {
         grade.passed = false
       })
       assert.isFalse(hasPassingExamGrade(course))
@@ -82,7 +82,7 @@ describe("Grades library", () => {
 
     beforeEach(() => {
       course = {
-        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult)
+        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult),
       }
     })
     it("should return true if the user has any failing exam grades", () => {
@@ -91,7 +91,7 @@ describe("Grades library", () => {
     })
 
     it("should return false otherwise", () => {
-      course.proctorate_exams_grades.forEach(grade => {
+      course.proctorate_exams_grades.forEach((grade) => {
         grade.passed = true
       })
       assert.isFalse(hasFailingExamGrade(course))
@@ -115,7 +115,7 @@ describe("Grades library", () => {
     })
 
     it("should return false otherwise", () => {
-      [
+      ;[
         STATUS_NOT_PASSED,
         STATUS_OFFERED,
         STATUS_CAN_UPGRADE,
@@ -123,9 +123,9 @@ describe("Grades library", () => {
         STATUS_WILL_ATTEND,
         STATUS_PENDING_ENROLLMENT,
         STATUS_MISSED_DEADLINE,
-        STATUS_PAID_BUT_NOT_ENROLLED
-      ].forEach(status => {
-        course.runs.forEach(run => {
+        STATUS_PAID_BUT_NOT_ENROLLED,
+      ].forEach((status) => {
+        course.runs.forEach((run) => {
           run.status = status
         })
         assert.isFalse(hasPassedCourseRun(course))

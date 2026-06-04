@@ -5,15 +5,21 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0017_programfaculty'),
+        ("cms", "0017_programfaculty"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='programfaculty',
-            name='image',
-            field=models.ForeignKey(blank=True, help_text='Image for the faculty member. Should be 500px by 385px.', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image'),
+            model_name="programfaculty",
+            name="image",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Image for the faculty member. Should be 500px by 385px.",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="wagtailimages.Image",
+            ),
         ),
     ]

@@ -4,16 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('search', '0002_percolatequery_original_query'),
+        ("search", "0002_percolatequery_original_query"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='percolatequery',
-            name='source_type',
-            field=models.CharField(choices=[('automatic_email_type', 'automatic_email_type'), ('discussion_channel_type', 'discussion_channel_type')], default='automatic_email_type', max_length=255),
+            model_name="percolatequery",
+            name="source_type",
+            field=models.CharField(
+                choices=[
+                    ("automatic_email_type", "automatic_email_type"),
+                    ("discussion_channel_type", "discussion_channel_type"),
+                ],
+                default="automatic_email_type",
+                max_length=255,
+            ),
             preserve_default=False,
         ),
     ]

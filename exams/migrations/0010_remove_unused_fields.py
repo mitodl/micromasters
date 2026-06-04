@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0009_not_nullable_exam_run'),
+        ("exams", "0009_not_nullable_exam_run"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='examauthorization',
-            name='date_first_eligible',
+            model_name="examauthorization",
+            name="date_first_eligible",
         ),
         migrations.RemoveField(
-            model_name='examauthorization',
-            name='date_last_eligible',
+            model_name="examauthorization",
+            name="date_last_eligible",
         ),
     ]

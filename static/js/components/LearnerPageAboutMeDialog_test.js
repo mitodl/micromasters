@@ -36,27 +36,27 @@ describe("LearnerPageAboutMeDialog", () => {
           clearProfileEdit={clearProfileEdit}
           saveProfile={saveProfile}
           ui={{
-            learnerPageAboutMeDialogVisibility: true
+            learnerPageAboutMeDialogVisibility: true,
           }}
           {...props}
         />
       </MuiThemeProvider>,
       {
-        context:           { router: {} },
-        childContextTypes: { router: PropTypes.object }
-      }
+        context: { router: {} },
+        childContextTypes: { router: PropTypes.object },
+      },
     )
 
   it("render dialog with data", () => {
     renderDialog({
       profile: {
         ...USER_PROFILE_RESPONSE,
-        about_me: "Hello world"
-      }
+        about_me: "Hello world",
+      },
     })
     assert.equal(
       document.querySelector(".dialog-title").textContent,
-      "About Me"
+      "About Me",
     )
     assert.equal(document.querySelector("textarea").textContent, "Hello world")
   })
@@ -65,7 +65,7 @@ describe("LearnerPageAboutMeDialog", () => {
     renderDialog()
     assert.equal(
       document.querySelector(".dialog-title").textContent,
-      "About Me"
+      "About Me",
     )
     assert.equal(document.querySelector("textarea").textContent, "")
   })
@@ -73,8 +73,8 @@ describe("LearnerPageAboutMeDialog", () => {
   it("render dialog when visibility set to false", () => {
     renderDialog({
       ui: {
-        learnerPageAboutMeDialogVisibility: false
-      }
+        learnerPageAboutMeDialogVisibility: false,
+      },
     })
     assert.isNull(document.querySelector("h3.dialog-title"))
     assert.isNull(document.querySelector("textarea"))
@@ -95,7 +95,7 @@ describe("LearnerPageAboutMeDialog", () => {
   it("disables the save button during profile update", () => {
     const dialogActionsSpy = sandbox.spy(inputUtil, "dialogActions")
     renderDialog({
-      profilePatchStatus: FETCH_PROCESSING
+      profilePatchStatus: FETCH_PROCESSING,
     })
     // assert that inFlight is true
     assert.isTrue(dialogActionsSpy.lastCall.args[2])

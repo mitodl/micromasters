@@ -9,8 +9,8 @@ import CustomPaginationDisplay from "./CustomPaginationDisplay"
 describe("CustomPaginationDisplay", () => {
   const toggleItemStub = sinon.stub()
   const props = {
-    disabled:   false,
-    toggleItem: toggleItemStub
+    disabled: false,
+    toggleItem: toggleItemStub,
   }
 
   afterEach(() => {
@@ -33,11 +33,11 @@ describe("CustomPaginationDisplay", () => {
     const previousOption = wrapper.find('[data-key="previous"]')
     const event = {
       preventDefault: (): void => {},
-      target:         {
+      target: {
         getAttribute: (): string => {
           return "previous"
-        }
-      }
+        },
+      },
     }
 
     previousOption.at(0).simulate("click", event, toggleItemStub)
@@ -49,11 +49,11 @@ describe("CustomPaginationDisplay", () => {
     const nextOption = wrapper.find('[data-key="next"]')
     const event = {
       preventDefault: (): void => {},
-      target:         {
+      target: {
         getAttribute: (): string => {
           return "next"
-        }
-      }
+        },
+      },
     }
 
     nextOption.at(0).simulate("click", event, toggleItemStub)

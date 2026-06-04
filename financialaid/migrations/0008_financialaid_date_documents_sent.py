@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0007_currencyexchangerate'),
+        ("financialaid", "0007_currencyexchangerate"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='financialaid',
-            name='date_documents_sent',
+            model_name="financialaid",
+            name="date_documents_sent",
             field=models.DateField(null=True),
         ),
     ]

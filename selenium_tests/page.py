@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 
 class BasePage:
     """Base class to represent a page in the app"""
+
     def __init__(self, browser):
         self.browser = browser
 

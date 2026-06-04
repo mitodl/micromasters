@@ -6,24 +6,54 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0024_programtabpage'),
+        ("cms", "0024_programtabpage"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='InfoLinks',
+            name="InfoLinks",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('url', models.URLField(blank=True, help_text='A url for an external page. There will be a link to this url from the program page.', null=True)),
-                ('title_url', models.TextField(blank=True, help_text='The text for the link to an external homepage.')),
-                ('program_page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='info_links', to='cms.ProgramPage')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "url",
+                    models.URLField(
+                        blank=True,
+                        help_text="A url for an external page. There will be a link to this url from the program page.",
+                        null=True,
+                    ),
+                ),
+                (
+                    "title_url",
+                    models.TextField(
+                        blank=True,
+                        help_text="The text for the link to an external homepage.",
+                    ),
+                ),
+                (
+                    "program_page",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="info_links",
+                        to="cms.ProgramPage",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

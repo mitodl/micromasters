@@ -42,7 +42,7 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
         """
         perm = CanReadIfStaffOrSelf()
         request = Mock(user=Mock(is_anonymous=True))
-        view = Mock(kwargs={'user': 'username'})
+        view = Mock(kwargs={"user": "username"})
         with self.assertRaises(Http404):
             perm.has_permission(request, view)
 
@@ -53,7 +53,7 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
         for user in (self.learner1, self.staff):
             perm = CanReadIfStaffOrSelf()
             request = Mock(user=user)
-            view = Mock(kwargs={'username': 'AFSDFASDFASDF'})
+            view = Mock(kwargs={"username": "AFSDFASDFASDF"})
             with self.assertRaises(Http404):
                 perm.has_permission(request, view)
 
@@ -63,7 +63,7 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
         """
         perm = CanReadIfStaffOrSelf()
         request = Mock(user=self.learner1)
-        view = Mock(kwargs={'username': self.learner1.username})
+        view = Mock(kwargs={"username": self.learner1.username})
         assert perm.has_permission(request, view) is True
 
     def test_learners_cannot_get_other_learners(self):
@@ -73,7 +73,7 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
         perm = CanReadIfStaffOrSelf()
         with mute_signals(post_save):
             request = Mock(user=self.learner1)
-            view = Mock(kwargs={'username': self.learner2.username})
+            view = Mock(kwargs={"username": self.learner2.username})
             with self.assertRaises(Http404):
                 perm.has_permission(request, view)
 
@@ -91,5 +91,5 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
                 role=role.ROLE_ID,
             )
             request = Mock(user=self.staff)
-            view = Mock(kwargs={'username': self.learner1.username})
+            view = Mock(kwargs={"username": self.learner1.username})
             assert perm.has_permission(request, view) is True

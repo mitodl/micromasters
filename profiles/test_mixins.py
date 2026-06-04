@@ -2,6 +2,7 @@
 Reusable test mixins for profile tests
 """
 
+
 class ProfileImageCleanupMixin:
     """
     Mixin to clean up profile image fields in tearDown to prevent ResourceWarning.
@@ -50,11 +51,11 @@ class ProfileImageCleanupMixin:
         profiles = []
 
         # Check for self.profile
-        if hasattr(self, 'profile'):
+        if hasattr(self, "profile"):
             profiles.append(self.profile)
 
         # Check for user1 and user2 (common pattern in view tests)
-        for user_attr in ['user1', 'user2']:
+        for user_attr in ["user1", "user2"]:
             if hasattr(self, user_attr):
                 user = getattr(self, user_attr)
                 try:

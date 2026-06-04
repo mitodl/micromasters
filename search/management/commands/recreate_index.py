@@ -12,6 +12,7 @@ class Command(BaseCommand):
     """
     Command for recreate_index
     """
+
     help = "Starts a new celery task that clears existing Opensearch indices and creates a new index and mapping."
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
@@ -33,6 +34,4 @@ class Command(BaseCommand):
         log.info("recreate_index has finished successfully!")
 
         total_seconds = (now_in_utc() - start).total_seconds()
-        self.stdout.write(
-            f"Recreate index finished, took {total_seconds} seconds"
-        )
+        self.stdout.write(f"Recreate index finished, took {total_seconds} seconds")

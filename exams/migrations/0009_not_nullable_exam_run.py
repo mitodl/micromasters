@@ -5,15 +5,18 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0008_populate_exam_run'),
+        ("exams", "0008_populate_exam_run"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='examauthorization',
-            name='exam_run',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exam_authorizations', to='exams.ExamRun'),
+            model_name="examauthorization",
+            name="exam_run",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="exam_authorizations",
+                to="exams.ExamRun",
+            ),
         ),
     ]

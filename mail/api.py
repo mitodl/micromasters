@@ -33,7 +33,8 @@ class MailgunClient:
     """
     Provides functions for communicating with the Mailgun REST API.
     """
-    _basic_auth_credentials = ('api', settings.MAILGUN_KEY)
+
+    _basic_auth_credentials = ("api", settings.MAILGUN_KEY)
 
     @staticmethod
     def default_params():
@@ -44,11 +45,11 @@ class MailgunClient:
         Returns:
             dict: A dict of default parameters for the Mailgun API
         """
-        return {'from': settings.EMAIL_SUPPORT}
+        return {"from": settings.EMAIL_SUPPORT}
 
     @classmethod
     def _mailgun_request(  # pylint: disable=too-many-arguments
-            cls, request_func, endpoint, params, sender_name=None, raise_for_status=True
+        cls, request_func, endpoint, params, sender_name=None, raise_for_status=True
     ):
         """
         Sends a request to the Mailgun API
@@ -61,16 +62,14 @@ class MailgunClient:
         Returns:
             requests.Response: HTTP response
         """
-        mailgun_url = f'{settings.MAILGUN_URL}/{endpoint}'
+        mailgun_url = f"{settings.MAILGUN_URL}/{endpoint}"
         email_params = cls.default_params()
         email_params.update(params)
         # Update 'from' address if sender_name was specified
         if sender_name is not None:
-            email_params['from'] = f"{sender_name} <{email_params['from']}>"
+            email_params["from"] = f"{sender_name} <{email_params['from']}>"
         response = request_func(
-            mailgun_url,
-            auth=cls._basic_auth_credentials,
-            data=email_params
+            mailgun_url, auth=cls._basic_auth_credentials, data=email_params
         )
         if response.status_code == status.HTTP_401_UNAUTHORIZED:
             message = "Mailgun API keys not properly configured."
@@ -81,9 +80,17 @@ class MailgunClient:
         return response
 
     @classmethod
-    def send_batch(cls, subject, body, recipients,  # pylint: disable=too-many-arguments, too-many-locals
-                   sender_address=None, sender_name=None, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
-                   raise_for_status=True, log_error_on_bounce=True):
+    def send_batch(
+        cls,
+        subject,
+        body,
+        recipients,  # pylint: disable=too-many-arguments, too-many-locals
+        sender_address=None,
+        sender_name=None,
+        chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
+        raise_for_status=True,
+        log_error_on_bounce=True,
+    ):
         """
         Sends a text email to a list of recipients (one email per recipient) via batch.
 
@@ -110,16 +117,17 @@ class MailgunClient:
                along with recipients we failed to send to.
         """
         # Convert null contexts to empty dicts
-        recipients = (
-            (email, context or {}) for email, context in recipients
-        )
+        recipients = ((email, context or {}) for email, context in recipients)
 
         if settings.MAILGUN_RECIPIENT_OVERRIDE is not None:
             # This is used for debugging only
-            body = '{body}\n\n[overridden recipient]\n{recipient_data}'.format(
+            body = "{body}\n\n[overridden recipient]\n{recipient_data}".format(
                 body=body,
-                recipient_data='\n'.join(
-                    [f"{recipient}: {json.dumps(context)}" for recipient, context in recipients]
+                recipient_data="\n".join(
+                    [
+                        f"{recipient}: {json.dumps(context)}"
+                        for recipient, context in recipients
+                    ]
                 ),
             )
             recipients = [(settings.MAILGUN_RECIPIENT_OVERRIDE, {})]
@@ -127,35 +135,37 @@ class MailgunClient:
         # parse our HTML body in order to generate a plain-text fallback
         # the only thing we need to do manually is ensure that we keep the
         # href for any URLs in the text
-        soup = BeautifulSoup(body, 'html5lib')
-        for link in soup.find_all('a'):
-            link.replace_with(link.attrs['href'])
+        soup = BeautifulSoup(body, "html5lib")
+        for link in soup.find_all("a"):
+            link.replace_with(link.attrs["href"])
         fallback_text = soup.get_text().strip()
 
         responses = []
         exception_pairs = []
 
         for chunk in chunks(recipients, chunk_size=chunk_size):
-            chunk_dict = {email: context for email, context in chunk}  # pylint: disable=unnecessary-comprehension
+            chunk_dict = {
+                email: context for email, context in chunk
+            }  # pylint: disable=unnecessary-comprehension
             emails = list(chunk_dict.keys())
 
             params = {
-                'to': emails,
-                'subject': filter_recipient_variables(subject),
-                'html': filter_recipient_variables(body),
-                'text': filter_recipient_variables(fallback_text),
-                'recipient-variables': json.dumps(chunk_dict),
-                'v:my-custom-data': json.dumps({
-                    "log_error_on_bounce": log_error_on_bounce
-                })
+                "to": emails,
+                "subject": filter_recipient_variables(subject),
+                "html": filter_recipient_variables(body),
+                "text": filter_recipient_variables(fallback_text),
+                "recipient-variables": json.dumps(chunk_dict),
+                "v:my-custom-data": json.dumps(
+                    {"log_error_on_bounce": log_error_on_bounce}
+                ),
             }
             if sender_address:
-                params['from'] = sender_address
+                params["from"] = sender_address
 
             try:
                 response = cls._mailgun_request(
                     requests.post,
-                    'messages',
+                    "messages",
                     params,
                     sender_name=sender_name,
                     raise_for_status=raise_for_status,
@@ -165,9 +175,7 @@ class MailgunClient:
             except ImproperlyConfigured:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                exception_pairs.append(
-                    (emails, exception)
-                )
+                exception_pairs.append((emails, exception))
 
         if len(exception_pairs) > 0:
             raise SendBatchException(exception_pairs)
@@ -175,9 +183,17 @@ class MailgunClient:
         return responses
 
     @classmethod
-    def send_individual_email(cls, subject, body, recipient,  # pylint: disable=too-many-arguments
-                              recipient_variables=None, sender_address=None, sender_name=None,
-                              raise_for_status=True, log_error_on_bounce=True):
+    def send_individual_email(
+        cls,
+        subject,
+        body,
+        recipient,  # pylint: disable=too-many-arguments
+        recipient_variables=None,
+        sender_address=None,
+        sender_name=None,
+        raise_for_status=True,
+        log_error_on_bounce=True,
+    ):
         """
         Sends a text email to a single recipient.
 
@@ -202,31 +218,37 @@ class MailgunClient:
             sender_address=sender_address,
             sender_name=sender_name,
             raise_for_status=raise_for_status,
-            log_error_on_bounce=log_error_on_bounce
+            log_error_on_bounce=log_error_on_bounce,
         )
         return responses[0]
 
     @classmethod
     def send_course_team_email(  # pylint: disable=too-many-arguments
-            cls, user, course, subject, body, raise_for_status=True, log_error_on_bounce=True
+        cls,
+        user,
+        course,
+        subject,
+        body,
+        raise_for_status=True,
+        log_error_on_bounce=True,
     ):
         """
-       Sends a text email from a user to a course team.
+        Sends a text email from a user to a course team.
 
-       Args:
-            user (User): A User
-            course (courses.models.Course): A Course
-            subject (str): Email subject
-            body (str): Email body
-            raise_for_status (bool): If true and we received a non 2xx status code from Mailgun, raise an exception
-            log_error_on_bounce (bool): App will log bounce email event when True
+        Args:
+             user (User): A User
+             course (courses.models.Course): A Course
+             subject (str): Email subject
+             body (str): Email body
+             raise_for_status (bool): If true and we received a non 2xx status code from Mailgun, raise an exception
+             log_error_on_bounce (bool): App will log bounce email event when True
 
-       Returns:
-            requests.Response: HTTP Response from Mailgun
-       """
+        Returns:
+             requests.Response: HTTP Response from Mailgun
+        """
         if not course.contact_email:
             raise ImproperlyConfigured(
-                'Course team contact email attempted for course without contact_email'
+                "Course team contact email attempted for course without contact_email"
                 '(id: {}, title: "{}")'.format(course.id, course.title)
             )
         response = cls.send_individual_email(
@@ -236,7 +258,7 @@ class MailgunClient:
             sender_address=user.email,
             sender_name=user.profile.display_name,
             raise_for_status=raise_for_status,
-            log_error_on_bounce=log_error_on_bounce
+            log_error_on_bounce=log_error_on_bounce,
         )
         return response
 
@@ -248,7 +270,9 @@ def send_automatic_emails(program_enrollment):
     Args:
         program_enrollment (ProgramEnrollment): A ProgramEnrollment
     """
-    percolate_queries = search_percolate_queries(program_enrollment.id, PercolateQuery.AUTOMATIC_EMAIL_TYPE)
+    percolate_queries = search_percolate_queries(
+        program_enrollment.id, PercolateQuery.AUTOMATIC_EMAIL_TYPE
+    )
     automatic_emails = AutomaticEmail.objects.filter(
         query__in=percolate_queries,
         enabled=True,
@@ -259,18 +283,27 @@ def send_automatic_emails(program_enrollment):
             with mark_emails_as_sent(automatic_email, [user.email]) as user_ids:
                 # user_ids should just contain user.id except when we already sent the user the email
                 # in a separate process
-                recipient_emails = User.objects.filter(id__in=user_ids).values_list('email', flat=True)
+                recipient_emails = User.objects.filter(id__in=user_ids).values_list(
+                    "email", flat=True
+                )
                 MailgunClient.send_batch(
                     automatic_email.email_subject,
                     automatic_email.email_body,
-                    [(context['email'], context) for context in get_mail_vars(list(recipient_emails))],
+                    [
+                        (context["email"], context)
+                        for context in get_mail_vars(list(recipient_emails))
+                    ],
                     sender_name=automatic_email.sender_name,
                 )
         except:  # pylint: disable=bare-except
-            log.exception("Error sending mailgun mail for automatic email %s", automatic_email)
+            log.exception(
+                "Error sending mailgun mail for automatic email %s", automatic_email
+            )
 
 
-def add_automatic_email(original_search, email_subject, email_body, sender_name, staff_user):
+def add_automatic_email(
+    original_search, email_subject, email_body, sender_name, staff_user
+):
     """
     Add an automatic email entry
 
@@ -312,7 +345,7 @@ def mark_emails_as_sent(automatic_email, emails):
     Yields:
         queryset of user id: A queryset of user ids which represent users who haven't been sent emails yet
     """
-    user_ids = list(User.objects.filter(email__in=emails).values_list('id', flat=True))
+    user_ids = list(User.objects.filter(email__in=emails).values_list("id", flat=True))
 
     # At any point the SentAutomaticEmail will be in three possible states:
     # it doesn't exist, status=PENDING, and status=SENT. They should only change state in that direction, ie
@@ -333,7 +366,9 @@ def mark_emails_as_sent(automatic_email, emails):
             automatic_email=automatic_email,
             status=SentAutomaticEmail.PENDING,
         )
-        user_ids_left = list(sent_queryset.select_for_update().values_list('user_id', flat=True))
+        user_ids_left = list(
+            sent_queryset.select_for_update().values_list("user_id", flat=True)
+        )
         # We yield the list of user ids here to let the block know which emails have not yet been sent
         yield user_ids_left
         sent_queryset.update(status=SentAutomaticEmail.SENT)
@@ -350,15 +385,20 @@ def get_mail_vars(emails):
         generator of dict:
             A dictionary of template variables which includes email so we can tell who is who
     """
-    queryset = Profile.objects.filter(user__email__in=emails).values(
-        'user__email',
-        'mail_id',
-        'preferred_name',
-    ).iterator()
+    queryset = (
+        Profile.objects.filter(user__email__in=emails)
+        .values(
+            "user__email",
+            "mail_id",
+            "preferred_name",
+        )
+        .iterator()
+    )
     return (
         {
-            'email': values['user__email'],
-            'mail_id': values['mail_id'].hex,
-            'preferred_name': values['preferred_name'],
-        } for values in queryset
+            "email": values["user__email"],
+            "mail_id": values["mail_id"].hex,
+            "preferred_name": values["preferred_name"],
+        }
+        for values in queryset
     )

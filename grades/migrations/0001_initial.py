@@ -8,45 +8,112 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('courses', '0019_courserun_default_ordering'),
+        ("courses", "0019_courserun_default_ordering"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FinalGrade',
+            name="FinalGrade",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('grade', models.FloatField(null=True, validators=[django.core.validators.MinValueValidator(0.0), django.core.validators.MaxValueValidator(1.0)])),
-                ('passed', models.BooleanField(default=False)),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('complete', 'complete')], default='pending', max_length=30)),
-                ('course_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.CourseRun')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                (
+                    "grade",
+                    models.FloatField(
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(0.0),
+                            django.core.validators.MaxValueValidator(1.0),
+                        ],
+                    ),
+                ),
+                ("passed", models.BooleanField(default=False)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("pending", "pending"), ("complete", "complete")],
+                        default="pending",
+                        max_length=30,
+                    ),
+                ),
+                (
+                    "course_run",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.CourseRun",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='FinalGradeAudit',
+            name="FinalGradeAudit",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('data_before', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True)),
-                ('data_after', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True)),
-                ('acting_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
-                ('final_grade', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='grades.FinalGrade')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                (
+                    "data_before",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        blank=True, null=True
+                    ),
+                ),
+                (
+                    "data_after",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        blank=True, null=True
+                    ),
+                ),
+                (
+                    "acting_user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "final_grade",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="grades.FinalGrade",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AlterUniqueTogether(
-            name='finalgrade',
-            unique_together={('user', 'course_run')},
+            name="finalgrade",
+            unique_together={("user", "course_run")},
         ),
     ]

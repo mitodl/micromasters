@@ -7,47 +7,97 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('courses', '0022_course_contact_email'),
-        ('grades', '0003_finalgrade_course_run_paid_on_edx'),
+        ("courses", "0022_course_contact_email"),
+        ("grades", "0003_finalgrade_course_run_paid_on_edx"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProctoredExamGrade',
+            name="ProctoredExamGrade",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('passing_score', models.FloatField()),
-                ('score', models.FloatField()),
-                ('grade', models.TextField()),
-                ('client_authorization_id', models.TextField()),
-                ('row_data', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('passed', models.BooleanField()),
-                ('percentage_grade', models.FloatField()),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.Course')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                ("passing_score", models.FloatField()),
+                ("score", models.FloatField()),
+                ("grade", models.TextField()),
+                ("client_authorization_id", models.TextField()),
+                ("row_data", django.contrib.postgres.fields.jsonb.JSONField()),
+                ("passed", models.BooleanField()),
+                ("percentage_grade", models.FloatField()),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="courses.Course"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='ProctoredExamGradeAudit',
+            name="ProctoredExamGradeAudit",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('data_before', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True)),
-                ('data_after', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True)),
-                ('acting_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
-                ('proctored_exam_grade', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='grades.ProctoredExamGrade')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                (
+                    "data_before",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        blank=True, null=True
+                    ),
+                ),
+                (
+                    "data_after",
+                    django.contrib.postgres.fields.jsonb.JSONField(
+                        blank=True, null=True
+                    ),
+                ),
+                (
+                    "acting_user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "proctored_exam_grade",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="grades.ProctoredExamGrade",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

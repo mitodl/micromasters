@@ -15,13 +15,13 @@ import {
   CLEAR_COUPONS,
   clearCoupons,
   SET_RECENTLY_ATTACHED_COUPON,
-  setRecentlyAttachedCoupon
+  setRecentlyAttachedCoupon,
 } from "./coupons"
 import { assertCreatedActionHelper } from "./test_util"
 
 describe("coupons actions", () => {
   it("should create all action creators", () => {
-    [
+    ;[
       [requestAttachCoupon, REQUEST_ATTACH_COUPON],
       [receiveAttachCouponSuccess, RECEIVE_ATTACH_COUPON_SUCCESS],
       [receiveAttachCouponFailure, RECEIVE_ATTACH_COUPON_FAILURE],
@@ -29,7 +29,7 @@ describe("coupons actions", () => {
       [receiveFetchCouponsSuccess, RECEIVE_FETCH_COUPONS_SUCCESS],
       [receiveFetchCouponsFailure, RECEIVE_FETCH_COUPONS_FAILURE],
       [clearCoupons, CLEAR_COUPONS],
-      [setRecentlyAttachedCoupon, SET_RECENTLY_ATTACHED_COUPON]
+      [setRecentlyAttachedCoupon, SET_RECENTLY_ATTACHED_COUPON],
     ].forEach(assertCreatedActionHelper)
   })
 })

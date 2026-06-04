@@ -20,6 +20,7 @@ class Command(BaseCommand):
     """
     Retire user from MicroMasters
     """
+
     help = """
 Retire one or multiple users. Username or email can be used to identify a user.
 
@@ -45,12 +46,12 @@ For multiple users, add arg `--user` for each user i.e:\n
     def add_arguments(self, parser):
         """create args"""
         parser.add_argument(
-            '-u',
-            '--user',
-            action='append',
+            "-u",
+            "--user",
+            action="append",
             default=[],
-            dest='users',
-            help="Single or multiple user name"
+            dest="users",
+            help="Single or multiple user name",
         )
 
     def display_messages(self, message, log_messages, is_error=False):
@@ -80,44 +81,50 @@ For multiple users, add arg `--user` for each user i.e:\n
             if not current_user:
                 # invalid user name, can be empty string
                 self.display_messages(
-                    f"Invalid user: '{current_user}'",
-                    log_messages,
-                    self.style.ERROR
+                    f"Invalid user: '{current_user}'", log_messages, self.style.ERROR
                 )
                 continue
 
             try:
-                user = User.objects.get(Q(username=current_user) | Q(email=current_user))
+                user = User.objects.get(
+                    Q(username=current_user) | Q(email=current_user)
+                )
             except User.DoesNotExist:
                 self.display_messages(
                     f"User '{current_user}' does not exist in MicroMasters",
                     log_messages,
-                    is_error=True
+                    is_error=True,
                 )
                 continue
 
             # mark user inactive
             user.is_active = False
             user.save()
-            self.display_messages(f"User {current_user} is_active set to False", log_messages)
+            self.display_messages(
+                f"User {current_user} is_active set to False", log_messages
+            )
 
             # reset email_optin
             user.profile.email_optin = False
             user.profile.save()
-            self.display_messages(f"User {current_user} email_optin set to False", log_messages)
+            self.display_messages(
+                f"User {current_user} email_optin set to False", log_messages
+            )
 
             # reset program enrollments
-            enrollment_delete_count, _ = ProgramEnrollment.objects.filter(user=user).delete()
+            enrollment_delete_count, _ = ProgramEnrollment.objects.filter(
+                user=user
+            ).delete()
             self.display_messages(
                 f"For user {current_user}: {enrollment_delete_count} ProgramEnrollments rows deleted",
-                log_messages
+                log_messages,
             )
 
             # reset user social
             auth_delete_count, _ = UserSocialAuth.objects.filter(user=user).delete()
             self.display_messages(
                 f"For user {current_user}: {auth_delete_count} SocialAuth rows deleted",
-                log_messages
+                log_messages,
             )
 
             # finish

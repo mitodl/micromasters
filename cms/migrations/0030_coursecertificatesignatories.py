@@ -6,30 +6,84 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0025_remove_unused_fields'),
-        ('wagtailimages', '0019_delete_filter'),
-        ('cms', '0029_populate_program_courses'),
+        ("courses", "0025_remove_unused_fields"),
+        ("wagtailimages", "0019_delete_filter"),
+        ("cms", "0029_populate_program_courses"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CourseCertificateSignatories',
+            name="CourseCertificateSignatories",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('name', models.CharField(help_text='Full name of the signatory', max_length=255)),
-                ('title_line_1', models.TextField(help_text='Signatory title (e.g.: Associate Professor)')),
-                ('title_line_2', models.TextField(blank=True, help_text='Signatory title (optional second line)')),
-                ('organization', models.CharField(default='Massachusetts Institute of Technology', help_text='Name of the organization where the signatory holds the given title.', max_length=255)),
-                ('course', models.ForeignKey(help_text='The course for this certificate.', on_delete=django.db.models.deletion.CASCADE, to='courses.Course')),
-                ('program_page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='course_certificate_signatories', to='cms.ProgramPage')),
-                ('signature_image', models.ForeignKey(help_text='Signature image.', on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailimages.Image')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="Full name of the signatory", max_length=255
+                    ),
+                ),
+                (
+                    "title_line_1",
+                    models.TextField(
+                        help_text="Signatory title (e.g.: Associate Professor)"
+                    ),
+                ),
+                (
+                    "title_line_2",
+                    models.TextField(
+                        blank=True, help_text="Signatory title (optional second line)"
+                    ),
+                ),
+                (
+                    "organization",
+                    models.CharField(
+                        default="Massachusetts Institute of Technology",
+                        help_text="Name of the organization where the signatory holds the given title.",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        help_text="The course for this certificate.",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.Course",
+                    ),
+                ),
+                (
+                    "program_page",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="course_certificate_signatories",
+                        to="cms.ProgramPage",
+                    ),
+                ),
+                (
+                    "signature_image",
+                    models.ForeignKey(
+                        help_text="Signature image.",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="wagtailimages.Image",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

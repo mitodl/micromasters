@@ -4,11 +4,11 @@ import React from "react"
 import CourseListItemWithPopover from "./CourseListItemWithPopover"
 import type {
   ProgramPageCourse,
-  ProgramPageElectiveSet
+  ProgramPageElectiveSet,
 } from "../flow/programTypes"
 import { EXTRA_ELECTIVE_REQUIREMENT_TITLES } from "../constants"
 
-const listItems = courses => {
+const listItems = (courses) => {
   return courses.map((course, index) => (
     <CourseListItemWithPopover key={index} course={course} />
   ))
@@ -45,7 +45,7 @@ function populateElectivesList(electiveSet) {
 export default class CourseListWithPopover extends React.Component {
   props: {
     courses: Array<ProgramPageCourse>,
-    electiveSets: Array<ProgramPageElectiveSet>
+    electiveSets: Array<ProgramPageElectiveSet>,
   }
 
   // eslint-disable-next-line require-jsdoc
@@ -70,8 +70,8 @@ export default class CourseListWithPopover extends React.Component {
         </div>
 
         <div>
-          {this.props.electiveSets.map(electiveSet =>
-            populateElectivesList(electiveSet)
+          {this.props.electiveSets.map((electiveSet) =>
+            populateElectivesList(electiveSet),
           )}
         </div>
       </div>

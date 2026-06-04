@@ -13,18 +13,18 @@ import {
   combineValidators,
   personalValidation,
   programValidation,
-  profileImageValidation
+  profileImageValidation,
 } from "../lib/validation/profile"
 import type {
   Profile,
   SaveProfileFunc,
   ValidationErrors,
-  UpdateProfileFunc
+  UpdateProfileFunc,
 } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
 import type {
   AvailableProgram,
-  AvailablePrograms
+  AvailablePrograms,
 } from "../flow/enrollmentTypes"
 import { validationErrorSelector } from "../util/util"
 import type { Option } from "../flow/generalTypes"
@@ -37,7 +37,7 @@ import CardContent from "@material-ui/core/CardContent"
 const personalTabValidator = combineValidators(
   personalValidation,
   programValidation,
-  profileImageValidation
+  profileImageValidation,
 )
 
 export default class PersonalTab extends React.Component {
@@ -55,19 +55,14 @@ export default class PersonalTab extends React.Component {
     setProgram: Function,
     ui: UIState,
     updateProfile: UpdateProfileFunc,
-    dispatch: Function
+    dispatch: Function,
   }
 
-  sortPrograms = R.sortBy(
-    R.compose(
-      R.toLower,
-      R.prop("title")
-    )
-  )
+  sortPrograms = R.sortBy(R.compose(R.toLower, R.prop("title")))
 
   programOptions = R.compose(
-    R.map(program => ({ value: program.id, label: program.title })),
-    this.sortPrograms
+    R.map((program) => ({ value: program.id, label: program.title })),
+    this.sortPrograms,
   )
 
   componentDidMount() {
@@ -87,7 +82,7 @@ export default class PersonalTab extends React.Component {
     const { programs, setProgram } = this.props
     if (selection && selection.value) {
       const selected = programs.find(
-        program => program.id === parseInt(selection.value)
+        (program) => program.id === parseInt(selection.value),
       )
       setProgram(selected)
     } else {
@@ -97,7 +92,7 @@ export default class PersonalTab extends React.Component {
 
   getSelectedProgramId = (): number | null => {
     const {
-      ui: { selectedProgram }
+      ui: { selectedProgram },
     } = this.props
     return selectedProgram ? selectedProgram.id : null
   }
@@ -110,7 +105,7 @@ export default class PersonalTab extends React.Component {
         onChange={this.onProgramSelect}
         clearable={false}
         className={`program-selectfield ${validationErrorSelector(errors, [
-          "program"
+          "program",
         ])}`}
         errorText={_.get(errors, "program")}
         options={this.programOptions(programs)}
@@ -122,7 +117,7 @@ export default class PersonalTab extends React.Component {
     const {
       ui: { selectedProgram },
       errors,
-      uneditedProfile
+      uneditedProfile,
     } = this.props
 
     return (
@@ -142,7 +137,7 @@ export default class PersonalTab extends React.Component {
           <Card
             shadow={1}
             className={`card profile-image ${validationErrorSelector(errors, [
-              "image"
+              "image",
             ])}`}
           >
             <CardContent>

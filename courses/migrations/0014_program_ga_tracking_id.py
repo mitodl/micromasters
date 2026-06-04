@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0013_new_indexes'),
+        ("courses", "0013_new_indexes"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='program',
-            name='ga_tracking_id',
-            field=models.CharField(blank=True, default='', max_length=255),
+            model_name="program",
+            name="ga_tracking_id",
+            field=models.CharField(blank=True, default="", max_length=255),
         ),
     ]

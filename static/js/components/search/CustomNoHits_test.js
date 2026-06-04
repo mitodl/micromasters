@@ -43,7 +43,7 @@ describe("CustomNoHits", () => {
     const results = renderCustomNoHits()
     assert.equal(
       results,
-      "There were no results found for this search. Please remove some filters or start over."
+      "There were no results found for this search. Please remove some filters or start over.",
     )
   })
 
@@ -67,8 +67,8 @@ describe("CustomNoHits", () => {
     sandbox.stub(CustomNoHits.prototype, "hasHits").returns(false)
     sandbox.stub(CustomNoHits.prototype, "getError").returns({
       data: {
-        detail: "Error!!"
-      }
+        detail: "Error!!",
+      },
     })
 
     const results = renderCustomNoHits()

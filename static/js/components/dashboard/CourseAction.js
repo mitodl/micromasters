@@ -15,13 +15,13 @@ import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_ENROLL,
   COURSE_ACTION_REENROLL,
-  COURSE_ACTION_CALCULATE_PRICE
+  COURSE_ACTION_CALCULATE_PRICE,
 } from "../../constants"
 import { isEnrollableRun } from "./courses/util"
 
 export default class CourseAction extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   }
 
   props: {
@@ -32,19 +32,17 @@ export default class CourseAction extends React.Component {
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     setCalculatePriceDialogVisibility: (b: boolean) => void,
     coupon: ?Coupon,
-    actionType: string
+    actionType: string,
   }
 
   statusDescriptionClasses = {
-    [STATUS_PASSED]:     "passed",
-    [STATUS_NOT_PASSED]: "not-passed"
+    [STATUS_PASSED]: "passed",
+    [STATUS_NOT_PASSED]: "not-passed",
   }
 
   handleEnrollButtonClick(run: CourseRun): void {
-    const {
-      setEnrollSelectedCourseRun,
-      setEnrollCourseDialogVisibility
-    } = this.props
+    const { setEnrollSelectedCourseRun, setEnrollCourseDialogVisibility } =
+      this.props
 
     setEnrollSelectedCourseRun(run)
     setEnrollCourseDialogVisibility(true)

@@ -15,7 +15,8 @@
     font-size: 20px;
     font-weight: 400;
 
-    .desktop-upload-message, .mobile-upload-message {
+    .desktop-upload-message,
+    .mobile-upload-message {
       font-size: 17px;
       width: 85%;
       margin: 0 auto;
@@ -23,7 +24,7 @@
       color: $font-black;
     }
 
-    .mobile-upload-message  {
+    .mobile-upload-message {
       display: none;
     }
 
@@ -32,7 +33,7 @@
         display: none;
       }
 
-      .mobile-upload-message  {
+      .mobile-upload-message {
         display: block;
       }
     }

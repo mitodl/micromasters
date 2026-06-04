@@ -3,13 +3,19 @@ Serializers for courses
 """
 from rest_framework import serializers
 
-from courses.models import (Course, CourseRun, ElectiveCourse, ElectivesSet,
-                            Program, Topic)
+from courses.models import (
+    Course,
+    CourseRun,
+    ElectiveCourse,
+    ElectivesSet,
+    Program,
+    Topic,
+)
 from dashboard.models import ProgramEnrollment
 
 
 class TopicSerializer(serializers.ModelSerializer):
-    """ Serializer for Topic objects"""
+    """Serializer for Topic objects"""
 
     class Meta:
         model = Topic
@@ -18,6 +24,7 @@ class TopicSerializer(serializers.ModelSerializer):
 
 class ProgramSerializer(serializers.ModelSerializer):
     """Serializer for Program objects"""
+
     programpage_url = serializers.SerializerMethodField()
     enrolled = serializers.SerializerMethodField()
     total_courses = serializers.SerializerMethodField()
@@ -34,6 +41,7 @@ class ProgramSerializer(serializers.ModelSerializer):
             str: The programpage URL or None
         """
         from cms.models import ProgramPage
+
         try:
             return program.programpage.get_full_url()
         except ProgramPage.DoesNotExist:
@@ -43,7 +51,7 @@ class ProgramSerializer(serializers.ModelSerializer):
         """
         Returns true if the user is enrolled in the program
         """
-        user = self.context['request'].user
+        user = self.context["request"].user
         return ProgramEnrollment.objects.filter(user=user, program=program).exists()
 
     def get_total_courses(self, program):
@@ -55,60 +63,66 @@ class ProgramSerializer(serializers.ModelSerializer):
     class Meta:
         model = Program
         fields = (
-            'id',
-            'title',
-            'programpage_url',
-            'enrolled',
-            'total_courses',
-            'topics',
-            'enrollable_courseware_backends',
+            "id",
+            "title",
+            "programpage_url",
+            "enrolled",
+            "total_courses",
+            "topics",
+            "enrollable_courseware_backends",
         )
 
 
 class CourseSerializer(serializers.ModelSerializer):
     """Serializer for Course objects"""
+
     description = serializers.SerializerMethodField()
 
     def get_description(self, course):
         """Choose the right description for course"""
-        if hasattr(course, 'programcourse') and course.programcourse.description:
+        if hasattr(course, "programcourse") and course.programcourse.description:
             return course.programcourse.description
         return course.description
 
     class Meta:
         model = Course
         fields = (
-            'id',
-            'title',
-            'description',
-            'url',
-            'enrollment_text',
+            "id",
+            "title",
+            "description",
+            "url",
+            "enrollment_text",
         )
 
 
 class ElectivesSetSerializer(serializers.ModelSerializer):
-    """Serializer for Elective Sets """
+    """Serializer for Elective Sets"""
+
     courses = serializers.SerializerMethodField()
 
     def get_courses(self, elective_set):
         """Get all the elective courses associated with an ElectivesSet through ElectiveCourse"""
         elective_courses = Course.objects.filter(
-            id__in=ElectiveCourse.objects.filter(electives_set=elective_set).values('course'))
+            id__in=ElectiveCourse.objects.filter(electives_set=elective_set).values(
+                "course"
+            )
+        )
         return CourseSerializer(elective_courses, many=True).data
 
     class Meta:
         model = ElectivesSet
         fields = (
-            'required_number',
-            'title',
-            'courses',
+            "required_number",
+            "title",
+            "courses",
         )
 
 
 class CourseRunSerializer(serializers.ModelSerializer):
     """Serializer for Course Run Objects"""
-    program_title = serializers.CharField(source='course.program.title')
+
+    program_title = serializers.CharField(source="course.program.title")
 
     class Meta:
         model = CourseRun
-        fields = ('edx_course_key', 'program_title', 'courseware_backend')
+        fields = ("edx_course_key", "program_title", "courseware_backend")

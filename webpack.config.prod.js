@@ -1,49 +1,53 @@
 /* global SETTINGS: false */
-const webpack = require('webpack')
-var path = require("path");
-const fs = require('fs');
-var BundleTracker = require('webpack-bundle-tracker');
+const webpack = require("webpack")
+var path = require("path")
+const fs = require("fs")
+var BundleTracker = require("webpack-bundle-tracker")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const SentryWebpackPlugin = require("@sentry/webpack-plugin");
-const { config, babelSharedLoader } = require(path.resolve("./webpack.config.shared.js"));
+const SentryWebpackPlugin = require("@sentry/webpack-plugin")
+const { config, babelSharedLoader } = require(
+  path.resolve("./webpack.config.shared.js"),
+)
 
-const prodBabelConfig = Object.assign({}, babelSharedLoader);
+const prodBabelConfig = Object.assign({}, babelSharedLoader)
 
 prodBabelConfig.query.plugins.push(
   "transform-react-constant-elements",
-  "transform-react-inline-elements"
-);
+  "transform-react-inline-elements",
+)
 
-const filePath = path.join(__dirname, "VERSION");
-const SENTRY_RELEASE = fs.readFileSync(
-  filePath, "utf8").split("\r?\n/")[0].trim();
+const filePath = path.join(__dirname, "VERSION")
+const SENTRY_RELEASE = fs
+  .readFileSync(filePath, "utf8")
+  .split("\r?\n/")[0]
+  .trim()
 
-const prodConfig = Object.assign({}, config);
+const prodConfig = Object.assign({}, config)
 
-const sentryCliPath = path.resolve('./node_modules/@sentry/cli/sentry-cli');
-const sentryCliAvailable = fs.existsSync(sentryCliPath);
+const sentryCliPath = path.resolve("./node_modules/@sentry/cli/sentry-cli")
+const sentryCliAvailable = fs.existsSync(sentryCliPath)
 
 prodConfig.module.rules = [
   prodBabelConfig,
   ...config.module.rules,
   {
     test: /\.css$|\.scss$/,
-    use:  [
+    use: [
       {
-        loader: MiniCssExtractPlugin.loader
+        loader: MiniCssExtractPlugin.loader,
       },
       "css-loader",
       "postcss-loader",
-      "sass-loader"
-    ]
-  }
-];
+      "sass-loader",
+    ],
+  },
+]
 
 module.exports = Object.assign(prodConfig, {
   context: __dirname,
-  mode: 'production',
+  mode: "production",
   output: {
-    path: path.resolve('./static/bundles/'),
+    path: path.resolve("./static/bundles/"),
     filename: "[name]-[chunkhash].js",
     chunkFilename: "[id]-[chunkhash].js",
     crossOriginLoading: "anonymous",
@@ -51,30 +55,34 @@ module.exports = Object.assign(prodConfig, {
   plugins: [
     new webpack.DefinePlugin({
       "process.env": {
-        NODE_ENV: '"production"'
-      }
+        NODE_ENV: '"production"',
+      },
     }),
     new BundleTracker({
-      filename: './webpack-stats.json'
+      filename: "./webpack-stats.json",
     }),
     new webpack.LoaderOptionsPlugin({
-      minimize: true
+      minimize: true,
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new MiniCssExtractPlugin({
-      filename: "styles-[name]-[contenthash].css"
+      filename: "styles-[name]-[contenthash].css",
     }),
-    ...process.env.MICROMASTERS_ENVIRONMENT && sentryCliAvailable ? [new SentryWebpackPlugin({
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      org : process.env.SENTRY_ORG_NAME,
-      project : process.env.SENTRY_PROJECT_NAME,
-      release : SENTRY_RELEASE,
-      include : '.',
-      ignoreFile: ".gitignore"
-    })] : []
+    ...(process.env.MICROMASTERS_ENVIRONMENT && sentryCliAvailable
+      ? [
+          new SentryWebpackPlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: process.env.SENTRY_ORG_NAME,
+            project: process.env.SENTRY_PROJECT_NAME,
+            release: SENTRY_RELEASE,
+            include: ".",
+            ignoreFile: ".gitignore",
+          }),
+        ]
+      : []),
   ],
   optimization: {
-    minimize: true
+    minimize: true,
   },
-  devtool: 'source-map'
-});
+  devtool: "source-map",
+})

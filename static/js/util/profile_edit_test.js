@@ -12,7 +12,7 @@ import {
   boundDateField,
   boundTelephoneInput,
   saveProfileStep,
-  shouldRenderRomanizedFields
+  shouldRenderRomanizedFields,
 } from "./profile_edit"
 import * as dateValidation from "../lib/validation/date"
 import { YEAR_VALIDATION_CUTOFF } from "../constants"
@@ -20,7 +20,7 @@ import { USER_PROFILE_RESPONSE } from "../test_constants"
 
 describe("Profile Editing utility functions", () => {
   let that, sandbox, gaEvent
-  const change = clone => (that.props.profile = clone)
+  const change = (clone) => (that.props.profile = clone)
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     gaEvent = sandbox.stub(ga, "event")
@@ -28,25 +28,25 @@ describe("Profile Editing utility functions", () => {
       props: {
         profile: {
           account_privacy: "private",
-          first_name:      "",
-          date_of_birth:   "",
-          gender:          undefined,
-          date_field:      "",
-          email_optin:     false,
-          phone_number:    USER_PROFILE_RESPONSE.phone_number
+          first_name: "",
+          date_of_birth: "",
+          gender: undefined,
+          date_field: "",
+          email_optin: false,
+          phone_number: USER_PROFILE_RESPONSE.phone_number,
         },
         errors: {
-          first_name:      "First name is required",
-          date_of_birth:   "Date of birth is required",
-          gender:          "Gender is required",
-          date_field:      "Date field is required",
-          account_privacy: "Account privacy is required"
+          first_name: "First name is required",
+          date_of_birth: "Date of birth is required",
+          gender: "Gender is required",
+          date_field: "Date field is required",
+          account_privacy: "Account privacy is required",
         },
-        updateProfile:              change,
+        updateProfile: change,
         updateValidationVisibility: sandbox.stub(),
-        updateProfileValidation:    sandbox.stub(),
-        ui:                         {}
-      }
+        updateProfileValidation: sandbox.stub(),
+        ui: {},
+      },
     }
   })
 
@@ -80,23 +80,23 @@ describe("Profile Editing utility functions", () => {
       assert(
         gaEvent.calledWith({
           category: "profile-form-field",
-          action:   "completed-first_name",
-          label:    "jane"
-        })
+          action: "completed-first_name",
+          label: "jane",
+        }),
       )
     })
   })
 
   describe("Bound date field", () => {
     let validateYearSpy, validateMonthSpy, validateDaySpy
-    const renderDateField = allowFutureYear => {
+    const renderDateField = (allowFutureYear) => {
       return shallow(
         boundDateField.call(
           that,
           ["date_of_birth"],
           "Date of birth",
-          allowFutureYear
-        )
+          allowFutureYear,
+        ),
       )
     }
 
@@ -109,7 +109,7 @@ describe("Profile Editing utility functions", () => {
     const _getInputProps = R.curry((idText, wrapper) => {
       return wrapper
         .find(TextField)
-        .filterWhere(node => node.prop("helperText") === idText)
+        .filterWhere((node) => node.prop("helperText") === idText)
         .props()
     })
 
@@ -191,8 +191,8 @@ describe("Profile Editing utility functions", () => {
       monthProps.onChange({ target: { value: "2" } })
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
         month: "2",
-        year:  "1917",
-        day:   "07"
+        year: "1917",
+        day: "07",
       })
     })
 
@@ -203,9 +203,9 @@ describe("Profile Editing utility functions", () => {
       monthProps.onChange({ target: { value: "text" } })
       assert.deepEqual(that.props.profile.date_of_birth, null)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "07",
+        day: "07",
         month: "",
-        year:  "1917"
+        year: "1917",
       })
     })
 
@@ -224,9 +224,9 @@ describe("Profile Editing utility functions", () => {
       yearProps.onChange({ target: { value: "text" } })
       assert.deepEqual(that.props.profile.date_of_birth, null)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "07",
+        day: "07",
         month: "11",
-        year:  ""
+        year: "",
       })
     })
 
@@ -245,9 +245,9 @@ describe("Profile Editing utility functions", () => {
       monthProps.onChange({ target: { value: "233" } })
       assert.deepEqual(that.props.profile.date_of_birth, "1917-12-07")
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "07",
+        day: "07",
         month: "12",
-        year:  "1917"
+        year: "1917",
       })
     })
 
@@ -259,9 +259,9 @@ describe("Profile Editing utility functions", () => {
         yearProps.onChange({ target: { value: tooOld } })
         assert.deepEqual(that.props.profile.date_of_birth, `${cutoff}-11-07`)
         assert.deepEqual(that.props.profile.date_of_birth_edit, {
-          day:   "07",
+          day: "07",
           month: "11",
-          year:  `${cutoff}`
+          year: `${cutoff}`,
         })
       })
 
@@ -272,12 +272,12 @@ describe("Profile Editing utility functions", () => {
         yearProps.onChange({ target: { value: tooYoung } })
         assert.deepEqual(
           that.props.profile.date_of_birth,
-          `${currentYear}-11-07`
+          `${currentYear}-11-07`,
         )
         assert.deepEqual(that.props.profile.date_of_birth_edit, {
-          day:   "07",
+          day: "07",
           month: "11",
-          year:  `${currentYear}`
+          year: `${currentYear}`,
         })
       })
     })
@@ -288,9 +288,9 @@ describe("Profile Editing utility functions", () => {
       dayProps.onChange({ target: { value: "12" } })
 
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "12",
+        day: "12",
         month: "",
-        year:  ""
+        year: "",
       })
     })
 
@@ -300,9 +300,9 @@ describe("Profile Editing utility functions", () => {
       monthProps.onChange({ target: { value: "12" } })
 
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "",
+        day: "",
         month: "12",
-        year:  ""
+        year: "",
       })
     })
 
@@ -312,57 +312,57 @@ describe("Profile Editing utility functions", () => {
       yearProps.onChange({ target: { value: "1992" } })
 
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "",
+        day: "",
         month: "",
-        year:  "1992"
+        year: "1992",
       })
     })
 
     it("updates the day correctly when edit value already exists", () => {
       that.props.profile.date_of_birth_edit = {
-        day:   "15",
+        day: "15",
         month: "8",
-        year:  "1991"
+        year: "1991",
       }
       const wrapper = renderDateField(false)
       const dayProps = getDayProps(wrapper)
       dayProps.onChange({ target: { value: "11" } })
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "11",
+        day: "11",
         month: "8",
-        year:  "1991"
+        year: "1991",
       })
     })
 
     it("updates the month correctly when edit value already exists", () => {
       that.props.profile.date_of_birth_edit = {
-        day:   "09",
+        day: "09",
         month: "11",
-        year:  "1965"
+        year: "1965",
       }
       const wrapper = renderDateField(false)
       const monthProps = getMonthProps(wrapper)
       monthProps.onChange({ target: { value: "8" } })
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "09",
+        day: "09",
         month: "8",
-        year:  "1965"
+        year: "1965",
       })
     })
 
     it("updates the year correctly when edit value already exists", () => {
       that.props.profile.date_of_birth_edit = {
-        day:   "09",
+        day: "09",
         month: "11",
-        year:  "1965"
+        year: "1965",
       }
       const wrapper = renderDateField(false)
       const yearProps = getYearProps(wrapper)
       yearProps.onChange({ target: { value: "1991" } })
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "09",
+        day: "09",
         month: "11",
-        year:  "1991"
+        year: "1991",
       })
     })
 
@@ -375,8 +375,8 @@ describe("Profile Editing utility functions", () => {
       assert.equal(that.props.profile.date_of_birth, `${currentYear}-12-01`)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
         month: "12",
-        year:  `${currentYear}`,
-        day:   undefined
+        year: `${currentYear}`,
+        day: undefined,
       })
     })
 
@@ -391,8 +391,8 @@ describe("Profile Editing utility functions", () => {
       assert.equal(that.props.profile.date_of_birth, `${currentYear}-12-01`)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
         month: "12",
-        year:  `${currentYear}`,
-        day:   "1"
+        year: `${currentYear}`,
+        day: "1",
       })
     })
 
@@ -404,9 +404,9 @@ describe("Profile Editing utility functions", () => {
 
       assert.deepEqual(that.props.profile.date_of_birth, null)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "28",
+        day: "28",
         month: "",
-        year:  `${currentYear}`
+        year: `${currentYear}`,
       })
     })
 
@@ -421,8 +421,8 @@ describe("Profile Editing utility functions", () => {
       // day is 28 here but it's discarded in the timestamp above, resulting in 01
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
         month: "1",
-        year:  `${currentYear}`,
-        day:   "28"
+        year: `${currentYear}`,
+        day: "28",
       })
     })
 
@@ -454,9 +454,9 @@ describe("Profile Editing utility functions", () => {
       // Feb 31 is not a valid date, and only moment.js knows that
       assert.deepEqual(that.props.profile.date_of_birth, null)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "31",
+        day: "31",
         month: "02",
-        year:  `${currentYear}`
+        year: `${currentYear}`,
       })
     })
 
@@ -466,9 +466,9 @@ describe("Profile Editing utility functions", () => {
       getDayProps(wrapper).onChange({ target: { value: "" } })
       assert.deepEqual(that.props.profile.date_of_birth, null)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "",
+        day: "",
         month: "02",
-        year:  `${currentYear}`
+        year: `${currentYear}`,
       })
     })
 
@@ -478,9 +478,9 @@ describe("Profile Editing utility functions", () => {
       getMonthProps(wrapper).onChange({ target: { value: "" } })
       assert.deepEqual(that.props.profile.date_of_birth, null)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "28",
+        day: "28",
         month: "",
-        year:  `${currentYear}`
+        year: `${currentYear}`,
       })
     })
 
@@ -490,9 +490,9 @@ describe("Profile Editing utility functions", () => {
       getYearProps(wrapper).onChange({ target: { value: "" } })
       assert.deepEqual(that.props.profile.date_of_birth, null)
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day:   "28",
+        day: "28",
         month: "02",
-        year:  ""
+        year: "",
       })
     })
 
@@ -502,9 +502,9 @@ describe("Profile Editing utility functions", () => {
       assert(
         gaEvent.calledWith({
           category: "profile-form-field",
-          action:   "completed-date_of_birth",
-          label:    "jane"
-        })
+          action: "completed-date_of_birth",
+          label: "jane",
+        }),
       )
     })
   })
@@ -534,9 +534,9 @@ describe("Profile Editing utility functions", () => {
       assert(
         gaEvent.calledWith({
           category: "profile-form-field",
-          action:   "completed-phone_number",
-          label:    "jane"
-        })
+          action: "completed-phone_number",
+          label: "jane",
+        }),
       )
     })
 
@@ -576,8 +576,8 @@ describe("Profile Editing utility functions", () => {
 
       const clone = {
         ...that.props.profile,
-        filled_out:  true,
-        email_optin: true
+        filled_out: true,
+        email_optin: true,
       }
 
       assert.ok(that.props.saveProfile.calledWith(func, clone, that.props.ui))

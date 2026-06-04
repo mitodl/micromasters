@@ -8,29 +8,198 @@ import wagtail.images.blocks
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
-        ('cms', '0039_benefitspage'),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("cms", "0039_benefitspage"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CourseTeamTabPage',
+            name="CourseTeamTabPage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('instructors_heading', models.CharField(default='Instructors', help_text='Heading to be shown for instructors on course team tab.', max_length=255)),
-                ('administrators_heading', models.CharField(default='Course Administrator', help_text='Heading to be shown for course administrator on course team tab.', max_length=255)),
-                ('contributors_heading', models.CharField(default='Course Contributors', help_text='Heading to be shown for course contributors on course team tab.', max_length=255)),
-                ('teaching_assistants_heading', models.CharField(default='Course TAs', help_text='Heading to be shown for course TAs on course team tab.', max_length=255)),
-                ('instructors', wagtail.fields.StreamField([('instructors', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True)),
-                ('administrators', wagtail.fields.StreamField([('administrator', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True)),
-                ('contributors', wagtail.fields.StreamField([('contributor', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True)),
-                ('teaching_assistants', wagtail.fields.StreamField([('TAs', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True)),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                (
+                    "instructors_heading",
+                    models.CharField(
+                        default="Instructors",
+                        help_text="Heading to be shown for instructors on course team tab.",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "administrators_heading",
+                    models.CharField(
+                        default="Course Administrator",
+                        help_text="Heading to be shown for course administrator on course team tab.",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "contributors_heading",
+                    models.CharField(
+                        default="Course Contributors",
+                        help_text="Heading to be shown for course contributors on course team tab.",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "teaching_assistants_heading",
+                    models.CharField(
+                        default="Course TAs",
+                        help_text="Heading to be shown for course TAs on course team tab.",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "instructors",
+                    wagtail.fields.StreamField(
+                        [
+                            (
+                                "instructors",
+                                wagtail.blocks.StructBlock(
+                                    [
+                                        (
+                                            "name",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Name of the course team member.",
+                                                max_length=100,
+                                            ),
+                                        ),
+                                        (
+                                            "bio",
+                                            wagtail.blocks.TextBlock(
+                                                help_text="Short bio of course team member."
+                                            ),
+                                        ),
+                                        (
+                                            "image",
+                                            wagtail.images.blocks.ImageChooserBlock(
+                                                help_text="Image for the faculty member. Should be 385px by 385px."
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                            )
+                        ],
+                        blank=True,
+                    ),
+                ),
+                (
+                    "administrators",
+                    wagtail.fields.StreamField(
+                        [
+                            (
+                                "administrator",
+                                wagtail.blocks.StructBlock(
+                                    [
+                                        (
+                                            "name",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Name of the course team member.",
+                                                max_length=100,
+                                            ),
+                                        ),
+                                        (
+                                            "bio",
+                                            wagtail.blocks.TextBlock(
+                                                help_text="Short bio of course team member."
+                                            ),
+                                        ),
+                                        (
+                                            "image",
+                                            wagtail.images.blocks.ImageChooserBlock(
+                                                help_text="Image for the faculty member. Should be 385px by 385px."
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                            )
+                        ],
+                        blank=True,
+                    ),
+                ),
+                (
+                    "contributors",
+                    wagtail.fields.StreamField(
+                        [
+                            (
+                                "contributor",
+                                wagtail.blocks.StructBlock(
+                                    [
+                                        (
+                                            "name",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Name of the course team member.",
+                                                max_length=100,
+                                            ),
+                                        ),
+                                        (
+                                            "bio",
+                                            wagtail.blocks.TextBlock(
+                                                help_text="Short bio of course team member."
+                                            ),
+                                        ),
+                                        (
+                                            "image",
+                                            wagtail.images.blocks.ImageChooserBlock(
+                                                help_text="Image for the faculty member. Should be 385px by 385px."
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                            )
+                        ],
+                        blank=True,
+                    ),
+                ),
+                (
+                    "teaching_assistants",
+                    wagtail.fields.StreamField(
+                        [
+                            (
+                                "TAs",
+                                wagtail.blocks.StructBlock(
+                                    [
+                                        (
+                                            "name",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Name of the course team member.",
+                                                max_length=100,
+                                            ),
+                                        ),
+                                        (
+                                            "bio",
+                                            wagtail.blocks.TextBlock(
+                                                help_text="Short bio of course team member."
+                                            ),
+                                        ),
+                                        (
+                                            "image",
+                                            wagtail.images.blocks.ImageChooserBlock(
+                                                help_text="Image for the faculty member. Should be 385px by 385px."
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                            )
+                        ],
+                        blank=True,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
     ]

@@ -13,7 +13,7 @@ from search.base import MockedESTestCase
 
 
 # pylint: disable=unused-argument
-@patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
+@patch("search.signals.transaction.on_commit", side_effect=lambda callback: callback())
 class ProgramEnrollmentTests(MockedESTestCase):
     """
     Test indexing on program enrollment
@@ -41,28 +41,38 @@ class ProgramEnrollmentTests(MockedESTestCase):
         """
         Tests that the database is reindexed when a ProgramEnrollment is created
         """
-        enrollment = ProgramEnrollment.objects.create(user=self.user, program=self.program)
-        assert list(self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)) == [
-            enrollment.id
-        ]
+        enrollment = ProgramEnrollment.objects.create(
+            user=self.user, program=self.program
+        )
+        assert list(
+            self.index_program_enrolled_users_mock.call_args[0][0].values_list(
+                "id", flat=True
+            )
+        ) == [enrollment.id]
 
     def test_update(self, mock_on_commit):
         """
         Tests that the database is reindexed when a ProgramEnrollment is created
         """
         with mute_signals(post_save):
-            enrollment = ProgramEnrollment.objects.create(user=self.user, program=self.program)
+            enrollment = ProgramEnrollment.objects.create(
+                user=self.user, program=self.program
+            )
         enrollment.save()
-        assert list(self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)) == [
-            enrollment.id
-        ]
+        assert list(
+            self.index_program_enrolled_users_mock.call_args[0][0].values_list(
+                "id", flat=True
+            )
+        ) == [enrollment.id]
 
     def test_delete(self, mock_on_commit):
         """
         Tests that if a CachedEnrollment is updated with data=None, the enrollment in the program is not deleted.
         """
         with mute_signals(post_save):
-            enrollment = ProgramEnrollment.objects.create(user=self.user, program=self.program)
+            enrollment = ProgramEnrollment.objects.create(
+                user=self.user, program=self.program
+            )
         enrollment_id = enrollment.id
         enrollment.delete()
         self.remove_program_enrolled_user_mock.assert_called_once_with(enrollment_id)

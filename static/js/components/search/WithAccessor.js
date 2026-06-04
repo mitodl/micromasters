@@ -3,7 +3,7 @@ import { Accessor, SearchkitComponent } from "searchkit"
 
 const WithAccessor = (
   BaseSearchkitComponent: SearchkitComponent,
-  accessor: Accessor
+  accessor: Accessor,
 ) =>
   class extends BaseSearchkitComponent {
     defineAccessor() {

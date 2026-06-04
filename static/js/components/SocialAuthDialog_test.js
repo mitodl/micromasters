@@ -18,7 +18,7 @@ describe("SocialAuthDialog", () => {
     mount(
       <MuiThemeProvider theme={createMuiTheme()}>
         <SocialAuthDialog currentProgramEnrollment={enrollment} />
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
     )
       .find(SocialAuthDialog)
       .children()
@@ -33,15 +33,15 @@ describe("SocialAuthDialog", () => {
         beforeEach(() => {
           availablePrograms = Object.keys(COURSEWARE_BACKEND_NAMES)
           SETTINGS.user.social_auth_providers = availablePrograms.filter(
-            backend => backend !== missingBackend
+            (backend) => backend !== missingBackend,
           )
           authenticatedEnrollment = makeAvailableProgram(
             undefined,
-            availablePrograms
+            availablePrograms,
           )
           unauthenticatedEnrollment = makeAvailableProgram(
             undefined,
-            availablePrograms.filter(backend => backend === missingBackend)
+            availablePrograms.filter((backend) => backend === missingBackend),
           )
         })
 
@@ -68,20 +68,17 @@ describe("SocialAuthDialog", () => {
 
         it("should have a description of what the learner needs to do", () => {
           const wrapper = renderDialog(unauthenticatedEnrollment)
-          const text = wrapper
-            .find(Grid)
-            .at(0)
-            .text()
+          const text = wrapper.find(Grid).at(0).text()
           assert.equal(
             text,
             `Courses for ${
               unauthenticatedEnrollment.title
             } are offered on ${String(
-              backendLabel
-            )}. Continue to create a new account and link it to your current MicroMasters account.`
+              backendLabel,
+            )}. Continue to create a new account and link it to your current MicroMasters account.`,
           )
         })
       })
-    }
+    },
   )
 })

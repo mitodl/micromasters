@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0002_courserungradingstatus'),
+        ("grades", "0002_courserungradingstatus"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='finalgrade',
-            name='course_run_paid_on_edx',
+            model_name="finalgrade",
+            name="course_run_paid_on_edx",
             field=models.BooleanField(default=False),
         ),
     ]

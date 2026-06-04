@@ -2,20 +2,23 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailimages', '0012_copy_image_permissions_to_collections'),
-        ('cms', '0004_create_homepage'),
+        ("wagtailimages", "0012_copy_image_permissions_to_collections"),
+        ("cms", "0004_create_homepage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='homepage',
-            name='title_background',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='wagtailimages.Image'),
+            model_name="homepage",
+            name="title_background",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="wagtailimages.Image",
+            ),
         ),
     ]

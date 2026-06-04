@@ -17,8 +17,9 @@ def get_advance_searchable_program_ids(user):
     """
     user_role_program = Role.objects.filter(user=user)
     program_ids = [
-        role.program_id for role in user_role_program
-        if has_object_permission('can_advance_search', user, role.program)
+        role.program_id
+        for role in user_role_program
+        if has_object_permission("can_advance_search", user, role.program)
     ]
     return program_ids
 
@@ -31,6 +32,6 @@ def is_learner(user, program):
         user (django.contrib.auth.models.User): A user
         program (courses.models.Program): Program object
     """
-    return (
-        not Role.objects.filter(user=user, role__in=Role.NON_LEARNERS, program=program).exists()
-    )
+    return not Role.objects.filter(
+        user=user, role__in=Role.NON_LEARNERS, program=program
+    ).exists()

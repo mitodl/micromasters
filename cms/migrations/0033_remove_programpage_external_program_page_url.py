@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0032_signatories_related_name'),
+        ("cms", "0032_signatories_related_name"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='programpage',
-            name='external_program_page_url',
+            model_name="programpage",
+            name="external_program_page_url",
         ),
     ]

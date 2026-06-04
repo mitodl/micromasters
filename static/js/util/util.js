@@ -19,13 +19,13 @@ import {
   PROFILE_STEP_ORDER,
   COURSEWARE_BACKEND_MITXONLINE,
   COURSEWARE_BACKEND_EDXORG,
-  COURSEWARE_BACKEND_NAMES
+  COURSEWARE_BACKEND_NAMES,
 } from "../constants"
 import type {
   Profile,
   EducationEntry,
   WorkHistoryEntry,
-  ValidationErrors
+  ValidationErrors,
 } from "../flow/profileTypes"
 import type { Program, Course, CourseRun } from "../flow/programTypes"
 import { workEntriesByDate } from "./sorting"
@@ -36,7 +36,7 @@ export const isProfileOfLoggedinUser = (profile: Profile): boolean =>
 export function userPrivilegeCheck(
   profile: Profile,
   privileged: any,
-  unPrivileged: any
+  unPrivileged: any,
 ): any {
   if (SETTINGS.user && profile.username === SETTINGS.user.username) {
     return _.isFunction(privileged) ? privileged() : privileged
@@ -63,28 +63,30 @@ export function makeProfileProgressDisplay(active: ?string) {
   const lightGrayText = "#888"
   const colors = {
     completed: {
-      fill:       "#a31f34",
+      fill: "#a31f34",
       circleText: "white",
-      text:       lightGrayText,
-      fontWeight: 400
+      text: lightGrayText,
+      fontWeight: 400,
     },
     current: {
-      fill:       "#a31f34",
+      fill: "#a31f34",
       circleText: "white",
-      text:       lightGrayText,
-      fontWeight: 400
+      text: lightGrayText,
+      fontWeight: 400,
     },
     future: {
-      fill:       "#ffffff",
+      fill: "#ffffff",
       circleText: "#444444",
-      text:       lightGrayText,
-      fontWeight: 400
-    }
+      text: lightGrayText,
+      fontWeight: 400,
+    },
   }
 
   const elements = []
 
-  const activeTab = [...PROFILE_STEP_LABELS.keys()].findIndex(k => k === active)
+  const activeTab = [...PROFILE_STEP_LABELS.keys()].findIndex(
+    (k) => k === active,
+  )
   ;[...PROFILE_STEP_LABELS.entries()].forEach(([, label], i) => {
     let colorScheme
     if (i < activeTab) {
@@ -124,9 +126,9 @@ export function makeProfileProgressDisplay(active: ?string) {
             textAnchor="middle"
             dominantBaseline="middle"
             style={{
-              fill:       colorScheme.circleText,
+              fill: colorScheme.circleText,
               fontWeight: 700,
-              fontSize:   i < activeTab ? "16pt" : "12pt"
+              fontSize: i < activeTab ? "16pt" : "12pt",
             }}
           >
             {i + 1}
@@ -149,14 +151,14 @@ export function makeProfileProgressDisplay(active: ?string) {
         y={textY}
         textAnchor="middle"
         style={{
-          fill:       colorScheme.text,
+          fill: colorScheme.text,
           fontWeight: colorScheme.fontWeight,
-          fontSize:   "12pt"
+          fontSize: "12pt",
         }}
       >
         {label}
       </text>,
-      circleLabel()
+      circleLabel(),
     )
 
     if (i !== numCircles - 1) {
@@ -169,7 +171,7 @@ export function makeProfileProgressDisplay(active: ?string) {
           y2={circleY}
           stroke={"#cccccc"}
           strokeWidth={1}
-        />
+        />,
       )
     }
   })
@@ -194,7 +196,7 @@ export const currentOrFirstIncompleteStep = R.compose(
   getStepIndices,
   R.reject(R.isNil),
   R.append(lastStep),
-  R.pair
+  R.pair,
 )
 
 /* eslint-disable camelcase */
@@ -203,14 +205,14 @@ export const currentOrFirstIncompleteStep = R.compose(
  */
 export function generateNewEducation(level: string): EducationEntry {
   return {
-    degree_name:               level,
-    graduation_date:           "",
-    field_of_study:            null,
-    online_degree:             false,
-    school_name:               null,
-    school_city:               null,
+    degree_name: level,
+    graduation_date: "",
+    field_of_study: null,
+    online_degree: false,
+    school_name: null,
+    school_city: null,
     school_state_or_territory: null,
-    school_country:            null
+    school_country: null,
   }
 }
 
@@ -219,14 +221,14 @@ export function generateNewEducation(level: string): EducationEntry {
  */
 export function generateNewWorkHistory(): WorkHistoryEntry {
   return {
-    position:           "",
-    industry:           "",
-    company_name:       "",
-    start_date:         "",
-    end_date:           null,
-    city:               "",
-    country:            null,
-    state_or_territory: null
+    position: "",
+    industry: "",
+    company_name: "",
+    start_date: "",
+    end_date: null,
+    city: "",
+    country: null,
+    state_or_territory: null,
   }
 }
 
@@ -261,7 +263,7 @@ export function makeStrippedHtml(textOrElement: any): string {
 
 export function makeProfileImageUrl(
   profile: Profile,
-  useSmall: ?boolean
+  useSmall: ?boolean,
 ): string {
   let imageUrl = "/static/images/avatar_default.png"
   if (profile) {
@@ -287,15 +289,16 @@ export function getPreferredName(profile: Profile): string {
 }
 
 export const getRomanizedName = (profile: Profile): string =>
-  `${profile.romanized_first_name ||
-    profile.first_name} ${profile.romanized_last_name || profile.last_name}`
+  `${profile.romanized_first_name || profile.first_name} ${
+    profile.romanized_last_name || profile.last_name
+  }`
 
 /**
  * returns the users location
  */
 export function getLocation(
   profile: Profile,
-  showState: boolean = true
+  showState: boolean = true,
 ): string {
   const { country, state_or_territory } = profile
   let { city } = profile
@@ -342,7 +345,7 @@ export function calculateDegreeInclusions(profile: Profile) {
   // turn on all switches where the user has data
   for (const { value } of EDUCATION_LEVELS) {
     if (
-      profile.education.filter(education => education.degree_name === value)
+      profile.education.filter((education) => education.degree_name === value)
         .length > 0
     ) {
       inclusions[value] = true
@@ -354,11 +357,11 @@ export function calculateDegreeInclusions(profile: Profile) {
 /**
  * Calls an array of functions in series with a given argument and returns an array of the results
  */
-export function callFunctionArray<R: any, F:(a: any) => R>(
+export function callFunctionArray<R: any, F: (a: any) => R>(
   functionArray: Array<F>,
-  arg: any
+  arg: any,
 ): R[] {
-  return functionArray.map(func => func(arg))
+  return functionArray.map((func) => func(arg))
 }
 
 /**
@@ -367,7 +370,7 @@ export function callFunctionArray<R: any, F:(a: any) => R>(
  */
 export function validationErrorSelector(
   errors: ValidationErrors,
-  keySet: string[]
+  keySet: string[],
 ) {
   return _.get(errors, keySet) ? "invalid-input" : ""
 }
@@ -407,8 +410,8 @@ export function findCourseRun(
   selector: (
     courseRun: CourseRun | null,
     course: Course | null,
-    program: Program | null
-  ) => boolean
+    program: Program | null,
+  ) => boolean,
 ): [CourseRun | null, Course | null, Program | null] {
   for (const program of programs) {
     try {
@@ -443,15 +446,10 @@ export function findCourseRun(
 export const classify: (s: string) => string = R.compose(
   R.replace(/_/g, "-"),
   _.snakeCase,
-  R.defaultTo("")
+  R.defaultTo(""),
 )
 
-export const labelSort = R.sortBy(
-  R.compose(
-    R.toLower,
-    R.prop("label")
-  )
-)
+export const labelSort = R.sortBy(R.compose(R.toLower, R.prop("label")))
 
 export function highlight(text: string, highlightPhrase: ?string) {
   if (!highlightPhrase || !text) {
@@ -471,7 +469,7 @@ export function highlight(text: string, highlightPhrase: ?string) {
     pieces.push(
       <span className="highlight" key={startPosition}>
         {text.substring(endPosition, endPosition + highlightPhrase.length)}
-      </span>
+      </span>,
     )
 
     startPosition = endPosition + highlightPhrase.length
@@ -501,7 +499,7 @@ export function getUserDisplayName(profile: Profile): string {
  */
 const intersperse = R.curry((elementFunc: Function, arr: Array<any>) => {
   let i = 0
-  const addGeneratedElement = el => [el, elementFunc(i++)]
+  const addGeneratedElement = (el) => [el, elementFunc(i++)]
   return R.dropLast(1, R.chain(addGeneratedElement, arr))
 })
 
@@ -510,11 +508,11 @@ const intersperse = R.curry((elementFunc: Function, arr: Array<any>) => {
  */
 export function renderSeparatedComponents(
   components: Array<React$Element<*> | null>,
-  separator: string
+  separator: string,
 ): Array<React$Element<*> | null> {
   return intersperse(
-    i => <span key={`separator-${i}`}>{separator}</span>,
-    components
+    (i) => <span key={`separator-${i}`}>{separator}</span>,
+    components,
   )
 }
 
@@ -524,7 +522,7 @@ export function getDisplayName(WrappedComponent: ReactClass<*>) {
 
 export const wrapWithProps = (
   addedProps: Object,
-  ComponentToWrap: ReactClass<*>
+  ComponentToWrap: ReactClass<*>,
 ): ReactClass<*> => {
   class WithAdditionalProps extends React.Component {
     render() {
@@ -533,22 +531,19 @@ export const wrapWithProps = (
   }
 
   WithAdditionalProps.displayName = `WithAdditionalProps(${getDisplayName(
-    ComponentToWrap
+    ComponentToWrap,
   )})`
   return WithAdditionalProps
 }
 
 export const isNilOrBlank = R.either(R.isNil, R.isEmpty)
 
-export const pickExistingProps = R.compose(
-  R.reject(R.isNil),
-  R.pick
-)
+export const pickExistingProps = R.compose(R.reject(R.isNil), R.pick)
 
 export function sortedCourseRuns(program: Program): Array<CourseRun> {
   const sortedCourses = R.sortBy(R.prop("position_in_program"), program.courses)
   return R.unnest(
-    R.map(R.sortBy(R.prop("position")), R.pluck("runs", sortedCourses))
+    R.map(R.sortBy(R.prop("position")), R.pluck("runs", sortedCourses)),
   )
 }
 
@@ -561,18 +556,14 @@ export function programBackendName(program: Program): string {
 // lets you edit both keys and values
 // just pass a function that expects and returns [key, value]
 export const mapObj = R.curry((fn, obj) =>
-  R.compose(
-    R.fromPairs,
-    R.map(fn),
-    R.toPairs
-  )(obj)
+  R.compose(R.fromPairs, R.map(fn), R.toPairs)(obj),
 )
 
 /**
  * Returns a promise which resolves after a number of milliseconds have elapsed
  */
 export const wait = (millis: number): Promise<void> =>
-  new Promise(resolve => setTimeout(resolve, millis))
+  new Promise((resolve) => setTimeout(resolve, millis))
 
 /**
  * extract object from json
@@ -581,9 +572,7 @@ export const findObjByName = (data: any, key: string) => {
   if (typeof data === "object" && _.has((data: Object), key)) {
     return [_.get(data, key)]
   }
-  return _.flatMap(
-    (data: Array<*>),
-    (value: Object | Array<*>): Array<*> =>
-      typeof value === "object" ? findObjByName(value, key) : []
+  return _.flatMap((data: Array<*>), (value: Object | Array<*>): Array<*> =>
+    typeof value === "object" ? findObjByName(value, key) : [],
   )
 }

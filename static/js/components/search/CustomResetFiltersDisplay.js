@@ -7,7 +7,7 @@ export default class CustomResetFiltersDisplay extends SearchkitComponent {
     bemBlock: any,
     hasFilters: boolean,
     resetFilters: Function,
-    clearAllLabel: string
+    clearAllLabel: string,
   }
 
   render() {

@@ -15,6 +15,6 @@ def can_advance_search(role, user, program):
     Determines whether a user can perform an advanced search on a specific program.
     """
     return (
-        has_permission(user, Permissions.CAN_ADVANCE_SEARCH) and Role.objects.filter(
-            user=user, role=role.ROLE_ID, program=program).exists()
+        has_permission(user, Permissions.CAN_ADVANCE_SEARCH)
+        and Role.objects.filter(user=user, role=role.ROLE_ID, program=program).exists()
     )

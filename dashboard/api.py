@@ -16,8 +16,12 @@ from django_redis import get_redis_connection
 from edx_api.client import EdxApi
 
 from backends import utils
-from backends.constants import (BACKEND_EDX_ORG, BACKEND_MITX_ONLINE,
-                                COURSEWARE_BACKEND_URL, COURSEWARE_BACKENDS)
+from backends.constants import (
+    BACKEND_EDX_ORG,
+    BACKEND_MITX_ONLINE,
+    COURSEWARE_BACKEND_URL,
+    COURSEWARE_BACKENDS,
+)
 from backends.exceptions import InvalidCredentialStored
 from backends.utils import has_social_auth
 from courses.models import CourseRun, ElectiveCourse, Program
@@ -31,6 +35,7 @@ from grades import api
 from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from micromasters.utils import now_in_utc
+
 # key that stores user_key and number of failures in a hash
 from profiles.api import get_social_auth
 
@@ -50,32 +55,41 @@ class CourseStatus:
     """
     Possible statuses for a course for a user. These are the course run statuses used in the dashboard API.
     """
-    PASSED = 'passed'
-    NOT_PASSED = 'not-passed'
-    CURRENTLY_ENROLLED = 'currently-enrolled'
-    WILL_ATTEND = 'will-attend'
-    CAN_UPGRADE = 'can-upgrade'
-    MISSED_DEADLINE = 'missed-deadline'
-    OFFERED = 'offered'
+
+    PASSED = "passed"
+    NOT_PASSED = "not-passed"
+    CURRENTLY_ENROLLED = "currently-enrolled"
+    WILL_ATTEND = "will-attend"
+    CAN_UPGRADE = "can-upgrade"
+    MISSED_DEADLINE = "missed-deadline"
+    OFFERED = "offered"
 
     @classmethod
     def all_statuses(cls):
         """Helper to get all the statuses"""
-        return [cls.PASSED, cls.NOT_PASSED, cls.CURRENTLY_ENROLLED,
-                cls.CAN_UPGRADE, cls.OFFERED, cls.WILL_ATTEND, cls.MISSED_DEADLINE, ]
+        return [
+            cls.PASSED,
+            cls.NOT_PASSED,
+            cls.CURRENTLY_ENROLLED,
+            cls.CAN_UPGRADE,
+            cls.OFFERED,
+            cls.WILL_ATTEND,
+            cls.MISSED_DEADLINE,
+        ]
 
 
 class CourseRunStatus:
     """
     Possible statuses for a course run for a user. These are used internally.
     """
-    NOT_ENROLLED = 'not-enrolled'
-    CURRENTLY_ENROLLED = 'currently-enrolled'
-    CHECK_IF_PASSED = 'check-if-passed'
-    WILL_ATTEND = 'will-attend'
-    CAN_UPGRADE = 'can-upgrade'
-    MISSED_DEADLINE = 'missed-deadline'
-    NOT_PASSED = 'not-passed'
+
+    NOT_ENROLLED = "not-enrolled"
+    CURRENTLY_ENROLLED = "currently-enrolled"
+    CHECK_IF_PASSED = "check-if-passed"
+    WILL_ATTEND = "will-attend"
+    CAN_UPGRADE = "can-upgrade"
+    MISSED_DEADLINE = "missed-deadline"
+    NOT_PASSED = "not-passed"
 
 
 class CourseFormatConditionalFields:
@@ -89,15 +103,16 @@ class CourseFormatConditionalFields:
     that need specific fields, the field associated correspondent
     to a course run and the new name they need to have.
     """
+
     ASSOCIATED_FIELDS = {
         CourseStatus.OFFERED: [
             {
-                'course_run_field': 'enrollment_start',
-                'format_field': 'enrollment_start_date'
+                "course_run_field": "enrollment_start",
+                "format_field": "enrollment_start_date",
             },
             {
-                'course_run_field': 'fuzzy_enrollment_start_date',
-                'format_field': 'fuzzy_enrollment_start_date'
+                "course_run_field": "fuzzy_enrollment_start_date",
+                "format_field": "fuzzy_enrollment_start_date",
             },
         ]
     }
@@ -108,9 +123,10 @@ class CourseFormatConditionalFields:
         Method to get from the ASSOCIATED_FIELDS dict
         """
         if course_status not in CourseStatus.all_statuses():
-            log.error('%s not defined in Courses.api.CourseStatus', course_status)
+            log.error("%s not defined in Courses.api.CourseStatus", course_status)
             raise ImproperlyConfigured(
-                f'{course_status} not defined in Courses.api.CourseStatus')
+                f"{course_status} not defined in Courses.api.CourseStatus"
+            )
         return cls.ASSOCIATED_FIELDS.get(course_status, [])
 
 
@@ -118,6 +134,7 @@ class CourseRunUserStatus:
     """
     Representation of a course run status for a specific user
     """
+
     def __init__(self, status, course_run=None):
         self.status = status
         self.course_run = course_run
@@ -144,7 +161,11 @@ def get_user_program_info(user, *, update_cache=True):
             try:
                 update_cache_for_backend(user, backend)
             except InvalidCredentialStored:
-                log.info("Invalid credentials token for user: %s, provider: %s", user, backend)
+                log.info(
+                    "Invalid credentials token for user: %s, provider: %s",
+                    user,
+                    backend,
+                )
                 invalid_backend_credentials.append(backend)
             except:  # pylint: disable=bare-except
                 log.exception("Unexpected error refreshing user dashboard")
@@ -154,17 +175,16 @@ def get_user_program_info(user, *, update_cache=True):
         "is_edx_data_fresh": CachedEdxDataApi.are_all_caches_fresh(user),
         "invalid_backend_credentials": invalid_backend_credentials,
     }
-    all_programs = (
-        Program.objects.filter(live=True, programenrollment__user=user).prefetch_related(
-            Prefetch(
-                'course_set__courserun_set',
-                queryset=CourseRun.objects.not_discontinued()
-            )
+    all_programs = Program.objects.filter(
+        live=True, programenrollment__user=user
+    ).prefetch_related(
+        Prefetch(
+            "course_set__courserun_set", queryset=CourseRun.objects.not_discontinued()
         )
     )
     for program in all_programs:
         mmtrack_info = get_mmtrack(user, program)
-        response_data['programs'].append(get_info_for_program(mmtrack_info))
+        response_data["programs"].append(get_info_for_program(mmtrack_info))
     return response_data
 
 
@@ -179,7 +199,11 @@ def get_info_for_program(mmtrack):
         dict: a dictionary containing information about the program
     """
     # basic data for the program
-    backend = BACKEND_MITX_ONLINE if mmtrack.program.has_mitxonline_courses else BACKEND_EDX_ORG
+    backend = (
+        BACKEND_MITX_ONLINE
+        if mmtrack.program.has_mitxonline_courses
+        else BACKEND_EDX_ORG
+    )
     print(has_social_auth(mmtrack.user, backend))
     data = {
         "id": mmtrack.program.pk,
@@ -197,19 +221,19 @@ def get_info_for_program(mmtrack):
         ),
         "number_courses_passed": mmtrack.get_number_of_passed_courses_for_completion(),
         "has_mitxonline_courses": mmtrack.program.has_mitxonline_courses,
-        "has_socialauth_for_backend": has_social_auth(mmtrack.user, backend)
+        "has_socialauth_for_backend": has_social_auth(mmtrack.user, backend),
     }
 
     if mmtrack.has_exams:
-        data["grade_records_url"] = reverse('grade_records', args=[mmtrack.get_program_enrollment().id])
+        data["grade_records_url"] = reverse(
+            "grade_records", args=[mmtrack.get_program_enrollment().id]
+        )
 
     program_letter_url = mmtrack.get_program_letter_url()
     if program_letter_url:
         data["program_letter_url"] = program_letter_url
     for course in mmtrack.program.course_set.all():
-        data['courses'].append(
-            get_info_for_course(course, mmtrack)
-        )
+        data["courses"].append(get_info_for_course(course, mmtrack))
     return data
 
 
@@ -248,35 +272,36 @@ def get_info_for_course(course, mmtrack):
         "has_exam": course.has_exam,
         "certificate_url": get_certificate_url(mmtrack, course),
         "overall_grade": mmtrack.get_overall_final_grade_for_course(course),
-        "is_passed": mmtrack.has_passed_course(course)
+        "is_passed": mmtrack.has_passed_course(course),
     }
 
     def _add_run(run, mmtrack_, status):
         """Helper function to add a course run to the status dictionary"""
         formatted_run = format_courserun_for_dashboard(
-            run,
-            status,
-            mmtrack=mmtrack_,
-            position=len(course_data['runs']) + 1
+            run, status, mmtrack=mmtrack_, position=len(course_data["runs"]) + 1
         )
-        if run.is_current and mmtrack_.is_enrolled_mmtrack(formatted_run['course_id']):
+        if run.is_current and mmtrack_.is_enrolled_mmtrack(formatted_run["course_id"]):
             # Prepend current run on the top because user can pay and enroll for current run as well as
             # future run and the dashboard UI picks first run to display. User should be able to
             # see current run progress on dashboard UI.
-            course_data['runs'] = [formatted_run] + course_data['runs']
+            course_data["runs"] = [formatted_run] + course_data["runs"]
         else:
-            course_data['runs'].append(formatted_run)
+            course_data["runs"].append(formatted_run)
 
     with transaction.atomic():
         runs_qs = course.courserun_set.not_discontinued()
         if not runs_qs.count():
             return course_data
         # get all the run statuses
-        run_statuses = [get_status_for_courserun(course_run, mmtrack)
-                        for course_run in runs_qs]
+        run_statuses = [
+            get_status_for_courserun(course_run, mmtrack) for course_run in runs_qs
+        ]
     # sort them by end date
-    run_statuses.sort(key=lambda x: x.course_run.end_date or
-                      datetime.datetime(datetime.MAXYEAR, 1, 1, tzinfo=pytz.utc), reverse=True)
+    run_statuses.sort(
+        key=lambda x: x.course_run.end_date
+        or datetime.datetime(datetime.MAXYEAR, 1, 1, tzinfo=pytz.utc),
+        reverse=True,
+    )
     # pick the first `not enrolled` or the first
     for run_status in run_statuses:
         if run_status.status != CourseRunStatus.NOT_ENROLLED:
@@ -359,16 +384,20 @@ def get_final_grade(mmtrack, course_run):
         # for the first time after we have already frozen the final grades
         log.warning(
             'The user "%s" doesn\'t have a final grade for the course run "%s" '
-            'but the course run has already been frozen. Trying to freeze the user now.',
+            "but the course run has already been frozen. Trying to freeze the user now.",
             mmtrack.user.username,
             course_run.edx_course_key,
         )
-        final_grade = api.freeze_user_final_grade(mmtrack.user, course_run, raise_on_exception=True)
+        final_grade = api.freeze_user_final_grade(
+            mmtrack.user, course_run, raise_on_exception=True
+        )
 
     return final_grade
 
 
-def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-return-statements 
+def get_status_for_courserun(
+    course_run, mmtrack
+):  # pylint: disable=too-many-return-statements
     """
     Checks the status of a course run for a user given her enrollments
 
@@ -385,16 +414,22 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
         final_grade = get_final_grade(mmtrack, course_run)
         if course_run.has_frozen_grades:
             return CourseRunUserStatus(
-                CourseRunStatus.MISSED_DEADLINE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+                CourseRunStatus.MISSED_DEADLINE
+                if final_grade.passed
+                else CourseRunStatus.NOT_PASSED,
                 course_run,
             )
         if course_run.is_upgradable:
             return CourseRunUserStatus(
-                CourseRunStatus.CAN_UPGRADE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+                CourseRunStatus.CAN_UPGRADE
+                if final_grade.passed
+                else CourseRunStatus.NOT_PASSED,
                 course_run,
             )
         return CourseRunUserStatus(
-            CourseRunStatus.MISSED_DEADLINE if final_grade.passed else CourseRunStatus.NOT_PASSED,
+            CourseRunStatus.MISSED_DEADLINE
+            if final_grade.passed
+            else CourseRunStatus.NOT_PASSED,
             course_run,
         )
 
@@ -410,7 +445,9 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
         elif course_run.has_frozen_grades:
             # be sure that the user has a final grade or freeze now
             if not mmtrack.has_final_grade(course_run.edx_course_key):
-                api.freeze_user_final_grade(mmtrack.user, course_run, raise_on_exception=True)
+                api.freeze_user_final_grade(
+                    mmtrack.user, course_run, raise_on_exception=True
+                )
             status = CourseRunStatus.CHECK_IF_PASSED
         # this last check needs to be done as last one
         elif course_run.is_past:
@@ -418,7 +455,7 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
             status = CourseRunStatus.CURRENTLY_ENROLLED
         else:
             raise ImproperlyConfigured(
-                'The course {} results are not either current, past, or future at the same time'.format(
+                "The course {} results are not either current, past, or future at the same time".format(
                     course_run.edx_course_key
                 )
             )
@@ -441,10 +478,7 @@ def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-r
                     else:
                         status = CourseRunStatus.NOT_PASSED
 
-    return CourseRunUserStatus(
-        status=status,
-        course_run=course_run
-    )
+    return CourseRunUserStatus(status=status, course_run=course_run)
 
 
 def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, position=1):
@@ -463,40 +497,52 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
     if course_run is None:
         return None
     formatted_run = {
-        'id': course_run.id,
-        'course_id': course_run.edx_course_key,
-        'title': course_run.title,
-        'status': status_for_user,
-        'position': position,
-        'course_start_date': course_run.start_date,
-        'course_end_date': course_run.end_date,
-        'course_upgrade_deadline': course_run.upgrade_deadline,
-        'fuzzy_start_date': course_run.fuzzy_start_date,
-        'enrollment_url': course_run.enrollment_url,
-        'courseware_backend': course_run.courseware_backend,
-        'year_season': format_season_year_for_course_run(course_run),
+        "id": course_run.id,
+        "course_id": course_run.edx_course_key,
+        "title": course_run.title,
+        "status": status_for_user,
+        "position": position,
+        "course_start_date": course_run.start_date,
+        "course_end_date": course_run.end_date,
+        "course_upgrade_deadline": course_run.upgrade_deadline,
+        "fuzzy_start_date": course_run.fuzzy_start_date,
+        "enrollment_url": course_run.enrollment_url,
+        "courseware_backend": course_run.courseware_backend,
+        "year_season": format_season_year_for_course_run(course_run),
     }
 
     # check if there are extra fields to pull in
     extra_fields = CourseFormatConditionalFields.get_assoc_field(status_for_user)
     for extra_field in extra_fields:
-        formatted_run[extra_field['format_field']] = getattr(course_run, extra_field['course_run_field'])
+        formatted_run[extra_field["format_field"]] = getattr(
+            course_run, extra_field["course_run_field"]
+        )
 
     if status_for_user in (CourseStatus.PASSED, CourseStatus.NOT_PASSED):
-        formatted_run['final_grade'] = mmtrack.get_final_grade_percent(course_run.edx_course_key)
+        formatted_run["final_grade"] = mmtrack.get_final_grade_percent(
+            course_run.edx_course_key
+        )
     # if the course is can-upgrade, we need to show the current grade if it is in progress
     # or the final grade if it is final
     elif status_for_user == CourseStatus.CAN_UPGRADE:
         if mmtrack.has_final_grade(course_run.edx_course_key):
-            formatted_run['final_grade'] = mmtrack.get_final_grade_percent(course_run.edx_course_key)
+            formatted_run["final_grade"] = mmtrack.get_final_grade_percent(
+                course_run.edx_course_key
+            )
         elif course_run.course.should_display_progress:
-            formatted_run['current_grade'] = mmtrack.get_current_grade(course_run.edx_course_key)
+            formatted_run["current_grade"] = mmtrack.get_current_grade(
+                course_run.edx_course_key
+            )
     # any other status but "offered" should have the current grade
     elif status_for_user != CourseStatus.OFFERED:
         if mmtrack.has_final_grade(course_run.edx_course_key):
-            formatted_run['final_grade'] = mmtrack.get_final_grade_percent(course_run.edx_course_key)
+            formatted_run["final_grade"] = mmtrack.get_final_grade_percent(
+                course_run.edx_course_key
+            )
         elif course_run.course.should_display_progress:
-            formatted_run['current_grade'] = mmtrack.get_current_grade(course_run.edx_course_key)
+            formatted_run["current_grade"] = mmtrack.get_current_grade(
+                course_run.edx_course_key
+            )
 
     return formatted_run
 
@@ -509,12 +555,15 @@ def is_exam_schedulable(user, course):
     schedulable_exam_runs = ExamRun.objects.filter(
         course=course, date_last_eligible__gte=now.date()
     )
-    return ExamAuthorization.objects.filter(
-        user=user,
-        status=ExamAuthorization.STATUS_SUCCESS,
-        exam_run__in=schedulable_exam_runs,
-    ).exclude(
-        operation=ExamAuthorization.OPERATION_DELETE).exists()
+    return (
+        ExamAuthorization.objects.filter(
+            user=user,
+            status=ExamAuthorization.STATUS_SUCCESS,
+            exam_run__in=schedulable_exam_runs,
+        )
+        .exclude(operation=ExamAuthorization.OPERATION_DELETE)
+        .exists()
+    )
 
 
 def get_exam_register_end_date(course):
@@ -523,7 +572,9 @@ def get_exam_register_end_date(course):
     """
     schedulable_exam_run = ExamRun.get_currently_schedulable(course).first()
     if schedulable_exam_run is not None:
-        return schedulable_exam_run.date_last_schedulable.strftime("%B %-d, %I:%M %p %Z")
+        return schedulable_exam_run.date_last_schedulable.strftime(
+            "%B %-d, %I:%M %p %Z"
+        )
     return ""
 
 
@@ -543,12 +594,12 @@ def get_edx_exam_course_key(user, course):
         user=user,
         course=course,
         status=ExamAuthorization.STATUS_SUCCESS,
-        exam_run__in=schedulable_exam_runs
+        exam_run__in=schedulable_exam_runs,
     ).first()
     if exam_auth is None:
         return ""
 
-    return exam_auth.exam_run.edx_exam_course_key or ''
+    return exam_auth.exam_run.edx_exam_course_key or ""
 
 
 def get_future_exam_runs(course):
@@ -562,8 +613,11 @@ def get_future_exam_runs(course):
         list(str): a list of dates when future exams become schedulable
     """
 
-    return (ExamRun.get_schedulable_in_future(course).
-            order_by('date_first_schedulable').values_list('date_first_schedulable', flat=True))
+    return (
+        ExamRun.get_schedulable_in_future(course)
+        .order_by("date_first_schedulable")
+        .values_list("date_first_schedulable", flat=True)
+    )
 
 
 def get_exam_date_next_semester(course):
@@ -582,18 +636,22 @@ def get_exam_date_next_semester(course):
     current_course_run = (
         CourseRun.objects.not_discontinued()
         .filter(start_date__lte=now_in_utc(), course=course)
-        .order_by('-start_date').first()
+        .order_by("-start_date")
+        .first()
     )
     three_months = datetime.timedelta(weeks=12)
     if current_course_run is None or current_course_run.upgrade_deadline is None:
         next_date = now_in_utc() + three_months
     else:
         next_date = current_course_run.upgrade_deadline + three_months
-    exam_run = ExamRun.get_schedulable_in_future(course).filter(
-        date_first_schedulable__gte=next_date
-    ).order_by('date_first_schedulable').first()
+    exam_run = (
+        ExamRun.get_schedulable_in_future(course)
+        .filter(date_first_schedulable__gte=next_date)
+        .order_by("date_first_schedulable")
+        .first()
+    )
 
-    return exam_run.date_last_eligible.strftime('%b %-d, %Y') if exam_run else ""
+    return exam_run.date_last_eligible.strftime("%b %-d, %Y") if exam_run else ""
 
 
 def get_current_exam_run_dates(course):
@@ -609,10 +667,14 @@ def get_current_exam_run_dates(course):
     """
     schedulable_exam_run = ExamRun.get_currently_schedulable(course).first()
 
-    return '{} and {}'.format(
-        schedulable_exam_run.date_first_eligible.strftime('%b %-d'),
-        schedulable_exam_run.date_last_eligible.strftime('%b %-d, %Y')
-    ) if schedulable_exam_run else ''
+    return (
+        "{} and {}".format(
+            schedulable_exam_run.date_first_eligible.strftime("%b %-d"),
+            schedulable_exam_run.date_last_eligible.strftime("%b %-d, %Y"),
+        )
+        if schedulable_exam_run
+        else ""
+    )
 
 
 def get_certificate_url(mmtrack, course):
@@ -632,9 +694,11 @@ def get_certificate_url(mmtrack, course):
         if mmtrack.has_exams:
             certificate = mmtrack.get_course_certificate(course)
             if certificate:
-                return reverse('certificate', args=[certificate.hash])
+                return reverse("certificate", args=[certificate.hash])
         if mmtrack.has_passing_certificate(course_key):
-            download_url = mmtrack.certificates.get_verified_cert(course_key).download_url
+            download_url = mmtrack.certificates.get_verified_cert(
+                course_key
+            ).download_url
             if download_url:
                 url = urljoin(settings.EDXORG_CALLBACK_URL, download_url)
     return url
@@ -650,7 +714,9 @@ def calculate_users_to_refresh_in_bulk():
     """
     refresh_time_limit = now_in_utc() - datetime.timedelta(hours=6)
 
-    all_users = User.objects.filter(is_active=True, profile__fake_user=False).exclude(social_auth=None)
+    all_users = User.objects.filter(is_active=True, profile__fake_user=False).exclude(
+        social_auth=None
+    )
 
     con = get_redis_connection("redis")
     user_ids_invalid_credentials = con.smembers(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE)
@@ -659,23 +725,23 @@ def calculate_users_to_refresh_in_bulk():
     users_not_expired = all_users.filter(
         usercacherefreshtime__enrollment__gte=refresh_time_limit,
         usercacherefreshtime__certificate__gte=refresh_time_limit,
-        usercacherefreshtime__current_grade__gte=refresh_time_limit
+        usercacherefreshtime__current_grade__gte=refresh_time_limit,
     )
 
     only_dedp_users = []
     if not settings.UPDATE_EDX_DATA_FOR_DEDP_PROGRAM_USERS:
         dedp_users = ProgramEnrollment.objects.filter(
             program__title=DEDP_PROGRAM_TITLE
-        ).values_list('user__id', flat=True)
-        non_dedp_users = ProgramEnrollment.objects.exclude(
-            program__title=DEDP_PROGRAM_TITLE
-        ).filter(
-            user__id__in=dedp_users
-        ).values_list('user__id', flat=True).distinct()
+        ).values_list("user__id", flat=True)
+        non_dedp_users = (
+            ProgramEnrollment.objects.exclude(program__title=DEDP_PROGRAM_TITLE)
+            .filter(user__id__in=dedp_users)
+            .values_list("user__id", flat=True)
+            .distinct()
+        )
         only_dedp_users = list(set(dedp_users) - set(non_dedp_users))
     return list(
-        all_users
-        .exclude(id__in=users_not_expired.values_list("id", flat=True))
+        all_users.exclude(id__in=users_not_expired.values_list("id", flat=True))
         .exclude(id__in=user_ids_invalid_credentials)
         .exclude(id__in=only_dedp_users)
         .values_list("id", flat=True)
@@ -703,7 +769,7 @@ def refresh_user_data(user_id, provider):
     try:
         user_social = get_social_auth(user, provider)
     except ObjectDoesNotExist:
-        log.info('No social auth for %s for user %s', provider, user.username)
+        log.info("No social auth for %s for user %s", provider, user.username)
         return
 
     try:
@@ -716,15 +782,21 @@ def refresh_user_data(user_id, provider):
     try:
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
     except:
-        log.exception("Unable to create an edX client object for student %s", user.username)
+        log.exception(
+            "Unable to create an edX client object for student %s", user.username
+        )
         return
 
     for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
         try:
-            CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type, provider)
+            CachedEdxDataApi.update_cache_if_expired(
+                user, edx_client, cache_type, provider
+            )
         except:
             save_cache_update_failure(user_id)
-            log.exception("Unable to refresh cache %s for student %s", cache_type, user.username)
+            log.exception(
+                "Unable to refresh cache %s for student %s", cache_type, user.username
+            )
             continue
 
 
@@ -754,7 +826,7 @@ def update_cache_for_backend(user, provider):
     try:
         user_social = get_social_auth(user, provider)
     except ObjectDoesNotExist:
-        log.info('No social auth for %s for user %s', provider, user.username)
+        log.info("No social auth for %s for user %s", provider, user.username)
 
     if user_social is not None:
         try:
@@ -762,16 +834,18 @@ def update_cache_for_backend(user, provider):
         except InvalidCredentialStored:
             raise
         except:  # pylint: disable=bare-except
-            log.exception('Impossible to refresh user credentials in dashboard view')
+            log.exception("Impossible to refresh user credentials in dashboard view")
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
         try:
             for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
-                CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type, provider)
+                CachedEdxDataApi.update_cache_if_expired(
+                    user, edx_client, cache_type, provider
+                )
         except InvalidCredentialStored:
             raise
         except:  # pylint: disable=bare-except
-            log.exception('Impossible to refresh edX cache')
+            log.exception("Impossible to refresh edX cache")
 
 
 def is_user_enrolled_in_exam_course(edx_client, exam_run):

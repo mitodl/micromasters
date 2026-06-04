@@ -6,7 +6,7 @@
   padding: 40px 30px 60px 30px;
   text-align: left;
   color: #808080;
-  font-size: .83em;
+  font-size: 0.83em;
   line-height: 1.2em;
 
   @include breakpoint(phone) {
@@ -20,7 +20,6 @@
     @include breakpoint(phone) {
       width: 100%;
     }
-
   }
 
   .social-buttons-list {
@@ -37,7 +36,8 @@
     }
   }
 
-  .footer-address, .footer-copy {
+  .footer-address,
+  .footer-copy {
     margin-bottom: 24px;
     display: block;
   }

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ecommerce', '0018_alter_field_status_on_order'),
+        ("ecommerce", "0018_alter_field_status_on_order"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='reference_number',
+            model_name="order",
+            name="reference_number",
             field=models.CharField(max_length=255, null=True, unique=True),
         ),
     ]

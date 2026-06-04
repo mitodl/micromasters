@@ -7,7 +7,7 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
 import {
   setShareDialogVisibility,
-  setRecordShareLink
+  setRecordShareLink,
 } from "../actions/share_grades_dialog"
 import CopyLinkDialog from "./CopyLinkDialog"
 import IntegratedTestHelper from "../util/integration_test_helper"
@@ -31,7 +31,7 @@ describe("CopyLinkDialog", () => {
         <Provider store={helper.store}>
           <CopyLinkDialog {...props} />
         </Provider>
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
     )
   }
 

@@ -8,7 +8,7 @@ import sinon from "sinon"
 import {
   makeDashboard,
   makeCourse,
-  makeCoursePrices
+  makeCoursePrices,
 } from "../../factories/dashboard"
 import CourseRow from "./CourseRow"
 import CourseAction from "./CourseAction"
@@ -51,12 +51,12 @@ describe("CourseRow", () => {
       />,
       {
         context: {
-          router: {}
+          router: {},
         },
         childContextTypes: {
-          router: PropTypes.object.isRequired
-        }
-      }
+          router: PropTypes.object.isRequired,
+        },
+      },
     )
   }
 
@@ -66,9 +66,9 @@ describe("CourseRow", () => {
     makeRunCurrent(course.runs[0])
     const wrapper = renderRow(
       {
-        course: course
+        course: course,
       },
-      true
+      true,
     )
     const statusProps = wrapper.find(StatusMessages).props()
     assert.deepEqual(statusProps.course, course)
@@ -85,10 +85,10 @@ describe("CourseRow", () => {
     course.is_elective = true
     const wrapper = renderRow(
       {
-        course:              course,
-        programHasElectives: true
+        course: course,
+        programHasElectives: true,
       },
-      true
+      true,
     )
     assert.deepEqual(wrapper.find(".elective-tag").text(), "elective")
   })
@@ -98,7 +98,7 @@ describe("CourseRow", () => {
     const course = programs[0].courses[0]
     makeRunCurrent(course.runs[0])
     const wrapper = renderRow({
-      course: course
+      course: course,
     })
     assert.lengthOf(wrapper.find(CourseAction), 1)
   })
@@ -108,8 +108,8 @@ describe("CourseRow", () => {
     const course = programs[0].courses[0]
     makeRunCurrent(course.runs[0])
     const wrapper = renderRow({
-      course:        course,
-      showStaffView: true
+      course: course,
+      showStaffView: true,
     })
     assert.lengthOf(wrapper.find(CourseAction), 0)
   })
@@ -120,9 +120,9 @@ describe("CourseRow", () => {
     makeRunPast(course.runs[0])
     const wrapper = renderRow(
       {
-        course: course
+        course: course,
       },
-      true
+      true,
     )
     assert.equal(0, wrapper.find(CourseAction).length)
   })
@@ -134,9 +134,9 @@ describe("CourseRow", () => {
     course.runs[1].status = STATUS_NOT_PASSED
     const wrapper = renderRow(
       {
-        course: course
+        course: course,
       },
-      true
+      true,
     )
     const progressProps = wrapper.find(ProgressMessage).props()
     assert.deepEqual(progressProps.course, course)
@@ -157,18 +157,18 @@ describe("CourseRow", () => {
       <CourseRow
         ui={{
           ...INITIAL_UI_STATE,
-          showEnrollPayLaterSuccess: course.runs[0].course_id
+          showEnrollPayLaterSuccess: course.runs[0].course_id,
         }}
         course={course}
-      />
+      />,
     )
     assert.equal(
       wrapper.find(".enroll-pay-later-heading").text(),
-      "You are now auditing this course"
+      "You are now auditing this course",
     )
     assert.equal(
       wrapper.find(".enroll-pay-later-txt").text(),
-      "But you still need to pay to get credit."
+      "But you still need to pay to get credit.",
     )
   })
 })

@@ -11,21 +11,19 @@ import {
   getEmployer,
   getPreferredName,
   isProfileOfLoggedinUser,
-  isNilOrBlank
+  isNilOrBlank,
 } from "../util/util"
 import { mstr } from "../lib/sanctuary"
 import type { Profile } from "../flow/profileTypes"
 import CardContent from "@material-ui/core/CardContent"
 
-const showLegalNameIfStaff = profile => {
+const showLegalNameIfStaff = (profile) => {
   return hasAnyStaffRole(SETTINGS.roles) ? (
-    <div className="legal-name">{`(Legal name: ${profile.first_name} ${
-      profile.last_name
-    })`}</div>
+    <div className="legal-name">{`(Legal name: ${profile.first_name} ${profile.last_name})`}</div>
   ) : null
 }
 
-const showIdIfStaff = profile => {
+const showIdIfStaff = (profile) => {
   return hasAnyStaffRole(SETTINGS.roles) ? (
     <div className="student-id">{`(Student Id: ${profile.student_id})`}</div>
   ) : null
@@ -36,7 +34,7 @@ export default class LearnerInfoCard extends React.Component {
     profile: Profile,
     toggleShowPersonalDialog: () => void,
     toggleShowAboutMeDialog: () => void,
-    openLearnerEmailComposer: () => void
+    openLearnerEmailComposer: () => void,
   }
 
   isOwnProfilePage = (): boolean => isProfileOfLoggedinUser(this.props.profile)
@@ -54,7 +52,7 @@ export default class LearnerInfoCard extends React.Component {
 
   renderAboutMeSection = (
     profile: Profile,
-    toggleShowAboutMeDialog: Function
+    toggleShowAboutMeDialog: Function,
   ): React$Element<*> => {
     let aboutMeContent, aboutMeEditContent
 
@@ -113,11 +111,8 @@ export default class LearnerInfoCard extends React.Component {
   }
 
   render() {
-    const {
-      profile,
-      toggleShowPersonalDialog,
-      toggleShowAboutMeDialog
-    } = this.props
+    const { profile, toggleShowPersonalDialog, toggleShowAboutMeDialog } =
+      this.props
 
     let personalInfoEditContent
     if (this.isOwnProfilePage()) {

@@ -6,26 +6,40 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0028_merge'),
-        ('cms', '0021_remove_frequentlyaskedquestion_faqs_page'),
+        ("wagtailcore", "0028_merge"),
+        ("cms", "0021_remove_frequentlyaskedquestion_faqs_page"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CategorizedFaqsPage',
+            name="CategorizedFaqsPage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
         migrations.AddField(
-            model_name='frequentlyaskedquestion',
-            name='faqs_page',
-            field=modelcluster.fields.ParentalKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='faqs', to='cms.CategorizedFaqsPage'),
+            model_name="frequentlyaskedquestion",
+            name="faqs_page",
+            field=modelcluster.fields.ParentalKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="faqs",
+                to="cms.CategorizedFaqsPage",
+            ),
         ),
     ]

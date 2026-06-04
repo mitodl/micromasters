@@ -26,24 +26,20 @@ const middleware = () => {
 }
 
 const devTools = () =>
-  notProd() && window.devToolsExtension ? window.devToolsExtension() : f => f
+  notProd() && window.devToolsExtension ? window.devToolsExtension() : (f) => f
 
-const storage = paths => compose(filter(paths))(adapter(window.localStorage))
+const storage = (paths) => compose(filter(paths))(adapter(window.localStorage))
 
-const createPersistentStore = persistence =>
-  compose(
-    middleware(),
-    persistence,
-    devTools()
-  )(createStore)
+const createPersistentStore = (persistence) =>
+  compose(middleware(), persistence, devTools())(createStore)
 
-const createPersistentTestStore = persistence =>
+const createPersistentTestStore = (persistence) =>
   compose(persistence)(configureTestStore)
 
 export default function configureStore(initialState: ?Object) {
   const persistence = persistState(
     storage(["currentProgramEnrollment"]),
-    "redux"
+    "redux",
   )
 
   const reducer = compose(mergePersistedState())(rootReducer)
@@ -65,7 +61,7 @@ export default function configureStore(initialState: ?Object) {
 export const configureMainTestStore = (reducer: Reducer<*, *>) => {
   const persistence = persistState(
     storage(["currentProgramEnrollment"]),
-    "redux"
+    "redux",
   )
 
   return createPersistentTestStore(persistence)(reducer)

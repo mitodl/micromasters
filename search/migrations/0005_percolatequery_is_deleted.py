@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('search', '0004_add_percolate_query_membership'),
+        ("search", "0004_add_percolate_query_membership"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='percolatequery',
-            name='is_deleted',
+            model_name="percolatequery",
+            name="is_deleted",
             field=models.BooleanField(default=False),
         ),
     ]

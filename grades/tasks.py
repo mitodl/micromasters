@@ -20,7 +20,7 @@ User = get_user_model()
 CACHE_ID_BASE_STR = "freeze_grade_{0}"
 
 log = logging.getLogger(__name__)
-cache_redis = caches['redis']
+cache_redis = caches["redis"]
 
 
 @app.task
@@ -54,12 +54,17 @@ def freeze_course_run_final_grades(course_run_id):
     course_run = CourseRun.objects.get(id=course_run_id)
     # no need to do anything if the course run is not ready
     if not course_run.can_freeze_grades:
-        log.info('the grades course "%s" cannot be frozen yet', course_run.edx_course_key)
+        log.info(
+            'the grades course "%s" cannot be frozen yet', course_run.edx_course_key
+        )
         return
 
     # if it has already completed, do not do anything
     if CourseRunGradingStatus.is_complete(course_run):
-        log.info('Final Grades freezing for course run "%s" has already been completed', course_run.edx_course_key)
+        log.info(
+            'Final Grades freezing for course run "%s" has already been completed',
+            course_run.edx_course_key,
+        )
         return
 
     # cache id string for this task
@@ -81,20 +86,29 @@ def freeze_course_run_final_grades(course_run_id):
         results.delete()
 
     # extract the users to be frozen for this course
-    user_ids_qset = api.get_users_without_frozen_final_grade(course_run).values_list('id', flat=True)
+    user_ids_qset = api.get_users_without_frozen_final_grade(course_run).values_list(
+        "id", flat=True
+    )
 
     # find number of users for which cache could not be updated
     con = get_redis_connection("redis")
-    failed_users_cache_key = api.CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key)
+    failed_users_cache_key = api.CACHE_KEY_FAILED_USERS_BASE_STR.format(
+        course_run.edx_course_key
+    )
     failed_users_count = con.llen(failed_users_cache_key)
 
     # get the list of users that failed authentication last run of the task
-    failed_users_list = list(map(int, con.lrange(failed_users_cache_key, 0, failed_users_count)))
+    failed_users_list = list(
+        map(int, con.lrange(failed_users_cache_key, 0, failed_users_count))
+    )
     users_need_freeze = list(user_ids_qset)
     users_left = list(set(users_need_freeze) - set(failed_users_list))
     # if there are no more users to be frozen, just complete the task
     if not users_left:
-        log.info('Completing grading with %d users getting refresh cache errors', len(failed_users_list))
+        log.info(
+            "Completing grading with %d users getting refresh cache errors",
+            len(failed_users_list),
+        )
         CourseRunGradingStatus.set_to_complete(course_run)
         con.delete(failed_users_cache_key)
         return
@@ -108,7 +122,8 @@ def freeze_course_run_final_grades(course_run_id):
 
     # create a group of subtasks to be run in parallel
     job = group(
-        freeze_users_final_grade_async.s(list_user_ids, course_run.id) for list_user_ids in chunks(user_ids_qset)
+        freeze_users_final_grade_async.s(list_user_ids, course_run.id)
+        for list_user_ids in chunks(user_ids_qset)
     )
     results = job.apply_async()
     # save the result ID in the celery backend
@@ -137,5 +152,6 @@ def freeze_users_final_grade_async(user_ids, course_run_id):
         except:
             log.exception(
                 'Impossible to freeze final grade for user "%s" in course %s',
-                user.username, course_run.edx_course_key
+                user.username,
+                course_run.edx_course_key,
             )

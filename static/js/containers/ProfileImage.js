@@ -8,7 +8,7 @@ import type { Dispatch } from "redux"
 import {
   makeProfileImageUrl,
   getPreferredName,
-  userPrivilegeCheck
+  userPrivilegeCheck,
 } from "../util/util"
 import type { Profile } from "../flow/profileTypes"
 import ProfileImageUploader from "../components/ProfileImageUploader"
@@ -18,14 +18,14 @@ import {
   clearPhotoEdit,
   updatePhotoEdit,
   setPhotoError,
-  updateUserPhoto
+  updateUserPhoto,
 } from "../actions/image_upload"
 import { fetchUserProfile } from "../actions/profile"
 import { showDialog, hideDialog } from "../actions/ui"
 
 export const PROFILE_IMAGE_DIALOG = "PROFILE_IMAGE_DIALOG"
 
-const formatPhotoName = photo => `${photo.name.replace(/\.\w*$/, "")}.jpg`
+const formatPhotoName = (photo) => `${photo.name.replace(/\.\w*$/, "")}.jpg`
 
 class ProfileImage extends React.Component {
   props: {
@@ -40,11 +40,11 @@ class ProfileImage extends React.Component {
     showLink: boolean,
     startPhotoEdit: (p: File) => void,
     updatePhotoEdit: (b: Blob) => void,
-    useSmall?: boolean
+    useSmall?: boolean,
   }
 
   static defaultProps = {
-    editable: false
+    editable: false,
   }
 
   updateUserPhoto = () => {
@@ -52,11 +52,11 @@ class ProfileImage extends React.Component {
       profile: { username },
       imageUpload: { edit, photo },
       dispatch,
-      clearPhotoEdit
+      clearPhotoEdit,
     } = this.props
 
     return dispatch(
-      updateUserPhoto(username, edit, formatPhotoName(photo))
+      updateUserPhoto(username, edit, formatPhotoName(photo)),
     ).then(() => {
       clearPhotoEdit()
       this.setDialogVisibility(false)
@@ -114,7 +114,7 @@ class ProfileImage extends React.Component {
               {...this.props}
               updateUserPhoto={this.updateUserPhoto}
               setDialogVisibility={this.setDialogVisibility}
-            />
+            />,
           )}
           <img
             src={imageUrl}
@@ -129,20 +129,17 @@ class ProfileImage extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   photoDialogOpen: state.ui.dialogVisibility[PROFILE_IMAGE_DIALOG] || false,
-  imageUpload:     state.imageUpload
+  imageUpload: state.imageUpload,
 })
 
-const mapDispatchToProps = dispatch => ({
-  startPhotoEdit:  createActionHelper(dispatch, startPhotoEdit),
-  clearPhotoEdit:  createActionHelper(dispatch, clearPhotoEdit),
+const mapDispatchToProps = (dispatch) => ({
+  startPhotoEdit: createActionHelper(dispatch, startPhotoEdit),
+  clearPhotoEdit: createActionHelper(dispatch, clearPhotoEdit),
   updatePhotoEdit: createActionHelper(dispatch, updatePhotoEdit),
-  setPhotoError:   createActionHelper(dispatch, setPhotoError),
-  dispatch:        dispatch
+  setPhotoError: createActionHelper(dispatch, setPhotoError),
+  dispatch: dispatch,
 })
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ProfileImage)
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileImage)

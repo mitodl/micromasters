@@ -6,7 +6,7 @@ export default class FacultyTile extends React.Component {
     name: string,
     title: string,
     short_bio: string,
-    image: Object
+    image: Object,
   }
   render() {
     const { name, title, short_bio: shortBio, image } = this.props
@@ -19,7 +19,7 @@ export default class FacultyTile extends React.Component {
     if (image) {
       const {
         alt,
-        rendition: { width, height, file }
+        rendition: { width, height, file },
       } = image
       imgEl = <img src={file} alt={alt} width={width} height={height} />
     } else {

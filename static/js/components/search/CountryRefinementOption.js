@@ -9,7 +9,7 @@ export default class CountryRefinementOption extends React.Component {
     label: string,
     active: boolean,
     onClick: Function,
-    count: number
+    count: number,
   }
 
   render() {

@@ -11,7 +11,7 @@ import type { Validator, UIValidator } from "../../lib/validation/profile"
 import type {
   Profile,
   ValidationErrors,
-  UpdateProfileFunc
+  UpdateProfileFunc,
 } from "../../flow/profileTypes"
 
 export const CREATE_OPTION_REGEX = /^Create option "|"$/g
@@ -29,19 +29,19 @@ type SelectFieldProps = {
   topMenu: boolean,
   updateProfile: UpdateProfileFunc,
   updateValidationVisibility: (xs: Array<string>) => void,
-  validator: Validator | UIValidator
+  validator: Validator | UIValidator,
 }
 
 class SelectField extends React.Component {
   constructor(props: SelectFieldProps) {
     super(props)
     this.state = {
-      customOptions: []
+      customOptions: [],
     }
   }
 
   state: {
-    customOptions: Array<Option>
+    customOptions: Array<Option>,
   }
 
   onChange = (selection: Option): void => {
@@ -52,7 +52,7 @@ class SelectField extends React.Component {
       keySet,
       selection && selection.value
         ? selection.value.replace(CREATE_OPTION_REGEX, "")
-        : ""
+        : "",
     )
     updateProfile(clone, validator)
   }
@@ -63,7 +63,7 @@ class SelectField extends React.Component {
       validator,
       updateProfile,
       profile,
-      keySet
+      keySet,
     } = this.props
     if (_.isFunction(updateValidationVisibility)) {
       updateValidationVisibility(keySet)
@@ -105,10 +105,10 @@ class SelectField extends React.Component {
     if (
       allowCreate &&
       value &&
-      !combinedOptions.find(option => option.value === value)
+      !combinedOptions.find((option) => option.value === value)
     ) {
       this.setState({
-        customOptions: customOptions.concat({ value: value, label: value })
+        customOptions: customOptions.concat({ value: value, label: value }),
       })
     }
   }

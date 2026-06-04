@@ -14,12 +14,12 @@ import ProfileFormFields from "../util/ProfileFormFields"
 import { showDialog, hideDialog, setProgramsToUnEnroll } from "../actions/ui"
 import {
   unEnrollProgramEnrollments,
-  UNENROLL_PROGRAM_DIALOG
+  UNENROLL_PROGRAM_DIALOG,
 } from "../actions/programs"
 import type { Profile } from "../flow/profileTypes"
 import type {
   AvailableProgramsState,
-  AvailableProgram
+  AvailableProgram,
 } from "../flow/enrollmentTypes"
 import type { UIState } from "../reducers/ui"
 import CardContent from "@material-ui/core/CardContent"
@@ -31,14 +31,14 @@ import InputLabel from "@material-ui/core/InputLabel"
 
 const selectStyle = {
   backgroundColor: "#ffff",
-  border:          "1px solid #c3c1c1",
-  padding:         "0 10px",
-  borderRadius:    "3px",
-  height:          "40px"
+  border: "1px solid #c3c1c1",
+  padding: "0 10px",
+  borderRadius: "3px",
+  height: "40px",
 }
 
 const formControl = {
-  minWidth: "75%"
+  minWidth: "75%",
 }
 
 const isVisible = R.propOr(false, UNENROLL_PROGRAM_DIALOG)
@@ -50,7 +50,7 @@ class LeaveProgramWizard extends ProfileFormFields {
     dispatch: Dispatch,
     profile: Profile,
     programs: AvailableProgramsState,
-    ui: UIState
+    ui: UIState,
   }
 
   onProgramUnEnrollChange = (event: any) => {
@@ -61,7 +61,7 @@ class LeaveProgramWizard extends ProfileFormFields {
   unEnrollUserTask = () => {
     const {
       dispatch,
-      ui: { programsToUnEnroll }
+      ui: { programsToUnEnroll },
     } = this.props
     if (!_.isEmpty(programsToUnEnroll)) {
       dispatch(unEnrollProgramEnrollments(programsToUnEnroll))
@@ -70,14 +70,16 @@ class LeaveProgramWizard extends ProfileFormFields {
 
   menuItems = (programs: Array<AvailableProgram>) => {
     const {
-      ui: { programsToUnEnroll = [] }
+      ui: { programsToUnEnroll = [] },
     } = this.props
     return programs.map((program: AvailableProgram) => (
       <MenuItem
         key={program.id}
         selected={R.and(
           R.not(R.isEmpty(programsToUnEnroll)),
-          R.not(_.isUndefined(programsToUnEnroll.find(id => id === program.id)))
+          R.not(
+            _.isUndefined(programsToUnEnroll.find((id) => id === program.id)),
+          ),
         )}
         value={program.id}
       >
@@ -89,7 +91,7 @@ class LeaveProgramWizard extends ProfileFormFields {
   renderUnenrollUI = () => {
     const {
       ui: { programsToUnEnroll = [] },
-      programs
+      programs,
     } = this.props
     const enrolledPrograms = enrolledInPrograms(programs)
     return (
@@ -118,8 +120,8 @@ class LeaveProgramWizard extends ProfileFormFields {
       ui: {
         dialogVisibility,
         programsToUnEnrollInFlight,
-        programsToUnEnroll = []
-      }
+        programsToUnEnroll = [],
+      },
     } = this.props
     return (
       <Dialog
@@ -155,7 +157,7 @@ class LeaveProgramWizard extends ProfileFormFields {
             programsToUnEnrollInFlight,
             "LEAVE SELECTED PROGRAM(S)",
             "",
-            programsToUnEnroll.length === 0
+            programsToUnEnroll.length === 0,
           )}
         </DialogActions>
       </Dialog>

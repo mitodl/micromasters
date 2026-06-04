@@ -13,7 +13,7 @@ describe("show and hide enroll pay later success alert", () => {
 
   beforeEach(() => {
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.ui)
+    dispatchThen = store.createDispatchThen((state) => state.ui)
     sandbox = sinon.sandbox.create()
   })
 
@@ -26,8 +26,8 @@ describe("show and hide enroll pay later success alert", () => {
     const waitStub = sandbox.stub(util, "wait").returns(waitPromise)
 
     return dispatchThen(showEnrollPayLaterSuccessMessage("foo/bar/baz"), [
-      SHOW_ENROLL_PAY_LATER_SUCCESS
-    ]).then(state => {
+      SHOW_ENROLL_PAY_LATER_SUCCESS,
+    ]).then((state) => {
       assert.equal(state.showEnrollPayLaterSuccess, "foo/bar/baz")
 
       sinon.assert.calledWith(waitStub, 9000)

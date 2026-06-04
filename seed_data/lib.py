@@ -9,17 +9,26 @@ from django.db.utils import IntegrityError
 
 from courses.models import Course, CourseRun, Program
 from dashboard.api_edx_cache import CachedEdxDataApi
-from dashboard.models import (CachedCertificate, CachedCurrentGrade,
-                              CachedEnrollment, UserCacheRefreshTime)
+from dashboard.models import (
+    CachedCertificate,
+    CachedCurrentGrade,
+    CachedEnrollment,
+    UserCacheRefreshTime,
+)
 from grades.models import FinalGrade, FinalGradeStatus
 from micromasters.utils import now_in_utc
-from seed_data.management.commands import (DEFAULT_GRADE,
-                                           FAKE_PROGRAM_DESC_PREFIX,
-                                           PASSING_GRADE)
-from seed_data.utils import (accepts_or_calculates_now,
-                             create_active_date_range,
-                             create_future_date_range, create_past_date_range,
-                             future_date)
+from seed_data.management.commands import (
+    DEFAULT_GRADE,
+    FAKE_PROGRAM_DESC_PREFIX,
+    PASSING_GRADE,
+)
+from seed_data.utils import (
+    accepts_or_calculates_now,
+    create_active_date_range,
+    create_future_date_range,
+    create_past_date_range,
+    future_date,
+)
 
 User = get_user_model()
 
@@ -31,6 +40,7 @@ def fake_programs_query():
 
 class ModelFinder:
     """Finds a single model object that matches some given parameters or throws and error"""
+
     model_cls = None
     param_keys = {}
 
@@ -57,7 +67,7 @@ class ModelFinder:
                 exc_text.format(
                     cls.model_cls.__name__,
                     params,
-                    '\n'.join(str(obj) for obj in objects)
+                    "\n".join(str(obj) for obj in objects),
                 )
             )
         return objects[0]
@@ -80,53 +90,57 @@ class ModelFinder:
 
 class UserFinder(ModelFinder):
     """Finds a single User"""
+
     model_cls = User
-    param_keys = {'username', 'email'}
+    param_keys = {"username", "email"}
 
     @classmethod
     def calculate_params(cls, **kwargs):
         params = {}
-        if 'username' in kwargs:
-            params['username__contains'] = kwargs['username']
-        if 'email' in kwargs:
-            params['email__contains'] = kwargs['email']
+        if "username" in kwargs:
+            params["username__contains"] = kwargs["username"]
+        if "email" in kwargs:
+            params["email__contains"] = kwargs["email"]
         return params
 
 
 class CourseFinder(ModelFinder):
     """Finds a single Course"""
+
     model_cls = Course
-    param_keys = {'program_title', 'course_level', 'course_title'}
+    param_keys = {"program_title", "course_level", "course_title"}
 
     @classmethod
     def calculate_params(cls, **kwargs):
         params = {}
-        if 'program_title' in kwargs:
-            params['program__title__contains'] = kwargs['program_title']
-        if 'course_level' in kwargs:
-            params['title__endswith'] = kwargs['course_level']
-        if 'course_title' in kwargs:
-            params['title__contains'] = kwargs['course_title']
+        if "program_title" in kwargs:
+            params["program__title__contains"] = kwargs["program_title"]
+        if "course_level" in kwargs:
+            params["title__endswith"] = kwargs["course_level"]
+        if "course_title" in kwargs:
+            params["title__contains"] = kwargs["course_title"]
         return params
 
 
 class CourseRunFinder(ModelFinder):
     """Finds a single CourseRun"""
+
     model_cls = CourseRun
-    param_keys = {'course_run_title', 'course_run_key'}
+    param_keys = {"course_run_title", "course_run_key"}
 
     @classmethod
     def calculate_params(cls, **kwargs):
         params = {}
-        if 'course_run_title' in kwargs:
-            params['title__contains'] = kwargs['course_run_title']
-        if 'course_run_key' in kwargs:
-            params['edx_course_key__contains'] = kwargs['course_run_key']
+        if "course_run_title" in kwargs:
+            params["title__contains"] = kwargs["course_run_title"]
+        if "course_run_key" in kwargs:
+            params["edx_course_key__contains"] = kwargs["course_run_key"]
         return params
 
 
 class CachedHandler:
     """Provides common functionality to retrieve/manipulate cached edX model objects"""
+
     model_cls = None
     cache_type = None
 
@@ -141,11 +155,11 @@ class CachedHandler:
 
     def clear_all(self, course=None, course_run=None):
         """Clears all cached edX objects associated with a User (and Course/CourseRun, if provided)"""
-        params = {'user': self.user}
+        params = {"user": self.user}
         if course:
-            params['course_run__course'] = course
+            params["course_run__course"] = course
         if course_run:
-            params['course_run'] = course_run
+            params["course_run"] = course_run
         return self.model_cls.objects.filter(**params).delete()
 
     @classmethod
@@ -164,21 +178,29 @@ class CachedHandler:
         if not created:
             obj.data = data
             obj.save()
-        CachedEdxDataApi.update_cache_last_access(self.user, self.cache_type, timestamp=now_in_utc())
+        CachedEdxDataApi.update_cache_last_access(
+            self.user, self.cache_type, timestamp=now_in_utc()
+        )
         return obj
 
     def find(self, course_run):
         """Gets a cached edX object for a given User and CourseRun"""
-        return self.model_cls.objects.filter(user=self.user, course_run=course_run).first()
+        return self.model_cls.objects.filter(
+            user=self.user, course_run=course_run
+        ).first()
 
     def get_or_create(self, course_run, data=None):
         """Gets or creates a cached edX object for a given User and CourseRun"""
         defaults = {"data": data}
-        return self.model_cls.objects.get_or_create(user=self.user, course_run=course_run, defaults=defaults)
+        return self.model_cls.objects.get_or_create(
+            user=self.user, course_run=course_run, defaults=defaults
+        )
 
     def exists(self, course_run):
         """Returns True if a User has an associated cached edX record for the given CourseRun"""
-        return self.model_cls.objects.filter(user=self.user, course_run=course_run).exists()
+        return self.model_cls.objects.filter(
+            user=self.user, course_run=course_run
+        ).exists()
 
 
 def _isoformat(date):
@@ -188,66 +210,75 @@ def _isoformat(date):
 
 class CachedEnrollmentHandler(CachedHandler):
     """Provides functionality to CachedEnrollment objects"""
+
     model_cls = CachedEnrollment
-    cache_type = 'enrollment'
+    cache_type = "enrollment"
 
     @classmethod
     def set_edx_key(cls, obj, course_run):
-        obj.data['course_details']['course_id'] = course_run.edx_course_key
+        obj.data["course_details"]["course_id"] = course_run.edx_course_key
 
-    def build_data_property(self, course_run, verified=True, **kwargs):  # pylint: disable=arguments-differ
+    def build_data_property(
+        self, course_run, verified=True, **kwargs
+    ):  # pylint: disable=arguments-differ
         return {
-            'user': self.username,
-            'mode': 'verified' if verified else 'not verified',
-            'is_active': True,
-            'course_details': {
-                'course_id': course_run.edx_course_key,
-                'enrollment_start': _isoformat(course_run.enrollment_start),
-                'enrollment_end': _isoformat(course_run.enrollment_end)
-            }
+            "user": self.username,
+            "mode": "verified" if verified else "not verified",
+            "is_active": True,
+            "course_details": {
+                "course_id": course_run.edx_course_key,
+                "enrollment_start": _isoformat(course_run.enrollment_start),
+                "enrollment_end": _isoformat(course_run.enrollment_end),
+            },
         }
 
 
 class CachedCertificateHandler(CachedHandler):
     """Provides functionality to CachedCertificate objects"""
+
     model_cls = CachedCertificate
-    cache_type = 'certificate'
+    cache_type = "certificate"
 
     @classmethod
     def set_edx_key(cls, obj, course_run):
-        obj.data['course_id'] = course_run.edx_course_key
+        obj.data["course_id"] = course_run.edx_course_key
 
-    def build_data_property(self, course_run, grade=DEFAULT_GRADE, **kwargs):  # pylint: disable=arguments-differ
+    def build_data_property(
+        self, course_run, grade=DEFAULT_GRADE, **kwargs
+    ):  # pylint: disable=arguments-differ
         return {
-            'username': self.username,
-            'course_id': course_run.edx_course_key,
-            'certificate_type': 'verified',
-            'grade': str(grade)
+            "username": self.username,
+            "course_id": course_run.edx_course_key,
+            "certificate_type": "verified",
+            "grade": str(grade),
         }
 
 
 class CachedCurrentGradeHandler(CachedHandler):
     """Provides functionality to CachedCurrentGrade objects"""
+
     model_cls = CachedCurrentGrade
-    cache_type = 'current_grade'
+    cache_type = "current_grade"
 
     @classmethod
     def set_edx_key(cls, obj, course_run):
-        obj.data['course_key'] = course_run.edx_course_key
+        obj.data["course_key"] = course_run.edx_course_key
 
-    def build_data_property(self, course_run, grade=DEFAULT_GRADE, **kwargs):  # pylint: disable=arguments-differ
+    def build_data_property(
+        self, course_run, grade=DEFAULT_GRADE, **kwargs
+    ):  # pylint: disable=arguments-differ
         return {
-            'course_key': course_run.edx_course_key,
-            'username': self.username,
-            'percent': str(grade),
-            'passed': grade >= PASSING_GRADE
+            "course_key": course_run.edx_course_key,
+            "username": self.username,
+            "percent": str(grade),
+            "passed": grade >= PASSING_GRADE,
         }
 
 
 CACHED_HANDLERS = {
     CachedEnrollment: CachedEnrollmentHandler,
     CachedCertificate: CachedCertificateHandler,
-    CachedCurrentGrade: CachedCurrentGradeHandler
+    CachedCurrentGrade: CachedCurrentGradeHandler,
 }
 
 
@@ -257,7 +288,7 @@ def ensure_cached_data_freshness(user):
     """
     future = future_date()
     updated_values = {cache: future for cache in CachedEdxDataApi.ALL_CACHE_TYPES}
-    updated_values['user'] = user
+    updated_values["user"] = user
     UserCacheRefreshTime.objects.update_or_create(user=user, defaults=updated_values)
 
 
@@ -276,9 +307,9 @@ def clear_dashboard_data(user, course=None, course_run=None, models=None):
     # Delete FinalGrade records
     final_grade_params = {"user": user}
     if course:
-        final_grade_params['course_run__course'] = course
+        final_grade_params["course_run__course"] = course
     if course_run:
-        final_grade_params['course_run'] = course_run
+        final_grade_params["course_run"] = course_run
     FinalGrade.objects.filter(**final_grade_params).delete()
     # Delete course payment records (if the associated program is FA-enabled)
     clear_course_payment_data(user, course=course, course_run=course_run)
@@ -286,20 +317,29 @@ def clear_dashboard_data(user, course=None, course_run=None, models=None):
 
 def generate_enrollment_date_range(course_start_date, day_spread=10):
     """Given a course start date, return an enrollment date range"""
-    day_incr = int(day_spread/2)
-    return course_start_date - timedelta(days=day_incr), course_start_date + timedelta(days=day_incr)
+    day_incr = int(day_spread / 2)
+    return course_start_date - timedelta(days=day_incr), course_start_date + timedelta(
+        days=day_incr
+    )
 
 
 @accepts_or_calculates_now
-def set_course_run_past(course_run, end_date=None, upgradeable=False, save=True, now=None):
+def set_course_run_past(
+    course_run, end_date=None, upgradeable=False, save=True, now=None
+):
     """Sets relevant CourseRun dates to the past relative to now"""
     day_spread = 30
     if end_date:
         course_run.end_date = end_date
         course_run.start_date = end_date - timedelta(days=day_spread)
     else:
-        course_run.start_date, course_run.end_date = create_past_date_range(ended_days_ago=30, day_spread=day_spread)
-    course_run.enrollment_start, course_run.enrollment_end = generate_enrollment_date_range(course_run.start_date)
+        course_run.start_date, course_run.end_date = create_past_date_range(
+            ended_days_ago=30, day_spread=day_spread
+        )
+    (
+        course_run.enrollment_start,
+        course_run.enrollment_end,
+    ) = generate_enrollment_date_range(course_run.start_date)
     if upgradeable:
         course_run.upgrade_deadline = now + timedelta(days=15)
     else:
@@ -310,17 +350,29 @@ def set_course_run_past(course_run, end_date=None, upgradeable=False, save=True,
 
 
 @accepts_or_calculates_now
-def set_course_run_current(course_run, enrollable_now=True,  # pylint: disable=too-many-arguments
-                           enrollable_past=False, upgradeable=True, save=True, now=None):
+def set_course_run_current(
+    course_run,
+    enrollable_now=True,  # pylint: disable=too-many-arguments
+    enrollable_past=False,
+    upgradeable=True,
+    save=True,
+    now=None,
+):
     """Sets relevant CourseRun dates to be current relative to now"""
     if enrollable_now:
-        course_run.enrollment_start, course_run.enrollment_end = \
-            create_active_date_range(started_days_ago=10, days_until_end=5)
+        (
+            course_run.enrollment_start,
+            course_run.enrollment_end,
+        ) = create_active_date_range(started_days_ago=10, days_until_end=5)
     elif enrollable_past:
-        course_run.enrollment_start, course_run.enrollment_end = \
-            create_past_date_range(ended_days_ago=2, day_spread=10)
+        course_run.enrollment_start, course_run.enrollment_end = create_past_date_range(
+            ended_days_ago=2, day_spread=10
+        )
     else:
-        course_run.enrollment_start, course_run.enrollment_end = create_future_date_range()
+        (
+            course_run.enrollment_start,
+            course_run.enrollment_end,
+        ) = create_future_date_range()
     course_run.start_date = course_run.enrollment_start + timedelta(days=5)
     course_run.end_date = course_run.start_date + timedelta(days=30)
     if enrollable_now and not upgradeable:
@@ -332,15 +384,28 @@ def set_course_run_current(course_run, enrollable_now=True,  # pylint: disable=t
     return course_run
 
 
-def set_course_run_future(course_run, enrollable_now=False, enrollable_past=False, save=True):
+def set_course_run_future(
+    course_run, enrollable_now=False, enrollable_past=False, save=True
+):
     """Sets relevant CourseRun dates to the future relative to now"""
-    course_run.start_date, course_run.end_date = create_future_date_range(days_ahead=20, day_spread=30)
+    course_run.start_date, course_run.end_date = create_future_date_range(
+        days_ahead=20, day_spread=30
+    )
     if enrollable_now:
-        course_run.enrollment_start, course_run.enrollment_end = create_active_date_range(day_spread=10)
+        (
+            course_run.enrollment_start,
+            course_run.enrollment_end,
+        ) = create_active_date_range(day_spread=10)
     elif enrollable_past:
-        course_run.enrollment_start, course_run.enrollment_end = create_past_date_range()
+        (
+            course_run.enrollment_start,
+            course_run.enrollment_end,
+        ) = create_past_date_range()
     else:
-        course_run.enrollment_start, course_run.enrollment_end = create_future_date_range(days_ahead=15, day_spread=10)
+        (
+            course_run.enrollment_start,
+            course_run.enrollment_end,
+        ) = create_future_date_range(days_ahead=15, day_spread=10)
     course_run.upgrade_deadline = course_run.start_date + timedelta(days=5)
     if save:
         course_run.save()
@@ -362,14 +427,12 @@ def set_course_run_to_past_graded(user, course_run, grade, upgradeable=False, no
     CachedEnrollmentHandler(user).set_or_create(course_run)
     # Create final grade
     final_grade_defaults = {
-        'grade': grade,
-        'passed': grade >= PASSING_GRADE,
-        'status': FinalGradeStatus.COMPLETE
+        "grade": grade,
+        "passed": grade >= PASSING_GRADE,
+        "status": FinalGradeStatus.COMPLETE,
     }
     FinalGrade.objects.update_or_create(
-        user=user,
-        course_run=course_run,
-        defaults=final_grade_defaults
+        user=user, course_run=course_run, defaults=final_grade_defaults
     )
     return course_run
 
@@ -382,18 +445,22 @@ def clear_course_payment_data(user, course=None, course_run=None):
     course_run_params = {}
     final_grade_params = {}
     if course:
-        course_run_params['course'] = course
-        final_grade_params['course_run__course'] = course
+        course_run_params["course"] = course
+        final_grade_params["course_run__course"] = course
     elif course_run:
-        course_run_params['id'] = course_run.id
-        final_grade_params['course_run'] = course_run
+        course_run_params["id"] = course_run.id
+        final_grade_params["course_run"] = course_run
 
     if course_run:
         CachedEnrollmentHandler(user).set_or_create(course_run, verified=False)
-    FinalGrade.objects.filter(user=user, **final_grade_params).update(course_run_paid_on_edx=False)
+    FinalGrade.objects.filter(user=user, **final_grade_params).update(
+        course_run_paid_on_edx=False
+    )
 
 
-def add_paid_order_for_course(user, course_run, price=None):  # pylint: disable=unused-argument
+def add_paid_order_for_course(
+    user, course_run, price=None
+):  # pylint: disable=unused-argument
     """
     Previously added an Order and Line for a FA-enabled CourseRun and a User.
     Now a no-op as payments were discontinued in 2021.
@@ -403,7 +470,9 @@ def add_paid_order_for_course(user, course_run, price=None):  # pylint: disable=
 def set_course_run_to_paid(user, course_run):
     """Ensures that a User will be considered as having paid for a CourseRun"""
     CachedEnrollmentHandler(user).set_or_create(course_run, verified=True)
-    FinalGrade.objects.filter(user=user, course_run=course_run).update(course_run_paid_on_edx=True)
+    FinalGrade.objects.filter(user=user, course_run=course_run).update(
+        course_run_paid_on_edx=True
+    )
     return course_run
 
 
@@ -421,17 +490,19 @@ def update_fake_course_run_edx_key(user, course_run):
     by the seed_db command
     """
     start_date = course_run.start_date
-    year = start_date.strftime('%Y')
-    month = start_date.strftime('%B')
+    year = start_date.strftime("%Y")
+    month = start_date.strftime("%B")
     short_month = month[:3]
-    course_run.edx_course_key = re.sub(r'\w{3}_\d{4}$', f'{short_month}_{year}', course_run.edx_course_key)
-    course_run.title = re.sub(r'\w+ \d{4}$', f'{month} {year}', course_run.title)
+    course_run.edx_course_key = re.sub(
+        r"\w{3}_\d{4}$", f"{short_month}_{year}", course_run.edx_course_key
+    )
+    course_run.title = re.sub(r"\w+ \d{4}$", f"{month} {year}", course_run.title)
     try:
         course_run.save()
     except IntegrityError:
         # If another course run already has this edx key, just tack on the pk to the end
-        course_run.edx_course_key = f'{course_run.edx_course_key}({course_run.pk})'
-        course_run.title = f'{course_run.title} ({course_run.pk})'
+        course_run.edx_course_key = f"{course_run.edx_course_key}({course_run.pk})"
+        course_run.title = f"{course_run.title} ({course_run.pk})"
         course_run.save()
     update_cached_edx_data_for_run(user, course_run)
     return course_run

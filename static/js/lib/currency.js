@@ -22,17 +22,17 @@ export const excludedCurrencyCodes = [
   "XBT",
   "XFU",
   "XTS",
-  "XXX"
+  "XXX",
 ]
 
-const codeToOption = code => ({ value: code, label: cc.code(code).currency })
+const codeToOption = (code) => ({ value: code, label: cc.code(code).currency })
 
 const invalidCurrency = R.contains(R.__, excludedCurrencyCodes)
 
 const codesToOptions = R.compose(
   labelSort,
   R.map(codeToOption),
-  R.reject(invalidCurrency)
+  R.reject(invalidCurrency),
 )
 
 export const currencyOptions = codesToOptions(cc.codes())

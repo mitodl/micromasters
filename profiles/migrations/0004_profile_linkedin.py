@@ -5,15 +5,14 @@ import jsonfield.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0003_profiles_for_existing_users'),
+        ("profiles", "0003_profiles_for_existing_users"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='linkedin',
+            model_name="profile",
+            name="linkedin",
             field=jsonfield.fields.JSONField(blank=True, null=True),
         ),
     ]

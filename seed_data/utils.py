@@ -12,11 +12,13 @@ from micromasters.utils import now_in_utc
 
 def accepts_or_calculates_now(func):
     """Decorator to wrap any function that should accept a 'now' date or calculate 'now' on its own"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):  # pylint: disable=missing-docstring
-        if not kwargs.get('now'):
-            kwargs['now'] = now_in_utc()
+        if not kwargs.get("now"):
+            kwargs["now"] = now_in_utc()
         return func(*args, **kwargs)
+
     return wrapper
 
 
@@ -31,7 +33,9 @@ def filter_dict_none_values(dict_to_filter):
 
 
 @accepts_or_calculates_now
-def create_active_date_range(started_days_ago=None, days_until_end=None, day_spread=10, now=None):
+def create_active_date_range(
+    started_days_ago=None, days_until_end=None, day_spread=10, now=None
+):
     """Returns a start/end datetime tuple that starts before now and ends after now"""
     if started_days_ago and days_until_end:
         start_datetime = now - timedelta(days=started_days_ago)
@@ -65,7 +69,7 @@ def future_date(now=None, days_in_future=30):
     return now + timedelta(days=days_in_future)
 
 
-def localized_datetime(dt, tz='US/Eastern'):
+def localized_datetime(dt, tz="US/Eastern"):
     """Ensures a localized datetime"""
     if dt.tzinfo:
         return dt.astimezone(timezone(tz))

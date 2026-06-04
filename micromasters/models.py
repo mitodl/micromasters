@@ -5,18 +5,27 @@ Classes related to models for MicroMasters
 from django.contrib.auth import get_user_model
 
 from django.db import transaction
-from django.db.models import (SET_NULL, DateTimeField, ForeignKey, JSONField,
-                              Manager, Model)
+from django.db.models import (
+    SET_NULL,
+    DateTimeField,
+    ForeignKey,
+    JSONField,
+    Manager,
+    Model,
+)
 from django.db.models.query import QuerySet
 
 from micromasters.utils import now_in_utc
 
 
 User = get_user_model()
+
+
 class TimestampedModelQuerySet(QuerySet):
     """
     Subclassed QuerySet for TimestampedModelManager
     """
+
     def update(self, **kwargs):
         """
         Automatically update updated_on timestamp when .update(). This is because .update()
@@ -32,6 +41,7 @@ class TimestampedModelManager(Manager):
     """
     Subclassed manager for TimestampedModel
     """
+
     def update(self, **kwargs):
         """
         Allows access to TimestampedModelQuerySet's update method on the manager
@@ -49,6 +59,7 @@ class TimestampedModel(Model):
     """
     Base model for create/update timestamps
     """
+
     objects = TimestampedModelManager()
     created_on = DateTimeField(auto_now_add=True)  # UTC
     updated_on = DateTimeField(auto_now=True)  # UTC

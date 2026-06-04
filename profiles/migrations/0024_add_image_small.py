@@ -5,15 +5,16 @@ import profiles.util
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0023_remove_profile_has_profile_image'),
+        ("profiles", "0023_remove_profile_has_profile_image"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='image_small',
-            field=models.ImageField(null=True, upload_to=profiles.util.profile_image_upload_uri_small),
+            model_name="profile",
+            name="image_small",
+            field=models.ImageField(
+                null=True, upload_to=profiles.util.profile_image_upload_uri_small
+            ),
         ),
     ]

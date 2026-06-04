@@ -13,7 +13,7 @@ export const dialogActions = (
   inFlight: boolean,
   text: string = "Save",
   saveClass: string = "",
-  disabled: boolean = false
+  disabled: boolean = false,
 ) => [
   <Button
     key="cancel"
@@ -34,12 +34,12 @@ export const dialogActions = (
     onClick={onSave}
   >
     {text}
-  </SpinnerButton>
+  </SpinnerButton>,
 ]
 
 export const singleBtnDialogActions = (
   onCancel: Function,
-  text: string = "OK"
+  text: string = "OK",
 ) => [
   <Button
     key="cancel"
@@ -47,5 +47,5 @@ export const singleBtnDialogActions = (
     onClick={onCancel}
   >
     {text}
-  </Button>
+  </Button>,
 ]

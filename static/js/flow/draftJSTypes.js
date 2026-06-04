@@ -1,3 +1,3 @@
 // @flow
 
-export type EditorState = Object;
+export type EditorState = Object

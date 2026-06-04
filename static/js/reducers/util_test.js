@@ -11,8 +11,8 @@ describe("reducer utilities", () => {
   describe("username selectors", () => {
     const state = {
       dashboard: {
-        [SETTINGS.user.username]: DASHBOARD_RESPONSE
-      }
+        [SETTINGS.user.username]: DASHBOARD_RESPONSE,
+      },
     }
 
     describe("getOwnDashboard", () => {
@@ -35,19 +35,19 @@ describe("reducer utilities", () => {
       it("should return Just(the dashboard for a particular user), if present", () => {
         assertIsJust(
           getDashboard(SETTINGS.user.username, state.dashboard),
-          DASHBOARD_RESPONSE
+          DASHBOARD_RESPONSE,
         )
       })
 
       it("should return Just(INITIAL_DASHBOARD_STATE) if not present", () => {
         assertIsJust(
           getDashboard("not_present_username", state.dashboard),
-          INITIAL_DASHBOARD_STATE
+          INITIAL_DASHBOARD_STATE,
         )
       })
 
       it("should return Nothing if either argument is nil", () => {
-        [null, undefined].forEach(nilval => {
+        ;[null, undefined].forEach((nilval) => {
           assertIsNothing(getDashboard("potato", nilval))
           assertIsNothing(getDashboard(nilval, state.dashboard))
         })

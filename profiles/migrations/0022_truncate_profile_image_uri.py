@@ -5,15 +5,16 @@ import profiles.util
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0021_add_address_and_phone'),
+        ("profiles", "0021_add_address_and_phone"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='image',
-            field=models.ImageField(null=True, upload_to=profiles.util.profile_image_upload_uri),
+            model_name="profile",
+            name="image",
+            field=models.ImageField(
+                null=True, upload_to=profiles.util.profile_image_upload_uri
+            ),
         ),
     ]

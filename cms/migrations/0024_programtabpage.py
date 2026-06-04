@@ -6,22 +6,37 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0029_unicode_slugfield_dj19'),
-        ('cms', '0023_programpage_title_program_home_page_url'),
+        ("wagtailcore", "0029_unicode_slugfield_dj19"),
+        ("cms", "0023_programpage_title_program_home_page_url"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProgramTabPage',
+            name="ProgramTabPage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('content', wagtail.fields.RichTextField(blank=True, help_text='The content of this tab on the program page')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                (
+                    "content",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        help_text="The content of this tab on the program page",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
     ]

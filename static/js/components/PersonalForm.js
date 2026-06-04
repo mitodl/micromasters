@@ -16,7 +16,7 @@ import type {
   Profile,
   SaveProfileFunc,
   ValidationErrors,
-  UpdateProfileFunc
+  UpdateProfileFunc,
 } from "../flow/profileTypes"
 import type { Validator, UIValidator } from "../lib/validation/profile"
 import type { UIState } from "../reducers/ui"
@@ -31,14 +31,14 @@ export default class PersonalForm extends ProfileFormFields {
   genderOptions: Array<Option> = [
     { value: "m", label: "Male" },
     { value: "f", label: "Female" },
-    { value: "o", label: "Other/Prefer not to say" }
+    { value: "o", label: "Other/Prefer not to say" },
   ]
   languageOptions: Array<Option> = _.sortBy(
-    LANGUAGE_CODES.map(language => ({
+    LANGUAGE_CODES.map((language) => ({
       value: language.alpha2,
-      label: language.English
+      label: language.English,
     })),
-    "label"
+    "label",
   )
 
   props: {
@@ -48,7 +48,7 @@ export default class PersonalForm extends ProfileFormFields {
     updateProfile: UpdateProfileFunc,
     validator: Validator | UIValidator,
     updateValidationVisibility: (xs: Array<string>) => void,
-    ui: UIState
+    ui: UIState,
   }
 
   renderRomanizedFields = (): React$Element<*> => (
@@ -75,16 +75,16 @@ export default class PersonalForm extends ProfileFormFields {
   radioGroupField(
     keySet: string[],
     label: string,
-    options: Option[]
+    options: Option[],
   ): React$Element<*> {
     const {
       profile,
       updateProfile,
       errors,
       validator,
-      updateValidationVisibility
+      updateValidationVisibility,
     } = this.props
-    const onChange = e => {
+    const onChange = (e) => {
       const clone = _.cloneDeep(profile)
       let value = e.target.value
       if (value === "true") {
@@ -107,7 +107,7 @@ export default class PersonalForm extends ProfileFormFields {
         <RadioGroup
           className={`profile-radio-group ${validationErrorSelector(
             errors,
-            keySet
+            keySet,
           )}`}
           name="gender"
           onChange={onChange}
@@ -158,7 +158,7 @@ export default class PersonalForm extends ProfileFormFields {
           <Grid item xs={12}>
             {this.boundTextField(
               ["preferred_name"],
-              "Nickname / Preferred name"
+              "Nickname / Preferred name",
             )}
           </Grid>
           <Grid item xs={12}>
@@ -190,7 +190,7 @@ export default class PersonalForm extends ProfileFormFields {
             </Grid>
             <Grid item xs={12} key="address">
               {this.boundTextField(["address"], "Street address", {
-                maxLength: 100
+                maxLength: 100,
               })}
             </Grid>
             <Grid item xs={4} key="city">

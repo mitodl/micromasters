@@ -11,7 +11,7 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_CAN_UPGRADE,
   DASHBOARD_FORMAT,
-  COURSE_ACTION_ENROLL
+  COURSE_ACTION_ENROLL,
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -24,14 +24,14 @@ import {
   notNilorEmpty,
   hasCanUpgradeCourseRun,
   hasMissedDeadlineCourseRun,
-  hasCurrentlyEnrolledCourseRun
+  hasCurrentlyEnrolledCourseRun,
 } from "./util"
 import { hasPassedCourseRun } from "../../../lib/grades"
 import { formatPrettyDateTimeAmPmTz, parseDateString } from "../../../util/date"
 
 type Message = {
   message: string | React$Element<*>,
-  action?: React$Element<*>
+  action?: React$Element<*>,
 }
 
 export const formatAction = (message: Message) => (
@@ -56,7 +56,7 @@ type CalculateMessagesProps = {
   setShowExpandedCourseStatus: (n: number) => void,
   setExamEnrollmentDialogVisibility: (b: boolean) => void,
   setSelectedExamCouponCourse: (n: number) => void,
-  coupon?: Coupon
+  coupon?: Coupon,
 }
 
 const courseStartMessage = (run: CourseRun) => {
@@ -96,7 +96,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     firstRun,
     course,
     expandedStatuses,
-    setShowExpandedCourseStatus
+    setShowExpandedCourseStatus,
   } = props
 
   const messages = []
@@ -124,8 +124,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
             <a href={contactHref}>contact us for help.</a>
           </div>
         ),
-        action: courseAction(firstRun, COURSE_ACTION_ENROLL)
-      }
+        action: courseAction(firstRun, COURSE_ACTION_ENROLL),
+      },
     ])
   }
 
@@ -134,18 +134,18 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     if (isEnrollableRun(firstRun)) {
       messages.push({
         message: `${courseStartMessage(firstRun)}`,
-        action:  courseAction(firstRun, COURSE_ACTION_ENROLL)
+        action: courseAction(firstRun, COURSE_ACTION_ENROLL),
       })
     } else if (
       firstRun.fuzzy_start_date &&
       isOfferedInUncertainFuture(firstRun)
     ) {
       messages.push({
-        message: `${courseStartMessage(firstRun)}`
+        message: `${courseStartMessage(firstRun)}`,
       })
     } else {
       messages.push({
-        message: "There are no future course runs scheduled."
+        message: "There are no future course runs scheduled.",
       })
     }
   }
@@ -171,18 +171,18 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
                 onClick={() => setShowExpandedCourseStatus(course.id)}
               >
                 Re-enroll
-              </a>
+              </a>,
             ],
-            futureEnrollableRun(course)
+            futureEnrollableRun(course),
           )}
         </div>
-      )
+      ),
     })
   }
   // course is passed and paid but no certificate yet
   if (!course.certificate_url && course.is_passed) {
     messages.push({
-      message: "You passed this course."
+      message: "You passed this course.",
     })
   }
   // handle other 'in-progress' cases
@@ -194,7 +194,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       ? "You are re-taking this course. Upgrades are no longer available."
       : "You are auditing. Upgrades are no longer available."
     messages.push({
-      message
+      message,
     })
     return S.Just(messages)
   }
@@ -208,12 +208,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       messages.push(
         S.maybe(
           null,
-          run => ({
+          (run) => ({
             message: `Next course starts ${formatDate(run.course_start_date)}.`,
-            action:  courseAction(run, COURSE_ACTION_REENROLL)
+            action: courseAction(run, COURSE_ACTION_REENROLL),
           }),
-          futureEnrollableRun(course)
-        )
+          futureEnrollableRun(course),
+        ),
       )
     }
     return S.Just(messages)
@@ -221,7 +221,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     // the course finished but was audited
     messages.push({
       message:
-        "The edX course is complete, but upgrades are no longer available."
+        "The edX course is complete, but upgrades are no longer available.",
     })
     return S.Just(messages)
   } else if (
@@ -229,39 +229,39 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     !hasCurrentlyEnrolledCourseRun(course)
   ) {
     // the course finished and the upgrade deadline passed
-    const date = run => formatDate(run.course_start_date)
-    const msg = run => {
+    const date = (run) => formatDate(run.course_start_date)
+    const msg = (run) => {
       return `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date(
-        run
+        run,
       )}.${enrollmentDateMessage(run)}`
     }
     messages.push(
       S.maybe(
         {
           message:
-            "You missed the upgrade deadline and will not receive MicroMasters credit for this course. There are no future runs of this course scheduled at this time."
+            "You missed the upgrade deadline and will not receive MicroMasters credit for this course. There are no future runs of this course scheduled at this time.",
         },
-        run => ({
+        (run) => ({
           message: msg(run),
-          action:  courseAction(run, COURSE_ACTION_REENROLL)
+          action: courseAction(run, COURSE_ACTION_REENROLL),
         }),
-        futureEnrollableRun(course)
-      )
+        futureEnrollableRun(course),
+      ),
     )
   }
   if (hasFailedCourseRun(course) && !hasPassedCourseRun(course)) {
     return S.Just(
       S.maybe(
         messages.concat({ message: "You did not pass the course." }),
-        run =>
+        (run) =>
           messages.concat({
             message: `You did not pass the course, but you can re-enroll. ${courseStartMessage(
-              run
+              run,
             )}${enrollmentDateMessage(run)}`,
-            action: courseAction(run, COURSE_ACTION_REENROLL)
+            action: courseAction(run, COURSE_ACTION_REENROLL),
           }),
-        futureEnrollableRun(course)
-      )
+        futureEnrollableRun(course),
+      ),
     )
   }
 
@@ -270,14 +270,14 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
 const formatMessages = R.addIndex(R.map)(formatMessage)
 
-const wrapMessages = messages => (
+const wrapMessages = (messages) => (
   <div className="course-status-messages">{messages}</div>
 )
 
 const StatusMessages = R.compose(
   S.maybe(null, wrapMessages),
   S.map(formatMessages),
-  calculateMessages
+  calculateMessages,
 )
 
 export default StatusMessages

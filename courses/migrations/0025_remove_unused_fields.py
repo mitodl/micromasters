@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0024_add_timestamp'),
+        ("courses", "0024_add_timestamp"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='course',
-            name='exam_module',
+            model_name="course",
+            name="exam_module",
         ),
         migrations.RemoveField(
-            model_name='program',
-            name='exam_series_code',
+            model_name="program",
+            name="exam_series_code",
         ),
     ]

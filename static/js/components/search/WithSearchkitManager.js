@@ -11,7 +11,7 @@ import { getCookie } from "redux-hammock/django_csrf_fetch"
 import type { AvailableProgram } from "../../flow/enrollmentTypes"
 
 type WithSearchkitManagerProps = {
-  currentProgramEnrollment: ?AvailableProgram
+  currentProgramEnrollment: ?AvailableProgram,
 }
 
 const withSearchkitManager = (WrappedComponent: ReactClass<*>) => {
@@ -26,26 +26,26 @@ const withSearchkitManager = (WrappedComponent: ReactClass<*>) => {
 
       this.searchkit = new SearchkitManager(SETTINGS.search_url, {
         httpHeaders: {
-          "X-CSRFToken": getCookie("csrftoken")
-        }
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
       })
 
       // delay execution of search until we have a program enrollment
-      const delayPromise = new Promise(resolve => {
+      const delayPromise = new Promise((resolve) => {
         this.searchkitCanSearch = resolve
       })
 
       const oldPromise = this.searchkit.registrationCompleted
       this.searchkit.registrationCompleted = Promise.all([
         oldPromise,
-        delayPromise
+        delayPromise,
       ])
     }
 
     componentDidMount() {
       const {
         props: { currentProgramEnrollment },
-        searchkitCanSearch
+        searchkitCanSearch,
       } = this
 
       if (!R.isNil(currentProgramEnrollment)) {
@@ -58,7 +58,7 @@ const withSearchkitManager = (WrappedComponent: ReactClass<*>) => {
     componentDidUpdate() {
       const {
         props: { currentProgramEnrollment },
-        searchkitCanSearch
+        searchkitCanSearch,
       } = this
 
       if (!R.isNil(currentProgramEnrollment)) {
@@ -89,7 +89,7 @@ const withSearchkitManager = (WrappedComponent: ReactClass<*>) => {
   }
 
   WithSearchkitManager.displayName = `WithSearchkitManager(${getDisplayName(
-    WrappedComponent
+    WrappedComponent,
   )})`
   return WithSearchkitManager
 }

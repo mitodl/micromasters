@@ -23,7 +23,7 @@ def _match_field(profile, field):
     """
     If a field is filled out match it to the CP-1252 character set.
     """
-    pattern = r'^[\u0020-\u00FF]*$'
+    pattern = r"^[\u0020-\u00FF]*$"
     reg = re.compile(pattern)
     value = getattr(profile, field)
     return bool(reg.match(value)) if value else False
@@ -39,16 +39,19 @@ def validate_profile(profile):
     Returns:
         bool: whether profile is valid or not
     """
-    fields = ['address', 'city', 'state_or_territory', 'country', 'phone_number']
-    optional = {'first_name': 'romanized_first_name', 'last_name': 'romanized_last_name'}
+    fields = ["address", "city", "state_or_territory", "country", "phone_number"]
+    optional = {
+        "first_name": "romanized_first_name",
+        "last_name": "romanized_last_name",
+    }
 
-    if not _match_field(profile.user, 'email'):
+    if not _match_field(profile.user, "email"):
         return False
     for key, value in optional.items():
         if not _match_field(profile, key):
             fields.append(value)
-    if profile.country in ('US', 'CA'):
-        fields.append('postal_code')
+    if profile.country in ("US", "CA"):
+        fields.append("postal_code")
 
     return all(_match_field(profile, field) for field in fields)
 

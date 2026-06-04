@@ -18,8 +18,7 @@ from rest_framework.views import APIView
 from backends import utils
 from backends.constants import BACKEND_MITX_ONLINE, COURSEWARE_BACKEND_URL
 from courses.models import CourseRun
-from dashboard.api import (get_user_program_info,
-                           is_user_enrolled_in_exam_course)
+from dashboard.api import get_user_program_info, is_user_enrolled_in_exam_course
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.models import ProgramEnrollment
 from dashboard.permissions import CanReadIfStaffOrSelf
@@ -36,6 +35,7 @@ class UserDashboard(APIView):
     """
     Class based view for user dashboard view.
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
@@ -58,29 +58,27 @@ class UserDashboard(APIView):
         # get the credentials for the current user for edX
         program_dashboard = get_user_program_info(user, update_cache=update_cache)
 
-        return Response(
-            status=status.HTTP_200_OK,
-            data=program_dashboard
-        )
+        return Response(status=status.HTTP_200_OK, data=program_dashboard)
 
 
 class UserCourseEnrollment(APIView):
     """
     Create an audit enrollment for the user in a given course run identified by course_id.
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
         """
         Audit enrolls the user in a course in edx
         """
-        course_id = request.data.get('course_id')
+        course_id = request.data.get("course_id")
         if course_id is None:
-            raise ValidationError('course id missing in the request')
+            raise ValidationError("course id missing in the request")
         # get the credentials for the current user for edX
         course_run = CourseRun.objects.get(edx_course_key=course_id)
         provider = course_run.courseware_backend
@@ -92,22 +90,21 @@ class UserCourseEnrollment(APIView):
                 "Error while refreshing credentials for user %s",
                 request.user.username,
             )
-            return Response(
-                status=exc.http_status_code,
-                data={'error': str(exc)}
-            )
+            return Response(status=exc.http_status_code, data={"error": str(exc)})
 
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
 
         try:
-            enrollment = edx_client.enrollments.create_audit_student_enrollment(course_id)
+            enrollment = edx_client.enrollments.create_audit_student_enrollment(
+                course_id
+            )
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_400_BAD_REQUEST:
                 raise PossiblyImproperlyConfigured(
-                    'Got a 400 status code from edX server while trying to create '
-                    'audit enrollment. This might happen if the course is improperly '
-                    'configured on MicroMasters. Course key '
+                    "Got a 400 status code from edX server while trying to create "
+                    "audit enrollment. This might happen if the course is improperly "
+                    "configured on MicroMasters. Course key "
                     '{course_key}, user "{username}"'.format(
                         username=request.user.username,
                         course_key=course_id,
@@ -119,8 +116,7 @@ class UserCourseEnrollment(APIView):
                 request.user,
             )
             return Response(
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                data={'error': str(exc)}
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={"error": str(exc)}
             )
         except Exception as exc:  # pylint: disable=broad-except
             log.exception(
@@ -129,44 +125,46 @@ class UserCourseEnrollment(APIView):
                 request.user.username,
             )
             return Response(
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                data={'error': str(exc)}
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={"error": str(exc)}
             )
-        CachedEdxDataApi.update_cached_enrollment(request.user, enrollment, enrollment.course_id, index_user=True)
-        return Response(
-            data=enrollment.json
+        CachedEdxDataApi.update_cached_enrollment(
+            request.user, enrollment, enrollment.course_id, index_user=True
         )
+        return Response(data=enrollment.json)
 
 
 class UserExamEnrollment(APIView):
     """
     Create an exam enrollment for the user in a given exam run identified by course_id.
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
         """
         enrolls the user in a exam run in edx
         """
-        edx_exam_course_id = request.data.get('exam_course_id')
+        edx_exam_course_id = request.data.get("exam_course_id")
 
         if edx_exam_course_id is None:
-            raise ValidationError('exam course id missing in the request')
+            raise ValidationError("exam course id missing in the request")
 
         exam_run = get_object_or_404(ExamRun, edx_exam_course_key=edx_exam_course_id)
         provider = exam_run.course.first_unexpired_run().courseware_backend
         if not ExamAuthorization.objects.filter(
             user=request.user,
             exam_run=exam_run,
-            status=ExamAuthorization.STATUS_SUCCESS
+            status=ExamAuthorization.STATUS_SUCCESS,
         ).exists():
-            raise ValidationError('user is not authorized for exam run')
+            raise ValidationError("user is not authorized for exam run")
 
-        url = urljoin(COURSEWARE_BACKEND_URL[provider], f'/courses/{edx_exam_course_id}/')
+        url = urljoin(
+            COURSEWARE_BACKEND_URL[provider], f"/courses/{edx_exam_course_id}/"
+        )
         # get the credentials for the current user for edX
         user_social = get_social_auth(request.user, provider)
         try:
@@ -176,23 +174,25 @@ class UserExamEnrollment(APIView):
                 "Error while refreshing credentials for user %s",
                 request.user.username,
             )
-            return Response(
-                status=exc.http_status_code,
-                data={'error': str(exc)}
-            )
-        edx_client_staff = EdxApi(utils.get_staff_edx_client_credentials(), COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE])
+            return Response(status=exc.http_status_code, data={"error": str(exc)})
+        edx_client_staff = EdxApi(
+            utils.get_staff_edx_client_credentials(),
+            COURSEWARE_BACKEND_URL[BACKEND_MITX_ONLINE],
+        )
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
         if is_user_enrolled_in_exam_course(edx_client, exam_run):
-            return Response({'url': url})
+            return Response({"url": url})
         try:
-            edx_client_staff.enrollments.create_verified_student_enrollment(edx_exam_course_id, user_social.uid)
+            edx_client_staff.enrollments.create_verified_student_enrollment(
+                edx_exam_course_id, user_social.uid
+            )
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_400_BAD_REQUEST:
                 raise PossiblyImproperlyConfigured(
-                    'Got a 400 status code from edX server while trying to create '
-                    'verified enrollment. This might happen if the course is improperly '
-                    'configured on MicroMasters. Course key '
+                    "Got a 400 status code from edX server while trying to create "
+                    "verified enrollment. This might happen if the course is improperly "
+                    "configured on MicroMasters. Course key "
                     '{exam_course_key}, user "{username}"'.format(
                         username=request.user.username,
                         exam_course_key=edx_exam_course_id,
@@ -204,8 +204,7 @@ class UserExamEnrollment(APIView):
                 request.user,
             )
             return Response(
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                data={'error': str(exc)}
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={"error": str(exc)}
             )
         except Exception as exc:  # pylint: disable=broad-except
             log.exception(
@@ -214,21 +213,21 @@ class UserExamEnrollment(APIView):
                 request.user.username,
             )
             return Response(
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                data={'error': str(exc)}
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={"error": str(exc)}
             )
-        return Response({'url': url})
+        return Response({"url": url})
 
 
 class UnEnrollPrograms(APIView):
     """
     api that unenroll user from one or more programs
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
         """
@@ -238,32 +237,31 @@ class UnEnrollPrograms(APIView):
         program_ids = UnEnrollProgramsSerializer(data=request.data).get_program_ids()
 
         program_enrollments = ProgramEnrollment.objects.filter(
-            program_id__in=program_ids,
-            user=request.user
+            program_id__in=program_ids, user=request.user
         )
 
         for program_enrollment in program_enrollments:
-            response.append({
-                'program_id': program_enrollment.program_id,
-                'title': program_enrollment.program.title
-            })
+            response.append(
+                {
+                    "program_id": program_enrollment.program_id,
+                    "title": program_enrollment.program.title,
+                }
+            )
             program_enrollment.delete()
 
-        return Response(
-            status=status.HTTP_200_OK,
-            data=response
-        )
+        return Response(status=status.HTTP_200_OK, data=response)
 
 
 class ToggelProgramEnrollmentShareHash(APIView):
     """
     API that generates or revokes share_hash for program record access
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
         """
@@ -272,8 +270,7 @@ class ToggelProgramEnrollmentShareHash(APIView):
         data = request.data
         if data.get("enrollment_id"):
             program_enrollment = ProgramEnrollment.objects.filter(
-                id=data.get("enrollment_id"),
-                user=request.user
+                id=data.get("enrollment_id"), user=request.user
             ).first()
             if program_enrollment:
                 share_hash = program_enrollment.get_share_hash()
@@ -282,19 +279,19 @@ class ToggelProgramEnrollmentShareHash(APIView):
                     data={
                         "share_hash": share_hash,
                         "absolute_path": request.build_absolute_uri(
-                            reverse("shared_grade_records", kwargs={
+                            reverse(
+                                "shared_grade_records",
+                                kwargs={
                                     "enrollment_id": data.get("enrollment_id"),
-                                    "record_share_hash": share_hash
-                            }
-                                )
-                        )
-                    }
+                                    "record_share_hash": share_hash,
+                                },
+                            )
+                        ),
+                    },
                 )
         return Response(
             status=status.HTTP_400_BAD_REQUEST,
-            data={
-                "error": "Provided data is not appropriate"
-            }
+            data={"error": "Provided data is not appropriate"},
         )
 
     def delete(self, request):
@@ -304,20 +301,15 @@ class ToggelProgramEnrollmentShareHash(APIView):
         data = request.data
         if data.get("enrollment_id"):
             program_enrollment = ProgramEnrollment.objects.filter(
-                id=data.get("enrollment_id"),
-                user=request.user
+                id=data.get("enrollment_id"), user=request.user
             ).first()
             if program_enrollment:
                 program_enrollment.revoke_share_hash()
                 return Response(
                     status=status.HTTP_200_OK,
-                    data={
-                        "success": "share_hash has been successfully revoked"
-                    }
+                    data={"success": "share_hash has been successfully revoked"},
                 )
         return Response(
             status=status.HTTP_400_BAD_REQUEST,
-            data={
-                "error": "Provided data is not appropriate"
-            }
+            data={"error": "Provided data is not appropriate"},
         )

@@ -15,7 +15,7 @@ import { educationValidation } from "../lib/validation/profile"
 import {
   userPrivilegeCheck,
   isProfileOfLoggedinUser,
-  labelSort
+  labelSort,
 } from "../util/util"
 import ProfileFormFields from "../util/ProfileFormFields"
 import ConfirmDeletion from "./ConfirmDeletion"
@@ -31,7 +31,7 @@ import type {
   Profile,
   ValidationErrors,
   SaveProfileFunc,
-  UpdateProfileFunc
+  UpdateProfileFunc,
 } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
 import type { Validator, UIValidator } from "../lib/validation/profile"
@@ -48,13 +48,13 @@ import DialogContent from "@material-ui/core/DialogContent"
 const fieldOfStudyOptions = labelSort(
   _.map(FIELDS_OF_STUDY, (name, code) => ({
     value: code,
-    label: name
-  }))
+    label: name,
+  })),
 )
 
 const EDUCATION_LEVEL_OPTIONS: Array<Option> = EDUCATION_LEVELS
 const EDUCATION_LEVEL_LABELS: Object = {}
-EDUCATION_LEVEL_OPTIONS.forEach(level => {
+EDUCATION_LEVEL_OPTIONS.forEach((level) => {
   EDUCATION_LEVEL_LABELS[level.value] = level.label
 })
 
@@ -76,7 +76,7 @@ class EducationForm extends ProfileFormFields {
     setShowEducationDeleteDialog: (b: boolean) => void,
     showSwitch: boolean,
     validator: Validator | UIValidator,
-    updateValidationVisibility: (xs: Array<string>) => void
+    updateValidationVisibility: (xs: Array<string>) => void,
   }
 
   openEditEducationForm = (index: number): void => {
@@ -84,7 +84,7 @@ class EducationForm extends ProfileFormFields {
       profile,
       setEducationDialogIndex,
       setEducationDegreeLevel,
-      setEducationDialogVisibility
+      setEducationDialogVisibility,
       // eslint-disable-next-line no-invalid-this
     } = this.props
 
@@ -101,12 +101,12 @@ class EducationForm extends ProfileFormFields {
       setEducationDialogIndex,
       setEducationDegreeLevel,
       setEducationDialogVisibility,
-      validator
+      validator,
       // eslint-disable-next-line no-invalid-this
     } = this.props
     const clone = {
       ...profile,
-      education: [...profile.education, generateNewEducation(level)]
+      education: [...profile.education, generateNewEducation(level)],
     }
     updateProfile(clone, validator, true)
     setEducationDialogIndex(clone.education.length - 1)
@@ -126,7 +126,7 @@ class EducationForm extends ProfileFormFields {
 
   educationLevelRadioSwitch = (level: Option): React$Element<*> => {
     const {
-      ui: { educationLevelAnswers }
+      ui: { educationLevelAnswers },
       // eslint-disable-next-line no-invalid-this
     } = this.props
     const valueSelected = level.value in educationLevelAnswers ? "false" : null
@@ -161,7 +161,7 @@ class EducationForm extends ProfileFormFields {
   handleRadioClick(value: string, level: string): void {
     const {
       setEducationLevelAnswers,
-      ui: { educationLevelAnswers }
+      ui: { educationLevelAnswers },
     } = this.props
     if (value === "true") {
       if (level in educationLevelAnswers) {
@@ -171,7 +171,7 @@ class EducationForm extends ProfileFormFields {
     } else {
       setEducationLevelAnswers({
         ...educationLevelAnswers,
-        [level]: "No"
+        [level]: "No",
       })
     }
   }
@@ -195,7 +195,7 @@ class EducationForm extends ProfileFormFields {
 
   // eslint-disable-next-line require-jsdoc
   renderEducationLevelEntries(
-    level: any
+    level: any,
   ): Array<React$Element<*> | void> | void {
     const { profile } = this.props
     let levelValue = HIGH_SCHOOL
@@ -215,7 +215,7 @@ class EducationForm extends ProfileFormFields {
     const renderedEducationRows = R.compose(
       R.map(this.educationRow(_.isNil(level))),
       R.filter(filterDegreeName),
-      educationEntriesByDate
+      educationEntriesByDate,
     )
 
     return [
@@ -233,14 +233,14 @@ class EducationForm extends ProfileFormFields {
             </button>
           </Grid>
         ),
-        null
-      )
+        null,
+      ),
     ]
   }
 
   // eslint-disable-next-line require-jsdoc
   renderEducationLevel(
-    level: Option
+    level: Option,
   ): Array<React$Element<*> | void> | React$Element<*> | void {
     if (this.hasEducationAtLevel(level.value)) {
       return this.renderEducationLevelEntries(level)
@@ -306,16 +306,16 @@ class EducationForm extends ProfileFormFields {
           </div>
         </Grid>
       )
-    }
+    },
   )
 
   // eslint-disable-next-line require-jsdoc
   hasEducationAtLevel(levelValue: string): boolean {
     const {
-      profile: { education }
+      profile: { education },
     } = this.props
     return !_.isUndefined(
-      education.find(entry => entry.degree_name === levelValue)
+      education.find((entry) => entry.degree_name === levelValue),
     )
   }
 
@@ -325,7 +325,7 @@ class EducationForm extends ProfileFormFields {
       setEducationDegreeLevel,
       setEducationDialogIndex,
       clearProfileEdit,
-      profile: { username }
+      profile: { username },
       // eslint-disable-next-line no-invalid-this
     } = this.props
     setEducationDialogVisibility(false)
@@ -352,7 +352,7 @@ class EducationForm extends ProfileFormFields {
     const {
       ui: { educationDialogIndex },
       showSwitch,
-      profile
+      profile,
       // eslint-disable-next-line no-invalid-this
     } = this.props
 
@@ -405,7 +405,7 @@ class EducationForm extends ProfileFormFields {
             keySet("graduation_date"),
             "Graduation Date",
             true,
-            true
+            true,
           )}
         </Grid>
         <Grid item md={4} sm={6} xs={12}>
@@ -440,11 +440,11 @@ class EducationForm extends ProfileFormFields {
   renderCard() {
     const { showSwitch, profile } = this.props
 
-    const cardClass = levelValue =>
+    const cardClass = (levelValue) =>
       this.hasEducationAtLevel(levelValue) ? "" : "collapsed"
 
     if (showSwitch) {
-      return EDUCATION_LEVEL_OPTIONS.map(level => {
+      return EDUCATION_LEVEL_OPTIONS.map((level) => {
         return (
           <Card
             shadow={1}
@@ -492,10 +492,10 @@ class EducationForm extends ProfileFormFields {
       ui: {
         educationDialogIndex,
         showEducationDeleteDialog,
-        educationDialogVisibility
+        educationDialogVisibility,
       },
       profilePatchStatus,
-      profile
+      profile,
     } = this.props
 
     const inFlight = profilePatchStatus === FETCH_PROCESSING
@@ -518,7 +518,7 @@ class EducationForm extends ProfileFormFields {
         <Dialog
           classes={{
             paper: "dialog education-dialog",
-            root:  "education-dialog-wrapper"
+            root: "education-dialog-wrapper",
           }}
           open={educationDialogVisibility}
           onClose={this.clearEducationEdit}
@@ -529,7 +529,7 @@ class EducationForm extends ProfileFormFields {
             {dialogActions(
               this.clearEducationEdit,
               this.saveEducationForm,
-              inFlight
+              inFlight,
             )}
           </DialogActions>
         </Dialog>

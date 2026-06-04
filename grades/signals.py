@@ -5,14 +5,26 @@ from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from grades.api import (generate_program_certificate, generate_program_letter,
-                        update_or_create_combined_final_grade)
-from grades.models import (FinalGrade, MicromastersCourseCertificate,
-                           MicromastersProgramCertificate)
+from grades.api import (
+    generate_program_certificate,
+    generate_program_letter,
+    update_or_create_combined_final_grade,
+)
+from grades.models import (
+    FinalGrade,
+    MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
+)
 
 
-@receiver(post_save, sender=MicromastersCourseCertificate, dispatch_uid="coursecertificate_post_save")
-def handle_create_coursecertificate(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
+@receiver(
+    post_save,
+    sender=MicromastersCourseCertificate,
+    dispatch_uid="coursecertificate_post_save",
+)
+def handle_create_coursecertificate(
+    sender, instance, created, **kwargs
+):  # pylint: disable=unused-argument
     """
     When a MicromastersCourseCertificate model is created
     """
@@ -22,8 +34,14 @@ def handle_create_coursecertificate(sender, instance, created, **kwargs):  # pyl
         transaction.on_commit(lambda: generate_program_certificate(user, program))
 
 
-@receiver(post_save, sender=MicromastersProgramCertificate, dispatch_uid="programcertificate_post_save")
-def handle_create_programcertificate(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
+@receiver(
+    post_save,
+    sender=MicromastersProgramCertificate,
+    dispatch_uid="programcertificate_post_save",
+)
+def handle_create_programcertificate(
+    sender, instance, created, **kwargs
+):  # pylint: disable=unused-argument
     """
     When a MicromastersProgramCertificate model is created
     """
@@ -33,10 +51,13 @@ def handle_create_programcertificate(sender, instance, created, **kwargs):  # py
 
 
 @receiver(post_save, sender=FinalGrade, dispatch_uid="final_grade_post_save")
-def handle_create_final_grade(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
+def handle_create_final_grade(
+    sender, instance, created, **kwargs
+):  # pylint: disable=unused-argument
     """
     When a FinalGrade model is created or updated
     """
+
     def _on_transaction_commit():
         """If either are applicable, update/create combined final grade and generate program letter"""
         user = instance.user

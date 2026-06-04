@@ -5,15 +5,18 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0030_unique_together_elective'),
+        ("courses", "0030_unique_together_elective"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='electivesset',
-            name='program',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='electives_set', to='courses.Program'),
+            model_name="electivesset",
+            name="program",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="electives_set",
+                to="courses.Program",
+            ),
         ),
     ]

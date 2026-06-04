@@ -14,6 +14,7 @@ FAKE = faker.Factory.create()
 
 class TopicFactory(DjangoModelFactory):
     """Factory for Topics"""
+
     name = fuzzy.FuzzyText()
 
     class Meta:
@@ -33,8 +34,9 @@ def _post_gen_topics(obj, create, extracted):
 
 class ProgramFactory(DjangoModelFactory):
     """Factory for Programs"""
+
     title = fuzzy.FuzzyText(prefix="Program ")
-    live = factory.Faker('boolean')
+    live = factory.Faker("boolean")
     description = fuzzy.FuzzyText()
     price = fuzzy.FuzzyDecimal(low=500, high=2000)
     num_required_courses = 1
@@ -46,6 +48,7 @@ class ProgramFactory(DjangoModelFactory):
 
 class FullProgramFactory(ProgramFactory):
     """Factory for Programs that also creates some related objects that we care about"""
+
     @factory.post_generation
     def post_gen(self, created, *args, **kwargs):  # pylint: disable=unused-argument
         """Post-object generation hook"""
@@ -57,11 +60,14 @@ class FullProgramFactory(ProgramFactory):
 
 class CourseFactory(DjangoModelFactory):
     """Factory for Courses"""
+
     title = fuzzy.FuzzyText(prefix="Course ")
     program = factory.SubFactory(ProgramFactory)
     position_in_program = factory.Sequence(lambda n: n)
 
-    edx_key = factory.Sequence(lambda number: f"v{number}")  # pylint: disable=unnecessary-lambda
+    edx_key = factory.Sequence(
+        lambda number: f"v{number}"
+    )  # pylint: disable=unnecessary-lambda
 
     description = fuzzy.FuzzyText()
     prerequisites = fuzzy.FuzzyText(prefix="Course requires ")
@@ -72,51 +78,43 @@ class CourseFactory(DjangoModelFactory):
 
 class CourseRunFactory(DjangoModelFactory):
     """Factory for CourseRuns"""
-    title = factory.LazyAttribute(
-        lambda x: f"CourseRun {FAKE.sentence()}"
-    )
+
+    title = factory.LazyAttribute(lambda x: f"CourseRun {FAKE.sentence()}")
     course = factory.SubFactory(CourseFactory)
     # Try to make sure we escape this correctly
-    edx_course_key = factory.Sequence(
-        lambda number: f"course:/v{number}/{FAKE.slug()}"
-    )
+    edx_course_key = factory.Sequence(lambda number: f"course:/v{number}/{FAKE.slug()}")
     enrollment_start = factory.Faker(
-        'date_time_this_month', before_now=True, after_now=False, tzinfo=pytz.utc
+        "date_time_this_month", before_now=True, after_now=False, tzinfo=pytz.utc
     )
     start_date = factory.Faker(
-        'date_time_this_month', before_now=True, after_now=False, tzinfo=pytz.utc
+        "date_time_this_month", before_now=True, after_now=False, tzinfo=pytz.utc
     )
     enrollment_end = factory.Faker(
-        'date_time_this_month', before_now=False, after_now=True, tzinfo=pytz.utc
+        "date_time_this_month", before_now=False, after_now=True, tzinfo=pytz.utc
     )
     end_date = factory.Faker(
-        'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
+        "date_time_this_year", before_now=False, after_now=True, tzinfo=pytz.utc
     )
     freeze_grade_date = factory.Faker(
-        'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
+        "date_time_this_year", before_now=False, after_now=True, tzinfo=pytz.utc
     )
-    fuzzy_start_date = factory.LazyAttribute(
-        lambda x: f"Starting {FAKE.sentence()}"
-    )
+    fuzzy_start_date = factory.LazyAttribute(lambda x: f"Starting {FAKE.sentence()}")
     fuzzy_enrollment_start_date = factory.LazyAttribute(
         lambda x: f"Enrollment starting {FAKE.sentence()}"
     )
     upgrade_deadline = factory.Faker(
-        'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
+        "date_time_this_year", before_now=False, after_now=True, tzinfo=pytz.utc
     )
-    enrollment_url = factory.Faker('url')
-    prerequisites = factory.Faker('paragraph')
+    enrollment_url = factory.Faker("url")
+    prerequisites = factory.Faker("paragraph")
 
     class Meta:
         model = CourseRun
 
     class Params:
         future_run = factory.Trait(
-            enrollment_start = factory.Faker(
-                'date_time_between',
-                start_date="+1d",
-                end_date="+30d",
-                tzinfo=pytz.utc
+            enrollment_start=factory.Faker(
+                "date_time_between", start_date="+1d", end_date="+30d", tzinfo=pytz.utc
             )
         )
 

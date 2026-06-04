@@ -33,22 +33,22 @@ describe("StaffLearnerInfoCard", () => {
             [
               {
                 program_id: program.id,
-                price:      price
-              }
+                price: price,
+              },
             ],
-            []
+            [],
           )}
           setShowGradeDetailDialog={() => undefined}
           dialogVisibility={{}}
         />
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
     )
 
   it("should have the program title", () => {
     const card = renderCard()
     assert.include(
       stringStrip(card.text()),
-      `Progress ${DASHBOARD_RESPONSE.programs[0].title}`
+      `Progress ${DASHBOARD_RESPONSE.programs[0].title}`,
     )
   })
 
@@ -61,7 +61,7 @@ describe("StaffLearnerInfoCard", () => {
     const program = { ...DASHBOARD_RESPONSE.programs[0] }
     program.grade_average = 62
     const badge = renderCard(program).find(
-      ".average-program-grade .program-badge"
+      ".average-program-grade .program-badge",
     )
     assert.equal(badge.text(), "62%")
   })

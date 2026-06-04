@@ -6,8 +6,21 @@ from django.conf import settings
 from django.db import migrations
 
 # A list containing all the existing disallowed URLS that were part of legacy robots.txt.
-EXISTING_DISALLOWED_URLS = ["/dashboard/", "/learner/", "/learners/", "/cms/", "/profile/", "/financial_aid/", "/admin/", "/logout/",
-                            "/pearson/", "/api/", "/certificate/", "/records/", "/letter/"]
+EXISTING_DISALLOWED_URLS = [
+    "/dashboard/",
+    "/learner/",
+    "/learners/",
+    "/cms/",
+    "/profile/",
+    "/financial_aid/",
+    "/admin/",
+    "/logout/",
+    "/pearson/",
+    "/api/",
+    "/certificate/",
+    "/records/",
+    "/letter/",
+]
 
 
 def create_default_robots_txt(apps, schema_editor):
@@ -34,7 +47,6 @@ def create_default_robots_txt(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("sites", "0002_alter_domain_unique"), ("robots", "0001_initial")]
 
     operations = [

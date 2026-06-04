@@ -23,7 +23,7 @@ class CustomSortingColumnHeaders extends React.Component {
     // The currently selected set of sorting keys, if any are selected
     selectedItems: ?Array<string>,
     // the currently selected program
-    currentProgramEnrollment: AvailableProgram
+    currentProgramEnrollment: AvailableProgram,
   }
 
   toggleSort = ([defaultSort, otherSort]: [string, string]) => {
@@ -65,7 +65,7 @@ class CustomSortingColumnHeaders extends React.Component {
       return ""
     }
     return items.find(
-      item => selectedItems[0] === item.key && keys.includes(item.key)
+      (item) => selectedItems[0] === item.key && keys.includes(item.key),
     )
   }
 
@@ -77,7 +77,7 @@ class CustomSortingColumnHeaders extends React.Component {
     const { currentProgramEnrollment } = this.props
     const showGrade = canAdvanceSearchProgram(
       currentProgramEnrollment,
-      SETTINGS.roles
+      SETTINGS.roles,
     )
     return (
       <Grid container className="sorting-row">

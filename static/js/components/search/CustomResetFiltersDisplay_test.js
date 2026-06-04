@@ -39,33 +39,27 @@ describe("CustomResetFiltersDisplay", () => {
           bemBlock={() => ({ state: () => {} })}
           {...props}
         />
-      </SearchkitProvider>
+      </SearchkitProvider>,
     )
 
   it("renders reset filters link", () => {
     sandbox.stub(CustomResetFiltersDisplay.prototype, "getQuery").returns({
       index: {
-        filters: ["program filter", "any other filter"]
-      }
+        filters: ["program filter", "any other filter"],
+      },
     })
     const wrapper = renderFilters()
-    assert.equal(
-      wrapper
-        .children()
-        .children()
-        .text(),
-      "Clear all filters"
-    )
+    assert.equal(wrapper.children().children().text(), "Clear all filters")
   })
 
   it("reset filter link does not render when hasFilters is false", () => {
     sandbox.stub(CustomResetFiltersDisplay.prototype, "getQuery").returns({
       index: {
-        filters: ["program filter", "any other filter"]
-      }
+        filters: ["program filter", "any other filter"],
+      },
     })
     const wrapper = renderFilters({
-      hasFilters: false
+      hasFilters: false,
     })
 
     assert.lengthOf(wrapper.children().children(), 0)
@@ -74,8 +68,8 @@ describe("CustomResetFiltersDisplay", () => {
   it("do not render when there is only program filter selected", () => {
     sandbox.stub(CustomResetFiltersDisplay.prototype, "getQuery").returns({
       index: {
-        filters: ["program filter"]
-      }
+        filters: ["program filter"],
+      },
     })
     const wrapper = renderFilters()
     assert.lengthOf(wrapper.children().children(), 0)

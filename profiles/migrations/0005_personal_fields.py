@@ -4,45 +4,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0004_profile_linkedin'),
+        ("profiles", "0004_profile_linkedin"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='profile',
-            name='year_of_birth',
+            model_name="profile",
+            name="year_of_birth",
         ),
         migrations.AddField(
-            model_name='profile',
-            name='date_of_birth',
+            model_name="profile",
+            name="date_of_birth",
             field=models.DateField(blank=True, null=True, default=None),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='profile',
-            name='filled_out',
+            model_name="profile",
+            name="filled_out",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='first_name',
+            model_name="profile",
+            name="first_name",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='last_name',
+            model_name="profile",
+            name="last_name",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='preferred_language',
+            model_name="profile",
+            name="preferred_language",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='preferred_name',
+            model_name="profile",
+            name="preferred_name",
             field=models.TextField(blank=True, null=True),
         ),
     ]

@@ -8,19 +8,19 @@ import Decimal from "decimal.js-light"
 import type {
   Profile,
   ProfileGetResult,
-  ProfilePatchResult
+  ProfilePatchResult,
 } from "../flow/profileTypes"
 import type { Coupons, AttachCouponResponse } from "../flow/couponTypes"
 import type { Dashboard, ProgramLearners } from "../flow/dashboardTypes"
 import type {
   AvailableProgram,
-  AvailablePrograms
+  AvailablePrograms,
 } from "../flow/enrollmentTypes"
 import type { EmailSendResponse } from "../flow/emailTypes"
 import type { PearsonSSOParameters } from "../flow/pearsonTypes"
 import {
   fetchWithCSRF,
-  fetchJSONWithCSRF
+  fetchJSONWithCSRF,
 } from "redux-hammock/django_csrf_fetch"
 
 const logoutOnError = (response: Response) => {
@@ -36,15 +36,15 @@ export function getUserProfile(username: string): Promise<ProfileGetResult> {
 
 export function patchUserProfile(
   username: string,
-  profile: Profile
+  profile: Profile,
 ): Promise<ProfilePatchResult> {
   profile = {
     ...profile,
-    image: undefined
+    image: undefined,
   }
   return fetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
     method: "PATCH",
-    body:   JSON.stringify(profile)
+    body: JSON.stringify(profile),
   })
 }
 
@@ -62,56 +62,56 @@ export function sendSearchResultMail(
   subject: string,
   body: string,
   searchRequest: Object,
-  sendAutomaticEmails: boolean
+  sendAutomaticEmails: boolean,
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF("/api/v0/mail/search/", {
     method: "POST",
-    body:   JSON.stringify({
-      email_subject:         subject,
-      email_body:            body,
-      search_request:        searchRequest,
-      send_automatic_emails: sendAutomaticEmails
-    })
+    body: JSON.stringify({
+      email_subject: subject,
+      email_body: body,
+      search_request: searchRequest,
+      send_automatic_emails: sendAutomaticEmails,
+    }),
   })
 }
 
 export function sendCourseTeamMail(
   subject: string,
   body: string,
-  courseId: number
+  courseId: number,
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF(`/api/v0/mail/course/${courseId}/`, {
     method: "POST",
-    body:   JSON.stringify({
+    body: JSON.stringify({
       email_subject: subject,
-      email_body:    body
-    })
+      email_body: body,
+    }),
   })
 }
 
 export function sendLearnerMail(
   subject: string,
   body: string,
-  studentId: number
+  studentId: number,
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF(`/api/v0/mail/learner/${studentId}/`, {
     method: "POST",
-    body:   JSON.stringify({
+    body: JSON.stringify({
       email_subject: subject,
-      email_body:    body
-    })
+      email_body: body,
+    }),
   })
 }
 
 export function sendGradesRecordMail(
   partnerId: number,
-  enrollmentHash: string
+  enrollmentHash: string,
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF(`/api/v0/mail/grades/${partnerId}/`, {
     method: "POST",
-    body:   JSON.stringify({
-      enrollment_hash: enrollmentHash
-    })
+    body: JSON.stringify({
+      enrollment_hash: enrollmentHash,
+    }),
   })
 }
 
@@ -126,35 +126,35 @@ export async function getPrograms(): Promise<AvailablePrograms> {
 }
 
 export function getProgramLearners(
-  programId: number
+  programId: number,
 ): Promise<ProgramLearners> {
   return fetchJSONWithCSRF(`/api/v0/programlearners/${programId}/`)
 }
 
 export function addProgramEnrollment(
-  programId: number
+  programId: number,
 ): Promise<AvailableProgram> {
   return fetchJSONWithCSRF("/api/v0/enrolledprograms/", {
     method: "POST",
-    body:   JSON.stringify({
-      program_id: programId
-    })
+    body: JSON.stringify({
+      program_id: programId,
+    }),
   })
 }
 
 export function updateProfileImage(
   username: string,
   image: Blob,
-  name: string
+  name: string,
 ): Promise<string> {
   const formData = new FormData()
   formData.append("image", image, name)
   return fetchWithCSRF(`/api/v0/profiles/${username}/`, {
     headers: {
-      Accept: "text/html"
+      Accept: "text/html",
     },
     method: "PATCH",
-    body:   formData
+    body: formData,
   })
 }
 
@@ -166,54 +166,54 @@ export function getPearsonSSO(): Promise<PearsonSSOParameters> {
 export function addCourseEnrollment(courseId: string) {
   return fetchJSONWithCSRF("/api/v0/course_enrollments/", {
     method: "POST",
-    body:   JSON.stringify({
-      course_id: courseId
-    })
+    body: JSON.stringify({
+      course_id: courseId,
+    }),
   })
 }
 
 export function getCoupons(): Promise<Coupons> {
-  return fetchJSONWithCSRF("/api/v0/coupons/").then(coupons => {
+  return fetchJSONWithCSRF("/api/v0/coupons/").then((coupons) => {
     // turn `amount` from string into decimal
     return R.map(R.evolve({ amount: Decimal }), coupons)
   })
 }
 
 export function attachCoupon(
-  couponCode: string
+  couponCode: string,
 ): Promise<AttachCouponResponse> {
   const code = encodeURI(couponCode)
   return fetchJSONWithCSRF(`/api/v0/coupons/${code}/users/`, {
     method: "POST",
-    body:   JSON.stringify({
-      username: SETTINGS.user.username
-    })
-  }).then(response => R.evolve({ coupon: { amount: Decimal } }, response))
+    body: JSON.stringify({
+      username: SETTINGS.user.username,
+    }),
+  }).then((response) => R.evolve({ coupon: { amount: Decimal } }, response))
 }
 
 export function unEnrollProgramEnrollments(programIds: Array<number>) {
   return fetchJSONWithCSRF("/api/v0/unenroll_programs/", {
     method: "POST",
-    body:   JSON.stringify({
-      program_ids: programIds
-    })
+    body: JSON.stringify({
+      program_ids: programIds,
+    }),
   })
 }
 
 export function getEnrollmentShareHash(enrollmentId: number) {
   return fetchJSONWithCSRF("/api/v0/enrollment_share_hash/", {
     method: "POST",
-    body:   JSON.stringify({
-      enrollment_id: enrollmentId
-    })
+    body: JSON.stringify({
+      enrollment_id: enrollmentId,
+    }),
   })
 }
 
 export function revokeEnrollmentShareHash(enrollmentId: number) {
   return fetchJSONWithCSRF("/api/v0/enrollment_share_hash/", {
     method: "DELETE",
-    body:   JSON.stringify({
-      enrollment_id: enrollmentId
-    })
+    body: JSON.stringify({
+      enrollment_id: enrollmentId,
+    }),
   })
 }

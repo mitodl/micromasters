@@ -8,7 +8,7 @@ import sinon from "sinon"
 import Grades from "./Grades"
 import {
   makeCourse,
-  makeProctoredExamResult
+  makeProctoredExamResult,
 } from "../../../factories/dashboard"
 import { STATUS_PASSED, STATUS_OFFERED } from "../../../constants"
 import { EXAM_GRADE, COURSE_GRADE } from "../../../containers/DashboardPage"
@@ -28,12 +28,12 @@ describe("Course Grades", () => {
         course={course}
         setShowGradeDetailDialog={setShowGradeDetailDialogStub}
         dialogVisibility={{}}
-      />
+      />,
     )
 
   it("should display placeholders if no grades are present", () => {
     const grades = renderGrades()
-    grades.find(".number").forEach(wrapper => {
+    grades.find(".number").forEach((wrapper) => {
       assert.equal(wrapper.text(), "--")
     })
   })
@@ -48,14 +48,14 @@ describe("Course Grades", () => {
   it("should display the highest exam grade", () => {
     course.proctorate_exams_grades = [1, 2, 3].map(makeProctoredExamResult)
     let highest = 0
-    course.proctorate_exams_grades.forEach(grade => {
+    course.proctorate_exams_grades.forEach((grade) => {
       highest =
         grade.percentage_grade > highest ? grade.percentage_grade : highest
     })
     const grades = renderGrades()
     assert.equal(
       grades.find(".exam-grade .number").text(),
-      `${_.round(highest * 100)}%`
+      `${_.round(highest * 100)}%`,
     )
   })
 
@@ -64,17 +64,20 @@ describe("Course Grades", () => {
     const grades = renderGrades()
     assert.equal(
       grades.find(".final-grade .number").text(),
-      `${course.overall_grade}%`
+      `${course.overall_grade}%`,
     )
   })
 
   it("should only display the course grade if has_exam == false", () => {
-    [[true, 3], [false, 1]].forEach(([hasExam, expectedGradeCount]) => {
+    ;[
+      [true, 3],
+      [false, 1],
+    ].forEach(([hasExam, expectedGradeCount]) => {
       course.has_exam = hasExam
       const grades = renderGrades()
       assert.equal(
         grades.find(".course-grades").find(".grade-display").length,
-        expectedGradeCount
+        expectedGradeCount,
       )
     })
   })
@@ -97,12 +100,12 @@ describe("Course Grades", () => {
   })
 
   it("should not display passed if a user did not pass (exam course)", () => {
-    [
+    ;[
       [STATUS_PASSED, false],
       [STATUS_OFFERED, false],
-      [STATUS_OFFERED, true]
+      [STATUS_OFFERED, true],
     ].forEach(([courseStatus, examPassed]) => {
-      course.runs.forEach(run => {
+      course.runs.forEach((run) => {
         run.status = courseStatus
       })
       course.proctorate_exams_grades = [makeProctoredExamResult()]
@@ -121,19 +124,13 @@ describe("Course Grades", () => {
     examGrade.passed = true
     course.proctorate_exams_grades.push(examGrade)
     const grades = renderGrades()
-    grades
-      .find(".open-popup")
-      .first()
-      .simulate("click")
+    grades.find(".open-popup").first().simulate("click")
     assert.ok(
-      setShowGradeDetailDialogStub.calledWith(true, COURSE_GRADE, course.title)
+      setShowGradeDetailDialogStub.calledWith(true, COURSE_GRADE, course.title),
     )
-    grades
-      .find(".open-popup")
-      .at(1)
-      .simulate("click")
+    grades.find(".open-popup").at(1).simulate("click")
     assert.ok(
-      setShowGradeDetailDialogStub.calledWith(true, EXAM_GRADE, course.title)
+      setShowGradeDetailDialogStub.calledWith(true, EXAM_GRADE, course.title),
     )
   })
 })

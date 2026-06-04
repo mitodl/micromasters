@@ -10,7 +10,7 @@ import {
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_CONTENT_TYPE_PROGRAM,
-  COUPON_CONTENT_TYPE_COURSE
+  COUPON_CONTENT_TYPE_COURSE,
 } from "../constants"
 import { makeAmountMessage } from "../lib/coupon"
 import type { Coupon } from "../flow/couponTypes"
@@ -22,7 +22,7 @@ type CouponNotification = {
   couponProgram: ?AvailableProgram,
   couponCourse: ?Course,
   open: boolean,
-  setDialogVisibility: (v: boolean) => void
+  setDialogVisibility: (v: boolean) => void,
 }
 
 const CouponNotificationDialog = ({
@@ -30,13 +30,13 @@ const CouponNotificationDialog = ({
   couponProgram,
   couponCourse,
   open,
-  setDialogVisibility
+  setDialogVisibility,
 }: CouponNotification) => {
   const {
     amount_type: amountType,
     content_type: contentType,
     program_id: programId,
-    object_id: objectId
+    object_id: objectId,
   } = coupon
   let programName
   if (couponProgram) {
@@ -123,7 +123,7 @@ const CouponNotificationDialog = ({
     <Dialog
       classes={{
         paper: "dialog coupon-notification-dialog",
-        root:  "coupon-notification-dialog-wrapper"
+        root: "coupon-notification-dialog-wrapper",
       }}
       open={open}
       onClose={() => setDialogVisibility(false)}

@@ -12,7 +12,7 @@ import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_WILL_ATTEND,
   DASHBOARD_FORMAT,
-  STATUS_PAID_BUT_NOT_ENROLLED
+  STATUS_PAID_BUT_NOT_ENROLLED,
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 
@@ -46,14 +46,14 @@ export const userIsEnrolled = R.compose(
     STATUS_CAN_UPGRADE,
     STATUS_CURRENTLY_ENROLLED,
     STATUS_WILL_ATTEND,
-    STATUS_MISSED_DEADLINE
+    STATUS_MISSED_DEADLINE,
   ]),
-  R.prop("status")
+  R.prop("status"),
 )
 
 export const hasEnrolledInAnyRun = R.compose(
   R.any(userIsEnrolled),
-  R.prop("runs")
+  R.prop("runs"),
 )
 
 export const courseCurrentlyInProgress = (courseRun: CourseRun) => {
@@ -73,32 +73,32 @@ export const courseUpcomingOrCurrent = (courseRun: CourseRun) =>
 
 export const isPassedOrMissedDeadline = R.compose(
   R.contains(R.__, [STATUS_PASSED, STATUS_MISSED_DEADLINE]),
-  R.prop("status")
+  R.prop("status"),
 )
 
 export const hasCurrentlyEnrolledCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_CURRENTLY_ENROLLED)),
-  R.prop("runs")
+  R.prop("runs"),
 )
 
 export const hasCanUpgradeCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_CAN_UPGRADE)),
-  R.prop("runs")
+  R.prop("runs"),
 )
 
 export const hasMissedDeadlineCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_MISSED_DEADLINE)),
-  R.prop("runs")
+  R.prop("runs"),
 )
 
 export const hasFailedCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_NOT_PASSED)),
-  R.prop("runs")
+  R.prop("runs"),
 )
 
 export const hasPassedCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_PASSED)),
-  R.prop("runs")
+  R.prop("runs"),
 )
 
 // returns Maybe(run), where run is a future enrollable course run
@@ -108,10 +108,10 @@ export const futureEnrollableRun = R.compose(
   R.filter(
     R.propSatisfies(
       R.contains(R.__, [STATUS_OFFERED, STATUS_PAID_BUT_NOT_ENROLLED]),
-      "status"
-    )
+      "status",
+    ),
   ),
-  R.propOr([], "runs")
+  R.propOr([], "runs"),
 )
 
 // checks if a run is enrollable

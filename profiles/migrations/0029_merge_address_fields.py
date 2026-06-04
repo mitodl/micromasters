@@ -4,27 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0028_auto_20170113_2133'),
+        ("profiles", "0028_auto_20170113_2133"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='profile',
-            name='address1',
+            model_name="profile",
+            name="address1",
         ),
         migrations.RemoveField(
-            model_name='profile',
-            name='address2',
+            model_name="profile",
+            name="address2",
         ),
         migrations.RemoveField(
-            model_name='profile',
-            name='address3',
+            model_name="profile",
+            name="address3",
         ),
         migrations.AddField(
-            model_name='profile',
-            name='address',
+            model_name="profile",
+            name="address",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
     ]

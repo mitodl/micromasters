@@ -13,7 +13,7 @@ import {
   makeRunEnrolled,
   makeRunFuture,
   makeRunMissedDeadline,
-  makeRunPast
+  makeRunPast,
 } from "./test_util"
 import {
   STATUS_CAN_UPGRADE,
@@ -22,7 +22,7 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
-  COURSEWARE_BACKEND_NAMES
+  COURSEWARE_BACKEND_NAMES,
 } from "../../../constants"
 import { courseRunUrl } from "../../../util/courseware"
 import { courseStartDateMessage } from "./util"
@@ -47,7 +47,7 @@ describe("Course ProgressMessage", () => {
         openCourseContactDialog={openCourseContactDialogStub}
         courseRun={course.runs[0]}
         {...props}
-      />
+      />,
     )
 
   it("displays information for an in-progress course run", () => {
@@ -150,8 +150,8 @@ describe("Course ProgressMessage", () => {
       assert.equal(
         staffCourseInfo(course.runs[0], course),
         `Auditing (Upgrade deadline ${moment(
-          course.runs[0].course_upgrade_deadline
-        ).format(DASHBOARD_FORMAT)})`
+          course.runs[0].course_upgrade_deadline,
+        ).format(DASHBOARD_FORMAT)})`,
       )
     })
 
@@ -166,7 +166,7 @@ describe("Course ProgressMessage", () => {
       course.runs[0].status = STATUS_MISSED_DEADLINE
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Missed upgrade deadline"
+        "Missed upgrade deadline",
       )
     })
 
@@ -175,7 +175,7 @@ describe("Course ProgressMessage", () => {
       course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Paid but not enrolled"
+        "Paid but not enrolled",
       )
     })
 
@@ -192,7 +192,7 @@ describe("Course ProgressMessage", () => {
       course.has_exam = true
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Passed edX course. Authorized to schedule exam."
+        "Passed edX course. Authorized to schedule exam.",
       )
     })
 
@@ -203,7 +203,7 @@ describe("Course ProgressMessage", () => {
       course.has_exam = true
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Passed edX course, did not pass exam"
+        "Passed edX course, did not pass exam",
       )
     })
 
@@ -233,7 +233,7 @@ describe("Course ProgressMessage", () => {
       course.runs[1].status = STATUS_MISSED_DEADLINE
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Audited, missed upgrade deadline"
+        "Audited, missed upgrade deadline",
       )
     })
 

@@ -30,6 +30,4 @@ def do_not_track(request):
     # if dnt is "1", the user does not wish to be tracked
     # if dnt is "0", the user explicitly consents to be tracked
     # if dnt is not set, the user hasn't stated a preference
-    return {
-        "DO_NOT_TRACK": dnt == "1"
-    }
+    return {"DO_NOT_TRACK": dnt == "1"}

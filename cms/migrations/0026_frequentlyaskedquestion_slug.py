@@ -6,40 +6,43 @@ from django.utils.text import slugify
 
 
 def gen_unique_slug(apps, schema_editor):
-    FrequentlyAskedQuestion = apps.get_model('cms', 'FrequentlyAskedQuestion')
+    FrequentlyAskedQuestion = apps.get_model("cms", "FrequentlyAskedQuestion")
     for row in FrequentlyAskedQuestion.objects.all():
         if not row.slug:
-            max_length = FrequentlyAskedQuestion._meta.get_field('slug').max_length
+            max_length = FrequentlyAskedQuestion._meta.get_field("slug").max_length
             slug = orig_slug = slugify(row.question)[:max_length]
-            slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=orig_slug).exists()
+            slug_is_unique = not FrequentlyAskedQuestion.objects.filter(
+                slug=orig_slug
+            ).exists()
             count = 1
             while not slug_is_unique:
                 slug = f"{orig_slug[:max_length - len(str(count)) - 1]}-{count}"
-                slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
+                slug_is_unique = not FrequentlyAskedQuestion.objects.filter(
+                    slug=slug
+                ).exists()
                 count += 1
             row.slug = slug
             row.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0025_infolinks'),
+        ("cms", "0025_infolinks"),
     ]
 
     operations = [
         # First add a new field for slug
         migrations.AddField(
-            model_name='frequentlyaskedquestion',
-            name='slug',
+            model_name="frequentlyaskedquestion",
+            name="slug",
             field=models.SlugField(default=None, null=True),
         ),
         # Then populate existing rows with unique slugs
         migrations.RunPython(gen_unique_slug, reverse_code=migrations.RunPython.noop),
         # Now can make this field unique
         migrations.AlterField(
-            model_name='frequentlyaskedquestion',
-            name='slug',
+            model_name="frequentlyaskedquestion",
+            name="slug",
             field=models.SlugField(blank=True, default=None, unique=True),
         ),
     ]

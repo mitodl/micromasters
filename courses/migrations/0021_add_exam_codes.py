@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0020_courserun_freeze_grade_date'),
+        ("courses", "0020_courserun_freeze_grade_date"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='exam_module',
+            model_name="course",
+            name="exam_module",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AddField(
-            model_name='program',
-            name='exam_series_code',
+            model_name="program",
+            name="exam_series_code",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
     ]

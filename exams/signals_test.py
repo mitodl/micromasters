@@ -18,14 +18,12 @@ from dashboard.factories import (
     CachedEnrollmentFactory,
 )
 from exams.factories import ExamRunFactory
-from exams.models import (
-    ExamProfile,
-    ExamAuthorization
-)
+from exams.models import ExamProfile, ExamAuthorization
 from grades.factories import FinalGradeFactory
 from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
+
 
 @ddt.ddt
 class ExamSignalsTest(MockedESTestCase):
@@ -47,10 +45,12 @@ class ExamSignalsTest(MockedESTestCase):
                 "passed": True,
                 "percent": 0.9,
                 "course_key": cls.course_run.edx_course_key,
-                "username": cls.profile.user.username
-            }
+                "username": cls.profile.user.username,
+            },
         )
-        CachedCertificateFactory.create(user=cls.profile.user, course_run=cls.course_run)
+        CachedCertificateFactory.create(
+            user=cls.profile.user, course_run=cls.course_run
+        )
         cls.exam_run = ExamRunFactory.create(
             course=cls.course_run.course,
             date_first_schedulable=now_in_utc() - timedelta(days=1),
@@ -63,14 +63,18 @@ class ExamSignalsTest(MockedESTestCase):
         with mute_signals(post_save):
             # muted because enrollment also trigger signal for profile creation. right now we are just
             # looking final grades
-            CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
+            CachedEnrollmentFactory.create(
+                user=self.profile.user, course_run=self.course_run
+            )
 
         # There is no ExamProfile or ExamAuthorization before creating the FinalGrade.
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=self.profile.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamAuthorization.objects.filter(
+                user=self.profile.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
         FinalGradeFactory.create(
             user=self.profile.user,
@@ -81,10 +85,12 @@ class ExamSignalsTest(MockedESTestCase):
 
         # assert Exam Authorization and profile created.
         assert ExamProfile.objects.filter(profile=self.profile).exists() is True
-        assert ExamAuthorization.objects.filter(
-            user=self.profile.user,
-            course=self.course_run.course
-        ).exists() is True
+        assert (
+            ExamAuthorization.objects.filter(
+                user=self.profile.user, course=self.course_run.course
+            ).exists()
+            is True
+        )
 
     def test_update_exam_authorization_final_grade_when_user_not_paid(self):
         """
@@ -94,13 +100,17 @@ class ExamSignalsTest(MockedESTestCase):
         with mute_signals(post_save):
             # muting signal for CachedEnrollment. Because CachedEnrollment and FinalGrade both omits
             # signal, we want to see behaviour of FinalGrade here
-            CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
+            CachedEnrollmentFactory.create(
+                user=self.profile.user, course_run=self.course_run
+            )
 
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=self.profile.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamAuthorization.objects.filter(
+                user=self.profile.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
         FinalGradeFactory.create(
             user=self.profile.user,
@@ -111,10 +121,12 @@ class ExamSignalsTest(MockedESTestCase):
 
         # assert Exam Authorization and profile not created.
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=self.profile.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamAuthorization.objects.filter(
+                user=self.profile.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
     def test_update_exam_authorization_cached_enrollment(self):
         """
@@ -131,7 +143,9 @@ class ExamSignalsTest(MockedESTestCase):
         # There is no ExamProfile before enrollment.
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
 
-        CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
+        CachedEnrollmentFactory.create(
+            user=self.profile.user, course_run=self.course_run
+        )
         assert ExamProfile.objects.filter(profile=self.profile).exists() is True
 
     def test_update_exam_authorization_cached_enrollment_user_not_paid(self):
@@ -140,7 +154,9 @@ class ExamSignalsTest(MockedESTestCase):
         """
         # exam profile before enrollment
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
-        CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
+        CachedEnrollmentFactory.create(
+            user=self.profile.user, course_run=self.course_run
+        )
         assert ExamProfile.objects.filter(profile=self.profile).exists() is True
 
     def test_update_exam_authorization_cached_enrollment_when_no_exam_run(self):
@@ -152,7 +168,7 @@ class ExamSignalsTest(MockedESTestCase):
         course_run = CourseRunFactory.create(
             end_date=now_in_utc() - timedelta(days=100),
             enrollment_end=now_in_utc() + timedelta(hours=1),
-            course=course
+            course=course,
         )
         # Create a paid final grade to mark user as having paid
         FinalGradeFactory.create(

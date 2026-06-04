@@ -9,6 +9,7 @@ from search.models import PercolateQuery, PercolateQueryMembership
 
 class PercolateQueryFactory(DjangoModelFactory):
     """Factory for PercolateQuery"""
+
     query = factory.DictFactory()
     original_query = factory.DictFactory()
     source_type = FuzzyChoice(choices=PercolateQuery.SOURCE_TYPES)
@@ -19,11 +20,12 @@ class PercolateQueryFactory(DjangoModelFactory):
 
 class PercolateQueryMembershipFactory(DjangoModelFactory):
     """Factory for PercolateQueryMembership"""
+
     query = factory.SubFactory(PercolateQueryFactory)
     user = factory.SubFactory(UserFactory)
 
-    is_member = factory.Faker('boolean')
-    needs_update = factory.Faker('boolean')
+    is_member = factory.Faker("boolean")
+    needs_update = factory.Faker("boolean")
 
     class Meta:
         model = PercolateQueryMembership

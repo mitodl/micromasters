@@ -16,10 +16,12 @@ log = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=User, dispatch_uid="create_profile")
-def create_user_profile(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
+def create_user_profile(
+    sender, instance, created, **kwargs
+):  # pylint: disable=unused-argument
     """
     Signal handler to create a user profile every time a new user is created
     """
     if created:
-        log.debug('creating profile for user %s', instance.username)
+        log.debug("creating profile for user %s", instance.username)
         Profile.objects.create(user=instance)

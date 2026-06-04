@@ -53,7 +53,8 @@
 }
 
 // IE: make x's disappear for input items
-input::-ms-clear { // sass-lint:disable-line no-vendor-prefixes
+input::-ms-clear {
+  // sass-lint:disable-line no-vendor-prefixes
   display: none;
 }
 

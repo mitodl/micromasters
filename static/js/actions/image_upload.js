@@ -23,20 +23,20 @@ export const requestPatchUserPhoto = createAction(REQUEST_PATCH_USER_PHOTO)
 export const RECEIVE_PATCH_USER_PHOTO_FAILURE =
   "RECEIVE_PATCH_USER_PHOTO_FAILURE"
 export const receivePatchUserPhotoFailure = createAction(
-  RECEIVE_PATCH_USER_PHOTO_FAILURE
+  RECEIVE_PATCH_USER_PHOTO_FAILURE,
 )
 
 export const RECEIVE_PATCH_USER_PHOTO_SUCCESS =
   "RECEIVE_PATCH_USER_PHOTO_SUCCESS"
 export const receivePatchUserPhotoSuccess = createAction(
-  RECEIVE_PATCH_USER_PHOTO_SUCCESS
+  RECEIVE_PATCH_USER_PHOTO_SUCCESS,
 )
 
 // eslint-disable-next-line require-jsdoc
 export function updateUserPhoto(
   username: string,
   image: Blob,
-  name: string
+  name: string,
 ): Dispatcher<string | void> {
   return (dispatch: Dispatch) => {
     dispatch(requestPatchUserPhoto(username))
@@ -44,9 +44,9 @@ export function updateUserPhoto(
       () => {
         dispatch(receivePatchUserPhotoSuccess())
       },
-      error => {
+      (error) => {
         dispatch(receivePatchUserPhotoFailure(error))
-      }
+      },
     )
   }
 }

@@ -22,14 +22,14 @@ describe("SpinnerButton", () => {
   it("passes through all props when spinning is false", () => {
     const onClick = sandbox.stub()
     const props = {
-      "data-x":  "y",
-      onClick:   onClick,
-      className: "class1 class2"
+      "data-x": "y",
+      onClick: onClick,
+      className: "class1 class2",
     }
     const wrapper = shallow(
       <SpinnerButton component="button" spinning={false} {...props}>
         childText
-      </SpinnerButton>
+      </SpinnerButton>,
     )
     const button = wrapper.find("button")
     const buttonProps = button.props()
@@ -45,7 +45,7 @@ describe("SpinnerButton", () => {
   it("replaces children with a Spinner, disables onClick and updates className when spinning is true", () => {
     const onClick = sandbox.stub()
     const props = {
-      "data-x": "y"
+      "data-x": "y",
     }
     const wrapper = shallow(
       <SpinnerButton
@@ -56,10 +56,10 @@ describe("SpinnerButton", () => {
         {...props}
       >
         text
-      </SpinnerButton>
+      </SpinnerButton>,
     )
     wrapper.setState({
-      recentlyClicked: true
+      recentlyClicked: true,
     })
     const button = wrapper.find(Button)
     const buttonProps = button.props()
@@ -82,10 +82,10 @@ describe("SpinnerButton", () => {
         ignoreRecentlyClicked={true}
       >
         text
-      </SpinnerButton>
+      </SpinnerButton>,
     )
     wrapper.setState({
-      recentlyClicked: false
+      recentlyClicked: false,
     })
     const button = wrapper.find(Button)
     assert.equal(button.children().find(CircularProgress).length, 1)
@@ -100,7 +100,7 @@ describe("SpinnerButton", () => {
         component="button"
       >
         text
-      </SpinnerButton>
+      </SpinnerButton>,
     )
     const buttonProps = wrapper.find("button").props()
 
@@ -113,7 +113,7 @@ describe("SpinnerButton", () => {
   it("sets recentlyClicked to true when the button is clicked", () => {
     const onClick = sandbox.stub()
     const wrapper = shallow(
-      <SpinnerButton component="button" onClick={onClick} spinning={false} />
+      <SpinnerButton component="button" onClick={onClick} spinning={false} />,
     )
     assert.isFalse(wrapper.state().recentlyClicked)
     const buttonProps = wrapper.find("button").props()
@@ -127,7 +127,7 @@ describe("SpinnerButton", () => {
     const wrapper = shallow(
       <SpinnerButton spinning={true} component="button" onClick={onClick}>
         text
-      </SpinnerButton>
+      </SpinnerButton>,
     )
     const buttonProps = wrapper.find("button").props()
     assert.equal(buttonProps.className, undefined)
@@ -138,13 +138,13 @@ describe("SpinnerButton", () => {
 
   it("sets recentlyClicked back to false if the spinning prop changes back to false", () => {
     const wrapper = shallow(
-      <SpinnerButton component="button" spinning={true} />
+      <SpinnerButton component="button" spinning={true} />,
     )
     wrapper.setState({
-      recentlyClicked: true
+      recentlyClicked: true,
     })
     wrapper.setProps({
-      spinning: false
+      spinning: false,
     })
     assert.isFalse(wrapper.state().recentlyClicked)
   })

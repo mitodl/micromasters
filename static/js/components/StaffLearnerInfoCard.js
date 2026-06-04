@@ -13,7 +13,7 @@ import CardContent from "@material-ui/core/CardContent"
 type StaffLearnerCardProps = {
   program: Program,
   setShowGradeDetailDialog: (b: boolean, t: string) => void,
-  dialogVisibility: DialogVisibilityState
+  dialogVisibility: DialogVisibilityState,
 }
 
 const programInfoBadge = (title, text) => (
@@ -25,14 +25,14 @@ const programInfoBadge = (title, text) => (
 
 // getProgramProp :: String -> Program -> Either String Number
 const getProgramProp = R.curry((prop, program) =>
-  S.maybeToEither("--", getm(prop, program))
+  S.maybeToEither("--", getm(prop, program)),
 )
 
 // formatCourseGrade :: Program -> String
 const formatCourseGrade = R.compose(
   R.prop("value"),
-  S.map(grade => `${grade}%`),
-  getProgramProp("grade_average")
+  S.map((grade) => `${grade}%`),
+  getProgramProp("grade_average"),
 )
 
 const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
@@ -50,12 +50,12 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
                 7,
                 program.number_courses_passed,
                 program.number_courses_required,
-                program.program_letter_url
+                program.program_letter_url,
               )}
             </div>
             {programInfoBadge(
               "Average program grade",
-              formatCourseGrade(program)
+              formatCourseGrade(program),
             )}
           </div>
         </div>

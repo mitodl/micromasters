@@ -6,15 +6,15 @@ import { getProgramLearners } from "../lib/api"
 
 export const INITIAL_PROGRAM_LEARNERS_STATE = {
   ...INITIAL_STATE,
-  data: []
+  data: [],
 }
 
 export const programLearnersEndpoint: Endpoint = {
-  name:                 "programLearners",
-  namespaceOnUsername:  true,
-  checkNoSpinner:       true,
-  verbs:                [GET],
-  getFunc:              getProgramLearners,
-  initialState:         {},
-  usernameInitialState: INITIAL_PROGRAM_LEARNERS_STATE
+  name: "programLearners",
+  namespaceOnUsername: true,
+  checkNoSpinner: true,
+  verbs: [GET],
+  getFunc: getProgramLearners,
+  initialState: {},
+  usernameInitialState: INITIAL_PROGRAM_LEARNERS_STATE,
 }

@@ -1,9 +1,10 @@
 .mdl-button {
-
   font-weight: 400;
   border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  transition: all 0.1s cubic-bezier(.25,.8,.25,1);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.1s cubic-bezier(0.25, 0.8, 0.25, 1);
   border: none;
   text-transform: uppercase;
   line-height: 35px;
@@ -18,13 +19,15 @@
     margin-right: 20px;
   }
 
-  &.next, &.go-back {
+  &.next,
+  &.go-back {
     height: 43px;
     line-height: 43px;
     padding: 0 23px;
   }
 
-  &.next, &.exam-button {
+  &.next,
+  &.exam-button {
     background: $button-color;
     color: #fff;
   }
@@ -34,7 +37,10 @@
     margin: 10px 30px 10px 5px;
   }
 
-  &.gray-button:hover, &.gray-button:focus, &.gray-button:active, &.gray-button:focus:not(:active) {
+  &.gray-button:hover,
+  &.gray-button:focus,
+  &.gray-button:active,
+  &.gray-button:focus:not(:active) {
     background: $gray-button-hover;
     color: #555;
     text-decoration: none;
@@ -52,7 +58,10 @@
     text-transform: none;
   }
 
-  &.hero-button:hover, &.hero-button:focus, &.hero-button:active, &.hero-button:focus:not(:active) {
+  &.hero-button:hover,
+  &.hero-button:focus,
+  &.hero-button:active,
+  &.hero-button:focus:not(:active) {
     background: $mm-brand-bg-dark;
   }
 
@@ -66,7 +75,8 @@
     padding: 0 3px;
   }
 
-  &.button-signup, &.button-login {
+  &.button-signup,
+  &.button-login {
     font-size: 14px;
     text-decoration: none;
     height: 38px;
@@ -78,19 +88,25 @@
   &.button-signup {
     color: $mm-brand-bg !important;
     background-color: white;
-    border: 2px solid rgba(255,255,255,.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
 
   &.button-login {
     margin-right: 12px;
-    border: 2px solid rgba(255,255,255,.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 3px;
-    color: rgba(255,255,255,.8);
+    color: rgba(255, 255, 255, 0.8);
     background: transparent;
   }
 
-  &.button-login:hover, &.button-login:focus, &.button-login:active, &.button-login:focus:not(:active),
-  &.button-signup:hover, &.button-signup:focus, &.button-signup:active, &.button-signup:focus:not(:active) {
+  &.button-login:hover,
+  &.button-login:focus,
+  &.button-login:active,
+  &.button-login:focus:not(:active),
+  &.button-signup:hover,
+  &.button-signup:focus,
+  &.button-signup:active,
+  &.button-signup:focus:not(:active) {
     background: white;
     color: $mm-brand-bg !important;
     border-color: white;
@@ -109,7 +125,8 @@
     background: #1d67a7 !important;
   }
 
-  &.program-status, &.course-status {
+  &.program-status,
+  &.course-status {
     display: block;
     width: fit-content;
     font-size: 14px;
@@ -121,7 +138,8 @@
     color: white;
     background: $medgray !important;
 
-    &.completed, &.earned {
+    &.completed,
+    &.earned {
       background: darkolivegreen !important;
     }
 
@@ -142,18 +160,27 @@
     text-transform: none;
   }
 
-  &.minor-action:hover, &.minor-action:focus, &.minor-action:active, &.minor-action:focus:not(:active) {
+  &.minor-action:hover,
+  &.minor-action:focus,
+  &.minor-action:active,
+  &.minor-action:focus:not(:active) {
     color: #000;
     background: linear-gradient(to bottom, #ffffff, #e2e2e2);
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05), 0 1px 5px rgba(0, 0, 0, 0.12);
-
+    box-shadow:
+      0 2px 3px rgba(0, 0, 0, 0.05),
+      0 1px 5px rgba(0, 0, 0, 0.12);
   }
 
-  &:hover, &:focus, &:active, &:focus:not(:active) {
+  &:hover,
+  &:focus,
+  &:active,
+  &:focus:not(:active) {
     background: $button-color;
     color: white;
     text-decoration: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15), 0 3px 7px rgba(0, 0, 0, 0.22);
+    box-shadow:
+      0 2px 5px rgba(0, 0, 0, 0.15),
+      0 3px 7px rgba(0, 0, 0, 0.22);
   }
 
   &.no-hover-styling:hover {
@@ -162,7 +189,8 @@
     background-color: none;
   }
 
-  &[disabled], &.progress-button[disabled] {
+  &[disabled],
+  &.progress-button[disabled] {
     color: white;
     background-color: $medgray;
     box-shadow: none;
@@ -189,7 +217,10 @@
   background: none;
   box-shadow: none;
 
-  &:hover, &:focus, &:active, &:focus:not(:active)  {
+  &:hover,
+  &:focus,
+  &:active,
+  &:focus:not(:active) {
     background: #eee;
     box-shadow: none;
   }
@@ -209,7 +240,8 @@
   background-color: $button-color;
 }
 
-.mm-minor-action, .icon-button-link {
+.mm-minor-action,
+.icon-button-link {
   color: $link-text;
   font-size: 15px;
   font-weight: 400;
@@ -235,7 +267,6 @@
 .mm-minor-action:hover {
   text-decoration: underline;
 }
-
 
 .icon-button-link {
   display: inline-flex;
@@ -274,11 +305,16 @@
     background-color: adjust-color($button-color, $alpha: -0.5);
   }
 
-  &:hover, &:focus, &:active, &:focus:not(:active) {
+  &:hover,
+  &:focus,
+  &:active,
+  &:focus:not(:active) {
     background: $button-color;
     color: white;
     text-decoration: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15), 0 3px 7px rgba(0, 0, 0, 0.22);
+    box-shadow:
+      0 2px 5px rgba(0, 0, 0, 0.15),
+      0 3px 7px rgba(0, 0, 0, 0.22);
   }
 }
 
@@ -296,7 +332,10 @@ a.btn {
   }
 }
 
-.dialog, .course-action, .document-sent-button-container, .final-exam-card  {
+.dialog,
+.course-action,
+.document-sent-button-container,
+.final-exam-card {
   .disabled-with-spinner {
     display: inline-block !important;
     box-shadow: none;

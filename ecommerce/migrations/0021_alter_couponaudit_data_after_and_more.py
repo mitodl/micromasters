@@ -4,65 +4,64 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ecommerce', '0020_populate_order_ref_number'),
+        ("ecommerce", "0020_populate_order_ref_number"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='couponaudit',
-            name='data_after',
+            model_name="couponaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='couponaudit',
-            name='data_before',
+            model_name="couponaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='couponinvoiceaudit',
-            name='data_after',
+            model_name="couponinvoiceaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='couponinvoiceaudit',
-            name='data_before',
+            model_name="couponinvoiceaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='orderaudit',
-            name='data_after',
+            model_name="orderaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='orderaudit',
-            name='data_before',
+            model_name="orderaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='receipt',
-            name='data',
+            model_name="receipt",
+            name="data",
             field=models.JSONField(),
         ),
         migrations.AlterField(
-            model_name='redeemedcouponaudit',
-            name='data_after',
+            model_name="redeemedcouponaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='redeemedcouponaudit',
-            name='data_before',
+            model_name="redeemedcouponaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='usercouponaudit',
-            name='data_after',
+            model_name="usercouponaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='usercouponaudit',
-            name='data_before',
+            model_name="usercouponaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
     ]

@@ -19,6 +19,8 @@ from micromasters.utils import now_in_utc, serialize_model_object
 
 
 User = get_user_model()
+
+
 class CourseRunGradingAlreadyCompleteError(Exception):
     """
     Custom Exception to raise in case a change of status for a course run is attempted
@@ -29,6 +31,7 @@ class FinalGradeQuerySet(models.QuerySet):
     """
     QuerySet class defining common query parameters for FinalGrade
     """
+
     def passed(self):
         """
         Returns a queryset with a filter that will only fetch passed course runs
@@ -59,6 +62,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
     """
     Model to store edx final grades
     """
+
     # Set a custom manager for this model. This lets us do a couple useful things:
     # (1) Apply commonly-needed filters by a short, easily-recognized name, and (2) compose a query piece-by-piece.
     # Docs: https://docs.djangoproject.com/en/1.10/topics/db/managers/#creating-a-manager-with-queryset-methods
@@ -66,10 +70,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
 
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     course_run = models.ForeignKey(CourseRun, null=False, on_delete=models.CASCADE)
-    grade = models.FloatField(
-        null=True,
-        validators=[MinValueValidator(0.0)]
-    )
+    grade = models.FloatField(null=True, validators=[MinValueValidator(0.0)])
     passed = models.BooleanField(default=False)
     status = models.CharField(
         null=False,
@@ -80,7 +81,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
     course_run_paid_on_edx = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('user', 'course_run')
+        unique_together = ("user", "course_run")
 
     @classmethod
     def get_audit_class(cls):
@@ -109,7 +110,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
         return list(
             cls.objects.filter(
                 course_run=course_run, status=FinalGradeStatus.COMPLETE
-            ).values_list('user', flat=True)
+            ).values_list("user", flat=True)
         )
 
     def __str__(self):
@@ -125,11 +126,12 @@ class FinalGradeAudit(AuditModel):
     """
     Audit table for the Final Grade
     """
+
     final_grade = models.ForeignKey(FinalGrade, null=True, on_delete=models.SET_NULL)
 
     @classmethod
     def get_related_field_name(cls):
-        return 'final_grade'
+        return "final_grade"
 
     def __str__(self):
         return f'Grade audit for user "{self.final_grade.user}", course "{self.final_grade.course_run.edx_course_key}"'
@@ -139,7 +141,10 @@ class MicromastersCourseCertificate(TimestampedModel):
     """
     Model for storing MicroMasters course certificates
     """
-    user = models.ForeignKey(User, models.SET_NULL, null=True, related_name='course_certificates')
+
+    user = models.ForeignKey(
+        User, models.SET_NULL, null=True, related_name="course_certificates"
+    )
     course = models.ForeignKey(Course, models.SET_NULL, null=True)
     hash = models.CharField(max_length=32, null=False, unique=True)
 
@@ -157,12 +162,13 @@ class MicromastersProgramCertificate(TimestampedModel):
     """
     Model for storing MicroMasters program certificates
     """
+
     program = models.ForeignKey(Program, null=False, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     hash = models.CharField(max_length=32, null=False, unique=True)
 
     class Meta:
-        unique_together = ('user', 'program')
+        unique_together = ("user", "program")
 
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden save method"""
@@ -178,6 +184,7 @@ class MicromastersProgramCommendation(TimestampedModel):
     """
     Model for storing MicroMasters program congratulation letters
     """
+
     program = models.ForeignKey(Program, null=False, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -188,7 +195,7 @@ class MicromastersProgramCommendation(TimestampedModel):
     )
 
     class Meta:
-        unique_together = ('user', 'program')
+        unique_together = ("user", "program")
 
     def __str__(self):
         return f"Program letter for user={self.user}, program={self.program}, uuid={self.uuid}, is_active={self.is_active}"
@@ -198,6 +205,7 @@ class CourseRunGradingStatus(TimestampedModel):
     """
     Additional information for the course run related to the final grades
     """
+
     course_run = models.OneToOneField(CourseRun, null=False, on_delete=models.CASCADE)
     status = models.CharField(
         null=False,
@@ -214,14 +222,18 @@ class CourseRunGradingStatus(TimestampedModel):
         """
         Returns True if there is an entry with status 'complete'
         """
-        return cls.objects.filter(course_run=course_run, status=FinalGradeStatus.COMPLETE).exists()
+        return cls.objects.filter(
+            course_run=course_run, status=FinalGradeStatus.COMPLETE
+        ).exists()
 
     @classmethod
     def is_pending(cls, course_run):
         """
         Returns True if there is an entry with status 'pending'
         """
-        return cls.objects.filter(course_run=course_run, status=FinalGradeStatus.PENDING).exists()
+        return cls.objects.filter(
+            course_run=course_run, status=FinalGradeStatus.PENDING
+        ).exists()
 
     @classmethod
     def set_to_complete(cls, course_run):
@@ -240,10 +252,13 @@ class CourseRunGradingStatus(TimestampedModel):
         Creates an entry with status pending
         """
         try:
-            course_fg_info, _ = cls.objects.get_or_create(course_run=course_run, status=FinalGradeStatus.PENDING)
+            course_fg_info, _ = cls.objects.get_or_create(
+                course_run=course_run, status=FinalGradeStatus.PENDING
+            )
         except IntegrityError:
             raise CourseRunGradingAlreadyCompleteError(
-                f'Course Run "{course_run.edx_course_key}" has already been completed')
+                f'Course Run "{course_run.edx_course_key}" has already been completed'
+            )
         return course_fg_info
 
 
@@ -251,6 +266,7 @@ class ProctoredExamGrade(TimestampedModel, AuditableModel):
     """
     Model to store proctored exam grades (like the pearson exams)
     """
+
     # relationship to other models
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, null=False, on_delete=models.CASCADE)
@@ -280,7 +296,9 @@ class ProctoredExamGrade(TimestampedModel, AuditableModel):
         Returns a queryset of the exam result for an user in a course of a program
         """
         now = now_in_utc()
-        return cls.objects.filter(user=user, course=course, exam_run__date_grades_available__lte=now)
+        return cls.objects.filter(
+            user=user, course=course, exam_run__date_grades_available__lte=now
+        )
 
     def set_score(self, new_score):
         """
@@ -305,16 +323,19 @@ class ProctoredExamGradeAudit(AuditModel):
     """
     Audit table for the ProctoredExamGrade
     """
-    proctored_exam_grade = models.ForeignKey(ProctoredExamGrade, null=True, on_delete=models.SET_NULL)
+
+    proctored_exam_grade = models.ForeignKey(
+        ProctoredExamGrade, null=True, on_delete=models.SET_NULL
+    )
 
     @classmethod
     def get_related_field_name(cls):
-        return 'proctored_exam_grade'
+        return "proctored_exam_grade"
 
     def __str__(self):
         return 'Proctored Exam Grade audit for user "{user}", course "{course_title}"'.format(
             user=self.proctored_exam_grade.user,
-            course_title=self.proctored_exam_grade.course.title
+            course_title=self.proctored_exam_grade.course.title,
         )
 
 
@@ -322,6 +343,7 @@ class CombinedFinalGrade(TimestampedModel, AuditableModel):
     """
     Model to store a combined grade for course_run and an exam
     """
+
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, null=False, on_delete=models.CASCADE)
     grade = models.FloatField(
@@ -329,7 +351,7 @@ class CombinedFinalGrade(TimestampedModel, AuditableModel):
     )
 
     class Meta:
-        unique_together = ('user', 'course')
+        unique_together = ("user", "course")
 
     @classmethod
     def get_audit_class(cls):
@@ -346,14 +368,17 @@ class CombinedFinalGradeAudit(AuditModel):
     """
     Audit table for CombinedFinalGrade
     """
-    combined_final_grade = models.ForeignKey(CombinedFinalGrade, null=True, on_delete=models.SET_NULL)
+
+    combined_final_grade = models.ForeignKey(
+        CombinedFinalGrade, null=True, on_delete=models.SET_NULL
+    )
 
     @classmethod
     def get_related_field_name(cls):
-        return 'combined_final_grade'
+        return "combined_final_grade"
 
     def __str__(self):
         return 'Combined Final Grade audit for user "{user}", course "{course_title}"'.format(
             user=self.combined_final_grade.user,
-            course_title=self.combined_final_grade.course.title
+            course_title=self.combined_final_grade.course.title,
         )

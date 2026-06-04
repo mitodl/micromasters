@@ -11,11 +11,14 @@ from search.models import PercolateQuery
 
 class AutomaticEmailFactory(DjangoModelFactory):
     """Factory for AutomaticEmail"""
-    query = SubFactory(PercolateQueryFactory, source_type=PercolateQuery.AUTOMATIC_EMAIL_TYPE)
-    enabled = Faker('boolean')
+
+    query = SubFactory(
+        PercolateQueryFactory, source_type=PercolateQuery.AUTOMATIC_EMAIL_TYPE
+    )
+    enabled = Faker("boolean")
     email_subject = FuzzyText()
     email_body = FuzzyText()
-    sender_name = Faker('name')
+    sender_name = Faker("name")
     staff_user = SubFactory(UserFactory)
 
     class Meta:

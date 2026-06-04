@@ -5,8 +5,15 @@ import uuid
 
 from django.contrib.auth import get_user_model
 
-from django.db.models import (CASCADE, CharField, DateTimeField, ForeignKey,
-                              JSONField, Model, OneToOneField)
+from django.db.models import (
+    CASCADE,
+    CharField,
+    DateTimeField,
+    ForeignKey,
+    JSONField,
+    Model,
+    OneToOneField,
+)
 from edx_api.certificates import Certificate, Certificates
 from edx_api.enrollments import Enrollments
 from edx_api.grades import CurrentGrade, CurrentGradesByUser
@@ -17,16 +24,19 @@ from micromasters.models import TimestampedModel
 
 
 User = get_user_model()
+
+
 class CachedEdxInfoModel(Model):
     """
     Base class to define other cached models
     """
+
     user = ForeignKey(User, on_delete=CASCADE)
     course_run = ForeignKey(CourseRun, on_delete=CASCADE)
     data = JSONField()
 
     class Meta:
-        unique_together = (('user', 'course_run'), )
+        unique_together = (("user", "course_run"),)
         abstract = True
 
     @classmethod
@@ -61,7 +71,7 @@ class CachedEdxInfoModel(Model):
         Returns:
             QuerySet: a flattened list queryset of 'data' values
         """
-        return cls.user_qset(user, program=program).values_list('data', flat=True)
+        return cls.user_qset(user, program=program).values_list("data", flat=True)
 
     @classmethod
     def active_course_ids(cls, user, provider):
@@ -76,7 +86,11 @@ class CachedEdxInfoModel(Model):
         Returns:
             list: a list of all the course key fields for the provided user
         """
-        return list(cls.user_qset(user, provider=provider).values_list('course_run__edx_course_key', flat=True).all())
+        return list(
+            cls.user_qset(user, provider=provider)
+            .values_list("course_run__edx_course_key", flat=True)
+            .all()
+        )
 
     @classmethod
     def delete_all_but(cls, user, course_ids_list, provider):
@@ -92,7 +106,9 @@ class CachedEdxInfoModel(Model):
         Returns:
             None
         """
-        cls.user_qset(user, provider=provider).exclude(course_run__edx_course_key__in=course_ids_list).delete()
+        cls.user_qset(user, provider=provider).exclude(
+            course_run__edx_course_key__in=course_ids_list
+        ).delete()
 
     @staticmethod
     def deserialize_edx_data(data_iter):
@@ -114,7 +130,9 @@ class CachedEdxInfoModel(Model):
         """
         Retrieves all the user IDs with entries in the cache for a given course run
         """
-        return list(cls.objects.filter(course_run=course_run).values_list('user', flat=True))
+        return list(
+            cls.objects.filter(course_run=course_run).values_list("user", flat=True)
+        )
 
     def __str__(self):
         """
@@ -127,6 +145,7 @@ class CachedEnrollment(CachedEdxInfoModel):
     """
     Model for user enrollment data from edX
     """
+
     @staticmethod
     def deserialize_edx_data(data_iter):
         """
@@ -142,13 +161,14 @@ class CachedEnrollment(CachedEdxInfoModel):
     @property
     def verified(self):
         """Whether the cached enrollment reflects a verified (paid) track"""
-        return self.data.get('mode') == 'verified'
+        return self.data.get("mode") == "verified"
 
 
 class CachedCertificate(CachedEdxInfoModel):
     """
     Model for certificate data from edX
     """
+
     @staticmethod
     def deserialize_edx_data(data_iter):
         """
@@ -159,15 +179,14 @@ class CachedCertificate(CachedEdxInfoModel):
 
         Returns: Certificates: an edX Certificates object
         """
-        return Certificates([
-            Certificate(data) for data in data_iter
-        ])
+        return Certificates([Certificate(data) for data in data_iter])
 
 
 class CachedCurrentGrade(CachedEdxInfoModel):
     """
     Model for current grade data from edX
     """
+
     @staticmethod
     def deserialize_edx_data(data_iter):
         """
@@ -178,15 +197,14 @@ class CachedCurrentGrade(CachedEdxInfoModel):
 
         Returns: CachedCurrentGrade: an edX CachedCurrentGrade object
         """
-        return CurrentGradesByUser([
-            CurrentGrade(data) for data in data_iter
-        ])
+        return CurrentGradesByUser([CurrentGrade(data) for data in data_iter])
 
 
 class UserCacheRefreshTime(Model):
     """
     Model to store the last refresh timestamp for each of the edX cached info model.
     """
+
     user = OneToOneField(User, on_delete=CASCADE)
     enrollment = DateTimeField(null=True)
     certificate = DateTimeField(null=True)
@@ -205,12 +223,13 @@ class ProgramEnrollment(Model):
     """
     Model for student enrollments in Programs
     """
+
     user = ForeignKey(User, on_delete=CASCADE)
     program = ForeignKey(Program, on_delete=CASCADE)
     share_hash = CharField(max_length=36, null=True, unique=True)
 
     class Meta:
-        unique_together = (('user', 'program'), )
+        unique_together = (("user", "program"),)
 
     def get_share_hash(self):
         """
@@ -233,7 +252,7 @@ class ProgramEnrollment(Model):
         """
         Returns a queryset that will prefetch Program and User (with Profile)
         """
-        return cls.objects.select_related('user__profile', 'program')
+        return cls.objects.select_related("user__profile", "program")
 
     def __str__(self):
         """
@@ -246,9 +265,10 @@ class MicromastersLearnerRecordShare(TimestampedModel):
     """
     Model for learner record sharing
     """
+
     user = ForeignKey(User, on_delete=CASCADE)
     program = ForeignKey(Program, on_delete=CASCADE)
     partner_school = ForeignKey(PartnerSchool, on_delete=CASCADE)
 
     class Meta:
-        unique_together = ('user', 'program', 'partner_school')
+        unique_together = ("user", "program", "partner_school")

@@ -33,14 +33,14 @@ const dropZone = (startPhotoEdit, setPhotoError) => (
 
 const uploaderBodyHeight = (): number => R.min(500, window.innerHeight * 0.44)
 
-const imageError = err => <div className="img-error">{err}</div>
+const imageError = (err) => <div className="img-error">{err}</div>
 
 const dialogContents = (
   updatePhotoEdit,
   photo,
   startPhotoEdit,
   setPhotoError,
-  inFlight
+  inFlight,
 ) => {
   if (inFlight) {
     return (
@@ -72,7 +72,7 @@ type ImageUploadProps = {
   imageUpload: ImageUploadState,
   updateUserPhoto: (i: string) => Promise<string>,
   updatePhotoEdit: (b: Blob) => void,
-  setPhotoError: (s: string) => void
+  setPhotoError: (s: string) => void,
 }
 
 const ProfileImageUploader = ({
@@ -83,7 +83,7 @@ const ProfileImageUploader = ({
   updatePhotoEdit,
   imageUpload: { photo, error, patchStatus },
   updateUserPhoto,
-  setPhotoError
+  setPhotoError,
 }: ImageUploadProps) => {
   const inFlight = patchStatus === FETCH_PROCESSING
   const disabled = patchStatus === FETCH_PROCESSING || !photo
@@ -92,7 +92,7 @@ const ProfileImageUploader = ({
     <Dialog
       classes={{
         paper: "dialog photo-upload-dialog",
-        root:  "photo-upload-dialog-wrapper"
+        root: "photo-upload-dialog-wrapper",
       }}
       onClose={() => setDialogVisibility(false)}
       open={photoDialogOpen}
@@ -105,7 +105,7 @@ const ProfileImageUploader = ({
           photo,
           startPhotoEdit,
           setPhotoError,
-          inFlight
+          inFlight,
         )}
       </DialogContent>
       <DialogActions>
@@ -118,7 +118,7 @@ const ProfileImageUploader = ({
           false,
           "Save",
           "",
-          disabled
+          disabled,
         )}
       </DialogActions>
     </Dialog>

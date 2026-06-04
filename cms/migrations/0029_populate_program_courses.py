@@ -4,8 +4,8 @@ from django.db import migrations
 
 
 def populate_program_courses(apps, schema_editor):
-    ProgramCourse = apps.get_model('cms', 'ProgramCourse')
-    ProgramPage = apps.get_model('cms', 'ProgramPage')
+    ProgramCourse = apps.get_model("cms", "ProgramCourse")
+    ProgramPage = apps.get_model("cms", "ProgramPage")
 
     ProgramCourse.objects.all().delete()
     program_pages = ProgramPage.objects.all()
@@ -17,17 +17,18 @@ def populate_program_courses(apps, schema_editor):
                 course=course,
                 title=course.title,
                 description=course.description,
-                program_page=program_page
+                program_page=program_page,
             )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0028_programcourse_course'),
-        ('courses', '0025_remove_unused_fields')
+        ("cms", "0028_programcourse_course"),
+        ("courses", "0025_remove_unused_fields"),
     ]
 
     operations = [
-        migrations.RunPython(populate_program_courses, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            populate_program_courses, reverse_code=migrations.RunPython.noop
+        ),
     ]

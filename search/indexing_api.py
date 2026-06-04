@@ -11,11 +11,17 @@ from dashboard.serializers import UserProgramSearchSerializer
 from micromasters.utils import chunks, dict_with_keys
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
-from search.connection import (ALL_INDEX_TYPES, PERCOLATE_INDEX_TYPE,
-                               PRIVATE_ENROLLMENT_INDEX_TYPE,
-                               PUBLIC_ENROLLMENT_INDEX_TYPE, get_aliases,
-                               get_conn, get_default_alias, make_alias_name,
-                               make_backing_index_name)
+from search.connection import (
+    ALL_INDEX_TYPES,
+    PERCOLATE_INDEX_TYPE,
+    PRIVATE_ENROLLMENT_INDEX_TYPE,
+    PUBLIC_ENROLLMENT_INDEX_TYPE,
+    get_aliases,
+    get_conn,
+    get_default_alias,
+    make_alias_name,
+    make_backing_index_name,
+)
 from search.exceptions import IndexTypeException, ReindexException
 from search.util import fix_nested_filter, open_json_stream
 
@@ -23,193 +29,200 @@ log = logging.getLogger(__name__)
 
 # Used for cases where we support folding of
 FOLDED_SEARCHABLE_KEYWORD_TYPE = {
-    'type': 'keyword',
-    'fields': {
-        'folded': {
-            'type': 'text',
-            'analyzer': 'folding',
+    "type": "keyword",
+    "fields": {
+        "folded": {
+            "type": "text",
+            "analyzer": "folding",
         }
-    }
+    },
 }
-KEYWORD_TYPE = {'type': 'keyword'}
-BOOL_TYPE = {'type': 'boolean'}
-DATE_TYPE = {'type': 'date', 'format': 'date'}
-LONG_TYPE = {'type': 'long'}
+KEYWORD_TYPE = {"type": "keyword"}
+BOOL_TYPE = {"type": "boolean"}
+DATE_TYPE = {"type": "date", "format": "date"}
+LONG_TYPE = {"type": "long"}
 
 
 PUBLIC_ENROLLMENT_MAPPING = {
-        "properties": {
-            "id": LONG_TYPE,
-            "user_id": LONG_TYPE,
-            "profile": {
-                "properties": {
-                    'account_privacy': KEYWORD_TYPE,
-                    'birth_country': KEYWORD_TYPE,
-                    'city': KEYWORD_TYPE,
-                    'country': KEYWORD_TYPE,
-                    'filled_out': BOOL_TYPE,
-                    'first_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'full_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'image': KEYWORD_TYPE,
-                    'image_small': KEYWORD_TYPE,
-                    'image_medium': KEYWORD_TYPE,
-                    'last_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'romanized_first_name': KEYWORD_TYPE,
-                    'romanized_last_name': KEYWORD_TYPE,
-                    'preferred_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'state_or_territory': KEYWORD_TYPE,
-                    'username': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'work_history': {'type': 'nested', 'properties': {
-                        'city': KEYWORD_TYPE,
-                        'company_name': KEYWORD_TYPE,
-                        'country': KEYWORD_TYPE,
-                        'id': LONG_TYPE,
-                        'industry': KEYWORD_TYPE,
-                        'position': KEYWORD_TYPE,
-                        'start_date': DATE_TYPE,
-                        'state_or_territory': KEYWORD_TYPE,
-                    }},
-                }
-            },
-            "program": {
-                "properties": {
-                    'id': LONG_TYPE,
-                    'total_courses': LONG_TYPE,
-                    'is_learner': BOOL_TYPE,
-                    'enrollments': {
-                        'type': 'nested',
-                        'properties': {
-                            'semester': KEYWORD_TYPE,
-                            'course_title': KEYWORD_TYPE,
-                        }
+    "properties": {
+        "id": LONG_TYPE,
+        "user_id": LONG_TYPE,
+        "profile": {
+            "properties": {
+                "account_privacy": KEYWORD_TYPE,
+                "birth_country": KEYWORD_TYPE,
+                "city": KEYWORD_TYPE,
+                "country": KEYWORD_TYPE,
+                "filled_out": BOOL_TYPE,
+                "first_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "full_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "image": KEYWORD_TYPE,
+                "image_small": KEYWORD_TYPE,
+                "image_medium": KEYWORD_TYPE,
+                "last_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "romanized_first_name": KEYWORD_TYPE,
+                "romanized_last_name": KEYWORD_TYPE,
+                "preferred_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "state_or_territory": KEYWORD_TYPE,
+                "username": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "work_history": {
+                    "type": "nested",
+                    "properties": {
+                        "city": KEYWORD_TYPE,
+                        "company_name": KEYWORD_TYPE,
+                        "country": KEYWORD_TYPE,
+                        "id": LONG_TYPE,
+                        "industry": KEYWORD_TYPE,
+                        "position": KEYWORD_TYPE,
+                        "start_date": DATE_TYPE,
+                        "state_or_territory": KEYWORD_TYPE,
                     },
-                    'course_runs': {
-                        'type': 'nested',
-                        'properties': {
-                            'semester': KEYWORD_TYPE,
-                        }
-                    },
-                    'courses': {
-                        'type': 'nested',
-                        'properties': {
-                            'course_title': KEYWORD_TYPE,
-                        }
-                    },
-                }
+                },
             }
         },
-        'dynamic': 'strict',
+        "program": {
+            "properties": {
+                "id": LONG_TYPE,
+                "total_courses": LONG_TYPE,
+                "is_learner": BOOL_TYPE,
+                "enrollments": {
+                    "type": "nested",
+                    "properties": {
+                        "semester": KEYWORD_TYPE,
+                        "course_title": KEYWORD_TYPE,
+                    },
+                },
+                "course_runs": {
+                    "type": "nested",
+                    "properties": {
+                        "semester": KEYWORD_TYPE,
+                    },
+                },
+                "courses": {
+                    "type": "nested",
+                    "properties": {
+                        "course_title": KEYWORD_TYPE,
+                    },
+                },
+            }
+        },
+    },
+    "dynamic": "strict",
 }
 PRIVATE_ENROLLMENT_MAPPING = {
-        "properties": {
-            "id": LONG_TYPE,
-            "user_id": LONG_TYPE,
-            "email": FOLDED_SEARCHABLE_KEYWORD_TYPE,
-            "profile": {
-                "properties": {
-                    'account_privacy': KEYWORD_TYPE,
-                    'about_me': KEYWORD_TYPE,
-                    'address': KEYWORD_TYPE,
-                    'agreed_to_terms_of_service': BOOL_TYPE,
-                    'birth_city': KEYWORD_TYPE,
-                    'birth_country': KEYWORD_TYPE,
-                    'birth_state_or_territory': KEYWORD_TYPE,
-                    'city': KEYWORD_TYPE,
-                    'country': KEYWORD_TYPE,
-                    'date_of_birth': DATE_TYPE,
-                    'edx_level_of_education': KEYWORD_TYPE,
-                    'education': {'type': 'nested', 'properties': {
-                        'degree_name': KEYWORD_TYPE,
-                        'field_of_study': KEYWORD_TYPE,
-                        'graduation_date': DATE_TYPE,
-                        'id': LONG_TYPE,
-                        'online_degree': BOOL_TYPE,
-                        'school_city': KEYWORD_TYPE,
-                        'school_country': KEYWORD_TYPE,
-                        'school_name': KEYWORD_TYPE,
-                        'school_state_or_territory': KEYWORD_TYPE,
-                    }},
-                    'email': KEYWORD_TYPE,
-                    'email_optin': BOOL_TYPE,
-                    'filled_out': BOOL_TYPE,
-                    'first_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'full_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'gender': KEYWORD_TYPE,
-                    'image': KEYWORD_TYPE,
-                    'image_small': KEYWORD_TYPE,
-                    'image_medium': KEYWORD_TYPE,
-                    'last_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'nationality': KEYWORD_TYPE,
-                    'phone_number': KEYWORD_TYPE,
-                    'postal_code': KEYWORD_TYPE,
-                    'preferred_language': KEYWORD_TYPE,
-                    'preferred_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'pretty_printed_student_id': KEYWORD_TYPE,
-                    'romanized_first_name': KEYWORD_TYPE,
-                    'romanized_last_name': KEYWORD_TYPE,
-                    'state_or_territory': KEYWORD_TYPE,
-                    'student_id': KEYWORD_TYPE,
-                    'username': FOLDED_SEARCHABLE_KEYWORD_TYPE,
-                    'work_history': {'type': 'nested', 'properties': {
-                        'city': KEYWORD_TYPE,
-                        'company_name': KEYWORD_TYPE,
-                        'country': KEYWORD_TYPE,
-                        'id': LONG_TYPE,
-                        'industry': KEYWORD_TYPE,
-                        'position': KEYWORD_TYPE,
-                        'start_date': DATE_TYPE,
-                        'state_or_territory': KEYWORD_TYPE,
-                    }},
-                }
-            },
-            "program": {
-                "properties": {
-                    'id': LONG_TYPE,
-                    'grade_average': LONG_TYPE,
-                    'num_courses_passed': LONG_TYPE,
-                    'total_courses': LONG_TYPE,
-                    'is_learner': BOOL_TYPE,
-                    'enrollments': {
-                        'type': 'nested',
-                        'properties': {
-                            'final_grade': LONG_TYPE,
-                            'semester': KEYWORD_TYPE,
-                            'course_title': KEYWORD_TYPE,
-                            'status': KEYWORD_TYPE,
-                            'payment_status': KEYWORD_TYPE,
-                        }
+    "properties": {
+        "id": LONG_TYPE,
+        "user_id": LONG_TYPE,
+        "email": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+        "profile": {
+            "properties": {
+                "account_privacy": KEYWORD_TYPE,
+                "about_me": KEYWORD_TYPE,
+                "address": KEYWORD_TYPE,
+                "agreed_to_terms_of_service": BOOL_TYPE,
+                "birth_city": KEYWORD_TYPE,
+                "birth_country": KEYWORD_TYPE,
+                "birth_state_or_territory": KEYWORD_TYPE,
+                "city": KEYWORD_TYPE,
+                "country": KEYWORD_TYPE,
+                "date_of_birth": DATE_TYPE,
+                "edx_level_of_education": KEYWORD_TYPE,
+                "education": {
+                    "type": "nested",
+                    "properties": {
+                        "degree_name": KEYWORD_TYPE,
+                        "field_of_study": KEYWORD_TYPE,
+                        "graduation_date": DATE_TYPE,
+                        "id": LONG_TYPE,
+                        "online_degree": BOOL_TYPE,
+                        "school_city": KEYWORD_TYPE,
+                        "school_country": KEYWORD_TYPE,
+                        "school_name": KEYWORD_TYPE,
+                        "school_state_or_territory": KEYWORD_TYPE,
                     },
-                    'course_runs': {
-                        'type': 'nested',
-                        'properties': {
-                            'semester': KEYWORD_TYPE,
-                        }
+                },
+                "email": KEYWORD_TYPE,
+                "email_optin": BOOL_TYPE,
+                "filled_out": BOOL_TYPE,
+                "first_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "full_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "gender": KEYWORD_TYPE,
+                "image": KEYWORD_TYPE,
+                "image_small": KEYWORD_TYPE,
+                "image_medium": KEYWORD_TYPE,
+                "last_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "nationality": KEYWORD_TYPE,
+                "phone_number": KEYWORD_TYPE,
+                "postal_code": KEYWORD_TYPE,
+                "preferred_language": KEYWORD_TYPE,
+                "preferred_name": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "pretty_printed_student_id": KEYWORD_TYPE,
+                "romanized_first_name": KEYWORD_TYPE,
+                "romanized_last_name": KEYWORD_TYPE,
+                "state_or_territory": KEYWORD_TYPE,
+                "student_id": KEYWORD_TYPE,
+                "username": FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                "work_history": {
+                    "type": "nested",
+                    "properties": {
+                        "city": KEYWORD_TYPE,
+                        "company_name": KEYWORD_TYPE,
+                        "country": KEYWORD_TYPE,
+                        "id": LONG_TYPE,
+                        "industry": KEYWORD_TYPE,
+                        "position": KEYWORD_TYPE,
+                        "start_date": DATE_TYPE,
+                        "state_or_territory": KEYWORD_TYPE,
                     },
-                    'courses': {
-                        'type': 'nested',
-                        'properties': {
-                            'final_grade': LONG_TYPE,
-                            'course_title': KEYWORD_TYPE,
-                            'status': KEYWORD_TYPE,
-                            'payment_status': KEYWORD_TYPE,
-                        }
-                    },
-                }
+                },
             }
         },
-        'dynamic': 'strict'
+        "program": {
+            "properties": {
+                "id": LONG_TYPE,
+                "grade_average": LONG_TYPE,
+                "num_courses_passed": LONG_TYPE,
+                "total_courses": LONG_TYPE,
+                "is_learner": BOOL_TYPE,
+                "enrollments": {
+                    "type": "nested",
+                    "properties": {
+                        "final_grade": LONG_TYPE,
+                        "semester": KEYWORD_TYPE,
+                        "course_title": KEYWORD_TYPE,
+                        "status": KEYWORD_TYPE,
+                        "payment_status": KEYWORD_TYPE,
+                    },
+                },
+                "course_runs": {
+                    "type": "nested",
+                    "properties": {
+                        "semester": KEYWORD_TYPE,
+                    },
+                },
+                "courses": {
+                    "type": "nested",
+                    "properties": {
+                        "final_grade": LONG_TYPE,
+                        "course_title": KEYWORD_TYPE,
+                        "status": KEYWORD_TYPE,
+                        "payment_status": KEYWORD_TYPE,
+                    },
+                },
+            }
+        },
+    },
+    "dynamic": "strict",
 }
 PERCOLATE_MAPPING = {
-        "properties": {
-            # Other fields will be provided via dynamic mapping
-            **PRIVATE_ENROLLMENT_MAPPING["properties"],
-            "query": {
-                "type": "percolator"
-            }
-        }
+    "properties": {
+        # Other fields will be provided via dynamic mapping
+        **PRIVATE_ENROLLMENT_MAPPING["properties"],
+        "query": {"type": "percolator"},
+    }
 }
 
-INDEX_WILDCARD = f'{settings.OPENSEARCH_INDEX}_*'
+INDEX_WILDCARD = f"{settings.OPENSEARCH_INDEX}_*"
 
 
 def _index_chunk(chunk, *, index):
@@ -294,39 +307,55 @@ def serialize_public_enrolled_user(serialized_enrolled_user):
     """
     # filter out grades, courses passed, etc
     program = dict_with_keys(
-        serialized_enrolled_user['program'],
-        ['id', 'enrollments', 'courses', 'is_learner', 'total_courses', 'course_runs']
+        serialized_enrolled_user["program"],
+        ["id", "enrollments", "courses", "is_learner", "total_courses", "course_runs"],
     )
-    program['enrollments'] = [
-        dict_with_keys(enrollment, ['course_title', 'semester'])
-        for enrollment in program['enrollments']
+    program["enrollments"] = [
+        dict_with_keys(enrollment, ["course_title", "semester"])
+        for enrollment in program["enrollments"]
     ]
-    program['courses'] = [
-        dict_with_keys(enrollment, ['course_title', ])
-        for enrollment in program['courses']
+    program["courses"] = [
+        dict_with_keys(
+            enrollment,
+            [
+                "course_title",
+            ],
+        )
+        for enrollment in program["courses"]
     ]
-    program['course_runs'] = [
-        dict_with_keys(enrollment, ['semester'])
-        for enrollment in program['course_runs']
+    program["course_runs"] = [
+        dict_with_keys(enrollment, ["semester"])
+        for enrollment in program["course_runs"]
     ]
     # filter out private profile information
     profile = dict_with_keys(
-        serialized_enrolled_user['profile'],
+        serialized_enrolled_user["profile"],
         [
-            'first_name', 'last_name', 'preferred_name', 'full_name',
-            'romanized_first_name', 'romanized_last_name',
-            'image', 'image_small', 'image_medium',
-            'username', 'filled_out', 'account_privacy',
-            'country', 'state_or_territory', 'city',
-            'birth_country', 'work_history',
-        ]
+            "first_name",
+            "last_name",
+            "preferred_name",
+            "full_name",
+            "romanized_first_name",
+            "romanized_last_name",
+            "image",
+            "image_small",
+            "image_medium",
+            "username",
+            "filled_out",
+            "account_privacy",
+            "country",
+            "state_or_territory",
+            "city",
+            "birth_country",
+            "work_history",
+        ],
     )
     return {
-        'id': serialized_enrolled_user['id'],
-        '_id': serialized_enrolled_user['_id'],
-        'user_id': serialized_enrolled_user['user_id'],
-        'profile': profile,
-        'program': program,
+        "id": serialized_enrolled_user["id"],
+        "_id": serialized_enrolled_user["_id"],
+        "user_id": serialized_enrolled_user["user_id"],
+        "profile": profile,
+        "program": program,
     }
 
 
@@ -377,8 +406,7 @@ def _get_percolate_documents(percolate_queries):
 
 
 def index_program_enrolled_users(
-        program_enrollments, *,
-        public_indices=None, private_indices=None, chunk_size=100
+    program_enrollments, *, public_indices=None, private_indices=None, chunk_size=100
 ):
     """
     Bulk index an iterable of ProgramEnrollments
@@ -443,18 +471,20 @@ def serialize_program_enrolled_user(program_enrollment):
     """
     user = program_enrollment.user
     serialized = {
-        'id': program_enrollment.id,
-        '_id': program_enrollment.id,
-        'user_id': user.id,
-        'email': user.email,
+        "id": program_enrollment.id,
+        "_id": program_enrollment.id,
+        "user_id": user.id,
+        "email": user.email,
     }
     try:
-        serialized['profile'] = filter_current_work(ProfileSerializer(user.profile).data)
+        serialized["profile"] = filter_current_work(
+            ProfileSerializer(user.profile).data
+        )
     except Profile.DoesNotExist:
-        log.exception('User %s has no profile', user.username)
+        log.exception("User %s has no profile", user.username)
         return None
 
-    serialized['program'] = UserProgramSearchSerializer.serialize(program_enrollment)
+    serialized["program"] = UserProgramSearchSerializer.serialize(program_enrollment)
     return serialized
 
 
@@ -468,7 +498,9 @@ def filter_current_work(profile):
     """
     return {
         **profile,
-        "work_history": [work for work in profile['work_history'] if not work['end_date']]
+        "work_history": [
+            work for work in profile["work_history"] if not work["end_date"]
+        ],
     }
 
 
@@ -510,28 +542,31 @@ def clear_and_create_index(index_name, *, index_type, skip_mapping=False):
     if conn.indices.exists(index_name):
         conn.indices.delete(index_name)
     # from https://www.elastic.co/guide/en/elasticsearch/guide/current/asciifolding-token-filter.html
-    conn.indices.create(index_name, body={
-        'settings': {
-            'index': {
-                'number_of_shards': settings.OPENSEARCH_SHARD_COUNT,
-            },
-            'analysis': {
-                'analyzer': {
-                    'folding': {
-                        'type': 'custom',
-                        'tokenizer': 'standard',
-                        'filter': [
-                            'lowercase',
-                            'asciifolding',  # remove accents if we use folding analyzer
-                        ]
+    conn.indices.create(
+        index_name,
+        body={
+            "settings": {
+                "index": {
+                    "number_of_shards": settings.OPENSEARCH_SHARD_COUNT,
+                },
+                "analysis": {
+                    "analyzer": {
+                        "folding": {
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "asciifolding",  # remove accents if we use folding analyzer
+                            ],
+                        }
                     }
-                }
-            }
+                },
+            },
+            "mappings": {
+                **({} if skip_mapping else mapping),
+            },
         },
-        'mappings': {
-            **({} if skip_mapping else mapping),
-        }
-    })
+    )
 
 
 def delete_indices():

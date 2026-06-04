@@ -26,7 +26,7 @@ describe("AutomaticEmailOptions", () => {
           setSendAutomaticEmails={setSendAutomaticEmailsStub}
           sendAutomaticEmails={sendAutomaticEmails}
         />
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
     )
 
   it("should render a div", () => {
@@ -41,7 +41,7 @@ describe("AutomaticEmailOptions", () => {
     const wrapper = renderComponent(true)
     assert.include(
       wrapper.text(),
-      "This email will be sent now and in the future whenever users meet the criteria."
+      "This email will be sent now and in the future whenever users meet the criteria.",
     )
     // test setEmailCompositionType is called when campaign selected
     const radioCampaign = wrapper.find("input").at(1)
@@ -49,7 +49,7 @@ describe("AutomaticEmailOptions", () => {
     radioCampaign.simulate("change")
     assert.isTrue(
       setSendAutomaticEmailsStub.called,
-      "called set email composition type handler"
+      "called set email composition type handler",
     )
   })
 })

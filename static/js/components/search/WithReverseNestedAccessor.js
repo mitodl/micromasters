@@ -4,7 +4,7 @@ import {
   TermsBucket,
   NestedBucket,
   CardinalityMetric,
-  Accessor
+  Accessor,
 } from "searchkit"
 
 // This accessor needs to be provided in place of the original accessor for the filter, so that the
@@ -13,7 +13,7 @@ import {
 const WithReverseNestedAccessor = (
   BaseAccessor: Accessor,
   nestedField: string,
-  countName: string
+  countName: string,
 ) =>
   class extends BaseAccessor {
     buildSharedQuery(query: Object) {
@@ -30,28 +30,28 @@ const WithReverseNestedAccessor = (
 
       const cardinality = CardinalityMetric("count", "user_id")
       const aggsContainer = AggsContainer(countName, { reverse_nested: {} }, [
-        cardinality
+        cardinality,
       ])
       const termsBucket = TermsBucket(
         nestedField,
         nestedField,
         {},
-        aggsContainer
+        aggsContainer,
       )
 
       const nestedBucket = NestedBucket(
         "inner",
         `${pieces[0]}.${pieces[1]}`,
-        termsBucket
+        termsBucket,
       )
       return modifiedQuery.setAggs(
         AggsContainer(
           `${this.uuid}`,
           {
-            filter: {}
+            filter: {},
           },
-          [nestedBucket]
-        )
+          [nestedBucket],
+        ),
       )
     }
 

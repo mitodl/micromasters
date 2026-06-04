@@ -7,20 +7,18 @@ from django.db import migrations
 
 def populate_date_grades_available(apps, schema_editor):
     """Populate values"""
-    ExamRun = apps.get_model('exams', 'ExamRun')
+    ExamRun = apps.get_model("exams", "ExamRun")
 
     for exam_run in ExamRun.objects.iterator():
         exam_run.date_grades_available = datetime.combine(
-            exam_run.date_last_eligible,
-            datetime.min.time()
+            exam_run.date_last_eligible, datetime.min.time()
         ).replace(tzinfo=pytz.utc)
         exam_run.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0011_add_date_grades_available'),
+        ("exams", "0011_add_date_grades_available"),
     ]
 
     operations = [

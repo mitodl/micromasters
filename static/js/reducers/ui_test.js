@@ -31,7 +31,7 @@ import {
   setShowExpandedCourseStatus,
   setProgramsToUnEnroll,
   setUnEnrollApiInFlightState,
-  SHOW_ENROLL_PAY_LATER_SUCCESS
+  SHOW_ENROLL_PAY_LATER_SUCCESS,
 } from "../actions/ui"
 import { INITIAL_UI_STATE } from "../reducers/ui"
 import rootReducer from "../reducers"
@@ -52,10 +52,10 @@ describe("ui reducers", () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.ui)
+    dispatchThen = store.createDispatchThen((state) => state.ui)
     assertReducerResultState = createAssertReducerResultState(
       store,
-      state => state.ui
+      (state) => state.ui,
     )
   })
 
@@ -72,8 +72,8 @@ describe("ui reducers", () => {
     it("should set the work history dialog visibility", () => {
       assertReducerResultState(
         setWorkDialogVisibility,
-        ui => ui.workDialogVisibility,
-        false
+        (ui) => ui.workDialogVisibility,
+        false,
       )
     })
 
@@ -81,13 +81,13 @@ describe("ui reducers", () => {
       assert.equal(store.getState().ui.workHistoryEdit, true)
 
       return dispatchThen(setWorkHistoryEdit(true), [
-        SET_WORK_HISTORY_EDIT
-      ]).then(state => {
+        SET_WORK_HISTORY_EDIT,
+      ]).then((state) => {
         assert.equal(state.workHistoryEdit, true)
 
         return dispatchThen(setWorkHistoryEdit(false), [
-          SET_WORK_HISTORY_EDIT
-        ]).then(state => {
+          SET_WORK_HISTORY_EDIT,
+        ]).then((state) => {
           assert.equal(state.workHistoryEdit, false)
         })
       })
@@ -96,16 +96,16 @@ describe("ui reducers", () => {
     it("should set a work history dialog index", () => {
       assertReducerResultState(
         setWorkDialogIndex,
-        ui => ui.workDialogIndex,
-        null
+        (ui) => ui.workDialogIndex,
+        null,
       )
     })
 
     it("should set the work history answer", () => {
       assertReducerResultState(
         setWorkHistoryAnswer,
-        ui => ui.workHistoryAnswer,
-        null
+        (ui) => ui.workHistoryAnswer,
+        null,
       )
     })
   })
@@ -114,32 +114,32 @@ describe("ui reducers", () => {
     it("should let you set education dialog visibility", () => {
       assertReducerResultState(
         setEducationDialogVisibility,
-        ui => ui.educationDialogVisibility,
-        false
+        (ui) => ui.educationDialogVisibility,
+        false,
       )
     })
 
     it("should let you set education degree level", () => {
       assertReducerResultState(
         setEducationDegreeLevel,
-        ui => ui.educationDegreeLevel,
-        ""
+        (ui) => ui.educationDegreeLevel,
+        "",
       )
     })
 
     it("should let you set education dialog index", () => {
       assertReducerResultState(
         setEducationDialogIndex,
-        ui => ui.educationDialogIndex,
-        -1
+        (ui) => ui.educationDialogIndex,
+        -1,
       )
     })
 
     it("should set the education level answers", () => {
       assertReducerResultState(
         setEducationLevelAnswers,
-        ui => ui.educationLevelAnswers,
-        {}
+        (ui) => ui.educationLevelAnswers,
+        {},
       )
     })
   })
@@ -148,8 +148,8 @@ describe("ui reducers", () => {
     it(`should let you set the user page dialog visibility`, () => {
       assertReducerResultState(
         setLearnerPageDialogVisibility,
-        ui => ui.learnerPageDialogVisibility,
-        false
+        (ui) => ui.learnerPageDialogVisibility,
+        false,
       )
     })
   })
@@ -158,27 +158,27 @@ describe("ui reducers", () => {
     it("should let you set to show the education delete dialog", () => {
       assertReducerResultState(
         setShowEducationDeleteDialog,
-        ui => ui.showEducationDeleteDialog,
-        false
+        (ui) => ui.showEducationDeleteDialog,
+        false,
       )
     })
 
     it(`should let you set to show the work delete dialog`, () => {
       assertReducerResultState(
         setShowWorkDeleteDialog,
-        ui => ui.showWorkDeleteDialog,
-        false
+        (ui) => ui.showWorkDeleteDialog,
+        false,
       )
     })
 
     it("should let you set a deletion index", () => {
-      assertReducerResultState(setDeletionIndex, ui => ui.deletionIndex, null)
+      assertReducerResultState(setDeletionIndex, (ui) => ui.deletionIndex, null)
     })
   })
 
   describe("profile step", () => {
     it(`should let you set the profile step`, () => {
-      assertReducerResultState(setProfileStep, ui => ui.profileStep, null)
+      assertReducerResultState(setProfileStep, (ui) => ui.profileStep, null)
     })
   })
 
@@ -186,8 +186,8 @@ describe("ui reducers", () => {
     it("should let you set the search filter visibility", () => {
       assertReducerResultState(
         setSearchFilterVisibility,
-        ui => ui.searchFilterVisibility,
-        {}
+        (ui) => ui.searchFilterVisibility,
+        {},
       )
     })
   })
@@ -196,38 +196,38 @@ describe("ui reducers", () => {
     it(`should let you set email dialog visibility`, () => {
       assertReducerResultState(
         setEmailDialogVisibility,
-        ui => ui.emailDialogVisibility,
-        false
+        (ui) => ui.emailDialogVisibility,
+        false,
       )
     })
   })
 
   describe("Program enrollment", () => {
     it("sets the enrollment message", () => {
-      assertReducerResultState(setToastMessage, ui => ui.toastMessage, null)
+      assertReducerResultState(setToastMessage, (ui) => ui.toastMessage, null)
     })
 
     it("sets the enrollment dialog error", () => {
       assertReducerResultState(
         setEnrollProgramDialogError,
-        ui => ui.enrollProgramDialogError,
-        null
+        (ui) => ui.enrollProgramDialogError,
+        null,
       )
     })
 
     it("sets the enrollment dialog visibility", () => {
       assertReducerResultState(
         setEnrollProgramDialogVisibility,
-        ui => ui.enrollProgramDialogVisibility,
-        false
+        (ui) => ui.enrollProgramDialogVisibility,
+        false,
       )
     })
 
     it("sets the enrollment dialog currently selected program", () => {
       assertReducerResultState(
         setEnrollSelectedProgram,
-        ui => ui.enrollSelectedProgram,
-        null
+        (ui) => ui.enrollSelectedProgram,
+        null,
       )
     })
   })
@@ -236,16 +236,16 @@ describe("ui reducers", () => {
     it("sets the enrollment dialog visibility", () => {
       assertReducerResultState(
         setEnrollCourseDialogVisibility,
-        ui => ui.enrollCourseDialogVisibility,
-        false
+        (ui) => ui.enrollCourseDialogVisibility,
+        false,
       )
     })
 
     it("sets the enrollment dialog currently selected course run", () => {
       assertReducerResultState(
         setEnrollSelectedCourseRun,
-        ui => ui.enrollSelectedCourseRun,
-        null
+        (ui) => ui.enrollSelectedCourseRun,
+        null,
       )
     })
   })
@@ -254,8 +254,8 @@ describe("ui reducers", () => {
     it("should let you set skip dialog visibility", () => {
       assertReducerResultState(
         setConfirmSkipDialogVisibility,
-        ui => ui.skipDialogVisibility,
-        false
+        (ui) => ui.skipDialogVisibility,
+        false,
       )
     })
   })
@@ -264,31 +264,35 @@ describe("ui reducers", () => {
     it("should let you set the document instruction visibility", () => {
       assertReducerResultState(
         setDocsInstructionsVisibility,
-        ui => ui.docsInstructionsVisibility,
-        false
+        (ui) => ui.docsInstructionsVisibility,
+        false,
       )
     })
   })
 
   describe("nav drawer", () => {
     it("should let you set the nav drawer visibility", () => {
-      assertReducerResultState(setNavDrawerOpen, ui => ui.navDrawerOpen, false)
+      assertReducerResultState(
+        setNavDrawerOpen,
+        (ui) => ui.navDrawerOpen,
+        false,
+      )
     })
   })
 
   describe("show enroll pay later success alert", () => {
     it("should let you set the pay later success alert", () => {
       return dispatchThen(showEnrollPayLaterSuccess("foo/bar/baz"), [
-        SHOW_ENROLL_PAY_LATER_SUCCESS
-      ]).then(state => {
+        SHOW_ENROLL_PAY_LATER_SUCCESS,
+      ]).then((state) => {
         assert.equal(state.showEnrollPayLaterSuccess, "foo/bar/baz")
       })
     })
 
     it("should let you reset the pay later success alert", () => {
       return dispatchThen(showEnrollPayLaterSuccess(null), [
-        SHOW_ENROLL_PAY_LATER_SUCCESS
-      ]).then(state => {
+        SHOW_ENROLL_PAY_LATER_SUCCESS,
+      ]).then((state) => {
         assert.deepEqual(state.showEnrollPayLaterSuccess, null)
       })
     })

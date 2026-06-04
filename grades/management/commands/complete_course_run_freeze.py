@@ -10,25 +10,32 @@ from grades.models import CourseRunGradingStatus
 from grades.tasks import CACHE_ID_BASE_STR
 from micromasters.celery import app
 
-cache_redis = caches['redis']
+cache_redis = caches["redis"]
 
 
 class Command(BaseCommand):
     """
     Sets the global freeze status for the course run to "complete"
     """
-    help = ('Sets the global freeze status for the course run to "complete". '
-            'This should not be necessary if all the users are processed')
+
+    help = (
+        'Sets the global freeze status for the course run to "complete". '
+        "This should not be necessary if all the users are processed"
+    )
 
     def add_arguments(self, parser):
-        parser.add_argument("edx_course_key", help="the edx_course_key for the course run")
+        parser.add_argument(
+            "edx_course_key", help="the edx_course_key for the course run"
+        )
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
-        edx_course_key = kwargs.get('edx_course_key')
+        edx_course_key = kwargs.get("edx_course_key")
         try:
             run = CourseRun.objects.get(edx_course_key=edx_course_key)
         except CourseRun.DoesNotExist:
-            raise CommandError(f'Course Run for course_id "{edx_course_key}" does not exist')
+            raise CommandError(
+                f'Course Run for course_id "{edx_course_key}" does not exist'
+            )
 
         if not run.can_freeze_grades:
             self.stdout.write(
@@ -55,7 +62,9 @@ class Command(BaseCommand):
                 self.stdout.write(
                     self.style.WARNING(
                         'Tasks for Course Run "{}" are still running. '
-                        'Impossible to set the global "complete" status'.format(edx_course_key)
+                        'Impossible to set the global "complete" status'.format(
+                            edx_course_key
+                        )
                     )
                 )
                 return

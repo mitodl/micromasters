@@ -13,13 +13,15 @@ def get_country_income_thresholds_data():
     """
     Returns a list of dictionaries of data imported from financialaid/fixtures/country_income_threshold_data.json.
     """
-    fixture_path = os.path.join(settings.BASE_DIR, "financialaid/fixtures/country_income_threshold_data.json")
+    fixture_path = os.path.join(
+        settings.BASE_DIR, "financialaid/fixtures/country_income_threshold_data.json"
+    )
     with open(fixture_path) as f:
         country_data = json.loads(f.read())
     return [
         {
             "country_code": country["fields"]["country_code"],
-            "income_threshold": DEFAULT_INCOME_THRESHOLD
+            "income_threshold": DEFAULT_INCOME_THRESHOLD,
         }
         for country in country_data
     ]
@@ -39,9 +41,7 @@ def load_country_income_thresholds(apps, schema_editor):
         # Use get_or_create() since there could be existing objects (however unlikely)
         CountryIncomeThreshold.objects.get_or_create(
             country_code=country["country_code"],
-            defaults={
-                "income_threshold": country["income_threshold"]
-            }
+            defaults={"income_threshold": country["income_threshold"]},
         )
 
 
@@ -66,11 +66,13 @@ def unload_country_income_thresholds(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0015_countryincomethreshold'),
+        ("financialaid", "0015_countryincomethreshold"),
     ]
 
     operations = [
-        migrations.RunPython(load_country_income_thresholds, reverse_code=unload_country_income_thresholds),
+        migrations.RunPython(
+            load_country_income_thresholds,
+            reverse_code=unload_country_income_thresholds,
+        ),
     ]

@@ -7,25 +7,28 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0017_countryincomethreshold_unique'),
+        ("financialaid", "0017_countryincomethreshold_unique"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='financialaidaudit',
-            name='acting_user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="financialaidaudit",
+            name="acting_user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='financialaidaudit',
-            name='data_after',
+            model_name="financialaidaudit",
+            name="data_after",
             field=django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='financialaidaudit',
-            name='data_before',
+            model_name="financialaidaudit",
+            name="data_before",
             field=django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True),
         ),
     ]

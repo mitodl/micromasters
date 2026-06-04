@@ -12,7 +12,7 @@ import {
   validateDay,
   validateMonth,
   validateYear,
-  validateNearFutureYear
+  validateNearFutureYear,
 } from "./date"
 import { YEAR_VALIDATION_CUTOFF } from "../../constants"
 import { assertMaybeEquality, assertIsNothing } from "../test_utils"
@@ -22,25 +22,25 @@ describe("Date validation", () => {
     describe("sanitizeNumberString", () => {
       describe("string input", () => {
         it("should remove any non-numerical characters", () => {
-          [
+          ;[
             ["-", 2, ""],
             ["-32", 2, "32"],
             ["asdf", 19, ""],
             ["A(*@$%!@#$100", 2, "10"],
-            ["eggplant 1X00 hey", 10, "100"]
+            ["eggplant 1X00 hey", 10, "100"],
           ].forEach(([input, length, expectation]) => {
             assert.deepEqual(sanitizeNumberString(length, input), expectation)
           })
         })
 
         it("should trim the input down to the desired length", () => {
-          [
+          ;[
             ["1999", 2, "19"],
             ["1x9", 2, "19"],
             ["1", 4, "1"],
             ["", 18318, ""],
             ["TESTS", 25, ""],
-            ["1991", 0, ""]
+            ["1991", 0, ""],
           ].forEach(([input, length, expectation]) => {
             assert.deepEqual(sanitizeNumberString(length, input), expectation)
           })
@@ -61,11 +61,13 @@ describe("Date validation", () => {
         })
 
         it("should trim a number down to the correct number of places", () => {
-          [[1999, 4, "1999"], [1999, 2, "19"], [112341234, 1, "1"]].forEach(
-            ([input, length, expectation]) => {
-              assert.deepEqual(sanitizeNumberString(length, input), expectation)
-            }
-          )
+          ;[
+            [1999, 4, "1999"],
+            [1999, 2, "19"],
+            [112341234, 1, "1"],
+          ].forEach(([input, length, expectation]) => {
+            assert.deepEqual(sanitizeNumberString(length, input), expectation)
+          })
         })
       })
     })
@@ -77,21 +79,21 @@ describe("Date validation", () => {
       it("should return Just(low cutoff) if the year is too low", () => {
         assertMaybeEquality(
           Just(lowCutoff),
-          checkYearRange(currentYear, lowCutoff - 10)
+          checkYearRange(currentYear, lowCutoff - 10),
         )
       })
 
       it("should return the input if the year is between the cutoffs", () => {
         assertMaybeEquality(
           Just(lowCutoff + 5),
-          checkYearRange(currentYear, lowCutoff + 5)
+          checkYearRange(currentYear, lowCutoff + 5),
         )
       })
 
       it("should return the high cutoff if the year is too high", () => {
         assertMaybeEquality(
           Just(currentYear),
-          checkYearRange(currentYear, currentYear + 10)
+          checkYearRange(currentYear, currentYear + 10),
         )
       })
     })
@@ -158,9 +160,9 @@ describe("Date validation", () => {
   })
 
   describe("year validation functions", () => {
-    [
+    ;[
       [validateYear, "validateYear"],
-      [validateNearFutureYear, "validateNearFutureYear"]
+      [validateNearFutureYear, "validateNearFutureYear"],
     ].forEach(([func, name]) => {
       describe(`basic validation for ${name}`, () => {
         it("handles years starting with 0 without treating as octal", () => {

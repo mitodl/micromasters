@@ -3,6 +3,9 @@ Validate that our settings functions work
 """
 
 import importlib
+from pathlib import Path
+import re
+import tomllib
 import sys
 from unittest import mock
 
@@ -38,12 +41,14 @@ class TestSettings(TestCase):
 
     def test_server_side_cursors_disabled(self):
         """DISABLE_SERVER_SIDE_CURSORS should be true by default"""
-        assert (
-            settings.DEFAULT_DATABASE_CONFIG["DISABLE_SERVER_SIDE_CURSORS"]
-            is True
-        )
+        assert settings.DEFAULT_DATABASE_CONFIG["DISABLE_SERVER_SIDE_CURSORS"] is True
 
     def test_server_side_cursors_enabled(self):
         """DISABLE_SERVER_SIDE_CURSORS should be false if MITXPRO_DB_DISABLE_SS_CURSORS is false"""
-        settings_vars = self.patch_settings({**REQUIRED_SETTINGS, "MICROMASTERS_DB_DISABLE_SS_CURSORS": "false"})
-        assert settings_vars["DEFAULT_DATABASE_CONFIG"]["DISABLE_SERVER_SIDE_CURSORS"] is False
+        settings_vars = self.patch_settings(
+            {**REQUIRED_SETTINGS, "MICROMASTERS_DB_DISABLE_SS_CURSORS": "false"}
+        )
+        assert (
+            settings_vars["DEFAULT_DATABASE_CONFIG"]["DISABLE_SERVER_SIDE_CURSORS"]
+            is False
+        )

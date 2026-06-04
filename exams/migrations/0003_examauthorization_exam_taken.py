@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0002_add_exam_auth'),
+        ("exams", "0002_add_exam_auth"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='examauthorization',
-            name='exam_taken',
+            model_name="examauthorization",
+            name="exam_taken",
             field=models.BooleanField(default=False),
         ),
     ]

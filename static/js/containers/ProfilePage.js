@@ -11,13 +11,13 @@ import ErrorMessage from "../components/ErrorMessage"
 import {
   profileFormContainer,
   mapStateToProfileProps,
-  childrenWithProps
+  childrenWithProps,
 } from "./ProfileFormContainer"
 import { validateProfileComplete } from "../lib/validation/profile"
 import type { Profile, ProfileGetResult } from "../flow/profileTypes"
 import {
   makeProfileProgressDisplay,
-  currentOrFirstIncompleteStep
+  currentOrFirstIncompleteStep,
 } from "../util/util"
 import type { ProfileContainerProps } from "./ProfileFormContainer"
 
@@ -28,7 +28,7 @@ class ProfilePage extends React.Component<*, ProfileContainerProps, *> {
   }
 
   static contextTypes = {
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
   }
 
   componentDidUpdate() {
@@ -36,7 +36,7 @@ class ProfilePage extends React.Component<*, ProfileContainerProps, *> {
     const {
       profiles: { [username]: profileInfo },
       ui: { profileStep },
-      profileProps
+      profileProps,
     } = this.props
 
     if (
@@ -58,7 +58,7 @@ class ProfilePage extends React.Component<*, ProfileContainerProps, *> {
     username: string,
     profileInfo: ProfileGetResult,
     profile: Profile,
-    currentStep: ?string
+    currentStep: ?string,
   ) {
     const { children, profileProps } = this.props
 
@@ -87,7 +87,7 @@ class ProfilePage extends React.Component<*, ProfileContainerProps, *> {
     const {
       profiles: { [username]: profileInfo },
       ui: { profileStep },
-      profileProps
+      profileProps,
     } = this.props
     const loaded =
       profileInfo !== undefined && profileInfo.getStatus !== FETCH_PROCESSING
@@ -105,5 +105,5 @@ class ProfilePage extends React.Component<*, ProfileContainerProps, *> {
 
 export default R.compose(
   connect(mapStateToProfileProps),
-  profileFormContainer
+  profileFormContainer,
 )(ProfilePage)

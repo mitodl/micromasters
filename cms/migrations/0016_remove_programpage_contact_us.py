@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0015_add_home_page_and_email_to_program_page'),
+        ("cms", "0015_add_home_page_and_email_to_program_page"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='programpage',
-            name='contact_us',
+            model_name="programpage",
+            name="contact_us",
         ),
     ]

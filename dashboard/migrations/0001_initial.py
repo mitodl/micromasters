@@ -7,41 +7,80 @@ import jsonfield.fields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('courses', '0011_courserun_upgrade_deadline'),
+        ("courses", "0011_courserun_upgrade_deadline"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CachedCertificate',
+            name="CachedCertificate",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', jsonfield.fields.JSONField(null=True)),
-                ('last_request', models.DateTimeField()),
-                ('course_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.CourseRun')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("data", jsonfield.fields.JSONField(null=True)),
+                ("last_request", models.DateTimeField()),
+                (
+                    "course_run",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.CourseRun",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='CachedEnrollment',
+            name="CachedEnrollment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', jsonfield.fields.JSONField(null=True)),
-                ('last_request', models.DateTimeField()),
-                ('course_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.CourseRun')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("data", jsonfield.fields.JSONField(null=True)),
+                ("last_request", models.DateTimeField()),
+                (
+                    "course_run",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.CourseRun",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='cachedenrollment',
-            unique_together={('user', 'course_run')},
+            name="cachedenrollment",
+            unique_together={("user", "course_run")},
         ),
         migrations.AlterUniqueTogether(
-            name='cachedcertificate',
-            unique_together={('user', 'course_run')},
+            name="cachedcertificate",
+            unique_together={("user", "course_run")},
         ),
     ]

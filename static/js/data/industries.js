@@ -147,5 +147,5 @@ export default [
   "Wholesale",
   "Wine and Spirits",
   "Wireless",
-  "Writing and Editing"
+  "Writing and Editing",
 ]

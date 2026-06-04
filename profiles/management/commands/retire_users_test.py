@@ -29,10 +29,10 @@ class AlterDataCommandTests(TestCase):
 
     def test_single_success(self):
         """test retire_users command success"""
-        user = UserFactory.create(username='foo', is_active=True)
+        user = UserFactory.create(username="foo", is_active=True)
         user.profile.email_optin = True
         user.profile.save()
-        UserSocialAuthFactory.create(user=user, provider='not_edx')
+        UserSocialAuthFactory.create(user=user, provider="not_edx")
 
         for _ in range(TOTAL_PROGRAMS):
             ProgramEnrollmentFactory.create(user=user)
@@ -53,10 +53,10 @@ class AlterDataCommandTests(TestCase):
 
     def test_single_success_user_with_email(self):
         """test retire_users command with email success"""
-        user = UserFactory.create(email='foo@example.com', is_active=True)
+        user = UserFactory.create(email="foo@example.com", is_active=True)
         user.profile.email_optin = True
         user.profile.save()
-        UserSocialAuthFactory.create(user=user, provider='not_edx')
+        UserSocialAuthFactory.create(user=user, provider="not_edx")
 
         for _ in range(TOTAL_PROGRAMS):
             ProgramEnrollmentFactory.create(user=user)
@@ -76,7 +76,7 @@ class AlterDataCommandTests(TestCase):
         assert ProgramEnrollment.objects.filter(user=user).count() == 0
 
     def test_error_with_invalid_users(self):
-        """test retire_users command with invalid users """
+        """test retire_users command with invalid users"""
         users = ["", "mitodl"]
         self.command.handle("retire_users", users=users)
         for user in users:
@@ -91,7 +91,7 @@ class AlterDataCommandTests(TestCase):
             user = UserFactory.create(username=user_name, is_active=True)
             user.profile.email_optin = True
             user.profile.save()
-            UserSocialAuthFactory.create(user=user, provider='not_edx')
+            UserSocialAuthFactory.create(user=user, provider="not_edx")
             for _ in range(TOTAL_PROGRAMS):
                 ProgramEnrollmentFactory.create(user=user)
 
@@ -117,7 +117,7 @@ class AlterDataCommandTests(TestCase):
             user = UserFactory.create(email=current_user, is_active=True)
             user.profile.email_optin = True
             user.profile.save()
-            UserSocialAuthFactory.create(user=user, provider='not_edx')
+            UserSocialAuthFactory.create(user=user, provider="not_edx")
             for _ in range(TOTAL_PROGRAMS):
                 ProgramEnrollmentFactory.create(user=user)
 

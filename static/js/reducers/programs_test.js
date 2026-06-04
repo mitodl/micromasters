@@ -19,7 +19,7 @@ import {
   RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
   RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
   CLEAR_ENROLLMENTS,
-  SET_CURRENT_PROGRAM_ENROLLMENT
+  SET_CURRENT_PROGRAM_ENROLLMENT,
 } from "../actions/programs"
 import * as api from "../lib/api"
 import * as dashboardActions from "../actions/dashboard"
@@ -40,22 +40,22 @@ describe("enrollments", () => {
   })
 
   const newEnrollment = {
-    id:    999,
-    title: "New enrollment"
+    id: 999,
+    title: "New enrollment",
   }
 
   describe("enrollments reducer", () => {
     let dispatchThen, fetchDashboardStub
     beforeEach(() => {
-      dispatchThen = store.createDispatchThen(state => state.programs)
+      dispatchThen = store.createDispatchThen((state) => state.programs)
       fetchDashboardStub = sandbox.stub(dashboardActions, "fetchDashboard")
       fetchDashboardStub.returns({ type: "fake" })
     })
 
     it("should have an empty default state", () => {
-      return dispatchThen({ type: "unknown" }, ["unknown"]).then(state => {
+      return dispatchThen({ type: "unknown" }, ["unknown"]).then((state) => {
         assert.deepEqual(state, {
-          availablePrograms: []
+          availablePrograms: [],
         })
       })
     })
@@ -65,8 +65,8 @@ describe("enrollments", () => {
 
       return dispatchThen(fetchProgramEnrollments(), [
         REQUEST_GET_PROGRAM_ENROLLMENTS,
-        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
-      ]).then(enrollmentsState => {
+        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+      ]).then((enrollmentsState) => {
         assert.equal(enrollmentsState.getStatus, FETCH_SUCCESS)
         assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS)
         assert.equal(getPrograms.callCount, 1)
@@ -79,8 +79,8 @@ describe("enrollments", () => {
 
       return dispatchThen(fetchProgramEnrollments(), [
         REQUEST_GET_PROGRAM_ENROLLMENTS,
-        RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE
-      ]).then(enrollmentsState => {
+        RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
+      ]).then((enrollmentsState) => {
         assert.equal(enrollmentsState.getStatus, FETCH_FAILURE)
         assert.equal(enrollmentsState.getErrorInfo, "error")
         assert.deepEqual(enrollmentsState.availablePrograms, [])
@@ -96,22 +96,20 @@ describe("enrollments", () => {
       return dispatchThen(addProgramEnrollment(newEnrollment.id), [
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-        SET_TOAST_MESSAGE
-      ]).then(enrollmentsState => {
+        SET_TOAST_MESSAGE,
+      ]).then((enrollmentsState) => {
         assert.equal(enrollmentsState.postStatus, FETCH_SUCCESS)
         assert.deepEqual(
           enrollmentsState.availablePrograms,
-          PROGRAMS.concat(newEnrollment)
+          PROGRAMS.concat(newEnrollment),
         )
         assert.equal(addProgramEnrollmentStub.callCount, 1)
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id])
         assert.ok(fetchDashboardStub.calledWith())
 
         assert.deepEqual(store.getState().ui.toastMessage, {
-          message: `You are now enrolled in the ${
-            newEnrollment.title
-          } MicroMasters`,
-          icon: TOAST_SUCCESS
+          message: `You are now enrolled in the ${newEnrollment.title} MicroMasters`,
+          icon: TOAST_SUCCESS,
         })
       })
     })
@@ -123,8 +121,8 @@ describe("enrollments", () => {
       return dispatchThen(addProgramEnrollment(newEnrollment.id), [
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
-        SET_TOAST_MESSAGE
-      ]).then(enrollmentsState => {
+        SET_TOAST_MESSAGE,
+      ]).then((enrollmentsState) => {
         assert.equal(enrollmentsState.postStatus, FETCH_FAILURE)
         assert.equal(enrollmentsState.postErrorInfo, "addError")
         assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS)
@@ -134,7 +132,7 @@ describe("enrollments", () => {
 
         assert.deepEqual(store.getState().ui.toastMessage, {
           message: "There was an error during enrollment",
-          icon:    TOAST_FAILURE
+          icon: TOAST_FAILURE,
         })
       })
     })
@@ -143,11 +141,11 @@ describe("enrollments", () => {
       store.dispatch(receiveGetProgramEnrollmentsSuccess(PROGRAMS))
 
       return dispatchThen(clearEnrollments(), [CLEAR_ENROLLMENTS]).then(
-        enrollmentsState => {
+        (enrollmentsState) => {
           assert.deepEqual(enrollmentsState, {
-            availablePrograms: []
+            availablePrograms: [],
           })
-        }
+        },
       )
     })
   })
@@ -156,7 +154,7 @@ describe("enrollments", () => {
     let dispatchThen
     beforeEach(() => {
       dispatchThen = store.createDispatchThen(
-        state => state.currentProgramEnrollment
+        (state) => state.currentProgramEnrollment,
       )
     })
 
@@ -166,8 +164,8 @@ describe("enrollments", () => {
 
     it("should set the current enrollment", () => {
       return dispatchThen(setCurrentProgramEnrollment(PROGRAMS[1]), [
-        SET_CURRENT_PROGRAM_ENROLLMENT
-      ]).then(state => {
+        SET_CURRENT_PROGRAM_ENROLLMENT,
+      ]).then((state) => {
         assert.deepEqual(state, PROGRAMS[1])
       })
     })
@@ -181,7 +179,7 @@ describe("enrollments", () => {
       const enrollment = { id: 999, title: "not an enrollment anymore" }
       store.dispatch(setCurrentProgramEnrollment(enrollment))
       store.dispatch(
-        receiveGetProgramEnrollmentsSuccess([enrollment].concat(PROGRAMS))
+        receiveGetProgramEnrollmentsSuccess([enrollment].concat(PROGRAMS)),
       )
       assert.deepEqual(store.getState().currentProgramEnrollment, PROGRAMS[0])
     })

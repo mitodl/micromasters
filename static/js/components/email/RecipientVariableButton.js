@@ -4,7 +4,7 @@ import React from "react"
 export default class RecipientVariableButton extends React.Component {
   props: {
     onClick: Function,
-    value: string
+    value: string,
   }
 
   render() {

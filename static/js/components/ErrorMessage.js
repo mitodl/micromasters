@@ -7,7 +7,7 @@ import type { APIErrorInfo } from "../flow/generalTypes"
 
 export default class ErrorMessage extends React.Component {
   props: {
-    errorInfo: APIErrorInfo
+    errorInfo: APIErrorInfo,
   }
 
   render() {
@@ -16,8 +16,8 @@ export default class ErrorMessage extends React.Component {
         error_code: errorCode,
         user_message: userMessage,
         detail,
-        errorStatusCode
-      }
+        errorStatusCode,
+      },
     } = this.props
 
     const errorCodeStr = () => {

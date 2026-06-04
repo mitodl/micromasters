@@ -4,22 +4,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0033_blank_edx_key'),
+        ("courses", "0033_blank_edx_key"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Topic',
+            name="Topic",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=128, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=128, unique=True)),
             ],
         ),
         migrations.AddField(
-            model_name='program',
-            name='topics',
-            field=models.ManyToManyField(blank=True, related_name='topics', to='courses.Topic'),
+            model_name="program",
+            name="topics",
+            field=models.ManyToManyField(
+                blank=True, related_name="topics", to="courses.Topic"
+            ),
         ),
     ]

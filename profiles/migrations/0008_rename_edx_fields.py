@@ -4,55 +4,54 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0007_city_and_birthplace'),
+        ("profiles", "0007_city_and_birthplace"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='profile',
-            old_name='bio',
-            new_name='edx_bio',
+            model_name="profile",
+            old_name="bio",
+            new_name="edx_bio",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='employer',
-            new_name='edx_employer',
+            model_name="profile",
+            old_name="employer",
+            new_name="edx_employer",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='goals',
-            new_name='edx_goals',
+            model_name="profile",
+            old_name="goals",
+            new_name="edx_goals",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='job_title',
-            new_name='edx_job_title',
+            model_name="profile",
+            old_name="job_title",
+            new_name="edx_job_title",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='language_proficiencies',
-            new_name='edx_language_proficiencies',
+            model_name="profile",
+            old_name="language_proficiencies",
+            new_name="edx_language_proficiencies",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='level_of_education',
-            new_name='edx_level_of_education',
+            model_name="profile",
+            old_name="level_of_education",
+            new_name="edx_level_of_education",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='mailing_address',
-            new_name='edx_mailing_address',
+            model_name="profile",
+            old_name="mailing_address",
+            new_name="edx_mailing_address",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='name',
-            new_name='edx_name',
+            model_name="profile",
+            old_name="name",
+            new_name="edx_name",
         ),
         migrations.RenameField(
-            model_name='profile',
-            old_name='requires_parental_consent',
-            new_name='edx_requires_parental_consent',
+            model_name="profile",
+            old_name="requires_parental_consent",
+            new_name="edx_requires_parental_consent",
         ),
     ]
