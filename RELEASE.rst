@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.250.0
+Version 0.250.0 (Released June 04, 2026)
 ---------------
 
 - Update DEDP and SCM to Login to MIT Learn (#5518)
