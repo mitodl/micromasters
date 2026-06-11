@@ -71,6 +71,10 @@
                 <a href="https://learn.mit.edu/programs/program-v1:MITxT+SCM" class="mdl-button hero-button mdl-cell--hide-phone">
                   Enroll on MIT Learn
                 </a>
+            {% elif page.program.id == 5 %}
+                <a href="https://learn.mit.edu/programs/program-v1:MITxT+FIN" class="mdl-button hero-button mdl-cell--hide-phone">
+                  Enroll on MIT Learn
+                </a>
             {% else %}
               {% if not authenticated %}
                 <a href="{% url 'signin' %}?program={{page.program.id}}" class="mdl-button hero-button mdl-cell--hide-phone">
