@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS base
+FROM python:3.12-slim@sha256:090ba77e2958f6af52a5341f788b50b032dd4ca28377d2893dcf1ecbdfdfe203 AS base
 
 LABEL maintainer="ODL DevOps <mitx-devops@mit.edu>"
 
