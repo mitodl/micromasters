@@ -256,7 +256,4 @@ export const testRoutes = (
   </Route>
 )
 
-export const stringStrip = R.compose(
-  R.join(" "),
-  _.words
-)
+export const stringStrip = R.compose(R.join(" "), _.words)

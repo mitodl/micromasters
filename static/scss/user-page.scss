@@ -1,5 +1,4 @@
 .user-page {
-
   .profile-title {
     margin-top: 19px;
     font-size: 23px;
@@ -7,7 +6,8 @@
     font-weight: 400;
   }
 
-  .legal-name, .student-id {
+  .legal-name,
+  .student-id {
     font-size: 13px;
     color: $font-gray-light;
     margin-top: 15px;
@@ -23,11 +23,11 @@
     font-size: 15px;
   }
 
-  .edit-profile-holder, .edit-about-me-holder {
+  .edit-profile-holder,
+  .edit-about-me-holder {
     text-align: right;
     position: absolute;
     top: 15px;
     right: 0;
   }
-
 }

@@ -83,8 +83,6 @@ def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
     return {}
 
 
-
-
 def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
     """
     Process raw course data from MIT Learn API and update or create course runs,

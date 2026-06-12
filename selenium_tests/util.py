@@ -17,7 +17,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from micromasters.utils import now_in_utc
 
-DEFAULT_PASSWORD = 'pass'
+DEFAULT_PASSWORD = "pass"
 DEFAULT_RETRY_COUNT = 3
 
 
@@ -25,12 +25,13 @@ class Browser:
     """
     Abstraction for the running browser. Provides general helper methods for interacting with the selenium driver.
     """
+
     ignored_log_messages = {
-        'static.doubleclick.net',
-        'React.createClass is deprecated',
-        'chrome-extension',
-        'This page includes a password or credit card input in a non-secure context',
-        'favicon.ico',
+        "static.doubleclick.net",
+        "React.createClass is deprecated",
+        "chrome-extension",
+        "This page includes a password or credit card input in a non-secure context",
+        "favicon.ico",
         "'webkitURL' is deprecated. Please use 'URL' instead",
         "zendesk",
         "__webpack_hmr",
@@ -56,9 +57,7 @@ class Browser:
 
     def wait_until_loaded(self, by, value):
         """Helper method to tell the driver to wait until an element is loaded"""
-        return self.wait().until(
-            lambda driver: driver.find_element(by, value)
-        )
+        return self.wait().until(lambda driver: driver.find_element(by, value))
 
     def wait_until_element_count(self, by, value, expected_count):
         """
@@ -78,9 +77,7 @@ class Browser:
         wait = self.wait()
         while True:
             try:
-                return wait.until(
-                    lambda driver: driver.find_element(by, value)
-                ).click()
+                return wait.until(lambda driver: driver.find_element(by, value)).click()
             except WebDriverException:
                 if retries_remaining > 0:
                     retries_remaining -= 1
@@ -95,9 +92,13 @@ class Browser:
             list(str): Console error strings
         """
         return [
-            entry['message'] for entry in self.driver.get_log("browser")
-            if entry['level'] != "WARNING" and
-            not any(ignored_msg in entry['message'] for ignored_msg in self.ignored_log_messages)
+            entry["message"]
+            for entry in self.driver.get_log("browser")
+            if entry["level"] != "WARNING"
+            and not any(
+                ignored_msg in entry["message"]
+                for ignored_msg in self.ignored_log_messages
+            )
         ]
 
     def assert_no_console_errors(self):
@@ -116,7 +117,7 @@ class Browser:
         """
         url = make_absolute_url(relative_url, self.live_server_url)
         self.driver.get(url)
-        self.wait_until_loaded(By.TAG_NAME, 'body')
+        self.wait_until_loaded(By.TAG_NAME, "body")
         if not ignore_errors:
             self.assert_no_console_errors()
         else:
@@ -126,44 +127,48 @@ class Browser:
         """Helper function to set browser window dimensions"""
         current_dimensions = self.driver.get_window_size()
         if width is None:
-            width = current_dimensions['width']
+            width = current_dimensions["width"]
         if height is None:
             height = (
-                current_dimensions['height']
+                current_dimensions["height"]
                 if not use_scroll_height
                 else self.driver.execute_script("return document.body.scrollHeight")
             )
         self.driver.set_window_size(width, height)
 
-    def take_screenshot(self, filename=None, filename_prefix='', output_base64=False):
+    def take_screenshot(self, filename=None, filename_prefix="", output_base64=False):
         """
         Takes a screenshot of the selenium browser window and saves it
         """
         self.set_dimension()
         if filename is None:
             if filename_prefix:
-                filename_prefix += '_'
-            filename = f"{filename_prefix}{now_in_utc().strftime('%Y_%m_%d_%H_%M_%S_%f')}"
+                filename_prefix += "_"
+            filename = (
+                f"{filename_prefix}{now_in_utc().strftime('%Y_%m_%d_%H_%M_%S_%f')}"
+            )
         repo_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         full_filename = os.path.join(repo_root, f"{filename}.png")
         self.driver.save_screenshot(full_filename)
         print(f"PNG screenshot for {filename} output to {full_filename}")
         if output_base64:
             # Can be useful for travis where we don't have access to build artifacts
-            with open(full_filename, 'rb') as f:
+            with open(full_filename, "rb") as f:
                 print(f"Screenshot as base64: {b64encode(f.read())}")
 
     def store_api_results(self, username, filename=None):
         """Helper method to save certain GET REST API responses"""
-        sessionid = self.driver.get_cookie('sessionid')['value']
+        sessionid = self.driver.get_cookie("sessionid")["value"]
         for endpoint_url, endpoint_name in [
-                (f"/api/v0/dashboard/{username}/", 'dashboard'),
-                ("/api/v0/coupons/", 'coupons'),
-                (f"/api/v0/course_prices/{username}/", 'course_prices'),
+            (f"/api/v0/dashboard/{username}/", "dashboard"),
+            ("/api/v0/coupons/", "coupons"),
+            (f"/api/v0/course_prices/{username}/", "course_prices"),
         ]:
             absolute_url = make_absolute_url(endpoint_url, self.live_server_url)
-            api_json = requests.get(absolute_url, cookies={'sessionid': sessionid}, timeout=30).json()
-            with open(f"{filename}.{endpoint_name}.json", 'w', encoding='utf-8') as f:
+            api_json = requests.get(
+                absolute_url, cookies={"sessionid": sessionid}, timeout=30
+            ).json()
+            with open(f"{filename}.{endpoint_name}.json", "w", encoding="utf-8") as f:
                 json.dump(api_json, f, indent="    ")
 
 
@@ -196,8 +201,7 @@ def make_absolute_url(relative_url, absolute_base):
 
 def terminate_db_connections():
     """Terminates active connections to the database being used by Django"""
-    kill_connection_sql = \
-        "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid();"
+    kill_connection_sql = "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid();"
     with connection.cursor() as cur:
         cur.execute(kill_connection_sql)
     connection.close()
@@ -205,7 +209,8 @@ def terminate_db_connections():
 
 class DatabaseLoader:
     """Backs up and restores databases using SQL and Postgres command line tools"""
-    DEFAULT_BACKUP_DB_NAME = 'backup_selenium_db'
+
+    DEFAULT_BACKUP_DB_NAME = "backup_selenium_db"
 
     def __init__(self, db_settings=None, db_backup_name=None):
         """
@@ -215,18 +220,25 @@ class DatabaseLoader:
             db_settings (dict): A dict of database settings
             db_backup_name (str): The name that will be given to the backup database
         """
-        self.db_settings = db_settings or settings.DATABASES['default']
-        self.db_name = self.db_settings['NAME']
-        if self.db_name[0:5] != 'test_':
+        self.db_settings = db_settings or settings.DATABASES["default"]
+        self.db_name = self.db_settings["NAME"]
+        if self.db_name[0:5] != "test_":
             raise Exception(  # pylint: disable=broad-exception-raised
                 "The test suite is attempting to use the database '{}'."
-                "The test database should have a name that begins with 'test_'. Exiting...".format(self.db_name)
+                "The test database should have a name that begins with 'test_'. Exiting...".format(
+                    self.db_name
+                )
             )
-        self.db_backup_name = db_backup_name or getattr(settings, 'BACKUP_DB_NAME', self.DEFAULT_BACKUP_DB_NAME)
+        self.db_backup_name = db_backup_name or getattr(
+            settings, "BACKUP_DB_NAME", self.DEFAULT_BACKUP_DB_NAME
+        )
         self.db_cmd_args = [
-            "-h", self.db_settings['HOST'],
-            "-p", str(self.db_settings['PORT']),
-            "-U", self.db_settings['USER']
+            "-h",
+            self.db_settings["HOST"],
+            "-p",
+            str(self.db_settings["PORT"]),
+            "-U",
+            self.db_settings["USER"],
         ]
 
     def _db_copy_sql(self, from_db, to_db):
@@ -240,7 +252,7 @@ class DatabaseLoader:
         Returns:
             bytes: utf8-encoded create statement
         """
-        return f"""CREATE DATABASE {to_db} TEMPLATE {from_db}""".encode('utf-8')
+        return f"""CREATE DATABASE {to_db} TEMPLATE {from_db}""".encode("utf-8")
 
     def has_backup(self, db_cursor):
         """
@@ -252,7 +264,9 @@ class DatabaseLoader:
         Returns:
             bool: Whether or not the backup db exists
         """
-        db_cursor.execute(f"SELECT 1 FROM pg_database WHERE datname='{self.db_backup_name}'")
+        db_cursor.execute(
+            f"SELECT 1 FROM pg_database WHERE datname='{self.db_backup_name}'"
+        )
         return db_cursor.fetchone() is not None
 
     def create_backup(self, db_cursor):
@@ -262,14 +276,16 @@ class DatabaseLoader:
         Args:
             db_cursor (django.db.connection.cursor): A database cursor
         """
-        db_cursor.execute(f'DROP DATABASE IF EXISTS {self.db_backup_name};')
+        db_cursor.execute(f"DROP DATABASE IF EXISTS {self.db_backup_name};")
         db_cursor.execute(self._db_copy_sql(self.db_name, self.db_backup_name))
 
     def load_backup(self):
         """
         Drops the main database and loads the backup
         """
-        check_call(["dropdb", *self.db_cmd_args, self.db_name], stdout=DEVNULL, stderr=DEVNULL)
+        check_call(
+            ["dropdb", *self.db_cmd_args, self.db_name], stdout=DEVNULL, stderr=DEVNULL
+        )
         sql = self._db_copy_sql(self.db_backup_name, self.db_name)
         check_output(["psql", *self.db_cmd_args], input=sql)
 
@@ -280,7 +296,7 @@ class DatabaseLoader:
         Args:
             db_cursor (django.db.connection.cursor): A database cursor
         """
-        db_cursor.execute(f'DROP DATABASE IF EXISTS {self.db_backup_name};')
+        db_cursor.execute(f"DROP DATABASE IF EXISTS {self.db_backup_name};")
 
 
 def should_load_from_existing_db(database_loader, cursor, *, config):
@@ -302,7 +318,7 @@ def should_load_from_existing_db(database_loader, cursor, *, config):
     # and if the config options don't indicate that the database should be freshly
     # created to start the the test suite execution
     return (
-        config.option.reuse_db and
-        not config.option.create_db and
-        database_loader.has_backup(db_cursor=cursor)
+        config.option.reuse_db
+        and not config.option.create_db
+        and database_loader.has_backup(db_cursor=cursor)
     )

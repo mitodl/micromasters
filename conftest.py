@@ -19,10 +19,10 @@ def warnings_as_errors():
     """
     try:
         warnings.resetwarnings()
-        warnings.simplefilter('error')
+        warnings.simplefilter("error")
         warnings.filterwarnings("ignore", category=ResourceWarning)
         # For celery
-        warnings.simplefilter('ignore', category=ImportWarning)
+        warnings.simplefilter("ignore", category=ImportWarning)
         warnings.filterwarnings(
             "ignore",
             message="'async' and 'await' will become reserved keywords in Python 3.7",
@@ -34,7 +34,7 @@ def warnings_as_errors():
                 "Using or importing the ABCs from 'collections' instead of "
                 "from 'collections.abc' is deprecated since Python 3.3,and in 3.9 it will stop working"
             ),
-            category=DeprecationWarning
+            category=DeprecationWarning,
         )
         warnings.filterwarnings(
             "ignore",
@@ -42,7 +42,7 @@ def warnings_as_errors():
                 "Using or importing the ABCs from 'collections' instead of "
                 "from 'collections.abc' is deprecated, and in 3.8 it will stop working"
             ),
-            category=DeprecationWarning
+            category=DeprecationWarning,
         )
         warnings.filterwarnings(
             "ignore",
@@ -58,7 +58,7 @@ def warnings_as_errors():
         warnings.filterwarnings(
             "ignore",
             category=UserWarning,
-            message='Failed to load HostKeys',
+            message="Failed to load HostKeys",
         )
 
         yield
@@ -71,27 +71,24 @@ def settings_defaults(settings):  # pylint: disable=unused-argument
     """No-op fixture for settings defaults, kept for consistency"""
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def mocked_opensearch_module_patcher(settings):
     """
     Fixture that patches all indexing API functions that communicate directly with OpenSearch
     """
-    settings.DEBUG=True
+    settings.DEBUG = True
     patchers = []
     patcher_mocks = []
     for name, val in tasks.__dict__.items():
         # This looks for functions starting with _ because those are the functions which are imported
         # from indexing_api. The _ lets it prevent name collisions.
         if callable(val) and name.startswith("_"):
-            patchers.append(patch(f'search.tasks.{name}', autospec=True))
+            patchers.append(patch(f"search.tasks.{name}", autospec=True))
     for patcher in patchers:
         mock = patcher.start()
         mock.name = patcher.attribute
         patcher_mocks.append(mock)
-    yield SimpleNamespace(
-        patchers=patchers,
-        patcher_mocks=patcher_mocks
-    )
+    yield SimpleNamespace(patchers=patchers, patcher_mocks=patcher_mocks)
     for patcher in patchers:
         patcher.stop()
 
@@ -116,7 +113,7 @@ def mocked_on_commit(mocker):
     cause problems here.
     """
     return mocker.patch(
-        'django.db.transaction.on_commit',
+        "django.db.transaction.on_commit",
         autospec=True,
         side_effect=lambda callback: callback(),
     )

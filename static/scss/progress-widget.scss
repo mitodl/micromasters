@@ -11,7 +11,7 @@
   }
 
   .circular-progress-widget-fg {
-    transition: stroke-dashoffset .5s ease-in-out;
+    transition: stroke-dashoffset 0.5s ease-in-out;
     stroke: $progress-bar-color;
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
@@ -25,7 +25,6 @@
 }
 
 .progress-widget {
-
   .progress-widget-content {
     width: 100%;
     display: flex;
@@ -46,7 +45,7 @@
 
   .heading-paragraph {
     font-size: 13px;
-    color: rgba(0,0,0,.4);
+    color: rgba(0, 0, 0, 0.4);
     text-align: center;
     margin: 0 8% 24px;
   }
@@ -61,5 +60,4 @@
     text-align: center;
     color: $font-gray;
   }
-
 }

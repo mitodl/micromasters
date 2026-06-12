@@ -19,11 +19,9 @@
   }
 }
 
-
 // MOBILE STYLES START HERE
 
 @include breakpoint(phone) {
-
   body {
     background-color: #dcdcdc;
   }
@@ -35,7 +33,8 @@
       width: 100%;
       display: block;
 
-      .first-column, .second-column {
+      .first-column,
+      .second-column {
         width: auto;
         display: block;
         margin: 0 13px;
@@ -63,7 +62,6 @@
     }
 
     .course-list {
-
       .course-row {
         padding: 10px 0;
       }
@@ -91,6 +89,4 @@
   .dashboard-page .dialog {
     padding: 0;
   }
-
-
 }

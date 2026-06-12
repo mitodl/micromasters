@@ -5,8 +5,7 @@ Views for the Search app
 import logging
 
 from rest_framework import status
-from rest_framework.authentication import (SessionAuthentication,
-                                           TokenAuthentication)
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +20,7 @@ class OpenSearchProxyView(APIView):
     """
     Opensearch proxy needed to enforce authentication and permissions
     """
+
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
@@ -36,7 +36,7 @@ class OpenSearchProxyView(APIView):
         except NoProgramAccessException:
             return Response(
                 status=status.HTTP_403_FORBIDDEN,
-                data={'detail': 'You do not have access to this search.'}
+                data={"detail": "You do not have access to this search."},
             )
 
         return Response(results.to_dict())

@@ -1,8 +1,5 @@
 {
-  "addons": [
-    "heroku-postgresql:hobby-dev",
-    "rediscloud:30"
-  ],
+  "addons": ["heroku-postgresql:hobby-dev", "rediscloud:30"],
   "buildpacks": [
     {
       "url": "https://github.com/heroku/heroku-buildpack-nodejs"
@@ -260,12 +257,7 @@
       "required": false
     }
   },
-  "keywords": [
-    "Django",
-    "Python",
-    "MIT",
-    "Office of Digital Learning"
-  ],
+  "keywords": ["Django", "Python", "MIT", "Office of Digital Learning"],
   "name": "micromasters",
   "stack": "heroku-20",
   "repository": "https://github.com/mitodl/micromasters",

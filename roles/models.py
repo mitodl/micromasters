@@ -14,6 +14,8 @@ from roles.roles import Instructor, Staff
 
 
 User = get_user_model()
+
+
 def _construct_permission_to_roles(role_ids):
     """
     Create a mapping of role id
@@ -27,7 +29,9 @@ def _construct_permission_to_roles(role_ids):
     """
     permissions = defaultdict(list)
     for role_id in role_ids:
-        for permission, is_set in RolesManager.retrieve_role(role_id).available_permissions.items():
+        for permission, is_set in RolesManager.retrieve_role(
+            role_id
+        ).available_permissions.items():
             if is_set:
                 permissions[permission].append(role_id)
     return permissions
@@ -42,15 +46,13 @@ class Role(models.Model):
     Example: if the logical role class in roles.py is `FooRole`, the
     instance here must me `foo_role`.
     """
+
     ASSIGNABLE_ROLES = [Staff.ROLE_ID, Instructor.ROLE_ID]
     DEFAULT_ROLE = Staff.ROLE_ID
 
     # List need to update when new roles added,
     # roles which are not learners.
-    NON_LEARNERS = [
-        Staff.ROLE_ID,
-        Instructor.ROLE_ID
-    ]
+    NON_LEARNERS = [Staff.ROLE_ID, Instructor.ROLE_ID]
 
     permission_to_roles = _construct_permission_to_roles(ASSIGNABLE_ROLES)
 
@@ -63,7 +65,11 @@ class Role(models.Model):
     )
 
     class Meta:
-        unique_together = ('user', 'program', 'role',)
+        unique_together = (
+            "user",
+            "program",
+            "role",
+        )
 
     @transaction.atomic
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
@@ -78,14 +84,16 @@ class Role(models.Model):
         Overridden method to run a preventive validation.
         """
         # try to get all the roles different from the current one
-        existing_role_queryset = Role.objects.filter(user=self.user).exclude(role=self.role)
+        existing_role_queryset = Role.objects.filter(user=self.user).exclude(
+            role=self.role
+        )
         # exclude the current object in case it going to be modified
         if self.pk is not None:
             existing_role_queryset = existing_role_queryset.exclude(pk=self.pk)
         if existing_role_queryset.exists():
             raise ValidationError(
                 'The user has the role "{}" assigned at the moment and cannot have a second one. '
-                'This is a technical limitation planned to be solved in the future.'.format(
+                "This is a technical limitation planned to be solved in the future.".format(
                     existing_role_queryset.first().role
                 )
             )

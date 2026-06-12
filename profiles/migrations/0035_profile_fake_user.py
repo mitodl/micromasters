@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0034_data_migration_for_countries'),
+        ("profiles", "0034_data_migration_for_countries"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='fake_user',
+            model_name="profile",
+            name="fake_user",
             field=models.BooleanField(default=False),
         ),
     ]

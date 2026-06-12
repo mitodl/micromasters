@@ -5,7 +5,7 @@ from django.db import migrations
 import pytz
 
 
-PILOT_SERIES_CODE = 'PILOT'
+PILOT_SERIES_CODE = "PILOT"
 PILOT_SCHEDULE_START_DATE = datetime(2017, 3, 6, tzinfo=pytz.UTC)
 PILOT_SCHEDULE_END_DATE = datetime(2017, 3, 30, tzinfo=pytz.UTC)
 PILOT_ELIGIBILITY_START_DATE = datetime(2017, 3, 18, tzinfo=pytz.UTC)
@@ -14,8 +14,8 @@ PILOT_ELIGIBILITY_END_DATE = datetime(2017, 3, 31, tzinfo=pytz.UTC)
 
 def populate_pilot_runs(apps, schema_editor):
     """Generate pilot ExamRuns"""
-    ExamRun = apps.get_model('exams', 'ExamRun')
-    ExamAuthorization = apps.get_model('exams', 'ExamAuthorization')
+    ExamRun = apps.get_model("exams", "ExamRun")
+    ExamAuthorization = apps.get_model("exams", "ExamAuthorization")
     runs_by_course_id = {}
 
     for exam_auth in ExamAuthorization.objects.filter(exam_run__isnull=True).iterator():
@@ -29,14 +29,12 @@ def populate_pilot_runs(apps, schema_editor):
                 date_last_eligible=PILOT_ELIGIBILITY_END_DATE,
             )
         exam_auth.exam_run = runs_by_course_id[exam_auth.course_id]
-        exam_auth.save(update_fields=('exam_run',))
+        exam_auth.save(update_fields=("exam_run",))
+
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0007_add_exam_run'),
+        ("exams", "0007_add_exam_run"),
     ]
 
-    operations = [
-        migrations.RunPython(populate_pilot_runs, migrations.RunPython.noop)
-    ]
+    operations = [migrations.RunPython(populate_pilot_runs, migrations.RunPython.noop)]

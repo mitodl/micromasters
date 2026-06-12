@@ -12,24 +12,21 @@ from wagtail.rich_text import RichText
 def page_to_streamfield(page):
     changed = False
     if page.content.raw_text and not page.content:
-        page.content = [('rich_text', RichText(page.content.raw_text))]
+        page.content = [("rich_text", RichText(page.content.raw_text))]
         changed = True
     return page, changed
 
 
 def pagerevision_to_streamfield(revision_data):
     changed = False
-    content = revision_data.get('content')
+    content = revision_data.get("content")
     if content:
         try:
             json.loads(content)
         except ValueError:
-            revision_data['content'] = json.dumps(
-                [{
-                    "value": content,
-                    "type": "rich_text"
-                }],
-                cls=DjangoJSONEncoder)
+            revision_data["content"] = json.dumps(
+                [{"value": content, "type": "rich_text"}], cls=DjangoJSONEncoder
+            )
             changed = True
         else:
             # It's already valid JSON. Leave it.
@@ -40,10 +37,13 @@ def pagerevision_to_streamfield(revision_data):
 def page_to_richtext(page):
     changed = False
     if page.content.raw_text is None:
-        raw_text = ''.join([
-            child.value.source for child in page.content
-            if child.block_type == 'rich_text'
-        ])
+        raw_text = "".join(
+            [
+                child.value.source
+                for child in page.content
+                if child.block_type == "rich_text"
+            ]
+        )
         page.content = raw_text
         changed = True
     return page, changed
@@ -51,7 +51,7 @@ def page_to_richtext(page):
 
 def pagerevision_to_richtext(revision_data):
     changed = False
-    content = revision_data.get('content', 'definitely non-JSON string')
+    content = revision_data.get("content", "definitely non-JSON string")
     if content:
         try:
             content_data = json.loads(content)
@@ -59,11 +59,14 @@ def pagerevision_to_richtext(revision_data):
             # It's not apparently a StreamField. Leave it.
             pass
         else:
-            raw_text = ''.join([
-                child['value'] for child in content_data
-                if child['type'] == 'rich_text'
-            ])
-            revision_data['content'] = raw_text
+            raw_text = "".join(
+                [
+                    child["value"]
+                    for child in content_data
+                    if child["type"] == "rich_text"
+                ]
+            )
+            revision_data["content"] = raw_text
             changed = True
     return revision_data, changed
 
@@ -71,7 +74,6 @@ def pagerevision_to_richtext(revision_data):
 def convert(apps, schema_editor, page_converter, pagerevision_converter):
     ProgramTabPage = apps.get_model("cms", "ProgramTabPage")
     for page in ProgramTabPage.objects.all():
-
         page, changed = page_converter(page)
         if changed:
             page.save()
@@ -85,7 +87,9 @@ def convert(apps, schema_editor, page_converter, pagerevision_converter):
 
 
 def convert_to_streamfield(apps, schema_editor):
-    return convert(apps, schema_editor, page_to_streamfield, pagerevision_to_streamfield)
+    return convert(
+        apps, schema_editor, page_to_streamfield, pagerevision_to_streamfield
+    )
 
 
 def convert_to_richtext(apps, schema_editor):
@@ -93,9 +97,8 @@ def convert_to_richtext(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0034_alter_content_feild'),
+        ("cms", "0034_alter_content_feild"),
     ]
 
     operations = [

@@ -6,24 +6,41 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0007_programcourse'),
+        ("cms", "0007_programcourse"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FrequentlyAskedQuestion',
+            name="FrequentlyAskedQuestion",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('question', models.TextField()),
-                ('answer', models.TextField()),
-                ('program_page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='faqs', to='cms.ProgramPage')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                ("question", models.TextField()),
+                ("answer", models.TextField()),
+                (
+                    "program_page",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="faqs",
+                        to="cms.ProgramPage",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'ordering': ['sort_order'],
+                "abstract": False,
+                "ordering": ["sort_order"],
             },
         ),
     ]

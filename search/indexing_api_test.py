@@ -12,34 +12,46 @@ from factory.django import mute_signals
 from opensearchpy.exceptions import NotFoundError
 
 from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
-from dashboard.factories import (CachedCertificateFactory,
-                                 CachedCurrentGradeFactory,
-                                 CachedEnrollmentFactory,
-                                 ProgramEnrollmentFactory)
+from dashboard.factories import (
+    CachedCertificateFactory,
+    CachedCurrentGradeFactory,
+    CachedEnrollmentFactory,
+    ProgramEnrollmentFactory,
+)
 from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSearchSerializer
-from profiles.factories import (EducationFactory, EmploymentFactory,
-                                ProfileFactory)
+from profiles.factories import EducationFactory, EmploymentFactory, ProfileFactory
 from profiles.serializers import ProfileSerializer
 from roles.models import Role
 from roles.roles import Instructor, Staff
 from search.base import ESTestCase, reindex_test_es_data
-from search.connection import (ALL_INDEX_TYPES, GLOBAL_DOC_TYPE,
-                               PERCOLATE_INDEX_TYPE,
-                               PRIVATE_ENROLLMENT_INDEX_TYPE,
-                               PUBLIC_ENROLLMENT_INDEX_TYPE, get_aliases,
-                               get_default_alias, make_alias_name,
-                               make_backing_index_name)
+from search.connection import (
+    ALL_INDEX_TYPES,
+    GLOBAL_DOC_TYPE,
+    PERCOLATE_INDEX_TYPE,
+    PRIVATE_ENROLLMENT_INDEX_TYPE,
+    PUBLIC_ENROLLMENT_INDEX_TYPE,
+    get_aliases,
+    get_default_alias,
+    make_alias_name,
+    make_backing_index_name,
+)
 from search.exceptions import IndexTypeException, ReindexException
 from search.factories import PercolateQueryFactory
-from search.indexing_api import (clear_and_create_index,
-                                 create_backing_indices, delete_indices,
-                                 delete_percolate_query, filter_current_work,
-                                 get_conn, index_percolate_queries,
-                                 index_program_enrolled_users, refresh_index,
-                                 remove_program_enrolled_user,
-                                 serialize_program_enrolled_user,
-                                 serialize_public_enrolled_user)
+from search.indexing_api import (
+    clear_and_create_index,
+    create_backing_indices,
+    delete_indices,
+    delete_percolate_query,
+    filter_current_work,
+    get_conn,
+    index_percolate_queries,
+    index_program_enrolled_users,
+    refresh_index,
+    remove_program_enrolled_user,
+    serialize_program_enrolled_user,
+    serialize_public_enrolled_user,
+)
 from search.models import PercolateQuery
 from search.util import traverse_mapping
 
@@ -51,6 +63,7 @@ class ESTestActions:
     """
     Provides helper functions for tests to communicate with ES
     """
+
     def __init__(self):
         self.conn = get_conn(verify=False)
 
@@ -58,7 +71,7 @@ class ESTestActions:
         """Gets full index data from the _search endpoint"""
         alias = get_default_alias(index_type)
         refresh_index(alias)
-        return self.conn.search(index=alias)['hits']
+        return self.conn.search(index=alias)["hits"]
 
     def get_percolate_query(self, _id):
         """Get percolate query"""
@@ -70,7 +83,7 @@ class ESTestActions:
         alias = get_default_alias(index_type)
         refresh_index(alias)
         mapping = self.conn.indices.get_mapping(index=alias)
-        return list(mapping.values())[0]['mappings']
+        return list(mapping.values())[0]["mappings"]
 
     def get_default_backing_index(self, index_type):
         """Get the default backing index"""
@@ -91,8 +104,8 @@ def get_sources(results):
     Returns:
         list of dict: The list of source dicts
     """
-    sorted_hits = sorted(results['hits'], key=lambda hit: hit['_source']['id'])
-    return [hit['_source'] for hit in sorted_hits]
+    sorted_hits = sorted(results["hits"], key=lambda hit: hit["_source"]["id"])
+    return [hit["_source"] for hit in sorted_hits]
 
 
 def remove_es_keys(hit):
@@ -105,9 +118,9 @@ def remove_es_keys(hit):
     Returns:
         dict: modified Opensearch hit object
     """
-    del hit['_id']
-    if '_type' in hit:
-        del hit['_type']
+    del hit["_id"]
+    if "_type" in hit:
+        del hit["_type"]
     return hit
 
 
@@ -115,9 +128,13 @@ def assert_search(results, program_enrollments, *, index_type):
     """
     Assert that search results match program-enrolled users
     """
-    assert results['total']['value'] == len(program_enrollments) * DOC_TYPES_PER_ENROLLMENT
+    assert (
+        results["total"]["value"] == len(program_enrollments) * DOC_TYPES_PER_ENROLLMENT
+    )
     sources_advanced = get_sources(results)
-    sorted_program_enrollments = sorted(program_enrollments, key=lambda program_enrollment: program_enrollment.id)
+    sorted_program_enrollments = sorted(
+        program_enrollments, key=lambda program_enrollment: program_enrollment.id
+    )
 
     if index_type == PRIVATE_ENROLLMENT_INDEX_TYPE:
         serialized = [
@@ -126,9 +143,11 @@ def assert_search(results, program_enrollments, *, index_type):
         ]
     elif index_type == PUBLIC_ENROLLMENT_INDEX_TYPE:
         serialized = [
-            remove_es_keys(serialize_public_enrolled_user(
-                serialize_program_enrolled_user(program_enrollment)
-            ))
+            remove_es_keys(
+                serialize_public_enrolled_user(
+                    serialize_program_enrolled_user(program_enrollment)
+                )
+            )
             for program_enrollment in sorted_program_enrollments
         ]
     else:
@@ -139,20 +158,23 @@ def assert_search(results, program_enrollments, *, index_type):
 
 # pylint: disable=unused-argument
 @ddt
-@patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
+@patch("search.signals.transaction.on_commit", side_effect=lambda callback: callback())
 class IndexTests(ESTestCase):
     """
     Tests for indexing
     """
+
     # pylint: disable=too-many-public-methods
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_program_enrollment_add(self, index_type, mock_on_commit):
         """
         Test that a newly created ProgramEnrollment is indexed properly
         """
-        assert es.search(index_type)['total']['value'] == 0
+        assert es.search(index_type)["total"]["value"] == 0
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_program_enrollment_delete(self, index_type, mock_on_commit):
@@ -160,9 +182,9 @@ class IndexTests(ESTestCase):
         Test that ProgramEnrollment is removed from index after the user is removed
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         program_enrollment.user.delete()
-        assert es.search(index_type)['total']['value'] == 0
+        assert es.search(index_type)["total"]["value"] == 0
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_profile_update(self, index_type, mock_on_commit):
@@ -170,11 +192,13 @@ class IndexTests(ESTestCase):
         Test that ProgramEnrollment is reindexed after the User's Profile has been updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         profile = program_enrollment.user.profile
-        profile.first_name = 'updated'
+        profile.first_name = "updated"
         profile.save()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_education_add(self, index_type, mock_on_commit):
@@ -182,9 +206,11 @@ class IndexTests(ESTestCase):
         Test that Education is indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         EducationFactory.create(profile=program_enrollment.user.profile)
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_education_update(self, index_type, mock_on_commit):
@@ -192,11 +218,13 @@ class IndexTests(ESTestCase):
         Test that Education is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         education = EducationFactory.create(profile=program_enrollment.user.profile)
-        education.school_city = 'city'
+        education.school_city = "city"
         education.save()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_education_delete(self, index_type, mock_on_commit):
@@ -205,9 +233,13 @@ class IndexTests(ESTestCase):
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         education = EducationFactory.create(profile=program_enrollment.user.profile)
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
         education.delete()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_employment_add(self, index_type, mock_on_commit):
@@ -215,9 +247,11 @@ class IndexTests(ESTestCase):
         Test that Employment is indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_employment_update(self, index_type, mock_on_commit):
@@ -225,11 +259,15 @@ class IndexTests(ESTestCase):
         Test that Employment is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
-        employment = EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
-        employment.city = 'city'
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
+        employment = EmploymentFactory.create(
+            profile=program_enrollment.user.profile, end_date=None
+        )
+        employment.city = "city"
         employment.save()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_employment_delete(self, index_type, mock_on_commit):
@@ -237,10 +275,16 @@ class IndexTests(ESTestCase):
         Test that Employment is removed from index after being deleted
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        employment = EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        employment = EmploymentFactory.create(
+            profile=program_enrollment.user.profile, end_date=None
+        )
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
         employment.delete()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_past_employment_add(self, index_type, mock_on_commit):
@@ -250,9 +294,11 @@ class IndexTests(ESTestCase):
         program_enrollment = ProgramEnrollmentFactory.create()
         EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         EmploymentFactory.create(profile=program_enrollment.user.profile)
-        search_result = es.search(index_type)['hits'][0]['_source']['profile']['work_history']
+        search_result = es.search(index_type)["hits"][0]["_source"]["profile"][
+            "work_history"
+        ]
         assert len(search_result) == 1
-        self.assertFalse(search_result[0]['end_date'])
+        self.assertFalse(search_result[0]["end_date"])
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_remove_program_enrolled_user(self, index_type, mock_on_commit):
@@ -260,7 +306,9 @@ class IndexTests(ESTestCase):
         Test that remove_program_enrolled_user removes the user from the index for that program
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
         remove_program_enrolled_user(program_enrollment.id)
         assert_search(es.search(index_type), [], index_type=index_type)
 
@@ -278,34 +326,43 @@ class IndexTests(ESTestCase):
             for enrollment in program_enrollments:
                 ProfileFactory.create(user=enrollment.user)
 
-        private = [serialize_program_enrolled_user(enrollment) for enrollment in program_enrollments]
-        private_dicts = {serialized['id']: serialized for serialized in private}
+        private = [
+            serialize_program_enrolled_user(enrollment)
+            for enrollment in program_enrollments
+        ]
+        private_dicts = {serialized["id"]: serialized for serialized in private}
         public = [serialize_public_enrolled_user(serialized) for serialized in private]
-        public_dicts = {serialized['id']: serialized for serialized in public}
+        public_dicts = {serialized["id"]: serialized for serialized in public}
 
         with patch(
-            'search.indexing_api._index_chunk', autospec=True, return_value=0
+            "search.indexing_api._index_chunk", autospec=True, return_value=0
         ) as index_chunk, patch(
-            'search.indexing_api.serialize_program_enrolled_user', autospec=True,
-            side_effect=lambda x: private_dicts[x.id]
+            "search.indexing_api.serialize_program_enrolled_user",
+            autospec=True,
+            side_effect=lambda x: private_dicts[x.id],
         ) as serialize_mock, patch(
-            'search.indexing_api.serialize_public_enrolled_user', autospec=True,
-            side_effect=lambda x: public_dicts[x['id']]
+            "search.indexing_api.serialize_public_enrolled_user",
+            autospec=True,
+            side_effect=lambda x: public_dicts[x["id"]],
         ) as serialize_public_mock:
             index_program_enrolled_users(program_enrollments, chunk_size=chunk_size)
-            assert index_chunk.call_count == 6  # 10 enrollments divided in chunks of 4, times the number of types (2)
+            assert (
+                index_chunk.call_count == 6
+            )  # 10 enrollments divided in chunks of 4, times the number of types (2)
 
-            public_index = make_alias_name(PUBLIC_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
-            private_index = make_alias_name(PRIVATE_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
+            public_index = make_alias_name(
+                PUBLIC_ENROLLMENT_INDEX_TYPE, is_reindexing=False
+            )
+            private_index = make_alias_name(
+                PRIVATE_ENROLLMENT_INDEX_TYPE, is_reindexing=False
+            )
             for offset in range(0, num_enrollments, chunk_size):
                 # each enrollment should get yielded twice to account for each doctype
                 index_chunk.assert_any_call(
-                    public[offset:offset+4],  # ordered dicts FTW
-                    index=public_index
+                    public[offset : offset + 4], index=public_index  # ordered dicts FTW
                 )
                 index_chunk.assert_any_call(
-                    private[offset:offset+4],
-                    index=private_index
+                    private[offset : offset + 4], index=private_index
                 )
 
             assert serialize_mock.call_count == len(program_enrollments)
@@ -321,13 +378,15 @@ class IndexTests(ESTestCase):
         with mute_signals(post_save):
             program_enrollments = [ProgramEnrollmentFactory.build() for _ in range(10)]
         with patch(
-            'search.indexing_api._index_chunk', autospec=True, return_value=0
+            "search.indexing_api._index_chunk", autospec=True, return_value=0
         ) as index_chunk, patch(
-            'search.indexing_api.serialize_program_enrolled_user',
+            "search.indexing_api.serialize_program_enrolled_user",
             autospec=True,
-            side_effect=lambda x: None  # simulate a missing profile
+            side_effect=lambda x: None,  # simulate a missing profile
         ) as serialize_mock, patch(
-            'search.indexing_api.serialize_public_enrolled_user', autospec=True, side_effect=lambda x: x
+            "search.indexing_api.serialize_public_enrolled_user",
+            autospec=True,
+            side_effect=lambda x: x,
         ) as serialize_public_mock:
             index_program_enrolled_users(program_enrollments)
             assert index_chunk.call_count == 0
@@ -340,13 +399,21 @@ class IndexTests(ESTestCase):
         Test that cached edX records are indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory, CachedCurrentGradeFactory]:
-            assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        for edx_cached_model_factory in [
+            CachedCertificateFactory,
+            CachedEnrollmentFactory,
+            CachedCurrentGradeFactory,
+        ]:
+            assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
             course = CourseFactory.create(program=program_enrollment.program)
             course_run = CourseRunFactory.create(course=course)
-            edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
+            edx_cached_model_factory.create(
+                user=program_enrollment.user, course_run=course_run
+            )
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+            assert_search(
+                es.search(index_type), [program_enrollment], index_type=index_type
+            )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_update_edx_record(self, index_type, mock_on_commit):
@@ -354,16 +421,24 @@ class IndexTests(ESTestCase):
         Test that a cached edX record is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory, CachedCurrentGradeFactory]:
-            assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        for edx_cached_model_factory in [
+            CachedCertificateFactory,
+            CachedEnrollmentFactory,
+            CachedCurrentGradeFactory,
+        ]:
+            assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
             course = CourseFactory.create(program=program_enrollment.program)
             course_run = CourseRunFactory.create(course=course)
-            edx_record = edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
+            edx_record = edx_cached_model_factory.create(
+                user=program_enrollment.user, course_run=course_run
+            )
             index_program_enrolled_users([program_enrollment])
-            edx_record.data.update({'new': 'data'})
+            edx_record.data.update({"new": "data"})
             edx_record.save()
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+            assert_search(
+                es.search(index_type), [program_enrollment], index_type=index_type
+            )
 
     @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
     def test_delete_edx_record(self, index_type, mock_on_commit):
@@ -371,15 +446,25 @@ class IndexTests(ESTestCase):
         Test that a cached edX record is removed from index after being deleted
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory, CachedCurrentGradeFactory]:
+        for edx_cached_model_factory in [
+            CachedCertificateFactory,
+            CachedEnrollmentFactory,
+            CachedCurrentGradeFactory,
+        ]:
             course = CourseFactory.create(program=program_enrollment.program)
             course_run = CourseRunFactory.create(course=course)
-            edx_record = edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
+            edx_record = edx_cached_model_factory.create(
+                user=program_enrollment.user, course_run=course_run
+            )
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+            assert_search(
+                es.search(index_type), [program_enrollment], index_type=index_type
+            )
             edx_record.delete()
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+            assert_search(
+                es.search(index_type), [program_enrollment], index_type=index_type
+            )
 
     def test_analyzed(self, mock_on_commit):
         """
@@ -395,9 +480,9 @@ class IndexTests(ESTestCase):
             nodes = list(traverse_mapping(mapping, ""))
             for key, node in nodes:
                 if key == "folded":
-                    assert node['analyzer'] == "folding"
-                elif node.get('type') == 'string':
-                    assert node['index'] == 'not_analyzed'
+                    assert node["analyzer"] == "folding"
+                elif node.get("type") == "string":
+                    assert node["index"] == "not_analyzed"
 
     def test_folded(self, mock_on_commit):
         """
@@ -409,16 +494,24 @@ class IndexTests(ESTestCase):
 
         for index_type in ALL_INDEX_TYPES:
             mapping = es.get_mappings(index_type)
-            properties = mapping['properties']
+            properties = mapping["properties"]
             if index_type == PUBLIC_ENROLLMENT_INDEX_TYPE:
                 # Make sure we aren't exposing people's email addresses
-                assert 'email' not in properties
+                assert "email" not in properties
             else:
-                assert properties['email']['fields']['folded']['analyzer'] == 'folding'
+                assert properties["email"]["fields"]["folded"]["analyzer"] == "folding"
 
-            profile_properties = properties['profile']['properties']
-            for key in 'first_name', 'last_name', 'preferred_name', 'full_name', 'username':
-                assert profile_properties[key]['fields']['folded']['analyzer'] == 'folding'
+            profile_properties = properties["profile"]["properties"]
+            for key in (
+                "first_name",
+                "last_name",
+                "preferred_name",
+                "full_name",
+                "username",
+            ):
+                assert (
+                    profile_properties[key]["fields"]["folded"]["analyzer"] == "folding"
+                )
 
     @data(
         *itertools.product(
@@ -432,20 +525,18 @@ class IndexTests(ESTestCase):
         Test that `is_learner` status is change when role is save
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         sources = get_sources(es.search(index_type))
         # user is learner
-        assert sources[0]['program']['is_learner'] is True
+        assert sources[0]["program"]["is_learner"] is True
 
         Role.objects.create(
-            user=program_enrollment.user,
-            program=program_enrollment.program,
-            role=role
+            user=program_enrollment.user, program=program_enrollment.program, role=role
         )
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         # user is not learner
         sources = get_sources(es.search(index_type))
-        assert sources[0]['program']['is_learner'] is False
+        assert sources[0]["program"]["is_learner"] is False
 
     @data(
         *itertools.product(
@@ -459,36 +550,33 @@ class IndexTests(ESTestCase):
         Test that `is_learner` status is restore once role is removed for a user.
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         sources = get_sources(es.search(index_type))
         # user is learner
-        assert sources[0]['program']['is_learner'] is True
+        assert sources[0]["program"]["is_learner"] is True
         Role.objects.create(
-            user=program_enrollment.user,
-            program=program_enrollment.program,
-            role=role
+            user=program_enrollment.user, program=program_enrollment.program, role=role
         )
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         # user is not learner
         sources = get_sources(es.search(index_type))
-        assert sources[0]['program']['is_learner'] is False
+        assert sources[0]["program"]["is_learner"] is False
 
         # when staff role is deleted
         Role.objects.filter(
-            user=program_enrollment.user,
-            program=program_enrollment.program,
-            role=role
+            user=program_enrollment.user, program=program_enrollment.program, role=role
         ).delete()
-        assert es.search(index_type)['total']['value'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)["total"]["value"] == DOC_TYPES_PER_ENROLLMENT
         sources = get_sources(es.search(index_type))
         # user is learner
-        assert sources[0]['program']['is_learner'] is True
+        assert sources[0]["program"]["is_learner"] is True
 
 
 class SerializerTests(ESTestCase):
     """
     Tests for document serializers
     """
+
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
@@ -500,9 +588,13 @@ class SerializerTests(ESTestCase):
         course = CourseFactory.create(program=program)
         course_runs = [CourseRunFactory.create(course=course) for _ in range(2)]
         for course_run in course_runs:
-            CachedCertificateFactory.create(user=cls.profile.user, course_run=course_run)
+            CachedCertificateFactory.create(
+                user=cls.profile.user, course_run=course_run
+            )
             CachedEnrollmentFactory.create(user=cls.profile.user, course_run=course_run)
-        cls.program_enrollment = ProgramEnrollment.objects.create(user=cls.profile.user, program=program)
+        cls.program_enrollment = ProgramEnrollment.objects.create(
+            user=cls.profile.user, program=program
+        )
 
     def test_program_enrolled_user_serializer(self):
         """
@@ -511,12 +603,12 @@ class SerializerTests(ESTestCase):
         profile = self.profile
         program_enrollment = self.program_enrollment
         assert serialize_program_enrolled_user(program_enrollment) == {
-            '_id': program_enrollment.id,
-            'id': program_enrollment.id,
-            'user_id': profile.user.id,
-            'email': profile.user.email,
-            'profile': filter_current_work(ProfileSerializer(profile).data),
-            'program': UserProgramSearchSerializer.serialize(program_enrollment)
+            "_id": program_enrollment.id,
+            "id": program_enrollment.id,
+            "user_id": profile.user.id,
+            "email": profile.user.email,
+            "profile": filter_current_work(ProfileSerializer(profile).data),
+            "program": UserProgramSearchSerializer.serialize(program_enrollment),
         }
 
     def test_public_enrolled_user_serializer(self):
@@ -529,44 +621,48 @@ class SerializerTests(ESTestCase):
         serialized = serialize_program_enrolled_user(program_enrollment)
 
         assert serialize_public_enrolled_user(serialized) == {
-            '_id': program_enrollment.id,
-            'id': program_enrollment.id,
-            'user_id': profile.user.id,
-            'profile': {
-                'first_name': profile.first_name,
-                'last_name': profile.last_name,
-                'full_name': profile.full_name,
-                'preferred_name': profile.preferred_name,
-                'romanized_first_name': profile.romanized_first_name,
-                'romanized_last_name': profile.romanized_last_name,
-                'image': f'/media/{profile.image}',
-                'image_small': f'/media/{profile.image_small}',
-                'image_medium': f'/media/{profile.image_medium}',
-                'username': profile.user.username,
-                'filled_out': profile.filled_out,
-                'account_privacy': profile.account_privacy,
-                'country': profile.country,
-                'state_or_territory': profile.state_or_territory,
-                'city': profile.city,
-                'birth_country': profile.birth_country,
-                'work_history': serialized['profile']['work_history'],
+            "_id": program_enrollment.id,
+            "id": program_enrollment.id,
+            "user_id": profile.user.id,
+            "profile": {
+                "first_name": profile.first_name,
+                "last_name": profile.last_name,
+                "full_name": profile.full_name,
+                "preferred_name": profile.preferred_name,
+                "romanized_first_name": profile.romanized_first_name,
+                "romanized_last_name": profile.romanized_last_name,
+                "image": f"/media/{profile.image}",
+                "image_small": f"/media/{profile.image_small}",
+                "image_medium": f"/media/{profile.image_medium}",
+                "username": profile.user.username,
+                "filled_out": profile.filled_out,
+                "account_privacy": profile.account_privacy,
+                "country": profile.country,
+                "state_or_territory": profile.state_or_territory,
+                "city": profile.city,
+                "birth_country": profile.birth_country,
+                "work_history": serialized["profile"]["work_history"],
             },
-            'program': {
-                'id': program_enrollment.program.id,
-                'enrollments': [{
-                    'course_title': enrollment['course_title'],
-                    'semester': enrollment['semester']
-                } for enrollment in serialized['program']['enrollments']],
-                'courses': [{
-                    'course_title': enrollment['course_title']
-                } for enrollment in serialized['program']['courses']],
-                'course_runs': [{
-                    'semester': semester_enrolled['semester']
-
-                } for semester_enrolled in serialized['program']['course_runs']],
-                'is_learner': True,
-                'total_courses': 1,
-            }
+            "program": {
+                "id": program_enrollment.program.id,
+                "enrollments": [
+                    {
+                        "course_title": enrollment["course_title"],
+                        "semester": enrollment["semester"],
+                    }
+                    for enrollment in serialized["program"]["enrollments"]
+                ],
+                "courses": [
+                    {"course_title": enrollment["course_title"]}
+                    for enrollment in serialized["program"]["courses"]
+                ],
+                "course_runs": [
+                    {"semester": semester_enrolled["semester"]}
+                    for semester_enrolled in serialized["program"]["course_runs"]
+                ],
+                "is_learner": True,
+                "total_courses": 1,
+            },
         }
 
 
@@ -575,6 +671,7 @@ class GetConnTests(ESTestCase):
     """
     Tests for get_conn
     """
+
     def setUp(self):
         """
         Start without any index
@@ -588,6 +685,7 @@ class GetConnTests(ESTestCase):
 
         # Clear globals
         from search import indexing_api
+
         indexing_api._CONN = None  # pylint: disable=protected-access
         indexing_api._CONN_VERIFIED = False  # pylint: disable=protected-access
 
@@ -613,17 +711,36 @@ class GetConnTests(ESTestCase):
         assert str(ex.exception) == f"Unable to find index {other_index}"
 
     @data(
-        [False, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_private_enrollment_default',)],
-        [False, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_public_enrollment_default',)],
-        [False, PERCOLATE_INDEX_TYPE, ('testindex_percolate_default',)],
-        [True, PRIVATE_ENROLLMENT_INDEX_TYPE,
-         ('testindex_private_enrollment_default', 'testindex_private_enrollment_reindexing')],
-        [True, PUBLIC_ENROLLMENT_INDEX_TYPE,
-         ('testindex_public_enrollment_default', 'testindex_public_enrollment_reindexing')],
-        [True, PERCOLATE_INDEX_TYPE,
-         ('testindex_percolate_default', 'testindex_percolate_reindexing')],
+        [
+            False,
+            PRIVATE_ENROLLMENT_INDEX_TYPE,
+            ("testindex_private_enrollment_default",),
+        ],
+        [False, PUBLIC_ENROLLMENT_INDEX_TYPE, ("testindex_public_enrollment_default",)],
+        [False, PERCOLATE_INDEX_TYPE, ("testindex_percolate_default",)],
+        [
+            True,
+            PRIVATE_ENROLLMENT_INDEX_TYPE,
+            (
+                "testindex_private_enrollment_default",
+                "testindex_private_enrollment_reindexing",
+            ),
+        ],
+        [
+            True,
+            PUBLIC_ENROLLMENT_INDEX_TYPE,
+            (
+                "testindex_public_enrollment_default",
+                "testindex_public_enrollment_reindexing",
+            ),
+        ],
+        [
+            True,
+            PERCOLATE_INDEX_TYPE,
+            ("testindex_percolate_default", "testindex_percolate_reindexing"),
+        ],
     )
-    @override_settings(OPENSEARCH_INDEX='testindex')
+    @override_settings(OPENSEARCH_INDEX="testindex")
     @unpack
     # pylint: disable=too-many-arguments
     def test_get_aliases(self, is_reindex, index_type, expected_indices):
@@ -640,7 +757,10 @@ class GetConnTests(ESTestCase):
         conn.indices.put_alias(index=backing_index, name=alias)
 
         if is_reindex:
-            conn.indices.put_alias(index=backing_index, name=make_alias_name(index_type, is_reindexing=True))
+            conn.indices.put_alias(
+                index=backing_index,
+                name=make_alias_name(index_type, is_reindexing=True),
+            )
 
         aliases = get_aliases(index_type)
         assert aliases == list(expected_indices)
@@ -666,12 +786,14 @@ class RecreateIndexTests(ESTestCase):
         """
         Test that recreate_index will create an index and let search successfully
         """
-        assert es.search(index_type)['total']['value'] == 0
+        assert es.search(index_type)["total"]["value"] == 0
 
-    @data(*itertools.product(
-        [True, False],
-        [PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE],
-    ))
+    @data(
+        *itertools.product(
+            [True, False],
+            [PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE],
+        )
+    )
     @unpack
     def test_keep_alias(self, existing_temp_alias, index_type):
         """
@@ -703,15 +825,21 @@ class RecreateIndexTests(ESTestCase):
         """
         Test that recreate_index will clear old data and index all profiles
         """
-        with patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback()):
+        with patch(
+            "search.signals.transaction.on_commit",
+            side_effect=lambda callback: callback(),
+        ):
             program_enrollment = ProgramEnrollmentFactory.create()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
         remove_program_enrolled_user(program_enrollment.id)
         assert_search(es.search(index_type), [], index_type=index_type)
         # recreate_index should index the program-enrolled user
         reindex_test_es_data()
-        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
-
+        assert_search(
+            es.search(index_type), [program_enrollment], index_type=index_type
+        )
 
     def test_update_during_recreate_index(self):
         """
@@ -730,16 +858,21 @@ class RecreateIndexTests(ESTestCase):
             conn.indices.put_alias(index=temp_index, name=temp_alias)
             temp_aliases[index_type] = temp_alias
 
-        with patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback()):
+        with patch(
+            "search.signals.transaction.on_commit",
+            side_effect=lambda callback: callback(),
+        ):
             program_enrollment = ProgramEnrollmentFactory.create()
 
         for index_type in index_types:
-            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+            assert_search(
+                es.search(index_type), [program_enrollment], index_type=index_type
+            )
 
             # Temp alias should get updated
             temp_alias = temp_aliases[index_type]
             refresh_index(temp_alias)
-            temp_hits = conn.search(index=temp_alias)['hits']
+            temp_hits = conn.search(index=temp_alias)["hits"]
             assert_search(temp_hits, [program_enrollment], index_type=index_type)
 
 
@@ -751,7 +884,9 @@ class PercolateQueryTests(ESTestCase):
     def test_index_percolate_query(self):
         """Test that we index the percolate query"""
         query = {"query": {"match": {"profile.first_name": "here"}}}
-        percolate_query = PercolateQueryFactory.create(query=query, original_query="original")
+        percolate_query = PercolateQueryFactory.create(
+            query=query, original_query="original"
+        )
         percolate_query_id = 123
         percolate_query.id = percolate_query_id
         # Don't save since that will trigger a signal which will update the index
@@ -759,30 +894,32 @@ class PercolateQueryTests(ESTestCase):
             es.get_percolate_query(percolate_query_id)
         index_percolate_queries([percolate_query])
         assert es.get_percolate_query(percolate_query_id) == {
-            '_id': str(percolate_query_id),
-            '_index': es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
-            '_source': query,
-            '_seq_no': 0,
-            '_primary_term': 1,
-            '_type': GLOBAL_DOC_TYPE,
-            '_version': 1,
-            'found': True,
+            "_id": str(percolate_query_id),
+            "_index": es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
+            "_source": query,
+            "_seq_no": 0,
+            "_primary_term": 1,
+            "_type": GLOBAL_DOC_TYPE,
+            "_version": 1,
+            "found": True,
         }
 
     def test_delete_percolate_queries(self):
         """Test that we delete the percolate query from the index"""
         query = {"query": {"match": {"profile.first_name": "here"}}}
-        with patch('search.signals.transaction', on_commit=lambda callback: callback()):
-            percolate_query = PercolateQueryFactory.create(query=query, original_query="original")
+        with patch("search.signals.transaction", on_commit=lambda callback: callback()):
+            percolate_query = PercolateQueryFactory.create(
+                query=query, original_query="original"
+            )
             assert es.get_percolate_query(percolate_query.id) == {
-                '_id': str(percolate_query.id),
-                '_index': es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
-                '_source': query,
-                '_seq_no': 0,
-                '_primary_term': 1,
-                '_type': GLOBAL_DOC_TYPE,
-                '_version': 1,
-                'found': True,
+                "_id": str(percolate_query.id),
+                "_index": es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
+                "_source": query,
+                "_seq_no": 0,
+                "_primary_term": 1,
+                "_type": GLOBAL_DOC_TYPE,
+                "_version": 1,
+                "found": True,
             }
             delete_percolate_query(percolate_query.id)
             with self.assertRaises(NotFoundError):
@@ -802,28 +939,12 @@ class PercolateQueryTests(ESTestCase):
                     "filter": [
                         {
                             "bool": {
-                                "must": [
-                                    {
-                                        "term": {
-                                            "program.is_learner": True
-                                        }
-                                    }
-                                ],
-                                "should": [
-                                    {
-                                        "term": {
-                                            "program.id": 34
-                                        }
-                                    }
-                                ],
-                                "minimum_should_match": 1
+                                "must": [{"term": {"program.is_learner": True}}],
+                                "should": [{"term": {"program.id": 34}}],
+                                "minimum_should_match": 1,
                             }
                         },
-                        {
-                            "term": {
-                                "profile.filled_out": True
-                            }
-                        },
+                        {"term": {"profile.filled_out": True}},
                         {
                             "bool": {
                                 "must": [
@@ -834,17 +955,13 @@ class PercolateQueryTests(ESTestCase):
                                                 "term": {
                                                     "program.course_runs.semester": "2015 - Summer"
                                                 }
-                                            }
+                                            },
                                         }
                                     },
-                                    {
-                                        "term": {
-                                            "program.id": 34
-                                        }
-                                    }
+                                    {"term": {"program.id": 34}},
                                 ]
                             }
-                        }
+                        },
                     ]
                 }
             }
@@ -861,42 +978,18 @@ class PercolateQueryTests(ESTestCase):
                         {
                             "bool": {
                                 "must": [
-                                    {
-                                        "term": {
-                                            "program.is_learner": True
-                                        }
-                                    },
-                                    {
-                                        "term": {
-                                            "profile.email_optin": True
-                                        }
-                                    }
+                                    {"term": {"program.is_learner": True}},
+                                    {"term": {"profile.email_optin": True}},
                                 ],
                                 "should": [
-                                    {
-                                        "term": {
-                                            "program.id": 1
-                                        }
-                                    },
-                                    {
-                                        "term": {
-                                            "program.id": 2
-                                        }
-                                    },
-                                    {
-                                        "term": {
-                                            "program.id": 13
-                                        }
-                                    }
+                                    {"term": {"program.id": 1}},
+                                    {"term": {"program.id": 2}},
+                                    {"term": {"program.id": 13}},
                                 ],
-                                "minimum_should_match": 1
+                                "minimum_should_match": 1,
                             }
                         },
-                        {
-                            "term": {
-                                "profile.filled_out": True
-                            }
-                        },
+                        {"term": {"profile.filled_out": True}},
                         {
                             "bool": {
                                 "must": [
@@ -908,48 +1001,35 @@ class PercolateQueryTests(ESTestCase):
                                                     "must": [
                                                         {
                                                             "term": {
-                                                                "program.courses.course_title":
-                                                                    "Supply Chain Fundamentals  (SC1x)"
+                                                                "program.courses.course_title": "Supply Chain Fundamentals  (SC1x)"
                                                             }
                                                         },
                                                         {
                                                             "term": {
                                                                 "program.courses.payment_status": "Auditing"
                                                             }
-                                                        }
+                                                        },
                                                     ]
                                                 }
-                                            }
+                                            },
                                         }
                                     },
                                     {
-                                        'nested': {
-                                            'path': "program.course_runs",
-                                            'query': {
-                                                'term': {
-                                                    'program.course_runs.semester': "2016 - Summer"
+                                        "nested": {
+                                            "path": "program.course_runs",
+                                            "query": {
+                                                "term": {
+                                                    "program.course_runs.semester": "2016 - Summer"
                                                 }
-                                            }
+                                            },
                                         }
                                     },
-                                    {
-                                        "term": {
-                                            "profile.birth_country": "DE"
-                                        }
-                                    },
-                                    {
-                                        "term": {
-                                            "profile.country": "US"
-                                        }
-                                    },
-                                    {
-                                        "term": {
-                                            "program.id": 1
-                                        }
-                                    }
+                                    {"term": {"profile.birth_country": "DE"}},
+                                    {"term": {"profile.country": "US"}},
+                                    {"term": {"program.id": 1}},
                                 ]
                             }
-                        }
+                        },
                     ]
                 }
             }

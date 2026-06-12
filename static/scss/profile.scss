@@ -90,7 +90,8 @@
     }
   }
 
-  .profile-radio-switch, .profile-radio-group {
+  .profile-radio-switch,
+  .profile-radio-group {
     font-size: 14px;
     display: flex;
     flex-direction: row;
@@ -132,7 +133,8 @@
     .profile-card-header {
       justify-content: space-between;
 
-      .title, span {
+      .title,
+      span {
         font-weight: 500;
         font-size: 18px;
       }
@@ -242,7 +244,7 @@
   }
 
   .bound-check-box {
-    margin:  12px 0 20px;
+    margin: 12px 0 20px;
   }
 }
 
@@ -334,7 +336,7 @@
     width: 100%;
     white-space: pre-wrap;
     font-weight: 400;
-    color: rbga(0,0,0,.75);
+    color: rbga(0, 0, 0, 0.75);
     line-height: 1.4em;
 
     &.placeholder {

@@ -9,17 +9,9 @@ import type { Course } from "../flow/programTypes"
 // and processing grades, mainly for displaying them in the dashboard
 
 const findLargestGrade = key =>
-  R.compose(
-    R.prop(key),
-    R.reduce(R.maxBy(R.prop(key)), { [key]: 0 })
-  )
+  R.compose(R.prop(key), R.reduce(R.maxBy(R.prop(key)), { [key]: 0 }))
 
-const filterEmpty = S.filter(
-  R.compose(
-    R.not,
-    R.isEmpty
-  )
-)
+const filterEmpty = S.filter(R.compose(R.not, R.isEmpty))
 
 // getLargestExamGrade :: Course -> Maybe Number
 export const getLargestExamGrade = R.compose(

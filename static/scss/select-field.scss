@@ -1,15 +1,15 @@
-.select-field, .Select {
+.select-field,
+.Select {
   .Select-menu-outer {
     z-index: 10000;
   }
 }
 
 .select-field {
-
   .select-label {
     font-size: 12px;
     font-weight: 400;
-    color: rgba(0,0,0,.5);
+    color: rgba(0, 0, 0, 0.5);
     position: relative;
     top: 4px;
     left: 2px;
@@ -26,7 +26,6 @@
 }
 
 .Select--single > .Select-control {
-
   border-radius: 0;
   border: none;
   border-bottom: 1px solid #dcdcdc;

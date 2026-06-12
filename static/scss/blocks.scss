@@ -41,11 +41,11 @@
   margin-bottom: 0;
 }
 
-.blocks-2 > li:nth-child(2n+3),
-.blocks-3 > li:nth-child(3n+4),
-.blocks-4 > li:nth-child(4n+5),
-.blocks-5 > li:nth-child(5n+6),
-.blocks-6 > li:nth-child(6n+7),
+.blocks-2 > li:nth-child(2n + 3),
+.blocks-3 > li:nth-child(3n + 4),
+.blocks-4 > li:nth-child(4n + 5),
+.blocks-5 > li:nth-child(5n + 6),
+.blocks-6 > li:nth-child(6n + 7),
 .block-first {
   clear: both;
 }

@@ -29,7 +29,7 @@ class CanEditIfOwnerTests(MockedESTestCase):
         Users are allowed to use safe methods without owning the profile.
         """
         perm = CanEditIfOwner()
-        for method in ('GET', 'HEAD', 'OPTIONS'):
+        for method in ("GET", "HEAD", "OPTIONS"):
             request = Mock(method=method)
             with mute_signals(post_save):
                 profile = ProfileFactory.create()
@@ -40,7 +40,7 @@ class CanEditIfOwnerTests(MockedESTestCase):
         Users are allowed to edit their own profile
         """
         perm = CanEditIfOwner()
-        for method in ('POST', 'PATCH', 'PUT'):
+        for method in ("POST", "PATCH", "PUT"):
             with mute_signals(post_save):
                 profile = ProfileFactory.create()
             request = Mock(method=method, user=profile.user)
@@ -52,7 +52,7 @@ class CanEditIfOwnerTests(MockedESTestCase):
         """
         perm = CanEditIfOwner()
         other_user = UserFactory.create()
-        for method in ('POST', 'PATCH', 'PUT'):
+        for method in ("POST", "PATCH", "PUT"):
             with mute_signals(post_save):
                 profile = ProfileFactory.create(account_privacy=Profile.PUBLIC_TO_MM)
 
@@ -78,7 +78,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         new_profile = SocialProfileFactory.create(account_privacy=Profile.PRIVATE)
 
         request = Mock(user=self.user)
-        view = Mock(kwargs={'user': new_profile.user.username})
+        view = Mock(kwargs={"user": new_profile.user.username})
 
         with self.assertRaises(Http404):
             self.perm.has_permission(request, view)
@@ -88,10 +88,12 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         """
         Anonymous are not supposed to view public_to_mm or private profiles.
         """
-        new_profile = SocialProfileFactory.create(account_privacy=account_privacy_setting)
+        new_profile = SocialProfileFactory.create(
+            account_privacy=account_privacy_setting
+        )
 
         request = Mock(user=Mock(is_anonymous=True))
-        view = Mock(kwargs={'user': new_profile.user.username})
+        view = Mock(kwargs={"user": new_profile.user.username})
 
         with self.assertRaises(Http404):
             self.perm.has_permission(request, view)
@@ -103,7 +105,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         new_profile = SocialProfileFactory.create(account_privacy=Profile.PUBLIC)
 
         request = Mock(user=Mock(is_anonymous=True))
-        view = Mock(kwargs={'user': new_profile.user.username})
+        view = Mock(kwargs={"user": new_profile.user.username})
 
         assert self.perm.has_permission(request, view) is True
 
@@ -114,7 +116,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         new_profile = SocialProfileFactory.create(account_privacy=Profile.PUBLIC_TO_MM)
 
         request = Mock(user=self.user)
-        view = Mock(kwargs={'user': new_profile.user.username})
+        view = Mock(kwargs={"user": new_profile.user.username})
 
         with self.assertRaises(Http404):
             self.perm.has_permission(request, view)
@@ -123,10 +125,10 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         """
         Users can not open profiles with ambiguous account_privacy settings.
         """
-        new_profile = SocialProfileFactory.create(account_privacy='weird_setting')
+        new_profile = SocialProfileFactory.create(account_privacy="weird_setting")
 
         request = Mock(user=self.user)
-        view = Mock(kwargs={'user': new_profile.user.username})
+        view = Mock(kwargs={"user": new_profile.user.username})
 
         with self.assertRaises(Http404):
             self.perm.has_permission(request, view)
@@ -136,7 +138,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         Users are allowed to view their own profile.
         """
         request = Mock(user=self.user)
-        view = Mock(kwargs={'user': self.user.username})
+        view = Mock(kwargs={"user": self.user.username})
 
         assert self.perm.has_permission(request, view) is True
 
@@ -147,14 +149,16 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         new_profile = SocialProfileFactory.create(account_privacy=Profile.PUBLIC)
 
         request = Mock(user=self.user)
-        view = Mock(kwargs={'user': new_profile.user.username})
+        view = Mock(kwargs={"user": new_profile.user.username})
         assert self.perm.has_permission(request, view) is True
 
     def test_can_view_if_verified_mm_user(self):
         """
         Verified MM users are allowed to view public_to_mm profile.
         """
-        new_user = SocialProfileFactory.create(account_privacy=Profile.PUBLIC_TO_MM).user
+        new_user = SocialProfileFactory.create(
+            account_privacy=Profile.PUBLIC_TO_MM
+        ).user
         verified_user = SocialProfileFactory.create(verified_micromaster_user=True).user
         program = ProgramFactory.create()
         for user in [new_user, verified_user]:
@@ -164,18 +168,20 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
             )
 
         request = Mock(user=verified_user)
-        view = Mock(kwargs={'user': new_user.username})
+        view = Mock(kwargs={"user": new_user.username})
         assert self.perm.has_permission(request, view) is True
 
     def test_view_public_to_mm_when_no_common_programs(self):
         """
         Users are not allowed to view public_to_mm profile if there are no common programs.
         """
-        new_user = SocialProfileFactory.create(account_privacy=Profile.PUBLIC_TO_MM).user
+        new_user = SocialProfileFactory.create(
+            account_privacy=Profile.PUBLIC_TO_MM
+        ).user
         verified_user = SocialProfileFactory.create(verified_micromaster_user=True).user
 
         request = Mock(user=verified_user)
-        view = Mock(kwargs={'user': new_user.username})
+        view = Mock(kwargs={"user": new_user.username})
         with self.assertRaises(Http404):
             self.perm.has_permission(request, view)
 
@@ -202,7 +208,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
             role=role_to_set,
         )
         request = Mock(user=self.user)
-        view = Mock(kwargs={'user': new_user.username})
+        view = Mock(kwargs={"user": new_user.username})
 
         assert self.perm.has_permission(request, view) is True
 

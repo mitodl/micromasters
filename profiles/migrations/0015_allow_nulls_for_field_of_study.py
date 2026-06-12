@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0014_removed_images'),
+        ("profiles", "0014_removed_images"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='education',
-            name='field_of_study',
+            model_name="education",
+            name="field_of_study",
             field=models.TextField(blank=True, null=True),
         ),
     ]

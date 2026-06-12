@@ -10,11 +10,11 @@ _CONN = None
 # When we create the connection, check to make sure all appropriate mappings exist
 _CONN_VERIFIED = False
 
-PUBLIC_ENROLLMENT_INDEX_TYPE = 'public_enrollment'
-PRIVATE_ENROLLMENT_INDEX_TYPE = 'private_enrollment'
-PERCOLATE_INDEX_TYPE = 'percolate'
+PUBLIC_ENROLLMENT_INDEX_TYPE = "public_enrollment"
+PRIVATE_ENROLLMENT_INDEX_TYPE = "private_enrollment"
+PERCOLATE_INDEX_TYPE = "percolate"
 
-GLOBAL_DOC_TYPE = '_doc'
+GLOBAL_DOC_TYPE = "_doc"
 
 ALL_INDEX_TYPES = [
     PUBLIC_ENROLLMENT_INDEX_TYPE,
@@ -47,7 +47,7 @@ def get_conn(*, verify=True, verify_indices=None):
             http_auth=http_auth,
             use_ssl=use_ssl,
             # make sure we verify SSL certificates (off by default)
-            verify_certs=use_ssl
+            verify_certs=use_ssl,
         )
         # Verify connection on first connect if verify=True.
         do_verify = verify
@@ -67,9 +67,7 @@ def get_conn(*, verify=True, verify_indices=None):
     if verify_indices is None:
         verify_indices = set()
         for index_type in ALL_INDEX_TYPES:
-            verify_indices = verify_indices.union(
-                get_aliases(index_type)
-            )
+            verify_indices = verify_indices.union(get_aliases(index_type))
     for verify_index in verify_indices:
         if not _CONN.indices.exists(verify_index):
             raise ReindexException(f"Unable to find index {verify_index}")

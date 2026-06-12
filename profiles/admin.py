@@ -10,21 +10,22 @@ from .models import Profile
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     """Admin for Profile"""
+
     model = Profile
     list_display = [
-        'user',
-        'first_name',
-        'last_name',
-        'email_optin',
+        "user",
+        "first_name",
+        "last_name",
+        "email_optin",
     ]
     search_fields = [
-        'user__username',
-        'user__email',
-        'first_name',
-        'last_name',
+        "user__username",
+        "user__email",
+        "first_name",
+        "last_name",
     ]
     list_filter = [
-        'email_optin',
-        'user__is_active',
+        "email_optin",
+        "user__is_active",
     ]
-    raw_id_fields = ('user',)
+    raw_id_fields = ("user",)

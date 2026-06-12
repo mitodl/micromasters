@@ -12,6 +12,7 @@ class AttachAvatarsTest(MockedESTestCase):
     """
     Tests for attach_avatars
     """
+
     def setUp(self):
         super().setUp()
         self.command = Command()

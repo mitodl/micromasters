@@ -28,10 +28,7 @@ def create_enrolled_user_batch(num_to_create, program, **kwargs):
     with mute_signals(post_save):
         new_users = create_user_batch(num_to_create, **kwargs)
         program_enrollments = [
-            ProgramEnrollment.objects.create(
-                program=program,
-                user=user
-            )
+            ProgramEnrollment.objects.create(program=program, user=user)
             for user in new_users
         ]
     index_program_enrolled_users(program_enrollments)
@@ -48,13 +45,13 @@ def create_user_for_login(is_staff=True, username=None):
             image=None,  # make these None so the default image is used
             image_small=None,
             image_medium=None,
-            **({'user__username': username} if username is not None else {}),
+            **({"user__username": username} if username is not None else {}),
             user__social_auth__extra_data={
-                'access_token': 'fake',
-                'refresh_token': 'fake',
-                'updated_at': later.timestamp(),
-                'expires_in': 3600,
-            }
+                "access_token": "fake",
+                "refresh_token": "fake",
+                "updated_at": later.timestamp(),
+                "expires_in": 3600,
+            },
         ).user
 
     UserCacheRefreshTime.objects.create(

@@ -14,9 +14,11 @@ from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory, UserFactory
 from profiles.models import Profile
 from profiles.test_mixins import ProfileImageCleanupMixin
-from profiles.util import (profile_image_upload_uri,
-                           profile_image_upload_uri_medium,
-                           profile_image_upload_uri_small)
+from profiles.util import (
+    profile_image_upload_uri,
+    profile_image_upload_uri_medium,
+    profile_image_upload_uri_small,
+)
 from search.base import MockedESTestCase
 
 
@@ -60,25 +62,35 @@ class StudentIdTests(MockedESTestCase):
             user = UserFactory()
         profile = Profile(user=user)
         assert profile.student_id is None
-        assert profile.pretty_printed_student_id == ''
+        assert profile.pretty_printed_student_id == ""
 
 
 class ImageTests(MockedESTestCase):
     """
     Tests for image fields
     """
+
     def test_upload_to(self):
         """
         Image upload_to should have a function which creates a path
         """
         # pin the timestamps used in creating the URL
-        with patch('profiles.util.now_in_utc', autospec=True) as mocked_now_in_utc:
+        with patch("profiles.util.now_in_utc", autospec=True) as mocked_now_in_utc:
             mocked_now_in_utc.return_value = now_in_utc()
             with mute_signals(post_save):
                 profile = ProfileFactory.create()
-            assert profile_image_upload_uri(None, "example").replace("+", "") in profile.image.url
-            assert profile_image_upload_uri_small(None, "example").replace("+", "") in profile.image_small.url
-            assert profile_image_upload_uri_medium(None, "example").replace("+", "") in profile.image_medium.url
+            assert (
+                profile_image_upload_uri(None, "example").replace("+", "")
+                in profile.image.url
+            )
+            assert (
+                profile_image_upload_uri_small(None, "example").replace("+", "")
+                in profile.image_small.url
+            )
+            assert (
+                profile_image_upload_uri_medium(None, "example").replace("+", "")
+                in profile.image_medium.url
+            )
 
 
 class ProfileAddressTests(MockedESTestCase):
@@ -132,9 +144,9 @@ class ProfileCountrySubdivisionTests(MockedESTestCase):
 
     @data(
         (None, (None, None)),
-        ('MA', (None, None)),
-        ('US-MA', ('US', 'MA')),
-        ('US-MA-BS', (None, None)),  # non a valid code
+        ("MA", (None, None)),
+        ("US-MA", ("US", "MA")),
+        ("US-MA-BS", (None, None)),  # non a valid code
     )
     @unpack
     def test_country_subdivision(self, state, expected_result):
@@ -150,44 +162,54 @@ class ProfileDisplayNameTests(MockedESTestCase):
     """
     Tests for profile display name
     """
+
     def test_full_display_name(self):
         """Test the profile display name with all name components set"""
         with mute_signals(post_save):
-            profile = ProfileFactory(first_name='First', last_name='Last', preferred_name='Pref')
-        assert profile.display_name == 'First Last (Pref)'
+            profile = ProfileFactory(
+                first_name="First", last_name="Last", preferred_name="Pref"
+            )
+        assert profile.display_name == "First Last (Pref)"
 
-    @data(None, 'First')
+    @data(None, "First")
     def test_display_name_without_preferred(self, pref_name):
         """Test the profile display name with a preferred name that is blank or equal to first name"""
         with mute_signals(post_save):
-            profile = ProfileFactory(first_name='First', last_name='Last', preferred_name=pref_name)
-        assert profile.display_name == 'First Last'
+            profile = ProfileFactory(
+                first_name="First", last_name="Last", preferred_name=pref_name
+            )
+        assert profile.display_name == "First Last"
 
     def test_display_name_no_last_name(self):
         """Test the profile display name with a blank last name"""
         with mute_signals(post_save):
-            profile = ProfileFactory(first_name='First', last_name=None, preferred_name=None)
-        assert profile.display_name == 'First'
+            profile = ProfileFactory(
+                first_name="First", last_name=None, preferred_name=None
+            )
+        assert profile.display_name == "First"
 
     def test_display_name_no_first_name(self):
         """Test the profile display name with a blank first name"""
         with mute_signals(post_save):
-            profile = ProfileFactory(user__username='uname', first_name=None, last_name=None, preferred_name=None)
-        assert profile.display_name == 'uname'
+            profile = ProfileFactory(
+                user__username="uname",
+                first_name=None,
+                last_name=None,
+                preferred_name=None,
+            )
+        assert profile.display_name == "uname"
 
     @data(
-        ('First', 'Last', 'uname', 'First Last'),
-        (None, 'Last', 'uname', 'uname Last'),
-        ('First', None, 'uname', 'First ')
+        ("First", "Last", "uname", "First Last"),
+        (None, "Last", "uname", "uname Last"),
+        ("First", None, "uname", "First "),
     )
     @unpack
     def test_full_name(self, first_name, last_name, username, expected_full_name):
         """Test the profile full name"""
         with mute_signals(post_save):
             profile = ProfileFactory(
-                first_name=first_name,
-                last_name=last_name,
-                user__username=username
+                first_name=first_name, last_name=last_name, user__username=username
             )
         assert profile.full_name == expected_full_name
 
@@ -210,8 +232,8 @@ class ProfileImageTests(ProfileImageCleanupMixin, MockedESTestCase):
 
         # create a dummy image file in memory for upload
         image_file = BytesIO()
-        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
-        image.save(image_file, 'png')
+        image = Image.new("RGBA", size=(50, 50), color=(256, 0, 0))
+        image.save(image_file, "png")
         image_file.seek(0)
 
         # Use SimpleUploadedFile to avoid unmanaged OS-level file handles
@@ -246,8 +268,8 @@ class ProfileImageTests(ProfileImageCleanupMixin, MockedESTestCase):
 
         # create a dummy image file in memory for upload
         image_file = BytesIO()
-        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
-        image.save(image_file, 'png')
+        image = Image.new("RGBA", size=(50, 50), color=(256, 0, 0))
+        image.save(image_file, "png")
         image_file.seek(0)
 
         upload = SimpleUploadedFile(
@@ -257,12 +279,12 @@ class ProfileImageTests(ProfileImageCleanupMixin, MockedESTestCase):
         self.profile.save(update_image=True)
         image_file_bytes = image_file.getvalue()
         # Open and read generated thumbnails in a managed way to avoid unclosed file warnings
-        self.profile.image_small.open('rb')
+        self.profile.image_small.open("rb")
         try:
             small_bytes = self.profile.image_small.read()
         finally:
             self.profile.image_small.close()
-        self.profile.image_medium.open('rb')
+        self.profile.image_medium.open("rb")
         try:
             medium_bytes = self.profile.image_medium.read()
         finally:

@@ -19,7 +19,7 @@
 
     &.open {
       transform: translate(100%);
-      box-shadow: 3px 0 10px rgba(0,0,0,.2);
+      box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
     }
 
     .profile-info {
@@ -33,7 +33,6 @@
         justify-content: space-between;
         align-items: center;
 
-
         .icon-button {
           width: 50px;
           top: -10px;
@@ -41,11 +40,13 @@
           .material-icons {
             color: white;
             font-size: 40px;
-            opacity: .7;
+            opacity: 0.7;
           }
         }
 
-        &:before, &:after { // overriding some bootstrap nonsense
+        &:before,
+        &:after {
+          // overriding some bootstrap nonsense
           display: none;
         }
       }
@@ -78,7 +79,8 @@
           background: inherit;
           text-align: left;
 
-          &:hover, &:focus {
+          &:hover,
+          &:focus {
             text-decoration: none;
             cursor: pointer;
             color: #fff;
@@ -86,7 +88,8 @@
         }
       }
 
-      .program-selector:last-child, .name:last-child {
+      .program-selector:last-child,
+      .name:last-child {
         padding-bottom: 0;
       }
 
@@ -107,7 +110,8 @@
       border-bottom: thin solid $sidenav-separator;
     }
 
-    .links, .logout-link {
+    .links,
+    .logout-link {
       padding: 12px 0;
 
       .link {
@@ -115,7 +119,8 @@
         align-items: center;
         padding: 10px 0;
 
-        a, button {
+        a,
+        button {
           color: $sidenav-font;
           width: 100%;
           font-weight: 300;
@@ -124,7 +129,8 @@
           background: inherit;
           text-align: left;
 
-          &:hover, &:focus {
+          &:hover,
+          &:focus {
             text-decoration: none;
             cursor: pointer;
             color: #fff;
@@ -137,10 +143,10 @@
         }
       }
     }
-
   }
 
-  .micromasters-nav, .micromasters-nav > * {
+  .micromasters-nav,
+  .micromasters-nav > * {
     background-color: $mm-brand-bg !important;
   }
 
@@ -269,11 +275,19 @@
     cursor: pointer;
   }
 
-  .Select-menu-outer,.Select-control,.Select-value-label,.Select-menu-outer,.Select-option {
+  .Select-menu-outer,
+  .Select-control,
+  .Select-value-label,
+  .Select-menu-outer,
+  .Select-option {
     background-color: $select-menu-bg;
   }
 
-  .Select-menu-outer,.Select-control,.Select-value-label,.Select-placeholder,.Select-option {
+  .Select-menu-outer,
+  .Select-control,
+  .Select-value-label,
+  .Select-placeholder,
+  .Select-option {
     color: $header_font_color !important;
   }
 
@@ -319,7 +333,8 @@
   font-weight: 300;
 }
 
-.mdl-layout-title > a:hover, .mdl-layout-title > a:focus {
+.mdl-layout-title > a:hover,
+.mdl-layout-title > a:focus {
   color: white;
 }
 

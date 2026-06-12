@@ -5,15 +5,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ecommerce', '0004_create_receipt'),
+        ("ecommerce", "0004_create_receipt"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='receipt',
-            name='data',
+            model_name="receipt",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(),
         ),
     ]

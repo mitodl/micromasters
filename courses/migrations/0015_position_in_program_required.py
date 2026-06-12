@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0014_program_ga_tracking_id'),
+        ("courses", "0014_program_ga_tracking_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='course',
-            name='position_in_program',
+            model_name="course",
+            name="position_in_program",
             field=models.PositiveSmallIntegerField(),
         ),
     ]

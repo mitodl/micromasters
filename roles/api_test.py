@@ -27,11 +27,7 @@ class APITests(MockedESTestCase):
         Test that the user can only search the programs she has permissions on
         """
         assert len(get_advance_searchable_program_ids(self.user)) == 0
-        Role.objects.create(
-            user=self.user,
-            program=self.program1,
-            role=Staff.ROLE_ID
-        )
+        Role.objects.create(user=self.user, program=self.program1, role=Staff.ROLE_ID)
         search_progs = get_advance_searchable_program_ids(self.user)
         assert len(search_progs) == 1
         assert self.program1.id == search_progs[0]

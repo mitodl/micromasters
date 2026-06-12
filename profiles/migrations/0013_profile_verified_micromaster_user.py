@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0012_education'),
+        ("profiles", "0012_education"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='verified_micromaster_user',
+            model_name="profile",
+            name="verified_micromaster_user",
             field=models.BooleanField(default=False),
         ),
     ]

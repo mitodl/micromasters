@@ -5,18 +5,25 @@ from rest_framework.viewsets import GenericViewSet
 from profiles.constants import USERNAME_RE_PARTIAL
 from profiles.models import Profile
 from profiles.permissions import CanEditIfOwner, CanSeeIfNotPrivate
-from profiles.serializers import (ProfileFilledOutSerializer,
-                                  ProfileLimitedSerializer, ProfileSerializer)
+from profiles.serializers import (
+    ProfileFilledOutSerializer,
+    ProfileLimitedSerializer,
+    ProfileSerializer,
+)
 from roles.roles import Instructor, Staff
 
 
 class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     """API for the Program collection"""
+
     # pylint: disable=too-many-return-statements
 
-    permission_classes = (CanEditIfOwner, CanSeeIfNotPrivate, )
-    lookup_field = 'user__username'
-    lookup_url_kwarg = 'user'
+    permission_classes = (
+        CanEditIfOwner,
+        CanSeeIfNotPrivate,
+    )
+    lookup_field = "user__username"
+    lookup_url_kwarg = "user"
     lookup_value_regex = USERNAME_RE_PARTIAL
     queryset = Profile.objects.all()
 
@@ -34,15 +41,18 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
 
         # Owner of the profile
         if self.request.user == profile.user:
-            if profile.filled_out or self.request.data.get('filled_out'):
+            if profile.filled_out or self.request.data.get("filled_out"):
                 return self.serializer_class_filled_out
             else:
                 return self.serializer_class_owner
         # Staff or instructor is looking at profile
-        elif not self.request.user.is_anonymous and self.request.user.role_set.filter(
+        elif (
+            not self.request.user.is_anonymous
+            and self.request.user.role_set.filter(
                 role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
                 program__programenrollment__user__profile=profile,
-        ).exists():
+            ).exists()
+        ):
             return self.serializer_class_staff
         # Profile is public
         elif profile.account_privacy == Profile.PUBLIC:

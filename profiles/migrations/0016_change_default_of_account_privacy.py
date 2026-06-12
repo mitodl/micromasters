@@ -4,15 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0015_allow_nulls_for_field_of_study'),
+        ("profiles", "0015_allow_nulls_for_field_of_study"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='account_privacy',
-            field=models.TextField(choices=[('private', 'Private'), ('public_to_mm', 'Public to logged in users'), ('public', 'Public to everyone')], default='public_to_mm'),
+            model_name="profile",
+            name="account_privacy",
+            field=models.TextField(
+                choices=[
+                    ("private", "Private"),
+                    ("public_to_mm", "Public to logged in users"),
+                    ("public", "Public to everyone"),
+                ],
+                default="public_to_mm",
+            ),
         ),
     ]

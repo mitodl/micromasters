@@ -18,11 +18,12 @@ def authorize_exam_runs():
     Check for outstanding exam runs
     """
     for exam_run in ExamRun.objects.filter(
-            authorized=False,
-            date_first_schedulable__lte=now_in_utc(),
+        authorized=False,
+        date_first_schedulable__lte=now_in_utc(),
     ):
         enrollment_ids_qset = ProgramEnrollment.objects.filter(
-            program=exam_run.course.program).values_list('id', flat=True)
+            program=exam_run.course.program
+        ).values_list("id", flat=True)
         # create a group of subtasks
         job = group(
             authorize_enrollment_for_exam_run.s(enrollment_ids, exam_run.id)
@@ -46,12 +47,15 @@ def authorize_enrollment_for_exam_run(enrollment_ids, exam_run_id):
         None
     """
     exam_run = ExamRun.objects.get(id=exam_run_id)
-    for enrollment in ProgramEnrollment.objects.filter(id__in=enrollment_ids).prefetch_related('user'):
+    for enrollment in ProgramEnrollment.objects.filter(
+        id__in=enrollment_ids
+    ).prefetch_related("user"):
         try:
             authorize_for_latest_passed_course(enrollment.user, exam_run)
         # pylint: disable=bare-except
         except:
             log.exception(
                 'Impossible to authorize user "%s" for exam_run %s',
-                enrollment.user.username, exam_run.id
+                enrollment.user.username,
+                exam_run.id,
             )

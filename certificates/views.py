@@ -14,14 +14,20 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
-from cms.models import (CourseCertificateSignatories,
-                        ProgramCertificateSignatories, ProgramLetterSignatory)
+from cms.models import (
+    CourseCertificateSignatories,
+    ProgramCertificateSignatories,
+    ProgramLetterSignatory,
+)
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import convert_to_letter, get_mmtrack
-from grades.models import (CombinedFinalGrade, MicromastersCourseCertificate,
-                           MicromastersProgramCertificate,
-                           MicromastersProgramCommendation)
+from grades.models import (
+    CombinedFinalGrade,
+    MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
+    MicromastersProgramCommendation,
+)
 from mail.models import PartnerSchool
 
 log = logging.getLogger(__name__)
@@ -31,10 +37,11 @@ class CertificateView(TemplateView):
     """
     Abstract view for certificate
     """
+
     class Meta:
         abstract = True
 
-    template_name = 'certificate.html'
+    template_name = "certificate.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -45,7 +52,9 @@ class CertificateView(TemplateView):
             "mitxonline_base_url": settings.MITXONLINE_CALLBACK_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)
-        context["twitter_share_text"] = "I just earned a Certificate on @Micromasters! Check it out: "
+        context[
+            "twitter_share_text"
+        ] = "I just earned a Certificate on @Micromasters! Check it out: "
 
         return context
 
@@ -54,7 +63,7 @@ class CertificateView(TemplateView):
         This method takes certificate details and returns a string of LinkedIn specific queryparams to be
         added directly to certificate share button
         """
-        return 'certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true'.format(
+        return "certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true".format(
             certId=cert.hash,
             issueMonth=cert.created_on.month,
             issueYear=cert.created_on.year,
@@ -72,9 +81,11 @@ class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
         context = super().get_context_data(**kwargs)
 
         certificate = (
-            MicromastersCourseCertificate.objects.filter(hash=kwargs.get('certificate_hash')).
-            select_related('course__program', 'user__profile').
-            first()
+            MicromastersCourseCertificate.objects.filter(
+                hash=kwargs.get("certificate_hash")
+            )
+            .select_related("course__program", "user__profile")
+            .first()
         )
         if not certificate:
             raise Http404
@@ -83,16 +94,20 @@ class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
         signatories = CourseCertificateSignatories.objects.filter(course=course).all()
         if len(signatories) == 0:
             log.error(
-                'Course "%s" (id: %s) does not have any signatories set in the CMS.', course.title, course.id
+                'Course "%s" (id: %s) does not have any signatories set in the CMS.',
+                course.title,
+                course.id,
             )
             raise Http404
 
-        context['course_title'] = course.title
-        context['program_title'] = course.program.title
-        context['name'] = certificate.user.profile.full_name
-        context['signatories'] = list(signatories)
-        context['certificate'] = certificate
-        context['linkedin_share_context'] = self._create_linkedin_share_context(certificate, course.title)
+        context["course_title"] = course.title
+        context["program_title"] = course.program.title
+        context["name"] = certificate.user.profile.full_name
+        context["signatories"] = list(signatories)
+        context["certificate"] = certificate
+        context["linkedin_share_context"] = self._create_linkedin_share_context(
+            certificate, course.title
+        )
 
         return context
 
@@ -106,28 +121,34 @@ class ProgramCertificateView(CertificateView):
         context = super().get_context_data(**kwargs)
 
         certificate = (
-            MicromastersProgramCertificate.objects.filter(hash=kwargs.get('certificate_hash')).
-            select_related('program', 'user__profile').
-            first()
+            MicromastersProgramCertificate.objects.filter(
+                hash=kwargs.get("certificate_hash")
+            )
+            .select_related("program", "user__profile")
+            .first()
         )
         if not certificate:
             raise Http404
         program = certificate.program
 
-        signatories = ProgramCertificateSignatories.objects.filter(program_page__program=program)
+        signatories = ProgramCertificateSignatories.objects.filter(
+            program_page__program=program
+        )
         if not signatories.exists():
             log.error(
                 'Program "%s" (id: %s) does not have any signatories set in the CMS.',
                 program.title,
-                program.id
+                program.id,
             )
             raise Http404
 
-        context['program_title'] = program.title
-        context['name'] = certificate.user.profile.full_name
-        context['signatories'] = list(signatories)
-        context['certificate'] = certificate
-        context['linkedin_share_context'] = self._create_linkedin_share_context(certificate, program.title)
+        context["program_title"] = program.title
+        context["name"] = certificate.user.profile.full_name
+        context["signatories"] = list(signatories)
+        context["certificate"] = certificate
+        context["linkedin_share_context"] = self._create_linkedin_share_context(
+            certificate, program.title
+        )
 
         return context
 
@@ -142,9 +163,11 @@ class ProgramLetterView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         letter = (
-            MicromastersProgramCommendation.objects.filter(uuid=kwargs.get('letter_uuid'), is_active=True).
-            select_related('program', 'user__profile').
-            first()
+            MicromastersProgramCommendation.objects.filter(
+                uuid=kwargs.get("letter_uuid"), is_active=True
+            )
+            .select_related("program", "user__profile")
+            .first()
         )
 
         if not letter:
@@ -152,13 +175,14 @@ class ProgramLetterView(TemplateView):
 
         program = letter.program
 
-        signatories = ProgramLetterSignatory.objects.filter(program_page__program=program).select_related(
-            'program_page__program')
+        signatories = ProgramLetterSignatory.objects.filter(
+            program_page__program=program
+        ).select_related("program_page__program")
         if not signatories.exists():
             log.error(
                 'Program "%s" (id: %s) does not have any signatories set in the CMS.',
                 program.title,
-                program.id
+                program.id,
             )
             raise Http404
         program_page = signatories[0].program_page
@@ -169,7 +193,7 @@ class ProgramLetterView(TemplateView):
             log.error(
                 'Program "%s" (id: %s) does not have letter logo set in the CMS.',
                 program.title,
-                program.id
+                program.id,
             )
             raise Http404
 
@@ -179,21 +203,23 @@ class ProgramLetterView(TemplateView):
             log.error(
                 'Program "%s" (id: %s) does not have letter text set in the CMS.',
                 program.title,
-                program.id
+                program.id,
             )
             raise Http404
 
-        context.update({
-            'program_title': program.title,
-            'letter_logo': program_letter_logo,
-            'header_text': program_page.program_letter_header_text,
-            'letter_footer': program_letter_footer,
-            'footer_text': program_page.program_letter_footer_text,
-            'name': letter.user.profile.full_name,
-            'letter_text': program_letter_text,
-            'signatories': list(signatories),
-            'letter': letter,
-        })
+        context.update(
+            {
+                "program_title": program.title,
+                "letter_logo": program_letter_logo,
+                "header_text": program_page.program_letter_header_text,
+                "letter_footer": program_letter_footer,
+                "footer_text": program_page.program_letter_footer_text,
+                "name": letter.user.profile.full_name,
+                "letter_text": program_letter_text,
+                "signatories": list(signatories),
+                "letter": letter,
+            }
+        )
         return context
 
 
@@ -202,7 +228,7 @@ class BaseGradeRecordView(ABC, TemplateView):
     Base view for grade records
     """
 
-    template_name = 'grade_record.html'
+    template_name = "grade_record.html"
 
     @abstractmethod
     def get_program_enrollment(self, **kwargs):
@@ -218,10 +244,12 @@ class BaseGradeRecordView(ABC, TemplateView):
 
         authenticated = not user.is_anonymous
         share_hash_absolute_url = self.request.build_absolute_uri(
-            reverse("shared_grade_records", kwargs={
+            reverse(
+                "shared_grade_records",
+                kwargs={
                     "enrollment_id": enrollment.id,
-                    "record_share_hash": enrollment.share_hash
-                }
+                    "record_share_hash": enrollment.share_hash,
+                },
             )
         )
         js_settings = {
@@ -233,18 +261,28 @@ class BaseGradeRecordView(ABC, TemplateView):
             "partner_schools": list(PartnerSchool.objects.values_list("id", "name")),
             "hash": enrollment.share_hash,
             "enrollment_id": enrollment.id,
-            "absolute_record_share_hash": "" if not enrollment.share_hash else share_hash_absolute_url
+            "absolute_record_share_hash": ""
+            if not enrollment.share_hash
+            else share_hash_absolute_url,
         }
         context["js_settings_json"] = json.dumps(js_settings)
-        courses = enrollment.program.course_set.prefetch_related('electivecourse')
+        courses = enrollment.program.course_set.prefetch_related("electivecourse")
         mmtrack = get_mmtrack(user, enrollment.program)
-        combined_grade = CombinedFinalGrade.objects.filter(
-            user=user,
-            course__in=courses.values_list("id", flat=True)
-        ).order_by("updated_on").last()
+        combined_grade = (
+            CombinedFinalGrade.objects.filter(
+                user=user, course__in=courses.values_list("id", flat=True)
+            )
+            .order_by("updated_on")
+            .last()
+        )
         context["program_title"] = enrollment.program.title
-        context["program_status"] = "completed" if MicromastersProgramCertificate.objects.filter(
-            user=user, program=enrollment.program).exists() else "partially"
+        context["program_status"] = (
+            "completed"
+            if MicromastersProgramCertificate.objects.filter(
+                user=user, program=enrollment.program
+            ).exists()
+            else "partially"
+        )
         context["last_updated"] = combined_grade.updated_on if combined_grade else ""
         context["has_electives"] = mmtrack.program.electives_set.exists()
         context["is_owner"] = self.request.user == user
@@ -252,29 +290,41 @@ class BaseGradeRecordView(ABC, TemplateView):
         context["profile"] = {
             "username": user.username,
             "email": user.email,
-            "full_name": user.profile.full_name
+            "full_name": user.profile.full_name,
         }
-        context['courses'] = []
+        context["courses"] = []
         for course in courses:
             best_grade = mmtrack.get_best_final_grade_for_course(course)
-            combined_grade = CombinedFinalGrade.objects.filter(user=user, course=course).first()
-            letter_grade = convert_to_letter(combined_grade.grade) if combined_grade else ""
+            combined_grade = CombinedFinalGrade.objects.filter(
+                user=user, course=course
+            ).first()
+            letter_grade = (
+                convert_to_letter(combined_grade.grade) if combined_grade else ""
+            )
             earned = get_certificate_url(mmtrack, course)
             if best_grade and best_grade.is_already_combined:
                 combined_grade = best_grade
                 letter_grade = convert_to_letter(best_grade.grade_percent)
                 earned = best_grade.passed
 
-            context['courses'].append({
-                "title": course.title,
-                "edx_course_key": best_grade.course_run.edx_course_key if best_grade else "",
-                "attempts": mmtrack.get_course_proctorate_exam_results(course).count(),
-                "letter_grade": letter_grade,
-                "status": "Earned" if earned else "Not Earned",
-                "date_earned": combined_grade.created_on if combined_grade else "",
-                "overall_grade": mmtrack.get_overall_final_grade_for_course(course),
-                "elective_tag": "elective" if (getattr(course, "electivecourse", None) is not None) else "core"
-            })
+            context["courses"].append(
+                {
+                    "title": course.title,
+                    "edx_course_key": best_grade.course_run.edx_course_key
+                    if best_grade
+                    else "",
+                    "attempts": mmtrack.get_course_proctorate_exam_results(
+                        course
+                    ).count(),
+                    "letter_grade": letter_grade,
+                    "status": "Earned" if earned else "Not Earned",
+                    "date_earned": combined_grade.created_on if combined_grade else "",
+                    "overall_grade": mmtrack.get_overall_final_grade_for_course(course),
+                    "elective_tag": "elective"
+                    if (getattr(course, "electivecourse", None) is not None)
+                    else "core",
+                }
+            )
 
         return context
 
@@ -283,6 +333,7 @@ class GradeRecordView(LoginRequiredMixin, BaseGradeRecordView):
     """
     View for grade records
     """
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["is_public"] = False
@@ -292,7 +343,9 @@ class GradeRecordView(LoginRequiredMixin, BaseGradeRecordView):
         """
         Returns specific ProgramEnrollment if record is sharable else raises HTTP404
         """
-        return get_object_or_404(ProgramEnrollment, id=kwargs.get('enrollment_id'), user=self.request.user)
+        return get_object_or_404(
+            ProgramEnrollment, id=kwargs.get("enrollment_id"), user=self.request.user
+        )
 
 
 class SharedGradeRecordView(BaseGradeRecordView):
@@ -311,6 +364,10 @@ class SharedGradeRecordView(BaseGradeRecordView):
         """
         Returns specific ProgramEnrollment if record is sharable else raises HTTP404
         """
-        if not kwargs.get('record_share_hash'):
+        if not kwargs.get("record_share_hash"):
             raise Http404
-        return get_object_or_404(ProgramEnrollment, id=kwargs.get('enrollment_id'), share_hash=kwargs.get('record_share_hash'))
+        return get_object_or_404(
+            ProgramEnrollment,
+            id=kwargs.get("enrollment_id"),
+            share_hash=kwargs.get("record_share_hash"),
+        )

@@ -5,36 +5,55 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('edx_course_key', models.CharField(blank=True, max_length=255, null=True)),
-                ('enrollment_start', models.DateTimeField(blank=True, null=True)),
-                ('start_date', models.DateTimeField(blank=True, null=True)),
-                ('enrollment_url', models.URLField(blank=True, null=True)),
-                ('prerequisites', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                (
+                    "edx_course_key",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("enrollment_start", models.DateTimeField(blank=True, null=True)),
+                ("start_date", models.DateTimeField(blank=True, null=True)),
+                ("enrollment_url", models.URLField(blank=True, null=True)),
+                ("prerequisites", models.TextField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Program',
+            name="Program",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('live', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("live", models.BooleanField(default=False)),
             ],
         ),
         migrations.AddField(
-            model_name='course',
-            name='program',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.Program'),
+            model_name="course",
+            name="program",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="courses.Program"
+            ),
         ),
     ]

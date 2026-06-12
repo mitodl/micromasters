@@ -20,6 +20,7 @@ class SplitNameTests(TestCase):
     """
     Tests for split_name
     """
+
     def test_none(self):
         """
         None should be treated like an empty string
@@ -63,27 +64,28 @@ class SplitNameTests(TestCase):
 
 class ImageTests(TestCase):
     """Tests for profile image util functions"""
+
     def test_upload_url(self):
         """
         profile_image_upload_uri should make an upload path with a timestamp
         """
-        name = 'name'
-        ext = '.jpg'
-        filename = f'{name}{ext}'
+        name = "name"
+        ext = ".jpg"
+        filename = f"{name}{ext}"
         url = util.profile_image_upload_uri(None, filename)
-        assert url.startswith(f'profile/{name}-')
-        assert url.endswith(f'{ext}')
+        assert url.startswith(f"profile/{name}-")
+        assert url.endswith(f"{ext}")
 
     def test_small(self):
         """
         profile_image_upload_uri_small should make an upload path with a timestamp
         """
-        name = 'name'
-        ext = '.jpg'
-        filename = f'{name}{ext}'
+        name = "name"
+        ext = ".jpg"
+        filename = f"{name}{ext}"
         url = util.profile_image_upload_uri_small(None, filename)
-        assert url.startswith(f'profile/{name}-')
-        assert url.endswith(f'_small{ext}')
+        assert url.startswith(f"profile/{name}-")
+        assert url.endswith(f"_small{ext}")
 
     def test_too_long_name(self):
         """
@@ -101,8 +103,12 @@ class ImageTests(TestCase):
         """
         filename = f"{'a' * 150}.jpg"
         with self.assertRaises(ValueError) as ex:
-            util._generate_upload_to_uri("x"*150)(None, filename)  # pylint: disable=protected-access
-        assert ex.exception.args[0].startswith("path is longer than max length even without name")
+            util._generate_upload_to_uri("x" * 150)(  # pylint: disable=protected-access
+                None, filename
+            )
+        assert ex.exception.args[0].startswith(
+            "path is longer than max length even without name"
+        )
 
     def test_shrink_dimensions(self):
         """Tests for make_small_dimensions"""
@@ -128,14 +134,13 @@ class ImageTests(TestCase):
         width = thumb_width * 4
         height = thumb_height * 4
 
-        image = Image.new('RGBA', (width, height))
+        image = Image.new("RGBA", (width, height))
         full_image_file = BytesIO()
         image.save(full_image_file, "PNG")
         full_image_file.seek(0)
 
         with patch(
-            'profiles.util.shrink_dimensions',
-            return_value=(thumb_width, thumb_height)
+            "profiles.util.shrink_dimensions", return_value=(thumb_width, thumb_height)
         ) as mocked:
             thumb_file = util.make_thumbnail(full_image_file, 64)
             thumb_image = Image.open(thumb_file)
@@ -148,6 +153,7 @@ class FullNameTests(DjangoTestCase):
     """
     Tests for profile full name function.
     """
+
     def test_full_name_no_profile(self):
         """
         test full name of user when no profile.
@@ -187,6 +193,7 @@ class IsProfileFilledOutTests(DjangoTestCase):
     """
     Tests for is_profile_filled_out function.
     """
+
     def setUp(self):
         super().setUp()
         with mute_signals(post_save):
@@ -200,9 +207,7 @@ class IsProfileFilledOutTests(DjangoTestCase):
         assert util.is_profile_filled_out(self.profile) is False
 
     # dob cannot be blank since it is a Date
-    @ddt.data(
-        *[field for field in util.COMPULSORY_FIELDS if field != 'date_of_birth']
-    )
+    @ddt.data(*[field for field in util.COMPULSORY_FIELDS if field != "date_of_birth"])
     def test_is_profile_filled_out_when_blank(self, column):
         """tests is_profile_filled_out method when column is blank"""
         setattr(self.profile, column, "")

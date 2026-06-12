@@ -5,16 +5,17 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0004_proctoredexamgrade_proctoredexamgradeaudit'),
+        ("grades", "0004_proctoredexamgrade_proctoredexamgradeaudit"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='proctoredexamgrade',
-            name='exam_date',
-            field=models.DateTimeField(default=django.utils.timezone.now),  # this works only because we have no data in the DB right now
+            model_name="proctoredexamgrade",
+            name="exam_date",
+            field=models.DateTimeField(
+                default=django.utils.timezone.now
+            ),  # this works only because we have no data in the DB right now
             preserve_default=False,
         ),
     ]

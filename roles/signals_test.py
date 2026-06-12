@@ -3,8 +3,7 @@ Tests for signals
 """
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from rolepermissions.checkers import (has_object_permission, has_permission,
-                                      has_role)
+from rolepermissions.checkers import has_object_permission, has_permission, has_role
 
 from courses.factories import ProgramFactory
 from micromasters.factories import UserFactory
@@ -27,9 +26,14 @@ class SignalsTest(MockedESTestCase):
         Helper function to assert role and permissions assignment
         """
         assert isinstance(expected_bool, bool)
-        assert has_role(self.user, 'staff') is expected_bool
-        assert has_permission(self.user, 'can_advance_search') is expected_bool
-        assert has_object_permission('can_advance_search', self.user, program or self.program) is expected_bool
+        assert has_role(self.user, "staff") is expected_bool
+        assert has_permission(self.user, "can_advance_search") is expected_bool
+        assert (
+            has_object_permission(
+                "can_advance_search", self.user, program or self.program
+            )
+            is expected_bool
+        )
 
     def test_assign_role(self):
         """
@@ -40,7 +44,7 @@ class SignalsTest(MockedESTestCase):
         Role.objects.create(
             program=self.program,
             user=self.user,
-            role='staff',
+            role="staff",
         )
         self.assert_standard_role_permissions(True)
 
@@ -52,14 +56,14 @@ class SignalsTest(MockedESTestCase):
         mm_role = Role.objects.create(
             program=self.program,
             user=self.user,
-            role='staff',
+            role="staff",
         )
         self.assert_standard_role_permissions(True)
 
         # muting the post_save signal to avoid the reassignment of the roles and related permissions
         # in this way only the pre_save will run and the effect will be only to remove the old role
         with mute_signals(post_save):
-            mm_role.role = 'instructor'
+            mm_role.role = "instructor"
             mm_role.save()
         self.assert_standard_role_permissions(False)
 
@@ -71,7 +75,7 @@ class SignalsTest(MockedESTestCase):
         mm_role = Role.objects.create(
             program=self.program,
             user=self.user,
-            role='staff',
+            role="staff",
         )
         self.assert_standard_role_permissions(True)
 
@@ -88,12 +92,12 @@ class SignalsTest(MockedESTestCase):
         mm_role_1 = Role.objects.create(
             program=existing_program,
             user=self.user,
-            role='staff',
+            role="staff",
         )
         Role.objects.create(
             program=new_program,
             user=self.user,
-            role='staff',
+            role="staff",
         )
         self.assert_standard_role_permissions(True, existing_program)
         self.assert_standard_role_permissions(True, new_program)

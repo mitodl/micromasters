@@ -4,23 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0016_change_default_of_account_privacy'),
+        ("profiles", "0016_change_default_of_account_privacy"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='profile',
-            name='birth_city',
+            model_name="profile",
+            name="birth_city",
         ),
         migrations.RemoveField(
-            model_name='profile',
-            name='birth_state_or_territory',
+            model_name="profile",
+            name="birth_state_or_territory",
         ),
         migrations.AddField(
-            model_name='profile',
-            name='nationality',
+            model_name="profile",
+            name="nationality",
             field=models.TextField(blank=True, null=True),
         ),
     ]

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0008_rename_edx_fields'),
+        ("profiles", "0008_rename_edx_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='student_id',
+            model_name="profile",
+            name="student_id",
             field=models.IntegerField(blank=True, null=True, unique=True),
         ),
     ]

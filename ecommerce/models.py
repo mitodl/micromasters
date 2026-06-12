@@ -8,9 +8,14 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db.models import CASCADE, SET_NULL, JSONField, Model
-from django.db.models.fields import (BooleanField, CharField, DateTimeField,
-                                     DecimalField, PositiveIntegerField,
-                                     TextField)
+from django.db.models.fields import (
+    BooleanField,
+    CharField,
+    DateTimeField,
+    DecimalField,
+    PositiveIntegerField,
+    TextField,
+)
 from django.db.models.fields.related import ForeignKey
 
 from courses.models import Course, CourseRun, Program
@@ -25,11 +30,12 @@ class Order(AuditableModel):
     """
     An order for financial aid programs
     """
-    FULFILLED = 'fulfilled'
-    FAILED = 'failed'
-    CREATED = 'created'
-    REFUNDED = 'refunded'
-    PARTIALLY_REFUNDED = 'partially_refunded'
+
+    FULFILLED = "fulfilled"
+    FAILED = "failed"
+    CREATED = "created"
+    REFUNDED = "refunded"
+    PARTIALLY_REFUNDED = "partially_refunded"
 
     STATUSES = [CREATED, FULFILLED, FAILED, REFUNDED, PARTIALLY_REFUNDED]
     FULFILLED_STATUSES = [FULFILLED, PARTIALLY_REFUNDED]
@@ -71,9 +77,8 @@ class Order(AuditableModel):
         Get a serialized representation of the Order and any attached Lines
         """
         data = serialize_model_object(self)
-        data['lines'] = [serialize_model_object(line) for line in self.line_set.all()]
+        data["lines"] = [serialize_model_object(line) for line in self.line_set.all()]
         return data
-
 
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """
@@ -96,17 +101,19 @@ class OrderAudit(AuditModel):
     """
     Audit model for Order
     """
+
     order = ForeignKey(Order, null=True, on_delete=SET_NULL)
 
     @classmethod
     def get_related_field_name(cls):
-        return 'order'
+        return "order"
 
 
 class Line(Model):
     """
     A line in an order. This contains information about a specific item to be purchased.
     """
+
     course_key = TextField(db_index=True)
     order = ForeignKey(Order, on_delete=CASCADE)
     price = DecimalField(decimal_places=2, max_digits=20)
@@ -124,6 +131,7 @@ class Receipt(Model):
     """
     The contents of the message from CyberSource about an Order fulfillment or cancellation
     """
+
     order = ForeignKey(Order, null=True, on_delete=CASCADE)
     data = JSONField()
 
@@ -140,6 +148,7 @@ class Receipt(Model):
 
 class CouponInvoice(AuditableModel):
     """Model for a batch of coupons"""
+
     invoice_number = TextField(null=True, blank=True)
     description = TextField(null=True, blank=True)
 
@@ -156,11 +165,12 @@ class CouponInvoice(AuditableModel):
 
 class CouponInvoiceAudit(AuditModel):
     """Audit table for CouponInvoice"""
+
     coupon_invoice = ForeignKey(CouponInvoice, null=True, on_delete=SET_NULL)
 
     @classmethod
     def get_related_field_name(cls):
-        return 'coupon_invoice'
+        return "coupon_invoice"
 
 
 class Coupon(TimestampedModel, AuditableModel):
@@ -170,14 +180,15 @@ class Coupon(TimestampedModel, AuditableModel):
     When a coupon is redeemed by a purchaser the counter on this object is decremented
     and a UserCoupon object is created for that particular purchaser.
     """
-    PERCENT_DISCOUNT = 'percent-discount'
-    FIXED_DISCOUNT = 'fixed-discount'
-    FIXED_PRICE = 'fixed-price'
+
+    PERCENT_DISCOUNT = "percent-discount"
+    FIXED_DISCOUNT = "fixed-discount"
+    FIXED_PRICE = "fixed-price"
 
     AMOUNT_TYPES = [PERCENT_DISCOUNT, FIXED_DISCOUNT, FIXED_PRICE]
 
-    STANDARD = 'standard'
-    DISCOUNTED_PREVIOUS_COURSE = 'discounted-previous-course'
+    STANDARD = "standard"
+    DISCOUNTED_PREVIOUS_COURSE = "discounted-previous-course"
     COUPON_TYPES = [STANDARD, DISCOUNTED_PREVIOUS_COURSE]
 
     coupon_code = TextField(
@@ -195,7 +206,7 @@ class Coupon(TimestampedModel, AuditableModel):
         help_text="content_object is a link to either a Course, CourseRun, or a Program",
     )
     object_id = PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")
     # Meaning of content_object depends on coupon_type
     coupon_type = CharField(
         choices=[(_type, _type) for _type in COUPON_TYPES],
@@ -224,7 +235,9 @@ class Coupon(TimestampedModel, AuditableModel):
         blank=True,
         help_text="If set, the coupons will not be redeemable before this time",
     )
-    enabled = BooleanField(default=True, help_text="If true, coupons are presently redeemable")
+    enabled = BooleanField(
+        default=True, help_text="If true, coupons are presently redeemable"
+    )
 
     invoice = ForeignKey(
         CouponInvoice,
@@ -238,12 +251,22 @@ class Coupon(TimestampedModel, AuditableModel):
         """Get the course keys which the coupon can be redeemed with"""
         obj = self.content_object
         if isinstance(obj, Program):
-            return CourseRun.objects.not_discontinued().filter(course__program=obj).values_list('edx_course_key', flat=True)
+            return (
+                CourseRun.objects.not_discontinued()
+                .filter(course__program=obj)
+                .values_list("edx_course_key", flat=True)
+            )
         elif isinstance(obj, Course):
-            return CourseRun.objects.not_discontinued().filter(course=obj).values_list('edx_course_key', flat=True)
+            return (
+                CourseRun.objects.not_discontinued()
+                .filter(course=obj)
+                .values_list("edx_course_key", flat=True)
+            )
         else:
             # Should probably not get here, clean() should take care of validating this
-            raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
+            raise ImproperlyConfigured(
+                "content_object expected to be one of Program, Course, CourseRun"
+            )
 
     @property
     def program(self):
@@ -257,7 +280,9 @@ class Coupon(TimestampedModel, AuditableModel):
             return obj.program
         else:
             # Should probably not get here, clean() should take care of validating this
-            raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
+            raise ImproperlyConfigured(
+                "content_object expected to be one of Program, Course, CourseRun"
+            )
 
     @property
     def is_valid(self):
@@ -306,10 +331,12 @@ class Coupon(TimestampedModel, AuditableModel):
         if self.another_user_already_redeemed(user):
             return False
 
-        runs_purchased = set(Line.objects.filter(
-            order__user=user,
-            order__status=Order.FULFILLED,
-        ).values_list("course_key", flat=True))
+        runs_purchased = set(
+            Line.objects.filter(
+                order__user=user,
+                order__status=Order.FULFILLED,
+            ).values_list("course_key", flat=True)
+        )
         return not set(self.course_keys).issubset(runs_purchased)
 
     def another_user_already_redeemed(self, user):
@@ -325,11 +352,13 @@ class Coupon(TimestampedModel, AuditableModel):
                 True if the coupon is not automatic and it has already been redeemed by someone else
         """
         return (
-            not Coupon.is_automatic_qset().filter(id=self.id).exists() and
-            RedeemedCoupon.objects.filter(
+            not Coupon.is_automatic_qset().filter(id=self.id).exists()
+            and RedeemedCoupon.objects.filter(
                 coupon=self,
                 order__status=Order.FULFILLED,
-            ).exclude(order__user=user).exists()
+            )
+            .exclude(order__user=user)
+            .exists()
         )
 
     def clean(self):
@@ -337,28 +366,38 @@ class Coupon(TimestampedModel, AuditableModel):
         super().clean()
 
         if self.content_type.model_class() not in (
-                Course,
-                Program,
+            Course,
+            Program,
         ):
             raise ValidationError("content_object must be of type Course or Program")
 
         if self.amount_type == self.PERCENT_DISCOUNT:
             if self.amount is None or not 0 <= self.amount <= 1:
-                raise ValidationError(f"amount must be between 0 and 1 if amount_type is {self.PERCENT_DISCOUNT}")
+                raise ValidationError(
+                    f"amount must be between 0 and 1 if amount_type is {self.PERCENT_DISCOUNT}"
+                )
 
         if self.amount_type not in self.AMOUNT_TYPES:
-            raise ValidationError(f"amount_type must be one of {', '.join(self.AMOUNT_TYPES)}")
+            raise ValidationError(
+                f"amount_type must be one of {', '.join(self.AMOUNT_TYPES)}"
+            )
 
         if self.coupon_type not in self.COUPON_TYPES:
-            raise ValidationError(f"coupon_type must be one of {', '.join(self.COUPON_TYPES)}")
+            raise ValidationError(
+                f"coupon_type must be one of {', '.join(self.COUPON_TYPES)}"
+            )
 
-        if self.coupon_type == self.DISCOUNTED_PREVIOUS_COURSE and not isinstance(self.content_object, Course):
+        if self.coupon_type == self.DISCOUNTED_PREVIOUS_COURSE and not isinstance(
+            self.content_object, Course
+        ):
             raise ValidationError(
                 f"coupon must be for a course if coupon_type is {self.DISCOUNTED_PREVIOUS_COURSE}"
             )
 
         if not self.program.financial_aid_availability:
-            raise ValidationError("coupons are only allowed for programs with financial aid")
+            raise ValidationError(
+                "coupons are only allowed for programs with financial aid"
+            )
 
     @classmethod
     def get_audit_class(cls):
@@ -382,17 +421,19 @@ class Coupon(TimestampedModel, AuditableModel):
 
 class CouponAudit(AuditModel):
     """Audit table for Coupon"""
+
     coupon = ForeignKey(Coupon, null=True, on_delete=SET_NULL)
 
     @classmethod
     def get_related_field_name(cls):
-        return 'coupon'
+        return "coupon"
 
 
 class UserCoupon(TimestampedModel, AuditableModel):
     """
     Model for a coupon attached to a user.
     """
+
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
 
@@ -404,7 +445,10 @@ class UserCoupon(TimestampedModel, AuditableModel):
         return serialize_model_object(self)
 
     class Meta:
-        unique_together = ('user', 'coupon',)
+        unique_together = (
+            "user",
+            "coupon",
+        )
 
     def __str__(self):
         """Description for UserCoupon"""
@@ -413,17 +457,19 @@ class UserCoupon(TimestampedModel, AuditableModel):
 
 class UserCouponAudit(AuditModel):
     """Audit table for Coupon"""
+
     user_coupon = ForeignKey(UserCoupon, null=True, on_delete=SET_NULL)
 
     @classmethod
     def get_related_field_name(cls):
-        return 'user_coupon'
+        return "user_coupon"
 
 
 class RedeemedCoupon(TimestampedModel, AuditableModel):
     """
     Model for coupon which has been used in a purchase by a user.
     """
+
     order = ForeignKey(Order, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
 
@@ -435,7 +481,10 @@ class RedeemedCoupon(TimestampedModel, AuditableModel):
         return serialize_model_object(self)
 
     class Meta:
-        unique_together = ('order', 'coupon',)
+        unique_together = (
+            "order",
+            "coupon",
+        )
 
     def __str__(self):
         """Description for RedeemedCoupon"""
@@ -444,8 +493,9 @@ class RedeemedCoupon(TimestampedModel, AuditableModel):
 
 class RedeemedCouponAudit(AuditModel):
     """Audit table for RedeemedCoupon"""
+
     redeemed_coupon = ForeignKey(RedeemedCoupon, null=True, on_delete=SET_NULL)
 
     @classmethod
     def get_related_field_name(cls):
-        return 'redeemed_coupon'
+        return "redeemed_coupon"

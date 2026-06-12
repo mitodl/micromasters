@@ -2,20 +2,25 @@
 
 from django.db import migrations
 
+
 def set_default_homepage_text(apps, schema_editor):
     HomePage = apps.get_model("cms", "HomePage")
     homepage = HomePage.objects.first()
-    homepage.title = ("MIT credentials are now attainable by "
+    homepage.title = (
+        "MIT credentials are now attainable by "
         "anyone in the world with the discipline, dedication, and "
-        "intelligence to master course material.")
+        "intelligence to master course material."
+    )
     homepage.save()
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('cms', '0005_add_homepage_image'),
+        ("cms", "0005_add_homepage_image"),
     ]
 
     operations = [
-        migrations.RunPython(set_default_homepage_text, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            set_default_homepage_text, reverse_code=migrations.RunPython.noop
+        ),
     ]

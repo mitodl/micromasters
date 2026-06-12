@@ -32,11 +32,10 @@ from grades.factories import FinalGradeFactory
 from profiles.factories import ProfileFactory
 
 
-
-
 @ddt.ddt
 class ExamAuthorizationApiTests(TestCase):
     """Tests for exam api"""
+
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
@@ -80,21 +79,29 @@ class ExamAuthorizationApiTests(TestCase):
         self.assertTrue(mmtrack.has_passed_course_run(self.course_run.edx_course_key))
 
         # Neither user has exam profile nor authorization.
-        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=mmtrack.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        )
+        assert (
+            ExamAuthorization.objects.filter(
+                user=mmtrack.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
         with self.assertRaises(ExamAuthorizationException):
             authorize_for_exam_run(user, self.course_run, self.exam_run)
 
         # Assert user doesn't have exam profile and authorization
-        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=mmtrack.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        )
+        assert (
+            ExamAuthorization.objects.filter(
+                user=mmtrack.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
     def test_exam_authorization(self):
         """
@@ -104,20 +111,26 @@ class ExamAuthorizationApiTests(TestCase):
         self.assertTrue(mmtrack.has_passed_course_run(self.course_run.edx_course_key))
 
         # Neither user has exam profile nor authorization.
-        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=mmtrack.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        )
+        assert (
+            ExamAuthorization.objects.filter(
+                user=mmtrack.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
         authorize_for_exam_run(self.user, self.course_run, self.exam_run)
 
         # Assert user has exam profile and authorization.
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
-        assert ExamAuthorization.objects.filter(
-            user=mmtrack.user,
-            course=self.course_run.course
-        ).exists() is True
+        assert (
+            ExamAuthorization.objects.filter(
+                user=mmtrack.user, course=self.course_run.course
+            ).exists()
+            is True
+        )
 
     def test_exam_authorization_course_mismatch(self):
         """
@@ -125,10 +138,12 @@ class ExamAuthorizationApiTests(TestCase):
         """
         # Neither user has exam profile nor authorization.
         assert ExamProfile.objects.filter(profile=self.user.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=self.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamAuthorization.objects.filter(
+                user=self.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
         exam_run = ExamRunFactory.create()
 
@@ -137,29 +152,41 @@ class ExamAuthorizationApiTests(TestCase):
 
         # Assert user has exam profile and authorization.
         assert ExamProfile.objects.filter(profile=self.user.profile).exists() is False
-        assert ExamAuthorization.objects.filter(
-            user=self.user,
-            course=self.course_run.course
-        ).exists() is False
+        assert (
+            ExamAuthorization.objects.filter(
+                user=self.user, course=self.course_run.course
+            ).exists()
+            is False
+        )
 
     def test_exam_authorization_when_not_passed_course(self):
         """
         test exam_authorization when user has not passed course.
         """
-        with patch('dashboard.utils.MMTrack.has_passed_course_run', autospec=True, return_value=False):
+        with patch(
+            "dashboard.utils.MMTrack.has_passed_course_run",
+            autospec=True,
+            return_value=False,
+        ):
             mmtrack = get_mmtrack(self.user, self.program)
             expected_errors_message = MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE.format(
-                user=mmtrack.user.username,
-                course_id=self.course_run.edx_course_key
+                user=mmtrack.user.username, course_id=self.course_run.edx_course_key
             )
-            assert mmtrack.has_passed_course_run(self.course_run.edx_course_key) is False
+            assert (
+                mmtrack.has_passed_course_run(self.course_run.edx_course_key) is False
+            )
 
             # Neither user has exam profile nor authorization.
-            assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
-            assert ExamAuthorization.objects.filter(
-                user=mmtrack.user,
-                course=self.course_run.course
-            ).exists() is False
+            assert (
+                ExamProfile.objects.filter(profile=mmtrack.user.profile).exists()
+                is False
+            )
+            assert (
+                ExamAuthorization.objects.filter(
+                    user=mmtrack.user, course=self.course_run.course
+                ).exists()
+                is False
+            )
 
             with self.assertRaises(ExamAuthorizationException) as eae:
                 authorize_for_exam_run(self.user, self.course_run, self.exam_run)
@@ -167,15 +194,21 @@ class ExamAuthorizationApiTests(TestCase):
             assert eae.exception.args[0] == expected_errors_message
 
             # assert exam profile created but user is not authorized
-            assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
-            assert ExamAuthorization.objects.filter(
-                user=mmtrack.user,
-                course=self.course_run.course
-            ).exists() is False
+            assert (
+                ExamProfile.objects.filter(profile=mmtrack.user.profile).exists()
+                is True
+            )
+            assert (
+                ExamAuthorization.objects.filter(
+                    user=mmtrack.user, course=self.course_run.course
+                ).exists()
+                is False
+            )
 
 
 class ExamLatestCourseAuthorizationApiTests(TestCase):
     """Tests for latest course authorization api"""
+
     @classmethod
     def setUpTestData(cls):
         cls.program, _ = create_program(past=True)
@@ -184,33 +217,37 @@ class ExamLatestCourseAuthorizationApiTests(TestCase):
         cls.program_enrollment = ProgramEnrollmentFactory.create(program=cls.program)
         cls.user = cls.program_enrollment.user
         with mute_signals(post_save):
-            cls.final_grades = sorted([
-                FinalGradeFactory.create(
-                    user=cls.user,
-                    course_run=cls.course_run,
-                    passed=False,
-                    status=FinalGradeStatus.PENDING
-                ),
-                FinalGradeFactory.create(
-                    user=cls.user,
-                    course_run__course=cls.course,
-                    passed=True,
-                    status=FinalGradeStatus.COMPLETE
-                ),
-                FinalGradeFactory.create(
-                    user=cls.user,
-                    course_run__course=cls.course,
-                    passed=True,
-                    status=FinalGradeStatus.COMPLETE
-                ),
-            ], key=lambda final_grade: final_grade.course_run.end_date, reverse=True)
+            cls.final_grades = sorted(
+                [
+                    FinalGradeFactory.create(
+                        user=cls.user,
+                        course_run=cls.course_run,
+                        passed=False,
+                        status=FinalGradeStatus.PENDING,
+                    ),
+                    FinalGradeFactory.create(
+                        user=cls.user,
+                        course_run__course=cls.course,
+                        passed=True,
+                        status=FinalGradeStatus.COMPLETE,
+                    ),
+                    FinalGradeFactory.create(
+                        user=cls.user,
+                        course_run__course=cls.course,
+                        passed=True,
+                        status=FinalGradeStatus.COMPLETE,
+                    ),
+                ],
+                key=lambda final_grade: final_grade.course_run.end_date,
+                reverse=True,
+            )
 
     def test_exam_authorization_multiple_runs(self):
         """Test that if the first enrollment is invalid it checks the second, but not the third"""
         exam_run = ExamRunFactory.create(course=self.course)
 
-        with patch('exams.api.authorize_for_exam_run') as mock:
-            mock.side_effect = [ExamAuthorizationException('invalid'), None, None]
+        with patch("exams.api.authorize_for_exam_run") as mock:
+            mock.side_effect = [ExamAuthorizationException("invalid"), None, None]
             authorize_for_latest_passed_course(self.user, exam_run)
 
         assert mock.call_count == 2

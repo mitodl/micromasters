@@ -2,11 +2,11 @@
 
 export type Event = {
   preventDefault: Function,
-  target:         EventTarget,
+  target: EventTarget,
   initMouseEvent: Function,
-};
+}
 
 export type EventTarget = {
   getAttribute: Function,
   value: Array<number>,
-};
+}

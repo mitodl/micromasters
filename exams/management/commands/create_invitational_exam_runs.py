@@ -13,6 +13,7 @@ class Command(BaseCommand):
     """
     Creates ExamAuthorization for given ExamRun id and username
     """
+
     help = "Creates ExamAuthorization for provided ExamRun id and username"
 
     def add_arguments(self, parser):
@@ -20,12 +21,12 @@ class Command(BaseCommand):
         parser.add_argument("username", help="the username of the learner")
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
-        exam_run_id = kwargs.get('exam_run_id')
-        username = kwargs.get('username')
+        exam_run_id = kwargs.get("exam_run_id")
+        username = kwargs.get("username")
 
         user = User.objects.get(username=username)
         if user is None:
-            raise CommandError(f'Username {username} does not exist')
+            raise CommandError(f"Username {username} does not exist")
         try:
             exam_run = ExamRun.objects.get(id=exam_run_id)
         except ExamRun.DoesNotExist:

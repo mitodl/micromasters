@@ -4,19 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0005_course_data_creation'),
+        ("courses", "0005_course_data_creation"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='courserun',
-            name='program',
+            model_name="courserun",
+            name="program",
         ),
         migrations.AddField(
-            model_name='courserun',
-            name='fuzzy_start_date',
-            field=models.CharField(blank=True, help_text="If you don't know when your course will run exactly, put something here like 'Fall 2019'.", max_length=255, null=True),
+            model_name="courserun",
+            name="fuzzy_start_date",
+            field=models.CharField(
+                blank=True,
+                help_text="If you don't know when your course will run exactly, put something here like 'Fall 2019'.",
+                max_length=255,
+                null=True,
+            ),
         ),
     ]

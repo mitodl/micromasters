@@ -5,22 +5,35 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0011_courserun_upgrade_deadline'),
-        ('ecommerce', '0001_initial'),
+        ("courses", "0011_courserun_upgrade_deadline"),
+        ("ecommerce", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CoursePrice',
+            name="CoursePrice",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('price', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('is_valid', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('modified_at', models.DateTimeField(auto_now=True)),
-                ('course_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.CourseRun')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("price", models.DecimalField(decimal_places=2, max_digits=20)),
+                ("is_valid", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("modified_at", models.DateTimeField(auto_now=True)),
+                (
+                    "course_run",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.CourseRun",
+                    ),
+                ),
             ],
         ),
     ]

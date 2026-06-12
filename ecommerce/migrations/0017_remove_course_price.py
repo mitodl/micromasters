@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ecommerce', '0016_invoice'),
-        ('courses', '0023_add_price'),
+        ("ecommerce", "0016_invoice"),
+        ("courses", "0023_add_price"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='courseprice',
-            name='course_run',
+            model_name="courseprice",
+            name="course_run",
         ),
         migrations.DeleteModel(
-            name='CoursePrice',
+            name="CoursePrice",
         ),
     ]

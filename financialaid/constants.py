@@ -10,25 +10,33 @@ class FinancialAidJustification:
     """
     Justifications for financial aid decisions
     """
+
     OKAY = "Documents in order"
     NOT_NOTARIZED = "Docs not notarized"
     INSUFFICIENT = "Insufficient docs"
     INCOME_INACCURATE = "Inaccurate income reported"
     COUNTRY_INACCURATE = "Inaccurate country reported"
 
-    ALL_JUSTIFICATIONS = [OKAY, NOT_NOTARIZED, INSUFFICIENT, INCOME_INACCURATE, COUNTRY_INACCURATE]
+    ALL_JUSTIFICATIONS = [
+        OKAY,
+        NOT_NOTARIZED,
+        INSUFFICIENT,
+        INCOME_INACCURATE,
+        COUNTRY_INACCURATE,
+    ]
 
 
 class FinancialAidStatus:
     """Statuses for the Financial Aid model"""
-    APPROVED = 'approved'
-    AUTO_APPROVED = 'auto-approved'
-    CREATED = 'created'
-    DOCS_SENT = 'docs-sent'
-    PENDING_DOCS = 'pending-docs'
-    PENDING_MANUAL_APPROVAL = 'pending-manual-approval'
-    SKIPPED = 'skipped'
-    RESET = 'reset'
+
+    APPROVED = "approved"
+    AUTO_APPROVED = "auto-approved"
+    CREATED = "created"
+    DOCS_SENT = "docs-sent"
+    PENDING_DOCS = "pending-docs"
+    PENDING_MANUAL_APPROVAL = "pending-manual-approval"
+    SKIPPED = "skipped"
+    RESET = "reset"
 
     ALL_STATUSES = [
         APPROVED,
@@ -38,7 +46,7 @@ class FinancialAidStatus:
         PENDING_DOCS,
         PENDING_MANUAL_APPROVAL,
         SKIPPED,
-        RESET
+        RESET,
     ]
     TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, SKIPPED]
 
@@ -52,9 +60,16 @@ class FinancialAidStatus:
         SKIPPED: "Skipped",
     }
 
-FINANCIAL_AID_RESET_SUBJECT = "Update to your personalized course price for {program_name} MicroMasters"
-FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT = "Documents received for {program_name} MicroMasters"
-FINANCIAL_AID_APPROVAL_SUBJECT = "Your personalized course price for {program_name} MicroMasters"
+
+FINANCIAL_AID_RESET_SUBJECT = (
+    "Update to your personalized course price for {program_name} MicroMasters"
+)
+FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT = (
+    "Documents received for {program_name} MicroMasters"
+)
+FINANCIAL_AID_APPROVAL_SUBJECT = (
+    "Your personalized course price for {program_name} MicroMasters"
+)
 
 FINANCIAL_AID_EMAIL_BODY = (
     "Dear {first_name},\n\n"
@@ -93,7 +108,7 @@ def get_currency_exchange_rate_api_request_url():
     if settings.OPEN_EXCHANGE_RATES_URL and settings.OPEN_EXCHANGE_RATES_APP_ID:
         return "{url}latest.json?app_id={app_id}".format(
             url=settings.OPEN_EXCHANGE_RATES_URL,
-            app_id=quote_plus(settings.OPEN_EXCHANGE_RATES_APP_ID)
+            app_id=quote_plus(settings.OPEN_EXCHANGE_RATES_APP_ID),
         )
     else:
         return None  # pragma: no cover

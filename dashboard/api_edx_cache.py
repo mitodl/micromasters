@@ -10,8 +10,11 @@ from edx_api.client import EdxApi
 from requests.exceptions import HTTPError
 
 from backends import utils
-from backends.constants import (BACKEND_EDX_ORG, BACKEND_MITX_ONLINE,
-                                COURSEWARE_BACKEND_URL)
+from backends.constants import (
+    BACKEND_EDX_ORG,
+    BACKEND_MITX_ONLINE,
+    COURSEWARE_BACKEND_URL,
+)
 from backends.exceptions import InvalidCredentialStored
 from backends.utils import has_social_auth
 from courses.models import CourseRun
@@ -23,11 +26,14 @@ from search import tasks
 log = logging.getLogger(__name__)
 
 UserCachedRunData = namedtuple(
-    'UserCachedRunData', ['edx_course_key', 'enrollment', 'certificate', 'current_grade'])
+    "UserCachedRunData",
+    ["edx_course_key", "enrollment", "certificate", "current_grade"],
+)
 
 
 class CachedEdxUserData:
     """Represents all edX data related to a User"""
+
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self, user, program=None):
@@ -40,9 +46,15 @@ class CachedEdxUserData:
         """
         self.user = user
         self.program = program
-        self.enrollments = models.CachedEnrollment.get_edx_data(self.user, program=self.program)
-        self.certificates = models.CachedCertificate.get_edx_data(self.user, program=self.program)
-        self.current_grades = models.CachedCurrentGrade.get_edx_data(self.user, program=self.program)
+        self.enrollments = models.CachedEnrollment.get_edx_data(
+            self.user, program=self.program
+        )
+        self.certificates = models.CachedCertificate.get_edx_data(
+            self.user, program=self.program
+        )
+        self.current_grades = models.CachedCurrentGrade.get_edx_data(
+            self.user, program=self.program
+        )
 
     def get_run_data(self, course_id):
         """
@@ -67,18 +79,25 @@ class CachedEdxDataApi:
     Class to handle the retrieval and update of the users' cached edX information
     """
 
-    ENROLLMENT = 'enrollment'
-    CERTIFICATE = 'certificate'
-    CURRENT_GRADE = 'current_grade'
-    ENROLLMENT_MITXONLINE = 'enrollment_mitxonline'
-    CURRENT_GRADE_MITXONLINE = 'current_grade_mitxonline'
+    ENROLLMENT = "enrollment"
+    CERTIFICATE = "certificate"
+    CURRENT_GRADE = "current_grade"
+    ENROLLMENT_MITXONLINE = "enrollment_mitxonline"
+    CURRENT_GRADE_MITXONLINE = "current_grade_mitxonline"
     # the sorting of the supported caches matters for refresh
-    EDX_SUPPORTED_CACHES = (ENROLLMENT, CERTIFICATE, CURRENT_GRADE,)
-    MITXONLINE_SUPPORTED_CACHES = (ENROLLMENT_MITXONLINE, CURRENT_GRADE_MITXONLINE,)
+    EDX_SUPPORTED_CACHES = (
+        ENROLLMENT,
+        CERTIFICATE,
+        CURRENT_GRADE,
+    )
+    MITXONLINE_SUPPORTED_CACHES = (
+        ENROLLMENT_MITXONLINE,
+        CURRENT_GRADE_MITXONLINE,
+    )
     ALL_CACHE_TYPES = EDX_SUPPORTED_CACHES + MITXONLINE_SUPPORTED_CACHES
     CACHE_TYPES_BACKEND = {
         BACKEND_EDX_ORG: EDX_SUPPORTED_CACHES,
-        BACKEND_MITX_ONLINE: MITXONLINE_SUPPORTED_CACHES
+        BACKEND_MITX_ONLINE: MITXONLINE_SUPPORTED_CACHES,
     }
 
     CACHED_EDX_MODELS = {
@@ -88,7 +107,7 @@ class CachedEdxDataApi:
     }
 
     CACHE_EXPIRATION_DELTAS = {
-        ENROLLMENT:  datetime.timedelta(minutes=5),
+        ENROLLMENT: datetime.timedelta(minutes=5),
         CERTIFICATE: datetime.timedelta(hours=6),
         CURRENT_GRADE: datetime.timedelta(hours=1),
         ENROLLMENT_MITXONLINE: datetime.timedelta(minutes=5),
@@ -127,10 +146,12 @@ class CachedEdxDataApi:
         if timestamp is None:
             timestamp = now_in_utc()
         updated_values = {
-            'user': user,
+            "user": user,
             cache_type: timestamp,
         }
-        models.UserCacheRefreshTime.objects.update_or_create(user=user, defaults=updated_values)
+        models.UserCacheRefreshTime.objects.update_or_create(
+            user=user, defaults=updated_values
+        )
 
     @classmethod
     def is_cache_fresh(cls, user, cache_type):
@@ -168,12 +189,16 @@ class CachedEdxDataApi:
         mitxonline_cache_fresh = True
 
         if has_social_auth(user, BACKEND_EDX_ORG):
-            edx_cache_fresh = all(cls.is_cache_fresh(user, cache_type) for cache_type in cls.EDX_SUPPORTED_CACHES)
+            edx_cache_fresh = all(
+                cls.is_cache_fresh(user, cache_type)
+                for cache_type in cls.EDX_SUPPORTED_CACHES
+            )
         if has_social_auth(user, BACKEND_MITX_ONLINE):
             mitxonline_cache_fresh = all(
-                cls.is_cache_fresh(user, cache_type) for cache_type in cls.MITXONLINE_SUPPORTED_CACHES)
+                cls.is_cache_fresh(user, cache_type)
+                for cache_type in cls.MITXONLINE_SUPPORTED_CACHES
+            )
         return edx_cache_fresh and mitxonline_cache_fresh
-
 
     @classmethod
     def update_cached_enrollment(cls, user, enrollment, course_id, index_user=False):
@@ -196,14 +221,12 @@ class CachedEdxDataApi:
             enrollment_data = enrollment.json
             course_run = CourseRun.objects.get(edx_course_key=course_id)
             updated_values = {
-                'user': user,
-                'course_run': course_run,
-                'data': enrollment_data,
+                "user": user,
+                "course_run": course_run,
+                "data": enrollment_data,
             }
             models.CachedEnrollment.objects.update_or_create(
-                user=user,
-                course_run=course_run,
-                defaults=updated_values
+                user=user, course_run=course_run, defaults=updated_values
             )
         if index_user:
             # submit a celery task to reindex the user
@@ -228,13 +251,25 @@ class CachedEdxDataApi:
         with transaction.atomic():
             # update the current ones
             all_enrolled_course_ids = enrollments.get_enrolled_course_ids()
-            for course_run in CourseRun.objects.filter(edx_course_key__in=all_enrolled_course_ids):
-                enrollment = enrollments.get_enrollment_for_course(course_run.edx_course_key)
-                cls.update_cached_enrollment(user, enrollment, course_run.edx_course_key)
+            for course_run in CourseRun.objects.filter(
+                edx_course_key__in=all_enrolled_course_ids
+            ):
+                enrollment = enrollments.get_enrollment_for_course(
+                    course_run.edx_course_key
+                )
+                cls.update_cached_enrollment(
+                    user, enrollment, course_run.edx_course_key
+                )
             # delete anything is not in the current enrollments for given courseware backend
-            models.CachedEnrollment.delete_all_but(user, list(all_enrolled_course_ids), provider)
+            models.CachedEnrollment.delete_all_but(
+                user, list(all_enrolled_course_ids), provider
+            )
             # update the last refresh timestamp
-            cache_type = cls.ENROLLMENT if provider == BACKEND_EDX_ORG else cls.ENROLLMENT_MITXONLINE
+            cache_type = (
+                cls.ENROLLMENT
+                if provider == BACKEND_EDX_ORG
+                else cls.ENROLLMENT_MITXONLINE
+            )
             cls.update_cache_last_access(user, cache_type)
         # submit a celery task to reindex the user
         tasks.index_users.delay([user.id], check_if_changed=True)
@@ -251,29 +286,30 @@ class CachedEdxDataApi:
         Returns:
             None
         """
-        if provider == 'mitxonline':
+        if provider == "mitxonline":
             return
         # the possible certificates can be only for courses where the user is enrolled
         course_ids = models.CachedEnrollment.active_course_ids(user, provider=provider)
 
         # Certificates are out of date, so fetch new data from edX.
         certificates = edx_client.certificates.get_student_certificates(
-            get_social_username(user, provider), course_ids)
+            get_social_username(user, provider), course_ids
+        )
 
         # This must be done atomically
         with transaction.atomic():
             all_cert_course_ids = certificates.all_courses_verified_certs
-            for course_run in CourseRun.objects.filter(edx_course_key__in=all_cert_course_ids):
+            for course_run in CourseRun.objects.filter(
+                edx_course_key__in=all_cert_course_ids
+            ):
                 certificate = certificates.get_verified_cert(course_run.edx_course_key)
                 updated_values = {
-                    'user': user,
-                    'course_run': course_run,
-                    'data': certificate.json,
+                    "user": user,
+                    "course_run": course_run,
+                    "data": certificate.json,
                 }
                 models.CachedCertificate.objects.update_or_create(
-                    user=user,
-                    course_run=course_run,
-                    defaults=updated_values
+                    user=user, course_run=course_run, defaults=updated_values
                 )
             # delete anything is not in the current certificates
             models.CachedCertificate.delete_all_but(user, all_cert_course_ids, provider)
@@ -299,27 +335,36 @@ class CachedEdxDataApi:
 
         # Current Grades are out of date, so fetch new data from edX.
         current_grades = edx_client.current_grades.get_student_current_grades(
-            get_social_username(user, provider), course_ids)
+            get_social_username(user, provider), course_ids
+        )
 
         # the update must be done atomically
         with transaction.atomic():
             all_grade_course_ids = current_grades.all_course_ids
-            for course_run in CourseRun.objects.filter(edx_course_key__in=all_grade_course_ids):
-                current_grade = current_grades.get_current_grade(course_run.edx_course_key)
+            for course_run in CourseRun.objects.filter(
+                edx_course_key__in=all_grade_course_ids
+            ):
+                current_grade = current_grades.get_current_grade(
+                    course_run.edx_course_key
+                )
                 updated_values = {
-                    'user': user,
-                    'course_run': course_run,
-                    'data': current_grade.json,
+                    "user": user,
+                    "course_run": course_run,
+                    "data": current_grade.json,
                 }
                 models.CachedCurrentGrade.objects.update_or_create(
-                    user=user,
-                    course_run=course_run,
-                    defaults=updated_values
+                    user=user, course_run=course_run, defaults=updated_values
                 )
             # delete anything is not in the current grades
-            models.CachedCurrentGrade.delete_all_but(user, all_grade_course_ids, provider)
+            models.CachedCurrentGrade.delete_all_but(
+                user, all_grade_course_ids, provider
+            )
             # update the last refresh timestamp
-            cache_type = cls.CURRENT_GRADE if provider == BACKEND_EDX_ORG else cls.CURRENT_GRADE_MITXONLINE
+            cache_type = (
+                cls.CURRENT_GRADE
+                if provider == BACKEND_EDX_ORG
+                else cls.CURRENT_GRADE_MITXONLINE
+            )
             cls.update_cache_last_access(user, cache_type)
         # submit a celery task to reindex the user
         tasks.index_users.delay([user.id], check_if_changed=True)
@@ -351,11 +396,14 @@ class CachedEdxDataApi:
             try:
                 update_func(user, edx_client, provider)
             except HTTPError as exc:
-                if exc.response.status_code in (400, 401,):
+                if exc.response.status_code in (
+                    400,
+                    401,
+                ):
                     raise InvalidCredentialStored(
-                        message=f'Received a {exc.response.status_code} status code from the server even'
-                        ' if access token was supposed to be valid',
-                        http_status_code=exc.response.status_code
+                        message=f"Received a {exc.response.status_code} status code from the server even"
+                        " if access token was supposed to be valid",
+                        http_status_code=exc.response.status_code,
                     )
                 raise
 

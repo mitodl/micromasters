@@ -28,10 +28,7 @@ type ErrorMessages = { [key: string]: string }
 
 export const isNilOrEmptyString = R.anyPass([R.isNil, R.test(/^\s*$/)])
 
-const filledOutFields = R.compose(
-  R.keys,
-  R.reject(isNilOrEmptyString)
-)
+const filledOutFields = R.compose(R.keys, R.reject(isNilOrEmptyString))
 
 const findErrors = (
   input: Object,
@@ -53,12 +50,7 @@ export const checkIsNotNilOrEmpty = checkProp(
 )
 
 export const mergeValidations = R.compose(
-  R.converge(
-    R.compose(
-      R.mergeAll,
-      Array.of
-    )
-  ),
+  R.converge(R.compose(R.mergeAll, Array.of)),
   Array.of
 )
 
@@ -68,11 +60,7 @@ export const checkMaxLength = R.curry((key, label, maxLength, profile) =>
     `${label} must be no more than ${maxLength} characters`,
     [
       R.complement(isNilOrEmptyString),
-      R.pipe(
-        R.toString,
-        R.prop("length"),
-        R.lte(R.__, maxLength)
-      )
+      R.pipe(R.toString, R.prop("length"), R.lte(R.__, maxLength))
     ],
     profile
   )
@@ -244,10 +232,7 @@ const nestedValidator = R.curry(
   }
 )
 
-const mergeListOfArgs = R.compose(
-  R.mergeAll,
-  Array
-)
+const mergeListOfArgs = R.compose(R.mergeAll, Array)
 
 const extraErrorCheck = R.curry((key, msg, predicate, entry, errors) =>
   predicate(entry) ? R.merge(errors, { [key]: msg }) : errors
@@ -273,18 +258,12 @@ const isHighSchool: (e: EducationEntry) => boolean = R.compose(
 )
 
 const excludeFieldOfStudy: (k: string[]) => string[] = R.filter(
-  R.compose(
-    R.not,
-    R.equals("field_of_study")
-  )
+  R.compose(R.not, R.equals("field_of_study"))
 )
 
 const educationKeys: (e: EducationEntry) => string[] = R.ifElse(
   isHighSchool,
-  R.compose(
-    excludeFieldOfStudy,
-    R.keys
-  ),
+  R.compose(excludeFieldOfStudy, R.keys),
   R.keys
 )
 
@@ -301,12 +280,13 @@ const additionalSchoolValidation = R.converge(mergeListOfArgs, [
   schoolLocationIsValid
 ])
 
-const educationErrors: (xs: EducationEntry[]) => ValidationErrors[] = R.map(
-  entry =>
-    additionalSchoolValidation(
-      entry,
-      findErrors(entry, educationKeys(entry), educationMessages)
-    )
+const educationErrors: (
+  xs: EducationEntry[]
+) => ValidationErrors[] = R.map(entry =>
+  additionalSchoolValidation(
+    entry,
+    findErrors(entry, educationKeys(entry), educationMessages)
+  )
 )
 
 export const educationValidation = nestedValidator("education", educationErrors)
@@ -373,12 +353,13 @@ const additionalWorkValidation = R.converge(mergeListOfArgs, [
   workLocationIsValid
 ])
 
-const workHistoryErrors: (xs: WorkHistoryEntry[]) => ValidationErrors[] = R.map(
-  entry =>
-    additionalWorkValidation(
-      entry,
-      findErrors(entry, R.keys(workMessages), workMessages)
-    )
+const workHistoryErrors: (
+  xs: WorkHistoryEntry[]
+) => ValidationErrors[] = R.map(entry =>
+  additionalWorkValidation(
+    entry,
+    findErrors(entry, R.keys(workMessages), workMessages)
+  )
 )
 
 export const employmentValidation = nestedValidator(
@@ -407,10 +388,7 @@ const emailMessages: ErrorMessages = {
 
 const emailLinksValid = R.ifElse(
   R.test(/<a.*>.*<\/a>/),
-  R.compose(
-    R.not,
-    R.test(/<a\s.*href=("|')(?!http|https|mailto:)/)
-  ),
+  R.compose(R.not, R.test(/<a\s.*href=("|')(?!http|https|mailto:)/)),
   R.T
 )
 

@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0011_programenrollment_share_hash'),
+        ("dashboard", "0011_programenrollment_share_hash"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='usercacherefreshtime',
-            name='current_grade_mitxonline',
+            model_name="usercacherefreshtime",
+            name="current_grade_mitxonline",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='usercacherefreshtime',
-            name='enrollment_mitxonline',
+            model_name="usercacherefreshtime",
+            name="enrollment_mitxonline",
             field=models.DateTimeField(null=True),
         ),
     ]

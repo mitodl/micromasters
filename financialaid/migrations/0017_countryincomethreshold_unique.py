@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0016_load_country_income_thresholds'),
+        ("financialaid", "0016_load_country_income_thresholds"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='countryincomethreshold',
-            name='country_code',
+            model_name="countryincomethreshold",
+            name="country_code",
             field=models.CharField(max_length=2, unique=True),
         ),
     ]

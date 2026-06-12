@@ -33,7 +33,10 @@ describe("sorting functions", () => {
         "1986-12",
         "1901-03"
       ]
-      assert.deepEqual(expected, moments.map(m => m.format("YYYY-MM")))
+      assert.deepEqual(
+        expected,
+        moments.map(m => m.format("YYYY-MM"))
+      )
     })
   })
 
@@ -48,7 +51,10 @@ describe("sorting functions", () => {
     const expected = ["1997-01", "1992-01", "1969-01", "1934-01"]
 
     it("should sort by date, descending", () => {
-      assert.deepEqual(expected, sorted.map(([, entry]) => entry.end_date))
+      assert.deepEqual(
+        expected,
+        sorted.map(([, entry]) => entry.end_date)
+      )
     })
 
     it("should not modify the original array", () => {
@@ -135,7 +141,10 @@ describe("sorting functions", () => {
     ]
 
     it("should sort education entries by date descending", () => {
-      assert.deepEqual(expectation, sorted.map(([, e]) => e.graduation_date))
+      assert.deepEqual(
+        expectation,
+        sorted.map(([, e]) => e.graduation_date)
+      )
     })
 
     it("should return the indices of the sorted entries in the original array", () => {

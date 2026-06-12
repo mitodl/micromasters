@@ -3,8 +3,7 @@ EdX.org backend for Python Social Auth
 """
 from django.conf import settings
 
-from backends.base import (BaseEdxOAuth2, edx_access_token_url,
-                           edx_authorize_url)
+from backends.base import BaseEdxOAuth2, edx_access_token_url, edx_authorize_url
 
 
 class EdxOrgOAuth2(BaseEdxOAuth2):

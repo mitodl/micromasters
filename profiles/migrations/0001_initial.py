@@ -7,7 +7,6 @@ import jsonfield.fields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -16,31 +15,91 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('account_privacy', models.TextField(choices=[('private', 'Private'), ('public_to_mm', 'Public to logged in users'), ('public', 'Public to everyone')], default='private')),
-                ('email_optin', models.BooleanField(default=False)),
-                ('employer', models.CharField(blank=True, max_length=255, null=True)),
-                ('job_title', models.CharField(blank=True, max_length=255, null=True)),
-                ('state_or_territory', models.CharField(blank=True, max_length=255, null=True)),
-                ('name', models.TextField(blank=True, null=True)),
-                ('bio', models.TextField(blank=True, null=True)),
-                ('country', models.TextField(blank=True, null=True)),
-                ('has_profile_image', models.BooleanField()),
-                ('profile_url_full', models.TextField(blank=True, null=True)),
-                ('profile_url_large', models.TextField(blank=True, null=True)),
-                ('profile_url_medium', models.TextField(blank=True, null=True)),
-                ('profile_url_small', models.TextField(blank=True, null=True)),
-                ('requires_parental_consent', models.NullBooleanField()),
-                ('year_of_birth', models.IntegerField(blank=True, null=True)),
-                ('level_of_education', models.TextField(blank=True, choices=[('p', 'Doctorate'), ('m', "Master's or professional degree"), ('b', "Bachelor's degree"), ('a', 'Associate degree'), ('hs', 'High school'), ('jhs', 'Junior high school'), ('el', 'Elementary school'), ('none', 'No formal education'), ('other', 'Other education')], max_length=6, null=True)),
-                ('goals', models.TextField(blank=True, null=True)),
-                ('language_proficiencies', jsonfield.fields.JSONField(blank=True, null=True)),
-                ('gender', models.CharField(blank=True, choices=[('m', 'Male'), ('f', 'Female'), ('o', 'Other/Prefer Not to Say')], max_length=6, null=True)),
-                ('mailing_address', models.TextField(blank=True, null=True)),
-                ('date_joined', models.DateTimeField(blank=True, null=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "account_privacy",
+                    models.TextField(
+                        choices=[
+                            ("private", "Private"),
+                            ("public_to_mm", "Public to logged in users"),
+                            ("public", "Public to everyone"),
+                        ],
+                        default="private",
+                    ),
+                ),
+                ("email_optin", models.BooleanField(default=False)),
+                ("employer", models.CharField(blank=True, max_length=255, null=True)),
+                ("job_title", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "state_or_territory",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("name", models.TextField(blank=True, null=True)),
+                ("bio", models.TextField(blank=True, null=True)),
+                ("country", models.TextField(blank=True, null=True)),
+                ("has_profile_image", models.BooleanField()),
+                ("profile_url_full", models.TextField(blank=True, null=True)),
+                ("profile_url_large", models.TextField(blank=True, null=True)),
+                ("profile_url_medium", models.TextField(blank=True, null=True)),
+                ("profile_url_small", models.TextField(blank=True, null=True)),
+                ("requires_parental_consent", models.NullBooleanField()),
+                ("year_of_birth", models.IntegerField(blank=True, null=True)),
+                (
+                    "level_of_education",
+                    models.TextField(
+                        blank=True,
+                        choices=[
+                            ("p", "Doctorate"),
+                            ("m", "Master's or professional degree"),
+                            ("b", "Bachelor's degree"),
+                            ("a", "Associate degree"),
+                            ("hs", "High school"),
+                            ("jhs", "Junior high school"),
+                            ("el", "Elementary school"),
+                            ("none", "No formal education"),
+                            ("other", "Other education"),
+                        ],
+                        max_length=6,
+                        null=True,
+                    ),
+                ),
+                ("goals", models.TextField(blank=True, null=True)),
+                (
+                    "language_proficiencies",
+                    jsonfield.fields.JSONField(blank=True, null=True),
+                ),
+                (
+                    "gender",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("m", "Male"),
+                            ("f", "Female"),
+                            ("o", "Other/Prefer Not to Say"),
+                        ],
+                        max_length=6,
+                        null=True,
+                    ),
+                ),
+                ("mailing_address", models.TextField(blank=True, null=True)),
+                ("date_joined", models.DateTimeField(blank=True, null=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

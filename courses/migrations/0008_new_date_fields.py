@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0007_position_in_program'),
+        ("courses", "0007_position_in_program"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='courserun',
-            name='end_date',
+            model_name="courserun",
+            name="end_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='courserun',
-            name='enrollment_end',
+            model_name="courserun",
+            name="enrollment_end",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

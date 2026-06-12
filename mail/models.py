@@ -10,10 +10,13 @@ from search.models import PercolateQuery
 
 
 User = get_user_model()
+
+
 class AutomaticEmail(TimestampedModel):
     """
     Stores information for an automatically sent email
     """
+
     query = models.ForeignKey(PercolateQuery, null=True, on_delete=models.SET_NULL)
     enabled = models.BooleanField(default=False)
     email_subject = models.TextField(null=False, blank=True)
@@ -30,13 +33,16 @@ class SentAutomaticEmail(TimestampedModel):
     """
     Keeps track of automatic emails which were sent to particular users
     """
-    PENDING = 'pending'
-    SENT = 'sent'
+
+    PENDING = "pending"
+    SENT = "sent"
 
     STATUSES = [PENDING, SENT]
 
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    automatic_email = models.ForeignKey(AutomaticEmail, null=False, on_delete=models.CASCADE)
+    automatic_email = models.ForeignKey(
+        AutomaticEmail, null=False, on_delete=models.CASCADE
+    )
     # This is used to aid the transaction in locking this row. SentAutomaticEmail will be created as PENDING
     # and then changed to SENT once a successful email was sent.
     status = models.CharField(
@@ -46,7 +52,7 @@ class SentAutomaticEmail(TimestampedModel):
     )
 
     class Meta:
-        unique_together = ('user', 'automatic_email')
+        unique_together = ("user", "automatic_email")
 
     def __str__(self):
         return f"SentAutomaticEmail for user={self.user} and automatic_email={self.automatic_email}"

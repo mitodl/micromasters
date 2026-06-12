@@ -3,8 +3,7 @@ Create Profiles for existing Users
 """
 
 
-from django.conf import settings
-from django.db import migrations, models
+from django.db import migrations
 
 
 def create_profiles(apps, schema_editor):
@@ -15,16 +14,13 @@ def create_profiles(apps, schema_editor):
     Profile = apps.get_model("profiles", "Profile")
 
     for user in Users.objects.all():
-        if not hasattr(user, 'profile'):
+        if not hasattr(user, "profile"):
             Profile.objects.create(user=user)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0002_fields_modified'),
+        ("profiles", "0002_fields_modified"),
     ]
 
-    operations = [
-        migrations.RunPython(create_profiles)
-    ]
+    operations = [migrations.RunPython(create_profiles)]

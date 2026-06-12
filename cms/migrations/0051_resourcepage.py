@@ -7,24 +7,62 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0060_fix_workflow_unique_constraint'),
-        ('wagtailimages', '0023_add_choose_permissions'),
-        ('cms', '0050_helper_text_change'),
+        ("wagtailcore", "0060_fix_workflow_unique_constraint"),
+        ("wagtailimages", "0023_add_choose_permissions"),
+        ("cms", "0050_helper_text_change"),
     ]
-    
+
     operations = [
         migrations.CreateModel(
-            name='ResourcePage',
+            name="ResourcePage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('content', wagtail.fields.StreamField([('content', wagtail.blocks.StructBlock([('heading', wagtail.blocks.CharBlock(max_length=100)), ('detail', wagtail.blocks.RichTextBlock())]))], help_text='Enter details of content.')),
-                ('header_image', models.ForeignKey(blank=True, help_text='Upload a header image that will render in the resource page. (The recommended dimensions for the image are 1920x300)', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.Image')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                (
+                    "content",
+                    wagtail.fields.StreamField(
+                        [
+                            (
+                                "content",
+                                wagtail.blocks.StructBlock(
+                                    [
+                                        (
+                                            "heading",
+                                            wagtail.blocks.CharBlock(max_length=100),
+                                        ),
+                                        ("detail", wagtail.blocks.RichTextBlock()),
+                                    ]
+                                ),
+                            )
+                        ],
+                        help_text="Enter details of content.",
+                    ),
+                ),
+                (
+                    "header_image",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="Upload a header image that will render in the resource page. (The recommended dimensions for the image are 1920x300)",
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="wagtailimages.Image",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
     ]

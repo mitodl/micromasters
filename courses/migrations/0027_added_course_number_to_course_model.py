@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0026_course_should_display_progress'),
+        ("courses", "0026_course_should_display_progress"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='course_number',
+            model_name="course",
+            name="course_number",
             field=models.TextField(blank=True, null=True),
         ),
     ]

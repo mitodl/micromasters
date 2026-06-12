@@ -22,7 +22,7 @@ class QueryStringFeatureFlagMiddleware(MiddlewareMixin):
         Returns:
             str: the full key value
         """
-        return f'{settings.MIDDLEWARE_FEATURE_FLAG_QS_PREFIX}_FEATURE_{suffix}'
+        return f"{settings.MIDDLEWARE_FEATURE_FLAG_QS_PREFIX}_FEATURE_{suffix}"
 
     @classmethod
     def encode_feature_flags(cls, data):
@@ -51,10 +51,10 @@ class QueryStringFeatureFlagMiddleware(MiddlewareMixin):
         Args:
             request (django.http.request.Request): the request to inspect
         """
-        prefix = self.get_flag_key('')
+        prefix = self.get_flag_key("")
         if request.GET and any(key.startswith(prefix) for key in request.GET.keys()):
             response = shortcuts.redirect(request.path)
-            if self.get_flag_key('CLEAR') in request.GET:
+            if self.get_flag_key("CLEAR") in request.GET:
                 response.delete_cookie(settings.MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME)
             else:
                 response.set_signed_cookie(
@@ -99,7 +99,11 @@ class CookieFeatureFlagMiddleware(MiddlewareMixin):
         """
         if settings.MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME in request.COOKIES:
             try:
-                value = int(request.get_signed_cookie(settings.MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME))
+                value = int(
+                    request.get_signed_cookie(
+                        settings.MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME
+                    )
+                )
             except ValueError:
                 return set()
             return cls.decode_feature_flags(value)

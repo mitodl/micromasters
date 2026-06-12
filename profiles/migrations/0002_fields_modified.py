@@ -6,29 +6,30 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0001_initial'),
+        ("profiles", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='profile',
-            name='date_joined',
+            model_name="profile",
+            name="date_joined",
         ),
         migrations.AddField(
-            model_name='profile',
-            name='date_joined_micromasters',
+            model_name="profile",
+            name="date_joined_micromasters",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='profile',
-            name='has_profile_image',
+            model_name="profile",
+            name="has_profile_image",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='profile',
-            name='user',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="profile",
+            name="user",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

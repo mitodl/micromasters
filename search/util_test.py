@@ -12,29 +12,31 @@ def test_traverse_mapping():
     """
     data = {
         "user": {
-            "properties": OrderedDict([
-                ("certificates", {
-                    "type": "nested",
-                    "properties": {
-                        "long_field": {
-                            "type": "long"
-                        }
-                    }
-                }),
-                ("string_field", {
-                    "type": "string"
-                })
-            ])
+            "properties": OrderedDict(
+                [
+                    (
+                        "certificates",
+                        {
+                            "type": "nested",
+                            "properties": {"long_field": {"type": "long"}},
+                        },
+                    ),
+                    ("string_field", {"type": "string"}),
+                ]
+            )
         }
     }
     assert list(traverse_mapping(data, "root")) == [
         ("root", data),
-        ('user', data['user']),
-        ('properties', data['user']['properties']),
-        ('certificates', data['user']['properties']['certificates']),
-        ('properties', data['user']['properties']['certificates']['properties']),
-        ('long_field', data['user']['properties']['certificates']['properties']['long_field']),
-        ('string_field', data['user']['properties']['string_field']),
+        ("user", data["user"]),
+        ("properties", data["user"]["properties"]),
+        ("certificates", data["user"]["properties"]["certificates"]),
+        ("properties", data["user"]["properties"]["certificates"]["properties"]),
+        (
+            "long_field",
+            data["user"]["properties"]["certificates"]["properties"]["long_field"],
+        ),
+        ("string_field", data["user"]["properties"]["string_field"]),
     ]
 
 

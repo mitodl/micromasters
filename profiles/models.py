@@ -8,31 +8,37 @@ from django.contrib.auth import get_user_model
 from django.db import models, transaction
 from django.db.models import JSONField
 
-from profiles.util import (IMAGE_MEDIUM_MAX_DIMENSION,
-                           IMAGE_SMALL_MAX_DIMENSION, full_name,
-                           make_thumbnail, profile_image_upload_uri,
-                           profile_image_upload_uri_medium,
-                           profile_image_upload_uri_small, split_at_space)
+from profiles.util import (
+    IMAGE_MEDIUM_MAX_DIMENSION,
+    IMAGE_SMALL_MAX_DIMENSION,
+    full_name,
+    make_thumbnail,
+    profile_image_upload_uri,
+    profile_image_upload_uri_medium,
+    profile_image_upload_uri_small,
+    split_at_space,
+)
 
 User = get_user_model()
 
-DOCTORATE = 'p'
-MASTERS = 'm'
-BACHELORS = 'b'
-ASSOCIATE = 'a'
-HIGH_SCHOOL = 'hs'
-JUNIOR_HIGH_SCHOOL = 'jhs'
-ELEMENTARY = 'el'
-NO_FORMAL_EDUCATION = 'none'
-OTHER_EDUCATION = 'other'
+DOCTORATE = "p"
+MASTERS = "m"
+BACHELORS = "b"
+ASSOCIATE = "a"
+HIGH_SCHOOL = "hs"
+JUNIOR_HIGH_SCHOOL = "jhs"
+ELEMENTARY = "el"
+NO_FORMAL_EDUCATION = "none"
+OTHER_EDUCATION = "other"
 
-ISO_3166_SUBDIVISION_RE = re.compile(r'^([A-Z]+)\-([A-Z]+)$')
+ISO_3166_SUBDIVISION_RE = re.compile(r"^([A-Z]+)\-([A-Z]+)$")
 
 
 class Employment(models.Model):
     """
     A user work_history
     """
+
     city = models.TextField()
     company_name = models.TextField()
     country = models.TextField()
@@ -41,10 +47,12 @@ class Employment(models.Model):
     state_or_territory = models.TextField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
-    profile = models.ForeignKey('Profile', on_delete=models.CASCADE, related_name='work_history')
+    profile = models.ForeignKey(
+        "Profile", on_delete=models.CASCADE, related_name="work_history"
+    )
 
     def __str__(self):
-        return 'Employment for {user}, {title} {start}-{end}'.format(
+        return "Employment for {user}, {title} {start}-{end}".format(
             user=self.profile.user.username,
             title=self.company_name,
             start=self.start_date.strftime("%b %Y") if self.start_date else "",
@@ -56,27 +64,28 @@ class Profile(models.Model):
     """
     A user profile
     """
-    PRIVATE = 'private'
-    PUBLIC_TO_MM = 'public_to_mm'
-    PUBLIC = 'public'
+
+    PRIVATE = "private"
+    PUBLIC_TO_MM = "public_to_mm"
+    PUBLIC = "public"
     ACCOUNT_PRIVACY_CHOICES = (
-        (PRIVATE, 'Private'),
-        (PUBLIC_TO_MM, 'Public to logged in users'),
-        (PUBLIC, 'Public to everyone'),
+        (PRIVATE, "Private"),
+        (PUBLIC_TO_MM, "Public to logged in users"),
+        (PUBLIC, "Public to everyone"),
     )
 
     # Defined in edX UserProfile model
-    MALE = 'm'
-    FEMALE = 'f'
-    OTHER = 'o'
+    MALE = "m"
+    FEMALE = "f"
+    OTHER = "o"
     GENDER_CHOICES = (
-        (MALE, 'Male'),
-        (FEMALE, 'Female'),
-        (OTHER, 'Other/Prefer Not to Say'),
+        (MALE, "Male"),
+        (FEMALE, "Female"),
+        (OTHER, "Other/Prefer Not to Say"),
     )
 
     LEVEL_OF_EDUCATION_CHOICES = (
-        (DOCTORATE, 'Doctorate'),
+        (DOCTORATE, "Doctorate"),
         (MASTERS, "Master's or professional degree"),
         (BACHELORS, "Bachelor's degree"),
         (ASSOCIATE, "Associate degree"),
@@ -126,16 +135,8 @@ class Profile(models.Model):
     romanized_first_name = models.CharField(blank=True, null=True, max_length=30)
     romanized_last_name = models.CharField(blank=True, null=True, max_length=50)
 
-    address = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
-    postal_code = models.CharField(
-        max_length=16,
-        blank=True,
-        null=True
-    )
+    address = models.CharField(max_length=100, blank=True, null=True)
+    postal_code = models.CharField(max_length=16, blank=True, null=True)
     city = models.TextField(blank=True, null=True)
     country = models.TextField(blank=True, null=True)
     state_or_territory = models.CharField(
@@ -144,11 +145,7 @@ class Profile(models.Model):
         null=True,
     )
 
-    phone_number = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True
-    )
+    phone_number = models.CharField(max_length=50, blank=True, null=True)
 
     birth_country = models.TextField(blank=True, null=True)
     nationality = models.TextField(blank=True, null=True)
@@ -156,7 +153,9 @@ class Profile(models.Model):
 
     image = models.ImageField(upload_to=profile_image_upload_uri, null=True)
     image_small = models.ImageField(upload_to=profile_image_upload_uri_small, null=True)
-    image_medium = models.ImageField(upload_to=profile_image_upload_uri_medium, null=True)
+    image_medium = models.ImageField(
+        upload_to=profile_image_upload_uri_medium, null=True
+    )
 
     edx_requires_parental_consent = models.BooleanField(null=True)
     date_of_birth = models.DateField(blank=True, null=True)
@@ -176,7 +175,9 @@ class Profile(models.Model):
         null=True,
     )
     edx_mailing_address = models.TextField(blank=True, null=True)
-    date_joined_micromasters = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+    date_joined_micromasters = models.DateTimeField(
+        blank=True, null=True, auto_now_add=True
+    )
     student_id = models.IntegerField(blank=True, null=True, unique=True)
     mail_id = models.UUIDField(default=uuid4, unique=True)
     fake_user = models.BooleanField(default=False)
@@ -184,12 +185,18 @@ class Profile(models.Model):
     updated_on = models.DateTimeField(blank=True, null=True, auto_now=True)
 
     @transaction.atomic
-    def save(self, *args, update_image=False, **kwargs):  # pylint: disable=arguments-differ
+    def save(
+        self, *args, update_image=False, **kwargs
+    ):  # pylint: disable=arguments-differ
         """Set the student_id number to the PK number and update thumbnails if necessary"""
         if update_image:
             if self.image:
-                small_thumbnail = make_thumbnail(self.image.file, IMAGE_SMALL_MAX_DIMENSION)
-                medium_thumbnail = make_thumbnail(self.image.file, IMAGE_MEDIUM_MAX_DIMENSION)
+                small_thumbnail = make_thumbnail(
+                    self.image.file, IMAGE_SMALL_MAX_DIMENSION
+                )
+                medium_thumbnail = make_thumbnail(
+                    self.image.file, IMAGE_MEDIUM_MAX_DIMENSION
+                )
 
                 # name doesn't matter here, we use upload_to to produce that
                 self.image_small.save(f"{uuid4().hex}.jpg", small_thumbnail)
@@ -260,29 +267,30 @@ class Profile(models.Model):
     @property
     def display_name(self):
         """User's full name in a standard displayable format"""
-        name_components = [
-            self.first_name or self.user.username
-        ]
+        name_components = [self.first_name or self.user.username]
         if self.last_name:
             name_components.append(self.last_name)
         if self.preferred_name and self.preferred_name != self.first_name:
-            name_components.append(f'({self.preferred_name})')
-        return ' '.join(name_components)
+            name_components.append(f"({self.preferred_name})")
+        return " ".join(name_components)
 
 
 class Education(models.Model):
     """
     A user education
     """
+
     DEGREE_CHOICES = (
-        (DOCTORATE, 'Doctorate'),
+        (DOCTORATE, "Doctorate"),
         (MASTERS, "Master's or professional degree"),
         (BACHELORS, "Bachelor's degree"),
         (ASSOCIATE, "Associate degree"),
         (HIGH_SCHOOL, "High school"),
         (OTHER_EDUCATION, "Other education"),
     )
-    profile = models.ForeignKey(Profile, related_name='education', on_delete=models.CASCADE)
+    profile = models.ForeignKey(
+        Profile, related_name="education", on_delete=models.CASCADE
+    )
     degree_name = models.CharField(max_length=30, choices=DEGREE_CHOICES)
     graduation_date = models.DateField()
     field_of_study = models.TextField(blank=True, null=True)
@@ -293,9 +301,9 @@ class Education(models.Model):
     school_country = models.TextField()
 
     def __str__(self):
-        degree_title = dict(self.DEGREE_CHOICES).get(self.degree_name, '')
+        degree_title = dict(self.DEGREE_CHOICES).get(self.degree_name, "")
 
-        return 'Education for {user}, {degree} at {title} {date}'.format(
+        return "Education for {user}, {degree} at {title} {date}".format(
             user=self.profile.user.username,
             degree=degree_title,
             title=self.school_name,
@@ -307,10 +315,15 @@ class Country(models.Model):
     """
     List of countries.
     """
+
     name = models.TextField()
     short_code = models.TextField()
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, null=True, blank=True
+    )
+    longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, null=True, blank=True
+    )
 
     def __str__(self):
         return self.name

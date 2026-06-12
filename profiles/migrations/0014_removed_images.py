@@ -4,26 +4,25 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0013_profile_verified_micromaster_user'),
+        ("profiles", "0013_profile_verified_micromaster_user"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='profile',
-            name='profile_url_full',
+            model_name="profile",
+            name="profile_url_full",
         ),
         migrations.RemoveField(
-            model_name='profile',
-            name='profile_url_large',
+            model_name="profile",
+            name="profile_url_large",
         ),
         migrations.RemoveField(
-            model_name='profile',
-            name='profile_url_medium',
+            model_name="profile",
+            name="profile_url_medium",
         ),
         migrations.RemoveField(
-            model_name='profile',
-            name='profile_url_small',
+            model_name="profile",
+            name="profile_url_small",
         ),
     ]

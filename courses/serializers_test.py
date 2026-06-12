@@ -8,8 +8,12 @@ from cms.factories import ProgramPageFactory
 from cms.models import HomePage
 from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 from courses.models import ElectiveCourse, ElectivesSet
-from courses.serializers import (CourseRunSerializer, CourseSerializer,
-                                 ElectivesSetSerializer, ProgramSerializer)
+from courses.serializers import (
+    CourseRunSerializer,
+    CourseSerializer,
+    ElectivesSetSerializer,
+    ProgramSerializer,
+)
 from dashboard.models import ProgramEnrollment
 from profiles.factories import UserFactory
 from search.base import MockedESTestCase
@@ -31,7 +35,7 @@ class CourseSerializerTests(MockedESTestCase):
             "title": course.title,
             "description": course.description,
             "url": "",
-            "enrollment_text": "Not available"
+            "enrollment_text": "Not available",
         }
         assert data == expected
 
@@ -42,8 +46,8 @@ class CourseSerializerTests(MockedESTestCase):
         course_run = CourseRunFactory.create()
         course = course_run.course
         data = CourseSerializer(course).data
-        assert data['url'] == course_run.enrollment_url
-        assert data['enrollment_text'] == course.enrollment_text
+        assert data["url"] == course_run.enrollment_url
+        assert data["enrollment_text"] == course.enrollment_text
 
 
 class CourseRunSerializerTests(MockedESTestCase):
@@ -58,9 +62,9 @@ class CourseRunSerializerTests(MockedESTestCase):
         course_run = CourseRunFactory.create()
         data = CourseRunSerializer(course_run).data
         expected = {
-            'edx_course_key': course_run.edx_course_key,
-            'program_title': course_run.course.program.title,
-            'courseware_backend': course_run.courseware_backend,
+            "edx_course_key": course_run.edx_course_key,
+            "program_title": course_run.course.program.title,
+            "courseware_backend": course_run.courseware_backend,
         }
         assert data == expected
 
@@ -78,9 +82,7 @@ class ProgramSerializerTests(MockedESTestCase):
         cls.program = ProgramFactory.create()
         cls.course_run = CourseRunFactory.create(course__program=cls.program)
         cls.user = UserFactory.create()
-        cls.context = {
-            "request": Mock(user=cls.user)
-        }
+        cls.context = {"request": Mock(user=cls.user)}
 
     def test_program_no_programpage(self):
         """
@@ -88,12 +90,14 @@ class ProgramSerializerTests(MockedESTestCase):
         """
         data = ProgramSerializer(self.program, context=self.context).data
         assert data == {
-            'id': self.program.id,
-            'title': self.program.title,
-            'programpage_url': None,
-            'enrolled': False,
-            'total_courses': 1,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "id": self.program.id,
+            "title": self.program.title,
+            "programpage_url": None,
+            "enrolled": False,
+            "total_courses": 1,
+            "topics": [
+                {"name": topic.name} for topic in self.program.topics.iterator()
+            ],
             "enrollable_courseware_backends": ["edxorg"],
         }
 
@@ -106,12 +110,14 @@ class ProgramSerializerTests(MockedESTestCase):
         homepage.add_child(instance=programpage)
         data = ProgramSerializer(self.program, context=self.context).data
         assert data == {
-            'id': self.program.id,
-            'title': self.program.title,
-            'programpage_url': programpage.get_full_url(),
-            'enrolled': False,
-            'total_courses': 1,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "id": self.program.id,
+            "title": self.program.title,
+            "programpage_url": programpage.get_full_url(),
+            "enrolled": False,
+            "total_courses": 1,
+            "topics": [
+                {"name": topic.name} for topic in self.program.topics.iterator()
+            ],
             "enrollable_courseware_backends": ["edxorg"],
         }
         assert len(programpage.url) > 0
@@ -123,12 +129,14 @@ class ProgramSerializerTests(MockedESTestCase):
         ProgramEnrollment.objects.create(user=self.user, program=self.program)
         data = ProgramSerializer(self.program, context=self.context).data
         assert data == {
-            'id': self.program.id,
-            'title': self.program.title,
-            'programpage_url': None,
-            'enrolled': True,
-            'total_courses': 1,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "id": self.program.id,
+            "title": self.program.title,
+            "programpage_url": None,
+            "enrolled": True,
+            "total_courses": 1,
+            "topics": [
+                {"name": topic.name} for topic in self.program.topics.iterator()
+            ],
             "enrollable_courseware_backends": ["edxorg"],
         }
 
@@ -139,12 +147,14 @@ class ProgramSerializerTests(MockedESTestCase):
         CourseFactory.create_batch(5, program=self.program)
         data = ProgramSerializer(self.program, context=self.context).data
         assert data == {
-            'id': self.program.id,
-            'title': self.program.title,
-            'programpage_url': None,
-            'enrolled': False,
-            'total_courses': 6,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "id": self.program.id,
+            "title": self.program.title,
+            "programpage_url": None,
+            "enrolled": False,
+            "total_courses": 6,
+            "topics": [
+                {"name": topic.name} for topic in self.program.topics.iterator()
+            ],
             "enrollable_courseware_backends": ["edxorg"],
         }
 
@@ -159,7 +169,9 @@ class ElectivesSetSerializerTests(MockedESTestCase):
         Make sure course that elective set serializer works correctly
         """
         courses = CourseFactory.create_batch(3)
-        elective_set = ElectivesSet.objects.create(program=courses[0].program, title="Elective", required_number=2)
+        elective_set = ElectivesSet.objects.create(
+            program=courses[0].program, title="Elective", required_number=2
+        )
         for course in courses:
             ElectiveCourse.objects.create(course=course, electives_set=elective_set)
         data = ElectivesSetSerializer(elective_set).data

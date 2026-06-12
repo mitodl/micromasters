@@ -5,17 +5,21 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0006_fuzzy_date__remove_program_from_course'),
-        ('cms', '0002_homepage'),
+        ("courses", "0006_fuzzy_date__remove_program_from_course"),
+        ("cms", "0002_homepage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programpage',
-            name='program',
-            field=models.OneToOneField(null=True, default=None, on_delete=django.db.models.deletion.SET_NULL, to='courses.Program'),
+            model_name="programpage",
+            name="program",
+            field=models.OneToOneField(
+                null=True,
+                default=None,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="courses.Program",
+            ),
             preserve_default=False,
         ),
     ]

@@ -7,29 +7,48 @@ import jsonfield.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0012_program_financial_aid_availability'),
+        ("courses", "0012_program_financial_aid_availability"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('dashboard', '0002_programenrollment'),
+        ("dashboard", "0002_programenrollment"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CachedCurrentGrade',
+            name="CachedCurrentGrade",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', jsonfield.fields.JSONField(null=True)),
-                ('last_request', models.DateTimeField()),
-                ('course_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.CourseRun')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("data", jsonfield.fields.JSONField(null=True)),
+                ("last_request", models.DateTimeField()),
+                (
+                    "course_run",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.CourseRun",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AlterUniqueTogether(
-            name='cachedcurrentgrade',
-            unique_together={('user', 'course_run')},
+            name="cachedcurrentgrade",
+            unique_together={("user", "course_run")},
         ),
     ]

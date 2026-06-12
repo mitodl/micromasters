@@ -4,30 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('mail', '0001_initial'),
+        ("mail", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='financialaidemailaudit',
-            name='email_body',
+            model_name="financialaidemailaudit",
+            name="email_body",
             field=models.TextField(blank=True),
         ),
         migrations.AlterField(
-            model_name='financialaidemailaudit',
-            name='email_subject',
+            model_name="financialaidemailaudit",
+            name="email_subject",
             field=models.TextField(blank=True),
         ),
         migrations.AlterField(
-            model_name='financialaidemailaudit',
-            name='from_email',
+            model_name="financialaidemailaudit",
+            name="from_email",
             field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name='financialaidemailaudit',
-            name='to_email',
+            model_name="financialaidemailaudit",
+            name="to_email",
             field=models.TextField(),
         ),
     ]

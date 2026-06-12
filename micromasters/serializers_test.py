@@ -16,6 +16,7 @@ class UserTests(MockedESTestCase):
     """
     Tests for serializing users.
     """
+
     def test_basic_user(self):
         """
         Test serializing a basic user, no profile
@@ -78,6 +79,7 @@ class AnonymousUserTests(TestCase):
     """
     Tests for serializing anonymous users.
     """
+
     def test_serialize_anonymous_user(self):
         """
         Test serializing an anonymous user

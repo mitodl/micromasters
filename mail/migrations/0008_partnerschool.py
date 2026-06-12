@@ -4,18 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('mail', '0007_sentautomaticemail_status'),
+        ("mail", "0007_sentautomaticemail_status"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PartnerSchool',
+            name="PartnerSchool",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('email', models.TextField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("email", models.TextField()),
             ],
         ),
     ]

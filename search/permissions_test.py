@@ -25,7 +25,7 @@ class PermissionsTests(ESTestCase):
 
     def setUp(self):
         super().setUp()
-        self.request = RequestFactory().get('/')
+        self.request = RequestFactory().get("/")
         self.request.user = AnonymousUser()
 
     def test_user_can_search(self):
@@ -39,9 +39,5 @@ class PermissionsTests(ESTestCase):
         self.request.user = self.user
         assert perm.has_permission(self.request, None) is False
         # but if the user has a proper role, she has permission
-        Role.objects.create(
-            user=self.user,
-            program=self.program,
-            role=Staff.ROLE_ID
-        )
+        Role.objects.create(user=self.user, program=self.program, role=Staff.ROLE_ID)
         assert perm.has_permission(self.request, None) is True

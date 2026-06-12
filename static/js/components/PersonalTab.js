@@ -58,12 +58,7 @@ export default class PersonalTab extends React.Component {
     dispatch: Function
   }
 
-  sortPrograms = R.sortBy(
-    R.compose(
-      R.toLower,
-      R.prop("title")
-    )
-  )
+  sortPrograms = R.sortBy(R.compose(R.toLower, R.prop("title")))
 
   programOptions = R.compose(
     R.map(program => ({ value: program.id, label: program.title })),

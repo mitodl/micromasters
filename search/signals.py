@@ -11,8 +11,7 @@ from django.dispatch import receiver
 from profiles.models import Education, Employment, Profile
 from roles.models import Role
 from search.models import PercolateQuery
-from search.tasks import (delete_percolate_query, index_percolate_queries,
-                          index_users)
+from search.tasks import delete_percolate_query, index_percolate_queries, index_users
 
 log = logging.getLogger(__name__)
 
@@ -26,19 +25,25 @@ log = logging.getLogger(__name__)
 @receiver(post_save, sender=Profile, dispatch_uid="profile_post_save_index")
 def handle_update_profile(sender, instance, **kwargs):
     """Update index when Profile model is updated."""
-    transaction.on_commit(lambda: index_users.delay([instance.user.id], check_if_changed=True))
+    transaction.on_commit(
+        lambda: index_users.delay([instance.user.id], check_if_changed=True)
+    )
 
 
 @receiver(post_save, sender=Education, dispatch_uid="education_post_save_index")
 def handle_update_education(sender, instance, **kwargs):
     """Update index when Education model is updated."""
-    transaction.on_commit(lambda: index_users.delay([instance.profile.user.id], check_if_changed=True))
+    transaction.on_commit(
+        lambda: index_users.delay([instance.profile.user.id], check_if_changed=True)
+    )
 
 
 @receiver(post_save, sender=Employment, dispatch_uid="employment_post_save_index")
 def handle_update_employment(sender, instance, **kwargs):
     """Update index when Employment model is updated."""
-    transaction.on_commit(lambda: index_users.delay([instance.profile.user.id], check_if_changed=True))
+    transaction.on_commit(
+        lambda: index_users.delay([instance.profile.user.id], check_if_changed=True)
+    )
 
 
 @receiver(post_delete, sender=Education, dispatch_uid="education_post_delete_index")

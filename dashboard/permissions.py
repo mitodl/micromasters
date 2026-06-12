@@ -11,6 +11,8 @@ from roles.roles import Instructor, Staff
 
 
 User = get_user_model()
+
+
 class CanReadIfStaffOrSelf(BasePermission):
     """
     Only staff on a program the learner is enrolled in can
@@ -23,7 +25,7 @@ class CanReadIfStaffOrSelf(BasePermission):
 
         user = get_object_or_404(
             User,
-            username=view.kwargs['username'],
+            username=view.kwargs["username"],
         )
 
         # if the user is looking for their own profile, they're good
@@ -33,8 +35,8 @@ class CanReadIfStaffOrSelf(BasePermission):
         # if the user is looking for someone enrolled in a program they
         # are staff on, they're good
         if request.user.role_set.filter(
-                role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
-                program__programenrollment__user=user,
+            role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
+            program__programenrollment__user=user,
         ).exists():
             return True
         else:

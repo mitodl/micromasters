@@ -10,22 +10,33 @@ from dashboard.models import MicromastersLearnerRecordShare, ProgramEnrollment
 @admin.register(ProgramEnrollment)
 class ProgramEnrollmentAdmin(admin.ModelAdmin):
     """ModelAdmin for ProgramEnrollment"""
-    list_display = ('user', 'program',)
-    list_filter = ('program', 'program__live',)
-    raw_id_fields = ('user',)
+
+    list_display = (
+        "user",
+        "program",
+    )
+    list_filter = (
+        "program",
+        "program__live",
+    )
+    raw_id_fields = ("user",)
     search_fields = (
-        'user__username',
-        'user__email',
+        "user__username",
+        "user__email",
     )
 
 
 @admin.register(MicromastersLearnerRecordShare)
 class MicromastersLearnerRecordShareAdmin(admin.ModelAdmin):
     """ModelAdmin for MicromastersLearnerRecordShare"""
-    list_display = ('user', 'program', 'partner_school', 'created_on', 'updated_on')
-    list_filter = ('program', 'program__live',)
-    raw_id_fields = ('user',)
+
+    list_display = ("user", "program", "partner_school", "created_on", "updated_on")
+    list_filter = (
+        "program",
+        "program__live",
+    )
+    raw_id_fields = ("user",)
     search_fields = (
-        'user__username',
-        'user__email',
+        "user__username",
+        "user__email",
     )

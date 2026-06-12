@@ -1,5 +1,5 @@
 // @flow
-import type { APIErrorInfo } from './generalTypes'
+import type { APIErrorInfo } from "./generalTypes"
 
 export type AvailableProgram = {
   id: number,
@@ -24,12 +24,11 @@ export type CourseEnrollmentsState = {
   courseEnrollAddStatus?: string,
 }
 
-
 export type UnEnrollPrograms = {
   program_id: number,
   title: string,
 }
 
 export type ExamEnrollmentResponse = {
-  url: string
+  url: string,
 }

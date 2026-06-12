@@ -4,35 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0016_unique_course_run_edx_key'),
+        ("courses", "0016_unique_course_run_edx_key"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='courserun',
-            name='end_date',
+            model_name="courserun",
+            name="end_date",
             field=models.DateTimeField(blank=True, db_index=True, null=True),
         ),
         migrations.AlterField(
-            model_name='courserun',
-            name='enrollment_end',
+            model_name="courserun",
+            name="enrollment_end",
             field=models.DateTimeField(blank=True, db_index=True, null=True),
         ),
         migrations.AlterField(
-            model_name='courserun',
-            name='enrollment_start',
+            model_name="courserun",
+            name="enrollment_start",
             field=models.DateTimeField(blank=True, db_index=True, null=True),
         ),
         migrations.AlterField(
-            model_name='courserun',
-            name='start_date',
+            model_name="courserun",
+            name="start_date",
             field=models.DateTimeField(blank=True, db_index=True, null=True),
         ),
         migrations.AlterField(
-            model_name='courserun',
-            name='upgrade_deadline',
+            model_name="courserun",
+            name="upgrade_deadline",
             field=models.DateTimeField(blank=True, db_index=True, null=True),
         ),
     ]

@@ -19,6 +19,7 @@ from search.base import MockedESTestCase
 
 class ProgramTests(MockedESTestCase):
     """Tests for the Program API"""
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -32,7 +33,7 @@ class ProgramTests(MockedESTestCase):
         """Live programs should show up"""
         prog = ProgramFactory.create(live=True)
 
-        resp = self.client.get(reverse('program-list'))
+        resp = self.client.get(reverse("program-list"))
 
         assert len(resp.json()) == 1
         context = {"request": Mock(user=self.user)}
@@ -43,7 +44,7 @@ class ProgramTests(MockedESTestCase):
         """Not-live programs should NOT show up"""
         ProgramFactory.create(live=False)
 
-        resp = self.client.get(reverse('program-list'))
+        resp = self.client.get(reverse("program-list"))
 
         assert len(resp.json()) == 0
 
@@ -52,7 +53,7 @@ def create_learner_with_image(privacy):
     """Helper function to create a user with account_privacy and image_small set"""
     user = UserFactory.create()
     user.profile.account_privacy = privacy
-    user.profile.image_small = 'some_url'
+    user.profile.image_small = "some_url"
     user.profile.save()
     return user
 
@@ -62,11 +63,10 @@ class ProgramLearnersTests(MockedESTestCase, APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-
         super().setUpTestData()
 
         cls.program = ProgramFactory.create(live=True)
-        cls.url = reverse('learners_in_program', kwargs={"program_id": cls.program.id})
+        cls.url = reverse("learners_in_program", kwargs={"program_id": cls.program.id})
         cls.user = create_learner_with_image(privacy=Profile.PUBLIC)
 
     def setUp(self):
@@ -88,7 +88,7 @@ class ProgramLearnersTests(MockedESTestCase, APITestCase):
 
         response = self.client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['learners_count'] == 0
+        assert response.data["learners_count"] == 0
 
     def test_should_return_only_eight_users(self):
         """
@@ -98,8 +98,8 @@ class ProgramLearnersTests(MockedESTestCase, APITestCase):
         self.create_learners_in_program(learners_count=10)
         response = self.client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['learners_count'] == 10
-        assert len(response.data['learners']) == 8
+        assert response.data["learners_count"] == 10
+        assert len(response.data["learners"]) == 8
 
     def test_should_return_only_public_users(self):
         """
@@ -110,7 +110,7 @@ class ProgramLearnersTests(MockedESTestCase, APITestCase):
         self.create_learners_in_program(learners_count=5)
         response = self.client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['learners_count'] == 10
+        assert response.data["learners_count"] == 10
 
 
 class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
@@ -126,7 +126,7 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
         cls.program2 = ProgramFactory.create(live=True)
         cls.program3 = ProgramFactory.create(live=True)
 
-        cls.url = reverse('user_program_enrollments')
+        cls.url = reverse("user_program_enrollments")
 
     def setUp(self):
         super().setUp()
@@ -134,7 +134,11 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
             ProgramEnrollmentFactory(
                 user=self.user1,
                 program=program,
-            ) for program in (self.program1, self.program2,)
+            )
+            for program in (
+                self.program1,
+                self.program2,
+            )
         ]
         self.client.force_login(self.user1)
 
@@ -171,21 +175,23 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
     def test_create_no_program_id(self):
         """Missing mandatory program_id parameter"""
         self.assert_program_enrollments_count()
-        resp = self.client.post(self.url, {}, format='json')
+        resp = self.client.post(self.url, {}, format="json")
         self.assert_program_enrollments_count()
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_create_invalid_program_id(self):
         """program_id parameter must be an integer"""
         self.assert_program_enrollments_count()
-        resp = self.client.post(self.url, {'program_id': 'foo'}, format='json')
+        resp = self.client.post(self.url, {"program_id": "foo"}, format="json")
         self.assert_program_enrollments_count()
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_create_enrollment_exists(self):
         """Test in case the enrollment is already there"""
         self.assert_program_enrollments_count()
-        resp = self.client.post(self.url, {'program_id': self.program1.pk}, format='json')
+        resp = self.client.post(
+            self.url, {"program_id": self.program1.pk}, format="json"
+        )
         self.assert_program_enrollments_count()
         assert resp.status_code == status.HTTP_200_OK
         self.assert_program_enrollments_count()
@@ -193,7 +199,7 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
     def test_create_program_does_not_exists(self):
         """Test in case the program does not exist"""
         self.assert_program_enrollments_count()
-        resp = self.client.post(self.url, {'program_id': 1234567}, format='json')
+        resp = self.client.post(self.url, {"program_id": 1234567}, format="json")
         self.assert_program_enrollments_count()
         assert resp.status_code == status.HTTP_404_NOT_FOUND
 
@@ -201,17 +207,19 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
         """Test in case the program is not live"""
         program = ProgramFactory.create(live=False)
         self.assert_program_enrollments_count()
-        resp = self.client.post(self.url, {'program_id': program.pk}, format='json')
+        resp = self.client.post(self.url, {"program_id": program.pk}, format="json")
         self.assert_program_enrollments_count()
         assert resp.status_code == status.HTTP_404_NOT_FOUND
 
     def test_create(self):
         """Test for happy path"""
         count_before = self.assert_program_enrollments_count()
-        resp = self.client.post(self.url, {'program_id': self.program3.pk}, format='json')
-        self.assert_program_enrollments_count(count_before+1)
+        resp = self.client.post(
+            self.url, {"program_id": self.program3.pk}, format="json"
+        )
+        self.assert_program_enrollments_count(count_before + 1)
         assert resp.status_code == status.HTTP_201_CREATED
-        assert resp.data.get('id') == self.program3.pk
+        assert resp.data.get("id") == self.program3.pk
 
 
 class CourseRunTests(MockedESTestCase, APITestCase):
@@ -229,7 +237,7 @@ class CourseRunTests(MockedESTestCase, APITestCase):
     def test_lists_course_runs(self):
         """Course Runs should show up"""
         course_run = CourseRunFactory.create()
-        resp = self.client.get(reverse('courserun-list'))
+        resp = self.client.get(reverse("courserun-list"))
 
         assert len(resp.json()) == 1
         context = {"request": Mock(user=self.user)}
@@ -246,7 +254,7 @@ class CatalogTests(MockedESTestCase, APITestCase):
         for course in CourseFactory.create_batch(3, program=program):
             CourseRunFactory.create_batch(2, course=course)
 
-        resp = self.client.get(reverse('catalog-list'))
+        resp = self.client.get(reverse("catalog-list"))
 
         assert len(resp.json()) == 1
         data = CatalogProgramSerializer(program).data

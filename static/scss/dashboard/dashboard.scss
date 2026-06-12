@@ -37,7 +37,6 @@
 }
 
 .dashboard {
-
   h2 {
     line-height: normal;
   }
@@ -140,7 +139,8 @@
       margin-bottom: 25px;
     }
 
-    .heading, .explanation {
+    .heading,
+    .explanation {
       margin-bottom: 17px;
     }
 
@@ -296,7 +296,8 @@
       }
     }
 
-    .coupon-message, .course-sub-row {
+    .coupon-message,
+    .course-sub-row {
       margin: 0px 15px 15px 15px;
     }
 
@@ -404,7 +405,6 @@
 }
 
 .dialog {
-
   .dialog-content {
     color: rgba(0, 0, 0, 0.6);
   }
@@ -412,7 +412,6 @@
   .select-control {
     padding-bottom: 20px;
     font-size: 14px;
-
   }
 
   p {
@@ -454,11 +453,15 @@
     }
   }
 
-  .primary-button, .secondary-button {
+  .primary-button,
+  .secondary-button {
     box-shadow: none;
     font-size: 17px;
 
-    &:hover, &:focus, &:active, &:focus:not(:active) {
+    &:hover,
+    &:focus,
+    &:active,
+    &:focus:not(:active) {
       box-shadow: none;
     }
   }
@@ -468,7 +471,8 @@
     margin-right: 20px;
     background: none;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
       background: none;
       color: #0473b3;
     }
@@ -478,7 +482,8 @@
     background: none;
     color: #9a9a9a;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
       background: none;
       color: #616161;
     }
@@ -571,7 +576,7 @@
   }
 }
 
-.dialog  .dialog-title {
+.dialog .dialog-title {
   h2 {
     padding: 5px 0;
     font-size: 22px;

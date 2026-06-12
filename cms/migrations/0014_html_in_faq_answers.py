@@ -5,15 +5,14 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0013_programpage_thumbnail_image'),
+        ("cms", "0013_programpage_thumbnail_image"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='frequentlyaskedquestion',
-            name='answer',
+            model_name="frequentlyaskedquestion",
+            name="answer",
             field=wagtail.fields.RichTextField(),
         ),
     ]

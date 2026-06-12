@@ -6,27 +6,48 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('search', '0003_percolatequery_source_type'),
+        ("search", "0003_percolatequery_source_type"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PercolateQueryMembership',
+            name="PercolateQueryMembership",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('is_member', models.BooleanField(default=False)),
-                ('needs_update', models.BooleanField(default=False)),
-                ('query', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='percolate_memberships', to='search.PercolateQuery')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='percolate_memberships', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                ("is_member", models.BooleanField(default=False)),
+                ("needs_update", models.BooleanField(default=False)),
+                (
+                    "query",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="percolate_memberships",
+                        to="search.PercolateQuery",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="percolate_memberships",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='percolatequerymembership',
-            unique_together={('user', 'query')},
+            name="percolatequerymembership",
+            unique_together={("user", "query")},
         ),
     ]

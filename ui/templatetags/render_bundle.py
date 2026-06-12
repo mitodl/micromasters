@@ -51,31 +51,33 @@ def _get_bundle(request, bundle_name):
 
     # Primary: use webpack_loader. Fallback: direct stats parsing.
     try:
-        for chunk in get_loader('DEFAULT').get_bundle(bundle_name):
+        for chunk in get_loader("DEFAULT").get_bundle(bundle_name):
             chunk_copy = dict(chunk)
-            chunk_copy['url'] = f"{public_path(request).rstrip('/')}/{chunk['name']}"
+            chunk_copy["url"] = f"{public_path(request).rstrip('/')}/{chunk['name']}"
             yield chunk_copy
         return
     except (KeyError, TypeError):
         pass  # fall through to manual parsing
-    except Exception:  # pylint: disable=broad-exception-caught  # broad safety net; don't block page render
+    except (
+        Exception
+    ):  # pylint: disable=broad-exception-caught  # broad safety net; don't block page render
         return
 
     # Fallback: parse stats file directly (legacy format with top-level 'chunks').
-    stats_path = Path(settings.WEBPACK_LOADER['DEFAULT']['STATS_FILE'])
+    stats_path = Path(settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"])
     if not stats_path.exists():
         return
     try:
-        with stats_path.open(encoding='utf-8') as fp:
+        with stats_path.open(encoding="utf-8") as fp:
             stats = json.load(fp)
     except (OSError, json.JSONDecodeError):
         return
-    chunks = stats.get('chunks', {})
+    chunks = stats.get("chunks", {})
     for chunk in chunks.get(bundle_name, []):
-        if 'name' not in chunk:
+        if "name" not in chunk:
             continue
         chunk_copy = dict(chunk)
-        chunk_copy['url'] = f"{public_path(request).rstrip('/')}/{chunk['name']}"
+        chunk_copy["url"] = f"{public_path(request).rstrip('/')}/{chunk['name']}"
         yield chunk_copy
 
 
@@ -97,11 +99,11 @@ def render_bundle(context, bundle_name, added_attrs=""):
         django.utils.safestring.SafeText: The tags for JS and CSS
     """
     try:
-        bundle = _get_bundle(context['request'], bundle_name)
+        bundle = _get_bundle(context["request"], bundle_name)
         return _render_tags(bundle, added_attrs)
     except OSError:
         # webpack-stats.json doesn't exist
-        return mark_safe('')
+        return mark_safe("")
 
 
 def _render_tags(bundle, added_attrs=""):
@@ -119,8 +121,12 @@ def _render_tags(bundle, added_attrs=""):
 
     tags = []
     for chunk in bundle:
-        if chunk['name'].endswith(('.js', '.js.gz')):
-            tags.append(f"<script type=\"text/javascript\" src=\"{chunk['url']}\" {added_attrs} ></script>")
-        elif chunk['name'].endswith(('.css', '.css.gz')):
-            tags.append(f"<link type=\"text/css\" href=\"{chunk['url']}\" rel=\"stylesheet\" {added_attrs} />")
-    return mark_safe('\n'.join(tags))
+        if chunk["name"].endswith((".js", ".js.gz")):
+            tags.append(
+                f"<script type=\"text/javascript\" src=\"{chunk['url']}\" {added_attrs} ></script>"
+            )
+        elif chunk["name"].endswith((".css", ".css.gz")):
+            tags.append(
+                f"<link type=\"text/css\" href=\"{chunk['url']}\" rel=\"stylesheet\" {added_attrs} />"
+            )
+    return mark_safe("\n".join(tags))

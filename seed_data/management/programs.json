@@ -1,262 +1,262 @@
 [
-    {
-        "title": "Digital Learning",
-        "price": 1000,
-        "description": "Learn stuff about digital learning.",
-        "num_required_courses": 3,
-        "elective_sets": [
-            {
-                "title": "ELECTIVE",
-                "required_number": 1,
-                "courses": [
-                    {
-                        "title": "Digital Learning 400 (ELECTIVE)",
-                        "position_in_program": 4,
-                        "description": "An elective course for Digital Learning",
-                        "course_runs": [
-                            {
-                                "title": "Digital Learning 400 - August 2016",
-                                "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                                "edx_course_key": "course-v1:MITx+Digital+Learning+400+Aug_2016",
-                                "enrollment_start": "2016-08-15T00:00:00+00:00",
-                                "end_date": "2016-12-15T00:00:00+00:00",
-                                "start_date": "2016-08-15T00:00:00+00:00",
-                                "enrollment_end": "2016-08-29T00:00:00+00:00"
-                            }
-                        ]
-                    },
-                    {
-                        "title": "Digital Learning 500 (ELECTIVE)",
-                        "position_in_program": 5,
-                        "description": "An elective advanced course for Digital Learning",
-                        "course_runs": [
-                            {
-                                "title": "Digital Learning 500 - August 2016",
-                                "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                                "edx_course_key": "course-v1:MITx+Digital+Learning+500+Aug_2016",
-                                "enrollment_start": "2016-08-15T00:00:00+00:00",
-                                "end_date": "2016-12-15T00:00:00+00:00",
-                                "start_date": "2016-08-15T00:00:00+00:00",
-                                "enrollment_end": "2016-08-29T00:00:00+00:00"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ],
+  {
+    "title": "Digital Learning",
+    "price": 1000,
+    "description": "Learn stuff about digital learning.",
+    "num_required_courses": 3,
+    "elective_sets": [
+      {
+        "title": "ELECTIVE",
+        "required_number": 1,
         "courses": [
-            {
-                "title": "Digital Learning 100",
-                "position_in_program": 1,
-                "description": "An introductory course to Digital Learning",
-                "course_runs": [
-                    {
-                        "title": "Digital Learning 100 - August 2016",
-                        "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+100+Aug_2016",
-                        "enrollment_start": "2016-08-15T00:00:00+00:00",
-                        "end_date": "2016-12-15T00:00:00+00:00",
-                        "start_date": "2016-08-15T00:00:00+00:00",
-                        "enrollment_end": "2016-08-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Digital Learning 100 - January 2016",
-                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+100+Jan_2016",
-                        "enrollment_start": "2016-01-15T00:00:00+00:00",
-                        "end_date": "2016-05-15T00:00:00+00:00",
-                        "start_date": "2016-01-15T00:00:00+00:00",
-                        "enrollment_end": "2016-01-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Digital Learning 100 - August 2015",
-                        "upgrade_deadline": "2015-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+100+Aug_2015",
-                        "enrollment_start": "2015-08-15T00:00:00+00:00",
-                        "end_date": "2015-12-15T00:00:00+00:00",
-                        "start_date": "2015-08-15T00:00:00+00:00",
-                        "enrollment_end": "2015-08-29T00:00:00+00:00"
-                    }
-                ]
-            },
-            {
-                "title": "Digital Learning 200",
-                "position_in_program": 2,
-                "description": "A more advanced course in Digital Learning",
-                "course_runs": [
-                    {
-                        "title": "Digital Learning 200 - August 2016",
-                        "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+200+Aug_2016",
-                        "enrollment_start": "2016-08-15T00:00:00+00:00",
-                        "end_date": "2016-12-15T00:00:00+00:00",
-                        "start_date": "2016-08-15T00:00:00+00:00",
-                        "enrollment_end": "2016-08-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Digital Learning 200 - January 2016",
-                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+200+Jan_2016",
-                        "enrollment_start": "2016-01-15T00:00:00+00:00",
-                        "end_date": "2016-05-15T00:00:00+00:00",
-                        "start_date": "2016-01-15T00:00:00+00:00",
-                        "enrollment_end": "2016-01-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Digital Learning 200 - August 2015",
-                        "upgrade_deadline": "2015-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+200+Aug_2015",
-                        "enrollment_start": "2015-08-15T00:00:00+00:00",
-                        "end_date": "2015-12-15T00:00:00+00:00",
-                        "start_date": "2015-08-15T00:00:00+00:00",
-                        "enrollment_end": "2015-08-29T00:00:00+00:00"
-                    }
-                ]
-            },
-            {
-                "title": "Digital Learning 300",
-                "position_in_program": 3,
-                "description": "The most advancedest course in Digital Learning",
-                "course_runs": [
-                    {
-                        "title": "Digital Learning 300 - August 2016",
-                        "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+300+Aug_2016",
-                        "enrollment_start": "2016-08-15T00:00:00+00:00",
-                        "end_date": "2016-12-15T00:00:00+00:00",
-                        "start_date": "2016-08-15T00:00:00+00:00",
-                        "enrollment_end": "2016-08-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Digital Learning 300 - January 2016",
-                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+300+Jan_2016",
-                        "enrollment_start": "2016-01-15T00:00:00+00:00",
-                        "end_date": "2016-05-15T00:00:00+00:00",
-                        "start_date": "2016-01-15T00:00:00+00:00",
-                        "enrollment_end": "2016-01-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Digital Learning 300 - August 2015",
-                        "upgrade_deadline": "2015-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Digital+Learning+300+Aug_2015",
-                        "enrollment_start": "2015-08-15T00:00:00+00:00",
-                        "end_date": "2015-12-15T00:00:00+00:00",
-                        "start_date": "2015-08-15T00:00:00+00:00",
-                        "enrollment_end": "2015-08-29T00:00:00+00:00"
-                    }
-                ]
-            }
+          {
+            "title": "Digital Learning 400 (ELECTIVE)",
+            "position_in_program": 4,
+            "description": "An elective course for Digital Learning",
+            "course_runs": [
+              {
+                "title": "Digital Learning 400 - August 2016",
+                "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+                "edx_course_key": "course-v1:MITx+Digital+Learning+400+Aug_2016",
+                "enrollment_start": "2016-08-15T00:00:00+00:00",
+                "end_date": "2016-12-15T00:00:00+00:00",
+                "start_date": "2016-08-15T00:00:00+00:00",
+                "enrollment_end": "2016-08-29T00:00:00+00:00"
+              }
+            ]
+          },
+          {
+            "title": "Digital Learning 500 (ELECTIVE)",
+            "position_in_program": 5,
+            "description": "An elective advanced course for Digital Learning",
+            "course_runs": [
+              {
+                "title": "Digital Learning 500 - August 2016",
+                "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+                "edx_course_key": "course-v1:MITx+Digital+Learning+500+Aug_2016",
+                "enrollment_start": "2016-08-15T00:00:00+00:00",
+                "end_date": "2016-12-15T00:00:00+00:00",
+                "start_date": "2016-08-15T00:00:00+00:00",
+                "enrollment_end": "2016-08-29T00:00:00+00:00"
+              }
+            ]
+          }
         ]
-    },
-    {
-        "title": "Analog Learning",
-        "price": 1000,
-        "description": "Learn stuff about analog learning.",
-        "num_required_courses": 3,
-        "courses": [
-            {
-                "title": "Analog Learning 100",
-                "position_in_program": 1,
-                "description": "An introductory course to Analog Learning",
-                "course_runs": [
-                    {
-                        "title": "Analog Learning 100 - August 2016",
-                        "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+100+Aug_2016",
-                        "enrollment_start": "2016-08-15T00:00:00+00:00",
-                        "end_date": "2016-12-15T00:00:00+00:00",
-                        "start_date": "2016-08-15T00:00:00+00:00",
-                        "enrollment_end": "2016-08-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Analog Learning 100 - January 2016",
-                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+100+Jan_2016",
-                        "enrollment_start": "2016-01-15T00:00:00+00:00",
-                        "end_date": "2016-05-15T00:00:00+00:00",
-                        "start_date": "2016-01-15T00:00:00+00:00",
-                        "enrollment_end": "2016-01-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Analog Learning 100 - August 2015",
-                        "upgrade_deadline": "2015-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+100+Aug_2015",
-                        "enrollment_start": "2015-08-15T00:00:00+00:00",
-                        "end_date": "2015-12-15T00:00:00+00:00",
-                        "start_date": "2015-08-15T00:00:00+00:00",
-                        "enrollment_end": "2015-08-29T00:00:00+00:00"
-                    }
-                ]
-            },
-            {
-                "title": "Analog Learning 200",
-                "position_in_program": 2,
-                "description": "A more advanced course in Analog Learning",
-                "course_runs": [
-                    {
-                        "title": "Analog Learning 200 - August 2016",
-                        "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+200+Aug_2016",
-                        "enrollment_start": "2016-08-15T00:00:00+00:00",
-                        "end_date": "2016-12-15T00:00:00+00:00",
-                        "start_date": "2016-08-15T00:00:00+00:00",
-                        "enrollment_end": "2016-08-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Analog Learning 200 - January 2016",
-                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+200+Jan_2016",
-                        "enrollment_start": "2016-01-15T00:00:00+00:00",
-                        "end_date": "2016-05-15T00:00:00+00:00",
-                        "start_date": "2016-01-15T00:00:00+00:00",
-                        "enrollment_end": "2016-01-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Analog Learning 200 - August 2015",
-                        "upgrade_deadline": "2015-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+200+Aug_2015",
-                        "enrollment_start": "2015-08-15T00:00:00+00:00",
-                        "end_date": "2015-12-15T00:00:00+00:00",
-                        "start_date": "2015-08-15T00:00:00+00:00",
-                        "enrollment_end": "2015-08-29T00:00:00+00:00"
-                    }
-                ]
-            },
-            {
-                "title": "Analog Learning 300",
-                "position_in_program": 3,
-                "description": "The most advancedest course in Analog Learning",
-                "course_runs": [
-                    {
-                        "title": "Analog Learning 300 - August 2016",
-                        "upgrade_deadline": "2016-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+300+Aug_2016",
-                        "enrollment_start": "2016-08-15T00:00:00+00:00",
-                        "end_date": "2016-12-15T00:00:00+00:00",
-                        "start_date": "2016-08-15T00:00:00+00:00",
-                        "enrollment_end": "2016-08-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Analog Learning 300 - January 2016",
-                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+300+Jan_2016",
-                        "enrollment_start": "2016-01-15T00:00:00+00:00",
-                        "end_date": "2016-05-15T00:00:00+00:00",
-                        "start_date": "2016-01-15T00:00:00+00:00",
-                        "enrollment_end": "2016-01-29T00:00:00+00:00"
-                    },
-                    {
-                        "title": "Analog Learning 300 - August 2015",
-                        "upgrade_deadline": "2015-08-22T00:00:00+00:00",
-                        "edx_course_key": "course-v1:MITx+Analog+Learning+300+Aug_2015",
-                        "enrollment_start": "2015-08-15T00:00:00+00:00",
-                        "end_date": "2015-12-15T00:00:00+00:00",
-                        "start_date": "2015-08-15T00:00:00+00:00",
-                        "enrollment_end": "2015-08-29T00:00:00+00:00"
-                    }
-                ]
-            }
+      }
+    ],
+    "courses": [
+      {
+        "title": "Digital Learning 100",
+        "position_in_program": 1,
+        "description": "An introductory course to Digital Learning",
+        "course_runs": [
+          {
+            "title": "Digital Learning 100 - August 2016",
+            "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+100+Aug_2016",
+            "enrollment_start": "2016-08-15T00:00:00+00:00",
+            "end_date": "2016-12-15T00:00:00+00:00",
+            "start_date": "2016-08-15T00:00:00+00:00",
+            "enrollment_end": "2016-08-29T00:00:00+00:00"
+          },
+          {
+            "title": "Digital Learning 100 - January 2016",
+            "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+100+Jan_2016",
+            "enrollment_start": "2016-01-15T00:00:00+00:00",
+            "end_date": "2016-05-15T00:00:00+00:00",
+            "start_date": "2016-01-15T00:00:00+00:00",
+            "enrollment_end": "2016-01-29T00:00:00+00:00"
+          },
+          {
+            "title": "Digital Learning 100 - August 2015",
+            "upgrade_deadline": "2015-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+100+Aug_2015",
+            "enrollment_start": "2015-08-15T00:00:00+00:00",
+            "end_date": "2015-12-15T00:00:00+00:00",
+            "start_date": "2015-08-15T00:00:00+00:00",
+            "enrollment_end": "2015-08-29T00:00:00+00:00"
+          }
         ]
-    }
+      },
+      {
+        "title": "Digital Learning 200",
+        "position_in_program": 2,
+        "description": "A more advanced course in Digital Learning",
+        "course_runs": [
+          {
+            "title": "Digital Learning 200 - August 2016",
+            "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+200+Aug_2016",
+            "enrollment_start": "2016-08-15T00:00:00+00:00",
+            "end_date": "2016-12-15T00:00:00+00:00",
+            "start_date": "2016-08-15T00:00:00+00:00",
+            "enrollment_end": "2016-08-29T00:00:00+00:00"
+          },
+          {
+            "title": "Digital Learning 200 - January 2016",
+            "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+200+Jan_2016",
+            "enrollment_start": "2016-01-15T00:00:00+00:00",
+            "end_date": "2016-05-15T00:00:00+00:00",
+            "start_date": "2016-01-15T00:00:00+00:00",
+            "enrollment_end": "2016-01-29T00:00:00+00:00"
+          },
+          {
+            "title": "Digital Learning 200 - August 2015",
+            "upgrade_deadline": "2015-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+200+Aug_2015",
+            "enrollment_start": "2015-08-15T00:00:00+00:00",
+            "end_date": "2015-12-15T00:00:00+00:00",
+            "start_date": "2015-08-15T00:00:00+00:00",
+            "enrollment_end": "2015-08-29T00:00:00+00:00"
+          }
+        ]
+      },
+      {
+        "title": "Digital Learning 300",
+        "position_in_program": 3,
+        "description": "The most advancedest course in Digital Learning",
+        "course_runs": [
+          {
+            "title": "Digital Learning 300 - August 2016",
+            "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+300+Aug_2016",
+            "enrollment_start": "2016-08-15T00:00:00+00:00",
+            "end_date": "2016-12-15T00:00:00+00:00",
+            "start_date": "2016-08-15T00:00:00+00:00",
+            "enrollment_end": "2016-08-29T00:00:00+00:00"
+          },
+          {
+            "title": "Digital Learning 300 - January 2016",
+            "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+300+Jan_2016",
+            "enrollment_start": "2016-01-15T00:00:00+00:00",
+            "end_date": "2016-05-15T00:00:00+00:00",
+            "start_date": "2016-01-15T00:00:00+00:00",
+            "enrollment_end": "2016-01-29T00:00:00+00:00"
+          },
+          {
+            "title": "Digital Learning 300 - August 2015",
+            "upgrade_deadline": "2015-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Digital+Learning+300+Aug_2015",
+            "enrollment_start": "2015-08-15T00:00:00+00:00",
+            "end_date": "2015-12-15T00:00:00+00:00",
+            "start_date": "2015-08-15T00:00:00+00:00",
+            "enrollment_end": "2015-08-29T00:00:00+00:00"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Analog Learning",
+    "price": 1000,
+    "description": "Learn stuff about analog learning.",
+    "num_required_courses": 3,
+    "courses": [
+      {
+        "title": "Analog Learning 100",
+        "position_in_program": 1,
+        "description": "An introductory course to Analog Learning",
+        "course_runs": [
+          {
+            "title": "Analog Learning 100 - August 2016",
+            "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+100+Aug_2016",
+            "enrollment_start": "2016-08-15T00:00:00+00:00",
+            "end_date": "2016-12-15T00:00:00+00:00",
+            "start_date": "2016-08-15T00:00:00+00:00",
+            "enrollment_end": "2016-08-29T00:00:00+00:00"
+          },
+          {
+            "title": "Analog Learning 100 - January 2016",
+            "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+100+Jan_2016",
+            "enrollment_start": "2016-01-15T00:00:00+00:00",
+            "end_date": "2016-05-15T00:00:00+00:00",
+            "start_date": "2016-01-15T00:00:00+00:00",
+            "enrollment_end": "2016-01-29T00:00:00+00:00"
+          },
+          {
+            "title": "Analog Learning 100 - August 2015",
+            "upgrade_deadline": "2015-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+100+Aug_2015",
+            "enrollment_start": "2015-08-15T00:00:00+00:00",
+            "end_date": "2015-12-15T00:00:00+00:00",
+            "start_date": "2015-08-15T00:00:00+00:00",
+            "enrollment_end": "2015-08-29T00:00:00+00:00"
+          }
+        ]
+      },
+      {
+        "title": "Analog Learning 200",
+        "position_in_program": 2,
+        "description": "A more advanced course in Analog Learning",
+        "course_runs": [
+          {
+            "title": "Analog Learning 200 - August 2016",
+            "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+200+Aug_2016",
+            "enrollment_start": "2016-08-15T00:00:00+00:00",
+            "end_date": "2016-12-15T00:00:00+00:00",
+            "start_date": "2016-08-15T00:00:00+00:00",
+            "enrollment_end": "2016-08-29T00:00:00+00:00"
+          },
+          {
+            "title": "Analog Learning 200 - January 2016",
+            "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+200+Jan_2016",
+            "enrollment_start": "2016-01-15T00:00:00+00:00",
+            "end_date": "2016-05-15T00:00:00+00:00",
+            "start_date": "2016-01-15T00:00:00+00:00",
+            "enrollment_end": "2016-01-29T00:00:00+00:00"
+          },
+          {
+            "title": "Analog Learning 200 - August 2015",
+            "upgrade_deadline": "2015-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+200+Aug_2015",
+            "enrollment_start": "2015-08-15T00:00:00+00:00",
+            "end_date": "2015-12-15T00:00:00+00:00",
+            "start_date": "2015-08-15T00:00:00+00:00",
+            "enrollment_end": "2015-08-29T00:00:00+00:00"
+          }
+        ]
+      },
+      {
+        "title": "Analog Learning 300",
+        "position_in_program": 3,
+        "description": "The most advancedest course in Analog Learning",
+        "course_runs": [
+          {
+            "title": "Analog Learning 300 - August 2016",
+            "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+300+Aug_2016",
+            "enrollment_start": "2016-08-15T00:00:00+00:00",
+            "end_date": "2016-12-15T00:00:00+00:00",
+            "start_date": "2016-08-15T00:00:00+00:00",
+            "enrollment_end": "2016-08-29T00:00:00+00:00"
+          },
+          {
+            "title": "Analog Learning 300 - January 2016",
+            "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+300+Jan_2016",
+            "enrollment_start": "2016-01-15T00:00:00+00:00",
+            "end_date": "2016-05-15T00:00:00+00:00",
+            "start_date": "2016-01-15T00:00:00+00:00",
+            "enrollment_end": "2016-01-29T00:00:00+00:00"
+          },
+          {
+            "title": "Analog Learning 300 - August 2015",
+            "upgrade_deadline": "2015-08-22T00:00:00+00:00",
+            "edx_course_key": "course-v1:MITx+Analog+Learning+300+Aug_2015",
+            "enrollment_start": "2015-08-15T00:00:00+00:00",
+            "end_date": "2015-12-15T00:00:00+00:00",
+            "start_date": "2015-08-15T00:00:00+00:00",
+            "enrollment_end": "2015-08-29T00:00:00+00:00"
+          }
+        ]
+      }
+    ]
+  }
 ]

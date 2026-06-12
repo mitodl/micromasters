@@ -10,6 +10,7 @@ from roles.models import Role
 
 class RoleFactory(DjangoModelFactory):
     """Factory for Role"""
+
     role = FuzzyChoice(choices=Role.ASSIGNABLE_ROLES)
     user = SubFactory(UserFactory)
     program = SubFactory(ProgramFactory)

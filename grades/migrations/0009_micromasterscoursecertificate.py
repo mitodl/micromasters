@@ -5,23 +5,36 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0008_populate_exam_run_for_exam_grades'),
+        ("grades", "0008_populate_exam_run_for_exam_grades"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MicromastersCourseCertificate',
+            name="MicromastersCourseCertificate",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('hash', models.CharField(max_length=32, unique=True)),
-                ('final_grade', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='grades.FinalGrade')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                ("hash", models.CharField(max_length=32, unique=True)),
+                (
+                    "final_grade",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="grades.FinalGrade",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

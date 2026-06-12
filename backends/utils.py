@@ -25,10 +25,13 @@ def _send_refresh_request(user_social):
     try:
         user_social.refresh_token(strategy)
     except HTTPError as exc:
-        if exc.response.status_code in (400, 401,):
+        if exc.response.status_code in (
+            400,
+            401,
+        ):
             raise InvalidCredentialStored(
-                message=f'Received a {exc.response.status_code} status code from the OAUTH server',
-                http_status_code=exc.response.status_code
+                message=f"Received a {exc.response.status_code} status code from the OAUTH server",
+                http_status_code=exc.response.status_code,
             )
         raise
 
@@ -41,8 +44,10 @@ def refresh_user_token(user_social):
         user_social (UserSocialAuth): a user social auth instance
     """
     try:
-        last_update = datetime.fromtimestamp(user_social.extra_data.get('updated_at'), tz=pytz.UTC)
-        expires_in = timedelta(seconds=user_social.extra_data.get('expires_in'))
+        last_update = datetime.fromtimestamp(
+            user_social.extra_data.get("updated_at"), tz=pytz.UTC
+        )
+        expires_in = timedelta(seconds=user_social.extra_data.get("expires_in"))
     except TypeError:
         _send_refresh_request(user_social)
         return
@@ -59,7 +64,7 @@ def update_email(user_profile_edx, user):
         user_profile_edx (dict): user details from edX
         user (User): user object
     """
-    user.email = user_profile_edx.get('email')
+    user.email = user_profile_edx.get("email")
     user.save()
 
 
@@ -75,7 +80,7 @@ def has_social_auth(user, provider):
     try:
         get_social_auth(user, provider)
     except ObjectDoesNotExist:
-        log.info('No social auth for %s for user %s', provider, user.username)
+        log.info("No social auth for %s for user %s", provider, user.username)
         return False
     return True
 
@@ -90,6 +95,4 @@ def get_staff_edx_client_credentials():
         dict: Payload dict with staff access token
 
     """
-    return {
-        "access_token": settings.MITXONLINE_STAFF_ACCESS_TOKEN
-    }
+    return {"access_token": settings.MITXONLINE_STAFF_ACCESS_TOKEN}

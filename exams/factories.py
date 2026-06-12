@@ -21,16 +21,18 @@ FAKE = faker.Factory.create()
 
 def _get_past_eligibility_date():
     """Generate a date that is truly in the past for eligibility_past trait"""
-    return (FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc) - timedelta(days=1)).date()
+    return (
+        FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc)
+        - timedelta(days=1)
+    ).date()
 
 
 class ExamProfileFactory(DjangoModelFactory):
     """
     Factory for ExamProfile
     """
-    status = FuzzyChoice(
-        [value[0] for value in ExamProfile.PROFILE_STATUS_CHOICES]
-    )
+
+    status = FuzzyChoice([value[0] for value in ExamProfile.PROFILE_STATUS_CHOICES])
     profile = SubFactory(ProfileFactory)
 
     class Meta:
@@ -41,16 +43,23 @@ class ExamRunFactory(DjangoModelFactory):
     """
     Factory for ExamRun
     """
+
     course = SubFactory(CourseFactory)
-    exam_series_code = factory.Faker('lexify', text="????_MicroMasters")
+    exam_series_code = factory.Faker("lexify", text="????_MicroMasters")
     date_first_schedulable = factory.LazyFunction(
-        lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc)
+        lambda: FAKE.date_time_this_year(
+            before_now=True, after_now=False, tzinfo=pytz.utc
+        )
     )
     date_last_schedulable = factory.LazyFunction(
-        lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc)
+        lambda: FAKE.date_time_this_year(
+            before_now=False, after_now=True, tzinfo=pytz.utc
+        )
     )
     date_first_eligible = factory.LazyFunction(
-        lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc).date()
+        lambda: FAKE.date_time_this_year(
+            before_now=False, after_now=True, tzinfo=pytz.utc
+        ).date()
     )
     date_last_eligible = factory.LazyAttribute(
         lambda exam_run: exam_run.date_first_eligible + timedelta(days=20)
@@ -69,31 +78,38 @@ class ExamRunFactory(DjangoModelFactory):
             date_last_eligible=factory.LazyFunction(_get_past_eligibility_date),
             date_first_eligible=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_last_eligible - timedelta(days=20)
-            )
+            ),
         )
         eligibility_future = factory.Trait(
             date_first_eligible=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc).date()
+                lambda: FAKE.date_time_this_year(
+                    before_now=False, after_now=True, tzinfo=pytz.utc
+                ).date()
             ),
             date_last_eligible=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_first_eligible + timedelta(days=20)
-            )
+            ),
         )
         scheduling_past = factory.Trait(
             date_last_schedulable=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc) - timedelta(hours=1)
+                lambda: FAKE.date_time_this_year(
+                    before_now=True, after_now=False, tzinfo=pytz.utc
+                )
+                - timedelta(hours=1)
             ),
             date_first_schedulable=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_last_schedulable - timedelta(days=10)
-            )
+            ),
         )
         scheduling_future = factory.Trait(
             date_first_schedulable=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc)
+                lambda: FAKE.date_time_this_year(
+                    before_now=False, after_now=True, tzinfo=pytz.utc
+                )
             ),
             date_last_schedulable=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_first_schedulable + timedelta(days=10)
-            )
+            ),
         )
 
 
@@ -101,15 +117,12 @@ class ExamAuthorizationFactory(DjangoModelFactory):
     """
     Factory for ExamAuthorization
     """
+
     user = SubFactory(UserFactory)
     course = SubFactory(CourseFactory)
 
-    operation = FuzzyChoice(
-        [value[0] for value in ExamAuthorization.OPERATION_CHOICES]
-    )
-    status = FuzzyChoice(
-        [value[0] for value in ExamAuthorization.STATUS_CHOICES]
-    )
+    operation = FuzzyChoice([value[0] for value in ExamAuthorization.OPERATION_CHOICES])
+    status = FuzzyChoice([value[0] for value in ExamAuthorization.STATUS_CHOICES])
 
     exam_run = SubFactory(ExamRunFactory)
 
@@ -121,14 +134,15 @@ class ExamRunCouponFactory(DjangoModelFactory):
     """
     Factory for ExamRunCoupon
     """
+
     course = SubFactory(CourseFactory)
     edx_exam_course_key = fuzzy.FuzzyText()
     expiration_date = factory.Faker(
-        'date_time_this_month', before_now=False, after_now=True, tzinfo=pytz.utc
+        "date_time_this_month", before_now=False, after_now=True, tzinfo=pytz.utc
     )
-    coupon_url = factory.Faker('url')
+    coupon_url = factory.Faker("url")
     coupon_code = fuzzy.FuzzyText()
-    is_taken = factory.Faker('boolean')
+    is_taken = factory.Faker("boolean")
 
     class Meta:
         model = ExamRunCoupon

@@ -10,9 +10,13 @@ from factory.django import mute_signals
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from cms.factories import (FacultyFactory, InfoLinksFactory,
-                           ProgramCourseFactory, ProgramPageFactory,
-                           SemesterDateFactory)
+from cms.factories import (
+    FacultyFactory,
+    InfoLinksFactory,
+    ProgramCourseFactory,
+    ProgramPageFactory,
+    SemesterDateFactory,
+)
 from courses.factories import CourseFactory, ProgramFactory
 from dashboard.models import ProgramEnrollment
 from profiles.models import Profile
@@ -30,26 +34,31 @@ def test_program_page(browser, base_test_data, logged_in_student):
     """
     Test viewing the program page
     """
-    courses = list(base_test_data.program.course_set.all()) + \
-        CourseFactory.create_batch(2, program=base_test_data.program)
-    page = ProgramPageFactory.create(program=base_test_data.program, title="A Program Title")
+    courses = list(
+        base_test_data.program.course_set.all()
+    ) + CourseFactory.create_batch(2, program=base_test_data.program)
+    page = ProgramPageFactory.create(
+        program=base_test_data.program, title="A Program Title"
+    )
     faculty = FacultyFactory.create_batch(3, program_page=page)
     info_links = InfoLinksFactory.create_batch(3, program_page=page)
     semester_dates = SemesterDateFactory.create_batch(3, program_page=page)
     program_courses = ProgramCourseFactory.create_batch(
-        len(courses),
-        program_page=page,
-        course=Iterator(courses)
+        len(courses), program_page=page, course=Iterator(courses)
     )
 
     browser.get("/a-program-title/")
     faculty_elements = browser.driver.find_elements_by_css_selector(".faculty-tile")
     assert len(faculty) == len(faculty_elements)
-    info_elements = browser.driver.find_elements_by_css_selector(".program-contact-link")
+    info_elements = browser.driver.find_elements_by_css_selector(
+        ".program-contact-link"
+    )
     assert len(info_links) == len(info_elements)
     semester_elements = browser.driver.find_elements_by_css_selector(".semester-date")
     assert len(semester_dates) == len(semester_elements)
-    program_course_elements = browser.driver.find_elements_by_css_selector(".program-course .course-row")
+    program_course_elements = browser.driver.find_elements_by_css_selector(
+        ".program-course .course-row"
+    )
     assert len(program_courses) == len(program_course_elements)
 
 
@@ -58,19 +67,24 @@ class TestLearnerSearchPage:
     """
     Learners search page tests
     """
+
     def test_learners(self, browser, base_test_data):
         """
         Page should contain the appropriate number of results on each page
         """
         page_size = settings.OPENSEARCH_DEFAULT_PAGE_SIZE
         num_users_to_create = page_size + 2
-        create_enrolled_user_batch(num_users_to_create, program=base_test_data.program, is_staff=False)
+        create_enrolled_user_batch(
+            num_users_to_create, program=base_test_data.program, is_staff=False
+        )
         expected_second_page_count = num_users_to_create - page_size
 
         browser.get("/learners")
-        browser.wait_until_element_count(By.CLASS_NAME, 'learner-result', page_size)
-        browser.driver.find_elements_by_class_name('sk-pagination-option')[1].click()
-        browser.wait_until_element_count(By.CLASS_NAME, 'learner-result', expected_second_page_count)
+        browser.wait_until_element_count(By.CLASS_NAME, "learner-result", page_size)
+        browser.driver.find_elements_by_class_name("sk-pagination-option")[1].click()
+        browser.wait_until_element_count(
+            By.CLASS_NAME, "learner-result", expected_second_page_count
+        )
 
     def test_query_string_preserved(self, browser, base_test_data):
         """
@@ -78,8 +92,8 @@ class TestLearnerSearchPage:
         """
         url = "/learners/?q=xyz"
         browser.get(url)
-        browser.wait_until_loaded(By.CLASS_NAME, 'no-hits')
-        assert browser.driver.current_url.endswith('/learners/?q=xyz')
+        browser.wait_until_loaded(By.CLASS_NAME, "no-hits")
+        assert browser.driver.current_url.endswith("/learners/?q=xyz")
         browser.assert_no_console_errors()
 
     def test_switch_program(self, browser, base_test_data, logged_in_staff):
@@ -87,11 +101,15 @@ class TestLearnerSearchPage:
         Switching programs should show a different set of users
         """
         existing_program_user_count = settings.OPENSEARCH_DEFAULT_PAGE_SIZE
-        create_enrolled_user_batch(existing_program_user_count, program=base_test_data.program, is_staff=False)
+        create_enrolled_user_batch(
+            existing_program_user_count, program=base_test_data.program, is_staff=False
+        )
 
         new_program = ProgramFactory.create(live=True)
         new_program_user_count = settings.OPENSEARCH_DEFAULT_PAGE_SIZE - 1
-        create_enrolled_user_batch(new_program_user_count, program=new_program, is_staff=False)
+        create_enrolled_user_batch(
+            new_program_user_count, program=new_program, is_staff=False
+        )
         ProgramEnrollment.objects.create(program=new_program, user=logged_in_staff)
         Role.objects.create(
             role=Staff.ROLE_ID,
@@ -101,15 +119,23 @@ class TestLearnerSearchPage:
 
         # Load the learners page for the existing program
         browser.get("/learners")
-        browser.wait_until_element_count(By.CLASS_NAME, 'learner-result', existing_program_user_count)
+        browser.wait_until_element_count(
+            By.CLASS_NAME, "learner-result", existing_program_user_count
+        )
         # Switch programs and check that the correct number of users are returned
-        switcher = browser.driver.find_element_by_css_selector('.micromasters-header .Select-input')
+        switcher = browser.driver.find_element_by_css_selector(
+            ".micromasters-header .Select-input"
+        )
         switcher.send_keys(Keys.DOWN)
         switcher.send_keys(Keys.ENTER)
-        browser.wait_until_element_count(By.CLASS_NAME, 'learner-result', new_program_user_count)
+        browser.wait_until_element_count(
+            By.CLASS_NAME, "learner-result", new_program_user_count
+        )
         # Refresh browser and verify the count is the same
         browser.get("/learners")
-        browser.wait_until_element_count(By.CLASS_NAME, 'learner-result', new_program_user_count)
+        browser.wait_until_element_count(
+            By.CLASS_NAME, "learner-result", new_program_user_count
+        )
 
     def test_profile_navigation(self, browser, base_test_data):
         """
@@ -118,28 +144,32 @@ class TestLearnerSearchPage:
         create_enrolled_user_batch(2, program=base_test_data.program, is_staff=False)
 
         browser.get("/learners")
-        browser.click_when_loaded(By.CLASS_NAME, 'menu-icon')
+        browser.click_when_loaded(By.CLASS_NAME, "menu-icon")
         browser.wait().until(
-            lambda driver: "open" in driver.find_element_by_class_name('nav-drawer').get_attribute('class')
+            lambda driver: "open"
+            in driver.find_element_by_class_name("nav-drawer").get_attribute("class")
         )
-        browser.click_when_loaded(By.CSS_SELECTOR, 'a .profile-image')
-        browser.wait_until_loaded(By.CLASS_NAME, 'user-page')
+        browser.click_when_loaded(By.CSS_SELECTOR, "a .profile-image")
+        browser.wait_until_loaded(By.CLASS_NAME, "user-page")
         # Go back to learners
-        browser.click_when_loaded(By.CLASS_NAME, 'menu-icon')
+        browser.click_when_loaded(By.CLASS_NAME, "menu-icon")
         browser.wait().until(
-            lambda driver: "open" in driver.find_element_by_class_name('nav-drawer').get_attribute('class')
+            lambda driver: "open"
+            in driver.find_element_by_class_name("nav-drawer").get_attribute("class")
         )
         browser.click_when_loaded(By.CSS_SELECTOR, "a[href='/learners']")
-        browser.wait_until_loaded(By.CLASS_NAME, 'learner-results')
+        browser.wait_until_loaded(By.CLASS_NAME, "learner-results")
 
     def test_country_limit(self, browser, base_test_data):
         """
         There should be more than 20 countries in current country and birth country facets
         """
-        with open("profiles/data/countries.csv", encoding='utf-8') as f:
+        with open("profiles/data/countries.csv", encoding="utf-8") as f:
             reader = csv.DictReader(f)
-            country_codes = [row['code'] for row in reader]
-        create_enrolled_user_batch(len(country_codes), program=base_test_data.program, is_staff=False)
+            country_codes = [row["code"] for row in reader]
+        create_enrolled_user_batch(
+            len(country_codes), program=base_test_data.program, is_staff=False
+        )
 
         # Don't update Opensearch for each profile, do that in bulk after
         with mute_signals(post_save):
@@ -152,9 +182,9 @@ class TestLearnerSearchPage:
         reindex_test_es_data()
 
         browser.get("/learners")
-        browser.wait_until_loaded(By.CLASS_NAME, 'menu-icon')
+        browser.wait_until_loaded(By.CLASS_NAME, "menu-icon")
 
-        current_selector = '.filter--country .sk-hierarchical-menu-list__item'
+        current_selector = ".filter--country .sk-hierarchical-menu-list__item"
 
         country_count = browser.driver.execute_script(
             f"return document.querySelectorAll('{current_selector}').length"

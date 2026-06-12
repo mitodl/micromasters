@@ -20,30 +20,38 @@ from search.base import reindex_test_es_data
 from search.indexing_api import delete_indices
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.page import LoginPage
-from selenium_tests.util import (DEFAULT_PASSWORD, Browser, DatabaseLoader,
-                                 should_load_from_existing_db,
-                                 terminate_db_connections)
+from selenium_tests.util import (
+    DEFAULT_PASSWORD,
+    Browser,
+    DatabaseLoader,
+    should_load_from_existing_db,
+    terminate_db_connections,
+)
 
 
 def pytest_exception_interact(node, call, report):
     """
     Pytest hook that runs if an unhandled and unexpected exception is raised
     """
-    browser = None if not hasattr(node, 'funcargs') else node.funcargs.get('browser')
+    browser = None if not hasattr(node, "funcargs") else node.funcargs.get("browser")
     # If the test case has a 'browser' fixture, it indicates that a selenium test case failed.
     if browser:
         # Take a screenshot to show the state of the selenium driver when the error occurred.
-        browser.take_screenshot(filename_prefix='error', output_base64=settings.IS_CI_ENV)
+        browser.take_screenshot(
+            filename_prefix="error", output_base64=settings.IS_CI_ENV
+        )
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def database_loader():
     """Fixture for a DatabaseLoader instance"""
     return DatabaseLoader()
 
 
-@pytest.fixture(scope='session', autouse=True)
-def django_db_setup_override(django_db_setup, django_db_blocker, database_loader, pytestconfig):
+@pytest.fixture(scope="session", autouse=True)
+def django_db_setup_override(
+    django_db_setup, django_db_blocker, database_loader, pytestconfig
+):
     """
     Fixture provided by pytest-django to allow for custom Django database config.
     'django_db_setup' exists in the arguments because we want to perform the normal pytest-django
@@ -51,10 +59,12 @@ def django_db_setup_override(django_db_setup, django_db_blocker, database_loader
     """
     with django_db_blocker.unblock():
         with connection.cursor() as cur:
-            load_from_existing_db = should_load_from_existing_db(database_loader, cur, config=pytestconfig)
+            load_from_existing_db = should_load_from_existing_db(
+                database_loader, cur, config=pytestconfig
+            )
             if not load_from_existing_db:
                 # Drop a wagtail table due to a bug: https://github.com/wagtail/wagtail/issues/1824
-                cur.execute('DROP TABLE IF EXISTS wagtailsearch_editorspick CASCADE;')
+                cur.execute("DROP TABLE IF EXISTS wagtailsearch_editorspick CASCADE;")
                 # Create the initial post-migration database backup to be restored before each test case
                 database_loader.create_backup(db_cursor=cur)
     if load_from_existing_db:
@@ -69,20 +79,20 @@ def _use_db_loader(request, django_db_blocker, database_loader):
     Fixture that replaces the test database with the post-migration backup before each test case.
     NOTE: This should run *before* the 'django_db' marker code is executed.
     """
-    marker = request.keywords.get('django_db', None)
+    marker = request.keywords.get("django_db", None)
     if marker:
         with django_db_blocker.unblock():
             terminate_db_connections()
         database_loader.load_backup()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def internal_api_patcher():
     """
     Fixture that patches certain internal app functions for the entire selenium suite execution
     """
     methods_to_patch = [
-        'mail.api.MailgunClient._mailgun_request',
+        "mail.api.MailgunClient._mailgun_request",
     ]
     patcher_mocks = []
     patchers = [patch(method_name) for method_name in methods_to_patch]
@@ -90,10 +100,7 @@ def internal_api_patcher():
         mock = patcher.start()
         mock.name = patcher.attribute
         patcher_mocks.append(mock)
-    yield SimpleNamespace(
-        patchers=patchers,
-        patcher_mocks=patcher_mocks
-    )
+    yield SimpleNamespace(patchers=patchers, patcher_mocks=patcher_mocks)
     for patcher in patchers:
         patcher.stop()
 
@@ -108,19 +115,19 @@ def patches(internal_api_patcher):
     return internal_api_patcher
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def driver():
     """
     Selenium driver fixture
     """
     # Start a selenium server running chrome
     capabilities = DesiredCapabilities.CHROME.copy()
-    capabilities['chromeOptions'] = {
-        'binary': os.getenv('CHROME_BIN', '/usr/bin/google-chrome-stable'),
-        'args': ['--no-sandbox'],
+    capabilities["chromeOptions"] = {
+        "binary": os.getenv("CHROME_BIN", "/usr/bin/google-chrome-stable"),
+        "args": ["--no-sandbox"],
     }
     driver = Remote(
-        os.getenv('SELENIUM_URL', 'http://chrome:5555/wd/hub'),
+        os.getenv("SELENIUM_URL", "http://chrome:5555/wd/hub"),
         capabilities,
     )
     driver.implicitly_wait(10)
@@ -128,7 +135,7 @@ def driver():
     driver.close()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def browser(driver, set_live_server_host, live_server):
     """
     Fixture for our Browser abstraction. 'live_server' is provided by pytest-django.
@@ -136,7 +143,7 @@ def browser(driver, set_live_server_host, live_server):
     return Browser(driver, live_server.url)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def set_live_server_host():
     """
     Override pytest fixture to set the environment variable to set the host and port for the live server.
@@ -144,7 +151,7 @@ def set_live_server_host():
     Also, for some reason 0.0.0.0 no longer works to bind all hosts, but we only really need the
     external IP address.
     """
-    os.environ.setdefault('DJANGO_LIVE_TEST_SERVER_ADDRESS', "0.0.0.0:7000")
+    os.environ.setdefault("DJANGO_LIVE_TEST_SERVER_ADDRESS", "0.0.0.0:7000")
     yield
 
 
@@ -171,7 +178,10 @@ def base_test_data():
     course_run = CourseRunFactory.create(course__program=program)
     ExamRunFactory.create(course=course_run.course)
     # Create users
-    staff_user, student_user = (create_user_for_login(is_staff=True), create_user_for_login(is_staff=False))
+    staff_user, student_user = (
+        create_user_for_login(is_staff=True),
+        create_user_for_login(is_staff=False),
+    )
     ProgramEnrollment.objects.create(program=program, user=staff_user)
     ProgramEnrollment.objects.create(program=program, user=student_user)
     Role.objects.create(
@@ -180,9 +190,7 @@ def base_test_data():
         program=program,
     )
     return SimpleNamespace(
-        staff_user=staff_user,
-        student_user=student_user,
-        program=program
+        staff_user=staff_user, student_user=student_user, program=program
     )
 
 
@@ -202,7 +210,9 @@ def logged_in_staff(browser, override_allowed_hosts, base_test_data):
     Returns:
         User: User object
     """
-    return LoginPage(browser).log_in_via_admin(base_test_data.staff_user, DEFAULT_PASSWORD)
+    return LoginPage(browser).log_in_via_admin(
+        base_test_data.staff_user, DEFAULT_PASSWORD
+    )
 
 
 @pytest.fixture()
@@ -213,7 +223,9 @@ def logged_in_student(browser, override_allowed_hosts, base_test_data):
     Returns:
         User: User object
     """
-    return LoginPage(browser).log_in_via_admin(base_test_data.student_user, DEFAULT_PASSWORD)
+    return LoginPage(browser).log_in_via_admin(
+        base_test_data.student_user, DEFAULT_PASSWORD
+    )
 
 
 @pytest.fixture(autouse=True)

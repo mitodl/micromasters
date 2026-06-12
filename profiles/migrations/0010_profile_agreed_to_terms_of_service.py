@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0009_profile_student_id'),
+        ("profiles", "0009_profile_student_id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='agreed_to_terms_of_service',
+            model_name="profile",
+            name="agreed_to_terms_of_service",
             field=models.BooleanField(default=False),
         ),
     ]

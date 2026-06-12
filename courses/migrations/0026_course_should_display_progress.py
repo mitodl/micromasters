@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0025_remove_unused_fields'),
+        ("courses", "0025_remove_unused_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='should_display_progress',
+            model_name="course",
+            name="should_display_progress",
             field=models.BooleanField(default=True),
         ),
     ]

@@ -7,8 +7,8 @@ import logging
 log = logging.getLogger(__name__)
 
 RECIPIENT_VARIABLE_NAMES = {
-    'PreferredName': 'preferred_name',
-    'Email': 'email',
+    "PreferredName": "preferred_name",
+    "Email": "email",
 }
 
 
@@ -31,9 +31,7 @@ def generate_mailgun_response_json(response):
     try:
         response_json = response.json()
     except ValueError:  # Includes JSONDecodeError since it inherits from ValueError
-        response_json = {
-            "message": response.reason
-        }
+        response_json = {"message": response.reason}
     return response_json
 
 
@@ -47,7 +45,7 @@ def filter_recipient_variables(text):
     """
 
     for key, value in RECIPIENT_VARIABLE_NAMES.items():
-        text = text.replace(f'[{key}]', f'%recipient.{value}%')
+        text = text.replace(f"[{key}]", f"%recipient.{value}%")
 
     return text
 
@@ -60,12 +58,16 @@ def get_email_footer(url):
     Returns:
         string: with the html styled footer
     """
-    text = ("You are receiving this e-mail because you signed up for MITx"
-            " MicroMasters.<br/> If you don't want to receive these emails in the"
-            " future, you can<br/> <a href='{0}'>edit your settings</a>"
-            " or <a href='{0}'>unsubscribe</a>.").format(url)
-    return ("<div style='margin-top:80px; text-align: center; color: #757575;'>"
-            "<div style='margin:auto; max-width:50%;'><p>{}</p>"
-            "<p>MIT Office of Digital Learning<br/>"
-            "600 Technology Square, 2nd Floor, Cambridge, MA 02139</p>"
-            "</div></div>").format(text)
+    text = (
+        "You are receiving this e-mail because you signed up for MITx"
+        " MicroMasters.<br/> If you don't want to receive these emails in the"
+        " future, you can<br/> <a href='{0}'>edit your settings</a>"
+        " or <a href='{0}'>unsubscribe</a>."
+    ).format(url)
+    return (
+        "<div style='margin-top:80px; text-align: center; color: #757575;'>"
+        "<div style='margin:auto; max-width:50%;'><p>{}</p>"
+        "<p>MIT Office of Digital Learning<br/>"
+        "600 Technology Square, 2nd Floor, Cambridge, MA 02139</p>"
+        "</div></div>"
+    ).format(text)

@@ -2,21 +2,20 @@
 
 import uuid
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 def gen_uuid(apps, schema_editor):
     """Generate unique UUID values"""
-    Profile = apps.get_model('profiles', 'Profile')
+    Profile = apps.get_model("profiles", "Profile")
     for profile in Profile.objects.all():
         profile.mail_id = uuid.uuid4()
         profile.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0030_create_mail_id'),
+        ("profiles", "0030_create_mail_id"),
     ]
 
     operations = [

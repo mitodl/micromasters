@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0013_require_date_grades_available'),
+        ("exams", "0013_require_date_grades_available"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='examauthorization',
-            name='exam_no_show',
+            model_name="examauthorization",
+            name="exam_no_show",
             field=models.BooleanField(default=False),
         ),
     ]

@@ -16,20 +16,21 @@ FAKE = faker.Factory.create()
 
 class ProfileFactory(DjangoModelFactory):
     """Factory for Profiles"""
+
     user = SubFactory(UserFactory)
     fake_user = True
-    filled_out = Faker('boolean')
-    agreed_to_terms_of_service = Faker('boolean')
+    filled_out = Faker("boolean")
+    agreed_to_terms_of_service = Faker("boolean")
 
-    first_name = Faker('first_name')
-    last_name = Faker('last_name')
-    preferred_name = Faker('name')
+    first_name = Faker("first_name")
+    last_name = Faker("last_name")
+    preferred_name = Faker("name")
 
     account_privacy = FuzzyChoice(
         [choice[0] for choice in Profile.ACCOUNT_PRIVACY_CHOICES]
     )
 
-    email_optin = Faker('boolean')
+    email_optin = Faker("boolean")
 
     edx_employer = FuzzyText(suffix=" corp")
     edx_job_title = FuzzyText(suffix=" consultant")
@@ -37,14 +38,14 @@ class ProfileFactory(DjangoModelFactory):
     edx_bio = FuzzyText()
     about_me = FuzzyText()
 
-    romanized_first_name = Faker('first_name')
-    romanized_last_name = Faker('last_name')
+    romanized_first_name = Faker("first_name")
+    romanized_last_name = Faker("last_name")
 
-    address = LazyFunction(lambda: f'{FAKE.building_number()} {FAKE.street_name()}')
+    address = LazyFunction(lambda: f"{FAKE.building_number()} {FAKE.street_name()}")
 
-    city = Faker('city')
-    country = Faker('country_code')
-    state_or_territory = Faker('state')
+    city = Faker("city")
+    country = Faker("country_code")
+    state_or_territory = Faker("state")
 
     @lazy_attribute
     def postal_code(self):
@@ -53,22 +54,20 @@ class ProfileFactory(DjangoModelFactory):
             return FAKE.postcode()
         return None
 
-    phone_number = Faker('numerify', text='+# (###) ###-####')
+    phone_number = Faker("numerify", text="+# (###) ###-####")
 
-    birth_country = Faker('country_code')
-    nationality = Faker('country_code')
+    birth_country = Faker("country_code")
+    nationality = Faker("country_code")
 
-    edx_requires_parental_consent = Faker('boolean')
+    edx_requires_parental_consent = Faker("boolean")
     date_of_birth = FuzzyDate(date(1850, 1, 1))
     edx_level_of_education = FuzzyChoice(
         [None] + [choice[0] for choice in Profile.LEVEL_OF_EDUCATION_CHOICES]
     )
     edx_goals = FuzzyText()
-    preferred_language = Faker('language_code')
+    preferred_language = Faker("language_code")
     edx_language_proficiencies = LazyFunction(lambda: [FAKE.text() for _ in range(3)])
-    gender = FuzzyChoice(
-        [choice[0] for choice in Profile.GENDER_CHOICES]
-    )
+    gender = FuzzyChoice([choice[0] for choice in Profile.GENDER_CHOICES])
     edx_mailing_address = FuzzyText()
     date_joined_micromasters = FuzzyDateTime(datetime(1850, 1, 1, tzinfo=timezone.utc))
     student_id = None
@@ -86,10 +85,10 @@ class ProfileFactory(DjangoModelFactory):
     class Params:
         validated = Trait(
             filled_out=True,
-            phone_number='+1-800-888-8888',
-            country='US',
-            state_or_territory='US-MA',
-            postal_code='02142',
+            phone_number="+1-800-888-8888",
+            country="US",
+            state_or_territory="US-MA",
+            postal_code="02142",
             agreed_to_terms_of_service=True,
         )
 
@@ -119,6 +118,7 @@ class ProfileFactory(DjangoModelFactory):
 
 class SocialProfileFactory(ProfileFactory):
     """Factory for Profiles which should also have a social_auth object created for them"""
+
     user = SubFactory(SocialUserFactory)
 
     @classmethod
@@ -134,13 +134,14 @@ class EmploymentFactory(DjangoModelFactory):
     """
     A factory for work history
     """
+
     profile = SubFactory(ProfileFactory)
-    city = Faker('city')
-    country = Faker('country')
-    state_or_territory = Faker('state')
-    company_name = Faker('company')
+    city = Faker("city")
+    country = Faker("country")
+    state_or_territory = Faker("state")
+    company_name = Faker("company")
     industry = FuzzyText(suffix=" IT")
-    position = Faker('job')
+    position = Faker("job")
     end_date = FuzzyDate(date(1850, 1, 1))
     start_date = FuzzyDate(date(1850, 1, 1))
 
@@ -152,18 +153,17 @@ class EducationFactory(DjangoModelFactory):
     """
     A factory for Education
     """
+
     profile = SubFactory(ProfileFactory)
 
-    degree_name = FuzzyChoice(
-        [choice[0] for choice in Education.DEGREE_CHOICES]
-    )
+    degree_name = FuzzyChoice([choice[0] for choice in Education.DEGREE_CHOICES])
     graduation_date = FuzzyDate(date(2000, 1, 1))
     field_of_study = FuzzyText()
-    online_degree = Faker('boolean')
+    online_degree = Faker("boolean")
     school_name = FuzzyText()
-    school_city = Faker('city')
-    school_state_or_territory = Faker('state')
-    school_country = Faker('country')
+    school_city = Faker("city")
+    school_state_or_territory = Faker("state")
+    school_country = Faker("country")
 
     class Meta:
         model = Education

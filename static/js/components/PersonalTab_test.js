@@ -49,12 +49,9 @@ describe("PersonalTab", () => {
       .find("Select")
       .props().options
     assert.equal(programOptions.length, PROGRAMS.length)
-    const sortedEnrollments = R.sortBy(
-      R.compose(
-        R.toLower,
-        R.prop("title")
-      )
-    )(PROGRAMS)
+    const sortedEnrollments = R.sortBy(R.compose(R.toLower, R.prop("title")))(
+      PROGRAMS
+    )
     programOptions.forEach((menuItem, i) => {
       const program = sortedEnrollments[i]
       assert.equal(program.title, menuItem.label)

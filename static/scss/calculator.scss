@@ -1,5 +1,6 @@
-.dialog.financial-aid-calculator, .confirm-dialog {
-  >div >div {
+.dialog.financial-aid-calculator,
+.confirm-dialog {
+  > div > div {
     border-top: none !important;
   }
 
@@ -11,7 +12,8 @@
     overflow: scroll;
 
     .checkbox {
-      .testify-income-text, .checkbox-income {
+      .testify-income-text,
+      .checkbox-income {
         font-size: 13px;
         line-height: 1.2em;
       }
@@ -23,7 +25,8 @@
     padding: 20px 10px;
 
     .checkbox {
-      .testify-income-text, .checkbox-income {
+      .testify-income-text,
+      .checkbox-income {
         font-size: 13px;
         line-height: 1.2em;
       }
@@ -51,7 +54,8 @@
     }
   }
 
-  .salary-input, .salary-input > div {
+  .salary-input,
+  .salary-input > div {
     @include breakpoint(phone) {
       display: block;
     }
@@ -111,10 +115,10 @@
       padding-left: 0;
     }
 
-    .testify-income-text, .checkbox-income {
+    .testify-income-text,
+    .checkbox-income {
       font-size: 16px;
       line-height: 24px;
-
     }
   }
 

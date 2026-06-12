@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('mail', '0006_automaticemail_staff_user'),
+        ("mail", "0006_automaticemail_staff_user"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sentautomaticemail',
-            name='status',
-            field=models.CharField(choices=[('pending', 'pending'), ('sent', 'sent')], default='pending', max_length=30),
+            model_name="sentautomaticemail",
+            name="status",
+            field=models.CharField(
+                choices=[("pending", "pending"), ("sent", "sent")],
+                default="pending",
+                max_length=30,
+            ),
         ),
     ]

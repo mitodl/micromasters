@@ -4350,4 +4350,3 @@ Version 0.1.0 (Released March 11, 2016)
 - Specify python 3 runtime for Heroku
 - Add newrelic agent
 - Initial setup for micromasters portal
-

@@ -7,30 +7,185 @@ import wagtail.images.blocks
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0045_courseteam_title'),
+        ("cms", "0045_courseteam_title"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='courseteamtabpage',
-            name='administrators',
-            field=wagtail.fields.StreamField([('administrator', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('title', wagtail.blocks.RichTextBlock(blank=True, features=['bold', 'italic'], help_text='Title of the course team member.', null=True)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True),
+            model_name="courseteamtabpage",
+            name="administrators",
+            field=wagtail.fields.StreamField(
+                [
+                    (
+                        "administrator",
+                        wagtail.blocks.StructBlock(
+                            [
+                                (
+                                    "name",
+                                    wagtail.blocks.CharBlock(
+                                        help_text="Name of the course team member.",
+                                        max_length=100,
+                                    ),
+                                ),
+                                (
+                                    "title",
+                                    wagtail.blocks.RichTextBlock(
+                                        blank=True,
+                                        features=["bold", "italic"],
+                                        help_text="Title of the course team member.",
+                                        null=True,
+                                    ),
+                                ),
+                                (
+                                    "bio",
+                                    wagtail.blocks.TextBlock(
+                                        help_text="Short bio of course team member."
+                                    ),
+                                ),
+                                (
+                                    "image",
+                                    wagtail.images.blocks.ImageChooserBlock(
+                                        help_text="Image for the faculty member. Should be 385px by 385px."
+                                    ),
+                                ),
+                            ]
+                        ),
+                    )
+                ],
+                blank=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='courseteamtabpage',
-            name='contributors',
-            field=wagtail.fields.StreamField([('contributor', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('title', wagtail.blocks.RichTextBlock(blank=True, features=['bold', 'italic'], help_text='Title of the course team member.', null=True)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True),
+            model_name="courseteamtabpage",
+            name="contributors",
+            field=wagtail.fields.StreamField(
+                [
+                    (
+                        "contributor",
+                        wagtail.blocks.StructBlock(
+                            [
+                                (
+                                    "name",
+                                    wagtail.blocks.CharBlock(
+                                        help_text="Name of the course team member.",
+                                        max_length=100,
+                                    ),
+                                ),
+                                (
+                                    "title",
+                                    wagtail.blocks.RichTextBlock(
+                                        blank=True,
+                                        features=["bold", "italic"],
+                                        help_text="Title of the course team member.",
+                                        null=True,
+                                    ),
+                                ),
+                                (
+                                    "bio",
+                                    wagtail.blocks.TextBlock(
+                                        help_text="Short bio of course team member."
+                                    ),
+                                ),
+                                (
+                                    "image",
+                                    wagtail.images.blocks.ImageChooserBlock(
+                                        help_text="Image for the faculty member. Should be 385px by 385px."
+                                    ),
+                                ),
+                            ]
+                        ),
+                    )
+                ],
+                blank=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='courseteamtabpage',
-            name='instructors',
-            field=wagtail.fields.StreamField([('instructors', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('title', wagtail.blocks.RichTextBlock(blank=True, features=['bold', 'italic'], help_text='Title of the course team member.', null=True)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True),
+            model_name="courseteamtabpage",
+            name="instructors",
+            field=wagtail.fields.StreamField(
+                [
+                    (
+                        "instructors",
+                        wagtail.blocks.StructBlock(
+                            [
+                                (
+                                    "name",
+                                    wagtail.blocks.CharBlock(
+                                        help_text="Name of the course team member.",
+                                        max_length=100,
+                                    ),
+                                ),
+                                (
+                                    "title",
+                                    wagtail.blocks.RichTextBlock(
+                                        blank=True,
+                                        features=["bold", "italic"],
+                                        help_text="Title of the course team member.",
+                                        null=True,
+                                    ),
+                                ),
+                                (
+                                    "bio",
+                                    wagtail.blocks.TextBlock(
+                                        help_text="Short bio of course team member."
+                                    ),
+                                ),
+                                (
+                                    "image",
+                                    wagtail.images.blocks.ImageChooserBlock(
+                                        help_text="Image for the faculty member. Should be 385px by 385px."
+                                    ),
+                                ),
+                            ]
+                        ),
+                    )
+                ],
+                blank=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='courseteamtabpage',
-            name='teaching_assistants',
-            field=wagtail.fields.StreamField([('TAs', wagtail.blocks.StructBlock([('name', wagtail.blocks.CharBlock(help_text='Name of the course team member.', max_length=100)), ('title', wagtail.blocks.RichTextBlock(blank=True, features=['bold', 'italic'], help_text='Title of the course team member.', null=True)), ('bio', wagtail.blocks.TextBlock(help_text='Short bio of course team member.')), ('image', wagtail.images.blocks.ImageChooserBlock(help_text='Image for the faculty member. Should be 385px by 385px.'))]))], blank=True),
+            model_name="courseteamtabpage",
+            name="teaching_assistants",
+            field=wagtail.fields.StreamField(
+                [
+                    (
+                        "TAs",
+                        wagtail.blocks.StructBlock(
+                            [
+                                (
+                                    "name",
+                                    wagtail.blocks.CharBlock(
+                                        help_text="Name of the course team member.",
+                                        max_length=100,
+                                    ),
+                                ),
+                                (
+                                    "title",
+                                    wagtail.blocks.RichTextBlock(
+                                        blank=True,
+                                        features=["bold", "italic"],
+                                        help_text="Title of the course team member.",
+                                        null=True,
+                                    ),
+                                ),
+                                (
+                                    "bio",
+                                    wagtail.blocks.TextBlock(
+                                        help_text="Short bio of course team member."
+                                    ),
+                                ),
+                                (
+                                    "image",
+                                    wagtail.images.blocks.ImageChooserBlock(
+                                        help_text="Image for the faculty member. Should be 385px by 385px."
+                                    ),
+                                ),
+                            ]
+                        ),
+                    )
+                ],
+                blank=True,
+            ),
         ),
     ]

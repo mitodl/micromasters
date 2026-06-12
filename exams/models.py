@@ -13,11 +13,18 @@ from micromasters.utils import now_in_utc
 
 
 User = get_user_model()
+
+
 class ExamRun(TimestampedModel):
     """Represents an individual run of an exam"""
-    course = models.ForeignKey('courses.Course', related_name='exam_runs', on_delete=models.CASCADE)
+
+    course = models.ForeignKey(
+        "courses.Course", related_name="exam_runs", on_delete=models.CASCADE
+    )
     exam_series_code = models.CharField(max_length=20)
-    edx_exam_course_key = models.CharField(max_length=255, blank=True, null=True, unique=True)
+    edx_exam_course_key = models.CharField(
+        max_length=255, blank=True, null=True, unique=True
+    )
     description = models.TextField(null=True, blank=True)
     semester = models.CharField(max_length=50, null=True, blank=True)
 
@@ -63,10 +70,7 @@ class ExamRun(TimestampedModel):
             django.db.models.query.QuerySet: A Queryset filtered to currently schedulable exam runs
         """
         now = now_in_utc()
-        return cls.objects.filter(
-            course=course,
-            date_first_schedulable__gte=now
-        )
+        return cls.objects.filter(course=course, date_first_schedulable__gte=now)
 
     def __str__(self):
         return f'Exam run for course "{self.course.title}" with exam series code "{self.exam_series_code}"'
@@ -83,10 +87,7 @@ class ExamRun(TimestampedModel):
             django.db.models.query.QuerySet: A Queryset filtered to past exam runs
         """
         now = now_in_utc()
-        return cls.objects.filter(
-            course=course,
-            date_last_schedulable__lt=now
-        )
+        return cls.objects.filter(course=course, date_last_schedulable__lt=now)
 
     @classmethod
     def get_current_term_exam(cls, course, run_end_date):
@@ -100,10 +101,13 @@ class ExamRun(TimestampedModel):
             (exams.models.ExamRun): Exam run that runs this term
         """
         three_weeks = datetime.timedelta(weeks=3)
-        return cls.objects.filter(
-            course=course,
-            date_first_schedulable__lt=run_end_date+three_weeks
-        ).order_by('-date_last_schedulable').first()
+        return (
+            cls.objects.filter(
+                course=course, date_first_schedulable__lt=run_end_date + three_weeks
+            )
+            .order_by("-date_last_schedulable")
+            .first()
+        )
 
     @property
     def is_schedulable(self):
@@ -144,26 +148,27 @@ class ExamProfile(TimestampedModel):
 
     The state machine can transition to the root node from any other node to restart the flow
     """
-    PROFILE_INVALID = 'invalid'
-    PROFILE_PENDING = 'pending'
-    PROFILE_IN_PROGRESS = 'in-progress'
-    PROFILE_FAILED = 'failed'
-    PROFILE_SUCCESS = 'success'
 
-    PROFILE_ABSENT = 'absent'
-    PROFILE_SCHEDULABLE = 'schedulable'
+    PROFILE_INVALID = "invalid"
+    PROFILE_PENDING = "pending"
+    PROFILE_IN_PROGRESS = "in-progress"
+    PROFILE_FAILED = "failed"
+    PROFILE_SUCCESS = "success"
+
+    PROFILE_ABSENT = "absent"
+    PROFILE_SCHEDULABLE = "schedulable"
 
     PROFILE_STATUS_CHOICES = (
-        (PROFILE_PENDING, 'Sync Pending'),
-        (PROFILE_IN_PROGRESS, 'Sync in Progress'),
-        (PROFILE_FAILED, 'Sync Failed'),
-        (PROFILE_SUCCESS, 'Sync Succeeded'),
-        (PROFILE_INVALID, 'Profile Invalid'),
+        (PROFILE_PENDING, "Sync Pending"),
+        (PROFILE_IN_PROGRESS, "Sync in Progress"),
+        (PROFILE_FAILED, "Sync Failed"),
+        (PROFILE_SUCCESS, "Sync Succeeded"),
+        (PROFILE_INVALID, "Profile Invalid"),
     )
 
     profile = models.OneToOneField(
-        'profiles.Profile',
-        related_name='exam_profile',
+        "profiles.Profile",
+        related_name="exam_profile",
         on_delete=models.CASCADE,
     )
     status = models.CharField(
@@ -179,7 +184,10 @@ class ExamProfile(TimestampedModel):
 
 class ExamRunCoupon(TimestampedModel):
     """Represents a coupon code url for an edx proctored exam"""
-    course = models.ForeignKey(Course, related_name='course_exam_coupons', on_delete=models.CASCADE)
+
+    course = models.ForeignKey(
+        Course, related_name="course_exam_coupons", on_delete=models.CASCADE
+    )
     edx_exam_course_key = models.CharField(max_length=30, null=False)
     coupon_url = models.URLField(null=False)
     coupon_code = models.CharField(max_length=30, null=False)
@@ -212,33 +220,43 @@ class ExamAuthorization(TimestampedModel):
 
     The state machine can transition to the root node from any other node to restart the flow
     """
-    OPERATION_ADD = 'add'
-    OPERATION_DELETE = 'delete'
-    OPERATION_UPDATE = 'update'
 
-    OPERATION_CHOICES = tuple((op, op.capitalize()) for op in [
-        OPERATION_ADD,
-        OPERATION_UPDATE,
-        OPERATION_DELETE,
-    ])
+    OPERATION_ADD = "add"
+    OPERATION_DELETE = "delete"
+    OPERATION_UPDATE = "update"
 
-    STATUS_PENDING = 'pending'
-    STATUS_SENDING = 'sending'
-    STATUS_IN_PROGRESS = 'in-progress'
-    STATUS_FAILED = 'failed'
-    STATUS_SUCCESS = 'success'
-
-    STATUS_CHOICES = (
-        (STATUS_PENDING, 'Sync Pending'),
-        (STATUS_SENDING, 'Sync Sending'),
-        (STATUS_IN_PROGRESS, 'Sync in Progress'),
-        (STATUS_FAILED, 'Sync Failed'),
-        (STATUS_SUCCESS, 'Sync Suceeded'),
+    OPERATION_CHOICES = tuple(
+        (op, op.capitalize())
+        for op in [
+            OPERATION_ADD,
+            OPERATION_UPDATE,
+            OPERATION_DELETE,
+        ]
     )
 
-    user = models.ForeignKey(User, related_name='exam_authorizations', on_delete=models.CASCADE)
-    course = models.ForeignKey('courses.Course', related_name='exam_authorizations', on_delete=models.CASCADE)
-    exam_run = models.ForeignKey(ExamRun, related_name='exam_authorizations', on_delete=models.CASCADE)
+    STATUS_PENDING = "pending"
+    STATUS_SENDING = "sending"
+    STATUS_IN_PROGRESS = "in-progress"
+    STATUS_FAILED = "failed"
+    STATUS_SUCCESS = "success"
+
+    STATUS_CHOICES = (
+        (STATUS_PENDING, "Sync Pending"),
+        (STATUS_SENDING, "Sync Sending"),
+        (STATUS_IN_PROGRESS, "Sync in Progress"),
+        (STATUS_FAILED, "Sync Failed"),
+        (STATUS_SUCCESS, "Sync Suceeded"),
+    )
+
+    user = models.ForeignKey(
+        User, related_name="exam_authorizations", on_delete=models.CASCADE
+    )
+    course = models.ForeignKey(
+        "courses.Course", related_name="exam_authorizations", on_delete=models.CASCADE
+    )
+    exam_run = models.ForeignKey(
+        ExamRun, related_name="exam_authorizations", on_delete=models.CASCADE
+    )
 
     operation = models.CharField(
         max_length=30,
@@ -255,7 +273,9 @@ class ExamAuthorization(TimestampedModel):
     exam_taken = models.BooleanField(default=False)
     exam_no_show = models.BooleanField(default=False)
     exam_coupon_url = models.URLField(blank=True, null=True)
-    exam_coupon = models.OneToOneField(ExamRunCoupon, null=True, blank=True, on_delete=models.SET_NULL)
+    exam_coupon = models.OneToOneField(
+        ExamRunCoupon, null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     @classmethod
     def taken_exams(cls):

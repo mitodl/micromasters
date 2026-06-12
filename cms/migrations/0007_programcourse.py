@@ -7,24 +7,41 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0006_change_homepage_title'),
+        ("cms", "0006_change_homepage_title"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProgramCourse',
+            name="ProgramCourse",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('title', models.CharField(default='', max_length=255)),
-                ('description', wagtail.fields.RichTextField(blank=True, null=True)),
-                ('program_page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='courses', to='cms.ProgramPage')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                ("title", models.CharField(default="", max_length=255)),
+                ("description", wagtail.fields.RichTextField(blank=True, null=True)),
+                (
+                    "program_page",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="courses",
+                        to="cms.ProgramPage",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'ordering': ['sort_order'],
+                "abstract": False,
+                "ordering": ["sort_order"],
             },
         ),
     ]

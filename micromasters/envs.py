@@ -41,12 +41,14 @@ def get_bool(name, default):
         return default
 
     parsed_value = value.lower()
-    if parsed_value == 'true':
+    if parsed_value == "true":
         return True
-    elif parsed_value == 'false':
+    elif parsed_value == "false":
         return False
 
-    raise EnvironmentVariableParseException(f"Expected value in {name}={value} to be a boolean")
+    raise EnvironmentVariableParseException(
+        f"Expected value in {name}={value} to be a boolean"
+    )
 
 
 def get_int(name, default):
@@ -68,7 +70,9 @@ def get_int(name, default):
     try:
         parsed_value = int(value)
     except ValueError as ex:
-        raise EnvironmentVariableParseException(f"Expected value in {name}={value} to be an int") from ex
+        raise EnvironmentVariableParseException(
+            f"Expected value in {name}={value} to be an int"
+        ) from ex
 
     return parsed_value
 
@@ -89,7 +93,9 @@ def get_list_of_str(name, default):
     if value is None:
         return default
 
-    parse_exception = EnvironmentVariableParseException(f"Expected value in {name}={value} to be a list of str")
+    parse_exception = EnvironmentVariableParseException(
+        f"Expected value in {name}={value} to be a list of str"
+    )
 
     try:
         parsed_value = literal_eval(value)

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0018_remove_max_validation_final_grade'),
+        ("grades", "0018_remove_max_validation_final_grade"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='proctoredexamgrade',
-            name='client_authorization_id',
+            model_name="proctoredexamgrade",
+            name="client_authorization_id",
             field=models.TextField(blank=True, null=True),
         ),
     ]

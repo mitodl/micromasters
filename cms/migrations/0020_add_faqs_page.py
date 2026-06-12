@@ -6,30 +6,44 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0028_merge'),
-        ('cms', '0019_removed_fields_cms_homepage'),
+        ("wagtailcore", "0028_merge"),
+        ("cms", "0019_removed_fields_cms_homepage"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FaqsPage',
+            name="FaqsPage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
         migrations.RemoveField(
-            model_name='frequentlyaskedquestion',
-            name='program_page',
+            model_name="frequentlyaskedquestion",
+            name="program_page",
         ),
         migrations.AddField(
-            model_name='frequentlyaskedquestion',
-            name='faqs_page',
-            field=modelcluster.fields.ParentalKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='faqs', to='cms.FaqsPage'),
+            model_name="frequentlyaskedquestion",
+            name="faqs_page",
+            field=modelcluster.fields.ParentalKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="faqs",
+                to="cms.FaqsPage",
+            ),
         ),
     ]

@@ -10,9 +10,11 @@ from social_core.exceptions import AuthException, AuthFailed
 
 from backends.base import BaseEdxOAuth2
 from backends.utils import update_email
-from dashboard.api import (CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE,
-                           CACHE_KEY_FAILURE_NUMS_BY_USER,
-                           FIELD_USER_ID_BASE_STR)
+from dashboard.api import (
+    CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE,
+    CACHE_KEY_FAILURE_NUMS_BY_USER,
+    FIELD_USER_ID_BASE_STR,
+)
 from micromasters.utils import now_in_utc
 from profiles.models import Profile
 from profiles.util import split_name
@@ -46,13 +48,15 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
     else:
         next_relative_url = "/dashboard"
 
-    next_url = backend.strategy.session.load().get('next') or backend.strategy.session.get('next')
+    next_url = backend.strategy.session.load().get(
+        "next"
+    ) or backend.strategy.session.get("next")
     if not next_url:
         next_url = next_relative_url
 
-    backend.strategy.session_set('next', next_url)
+    backend.strategy.session_set("next", next_url)
 
-    user_profile_edx = kwargs.get('edx_profile')
+    user_profile_edx = kwargs.get("edx_profile")
     update_email(user_profile_edx, user)
     if not is_new:
         return
@@ -62,25 +66,31 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
     except Profile.DoesNotExist:
         # this should never happen, since the profile is created with a signal
         # right after the user is created
-        log.error('No profile found for the user %s', user.username)
+        log.error("No profile found for the user %s", user.username)
         return
 
-    name = user_profile_edx.get('name', "")
+    name = user_profile_edx.get("name", "")
     user_profile.edx_name = name
     user_profile.first_name, user_profile.last_name = split_name(name)
     user_profile.preferred_name = name
-    user_profile.edx_bio = user_profile_edx.get('bio')
-    user_profile.country = user_profile_edx.get('country')
-    user_profile.edx_requires_parental_consent = user_profile_edx.get('requires_parental_consent')
-    user_profile.edx_level_of_education = user_profile_edx.get('level_of_education')
-    user_profile.edx_goals = user_profile_edx.get('goals')
-    user_profile.edx_language_proficiencies = user_profile_edx.get('language_proficiencies')
+    user_profile.edx_bio = user_profile_edx.get("bio")
+    user_profile.country = user_profile_edx.get("country")
+    user_profile.edx_requires_parental_consent = user_profile_edx.get(
+        "requires_parental_consent"
+    )
+    user_profile.edx_level_of_education = user_profile_edx.get("level_of_education")
+    user_profile.edx_goals = user_profile_edx.get("goals")
+    user_profile.edx_language_proficiencies = user_profile_edx.get(
+        "language_proficiencies"
+    )
     try:
-        user_profile.preferred_language = user_profile.edx_language_proficiencies[0]['code']
+        user_profile.preferred_language = user_profile.edx_language_proficiencies[0][
+            "code"
+        ]
     except (IndexError, ValueError, KeyError, TypeError):
         pass
-    user_profile.gender = user_profile_edx.get('gender')
-    user_profile.edx_mailing_address = user_profile_edx.get('mailing_address')
+    user_profile.gender = user_profile_edx.get("gender")
+    user_profile.edx_mailing_address = user_profile_edx.get("mailing_address")
     user_profile.agreed_to_terms_of_service = True
 
     user_profile.save()
@@ -88,32 +98,34 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
     log.debug(
         'Profile for user "%s" updated with values from EDX %s',
         user.username,
-        user_profile_edx
+        user_profile_edx,
     )
 
 
-def check_edx_verified_email(backend, response, details, *args, **kwargs):  # pylint: disable=unused-argument
+def check_edx_verified_email(
+    backend, response, details, *args, **kwargs
+):  # pylint: disable=unused-argument
     """Get account information to check if email was verified for account on edX"""
     if not isinstance(backend, BaseEdxOAuth2):
         return {}
 
-    username = details.get('username')
-    access_token = response.get('access_token')
+    username = details.get("username")
+    access_token = response.get("access_token")
     if not access_token:
         # this should never happen for the edx oauth provider, but just in case...
-        raise AuthException(f'Missing access token for the edX user {username}')
+        raise AuthException(f"Missing access token for the edX user {username}")
 
     user_profile_edx = backend.get_json(
-        backend.get_url(f'/api/user/v1/accounts/{username}'),
+        backend.get_url(f"/api/user/v1/accounts/{username}"),
         headers={
             "Authorization": f"Bearer {access_token}",
-        }
+        },
     )
 
-    if not user_profile_edx.get('is_active'):
-        return redirect('verify-email')
+    if not user_profile_edx.get("is_active"):
+        return redirect("verify-email")
 
-    return {'edx_profile': user_profile_edx}
+    return {"edx_profile": user_profile_edx}
 
 
 def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argument
@@ -127,7 +139,7 @@ def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argumen
     Returns:
         dict: updated details dictionary
     """
-    details['updated_at'] = now_in_utc().timestamp()
+    details["updated_at"] = now_in_utc().timestamp()
     return details
 
 
@@ -160,6 +172,9 @@ def limit_one_auth_per_backend(
     # if there's at least one social auth and any of them don't match the incoming uid
     # we have or are trying to add mutltiple accounts
     if social_auths and any(auth.uid != uid for auth in social_auths):
-        raise AuthFailed(backend.name, "Another edX account is already linked to your MicroMasters account.")
+        raise AuthFailed(
+            backend.name,
+            "Another edX account is already linked to your MicroMasters account.",
+        )
 
     return {}

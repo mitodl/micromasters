@@ -14,7 +14,10 @@ class CatalogCourseRunSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CourseRun
-        fields = ('id', 'edx_course_key',)
+        fields = (
+            "id",
+            "edx_course_key",
+        )
 
 
 class CatalogCourseSerializer(serializers.ModelSerializer):
@@ -25,15 +28,16 @@ class CatalogCourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
-            'id',
-            'edx_key',
+            "id",
+            "edx_key",
             "position_in_program",
-            'course_runs',
+            "course_runs",
         )
 
 
 class CatalogProgramSerializer(serializers.ModelSerializer):
     """Serializer for Program objects"""
+
     programpage_url = serializers.SerializerMethodField()
     thumbnail_url = serializers.SerializerMethodField()
     instructors = serializers.SerializerMethodField()
@@ -72,7 +76,9 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         """
         try:
             if getattr(program.programpage, "thumbnail_image", None) is not None:
-                return program.programpage.thumbnail_image.get_rendition('fill-300x186').url
+                return program.programpage.thumbnail_image.get_rendition(
+                    "fill-300x186"
+                ).url
             else:
                 return None
         except ProgramPage.DoesNotExist:
@@ -97,7 +103,8 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         if not course:
             return None
         first_unexpired = first_matching_item(
-            course.courserun_set.not_discontinued().order_by("start_date"), lambda run: run.is_unexpired
+            course.courserun_set.not_discontinued().order_by("start_date"),
+            lambda run: run.is_unexpired,
         )
         return first_unexpired.start_date if first_unexpired else None
 
@@ -107,7 +114,8 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         if not course:
             return None
         last_unexpired = first_matching_item(
-            course.courserun_set.not_discontinued().order_by("-start_date"), lambda run: run.is_unexpired
+            course.courserun_set.not_discontinued().order_by("-start_date"),
+            lambda run: run.is_unexpired,
         )
         return last_unexpired.end_date if last_unexpired else None
 
@@ -117,22 +125,23 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         if not course:
             return None
         first_unexpired = first_matching_item(
-            course.courserun_set.not_discontinued().order_by("start_date"), lambda run: run.is_unexpired
+            course.courserun_set.not_discontinued().order_by("start_date"),
+            lambda run: run.is_unexpired,
         )
         return first_unexpired.enrollment_start if first_unexpired else None
 
     class Meta:
         model = Program
         fields = (
-            'id',
-            'title',
-            'programpage_url',
-            'thumbnail_url',
-            'instructors',
-            'courses',
-            'topics',
-            'total_price',
-            'start_date',
-            'end_date',
-            'enrollment_start',
+            "id",
+            "title",
+            "programpage_url",
+            "thumbnail_url",
+            "instructors",
+            "courses",
+            "topics",
+            "total_price",
+            "start_date",
+            "end_date",
+            "enrollment_start",
         )

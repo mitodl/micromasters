@@ -22,9 +22,11 @@ def _get_lock(lock_name, expiration):
     timeout = int((expiration - now_in_utc()).total_seconds())
 
     # this is a StrictRedis instance, we need this for the script installation that LuaLock uses
-    redis = caches['redis'].client.get_client()
+    redis = caches["redis"].client.get_client()
     # don't block acquiring the lock, the task will need to try again later
-    return LuaLock(redis, lock_name, timeout=timeout, blocking=False, thread_local=False)
+    return LuaLock(
+        redis, lock_name, timeout=timeout, blocking=False, thread_local=False
+    )
 
 
 def release_lock(lock_name, token):
@@ -39,7 +41,7 @@ def release_lock(lock_name, token):
         bool: True if the lock was successfully released
     """
     # this is a StrictRedis instance, we need this for the script installation that LuaLock uses
-    redis = caches['redis'].client.get_client()
+    redis = caches["redis"].client.get_client()
     lock = LuaLock(redis, lock_name)
     try:
         lock.do_release(token)

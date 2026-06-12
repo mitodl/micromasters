@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0012_modify_documents_sent'),
+        ("financialaid", "0012_modify_documents_sent"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='financialaid',
-            name='justification',
+            model_name="financialaid",
+            name="justification",
             field=models.TextField(null=True),
         ),
     ]

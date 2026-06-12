@@ -108,10 +108,8 @@ describe("enrollments", () => {
         assert.ok(fetchDashboardStub.calledWith())
 
         assert.deepEqual(store.getState().ui.toastMessage, {
-          message: `You are now enrolled in the ${
-            newEnrollment.title
-          } MicroMasters`,
-          icon: TOAST_SUCCESS
+          message: `You are now enrolled in the ${newEnrollment.title} MicroMasters`,
+          icon:    TOAST_SUCCESS
         })
       })
     })

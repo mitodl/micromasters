@@ -5,15 +5,18 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('grades', '0009_micromasterscoursecertificate'),
+        ("grades", "0009_micromasterscoursecertificate"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='micromasterscoursecertificate',
-            name='final_grade',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='certificate', to='grades.FinalGrade'),
+            model_name="micromasterscoursecertificate",
+            name="final_grade",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="certificate",
+                to="grades.FinalGrade",
+            ),
         ),
     ]

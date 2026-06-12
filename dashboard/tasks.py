@@ -17,11 +17,13 @@ from micromasters.utils import chunks, now_in_utc
 log = logging.getLogger(__name__)
 
 
-LOCK_ID = 'batch_update_user_data_lock'
+LOCK_ID = "batch_update_user_data_lock"
 
 
 @app.task
-def release_batch_update_user_data_lock(*args, token):  # pylint: disable=unused-argument
+def release_batch_update_user_data_lock(
+    *args, token
+):  # pylint: disable=unused-argument
     """
     Task which releases the lock acquired in batch_update_user_data
 

@@ -27,7 +27,8 @@ div.disabled {
 
   // remove padding and margin from MDL layout components
   .no-padding {
-    .search-grid, .MuiGrid-item {
+    .search-grid,
+    .MuiGrid-item {
       padding: 0;
       margin: 0;
     }
@@ -104,8 +105,10 @@ div.disabled {
     .sk-panel__content .sk-item-list-option__count,
     .sk-hierarchical-menu-list__root .sk-hierarchical-menu-option__text,
     .sk-hierarchical-menu-list__root .sk-hierarchical-menu-option__count,
-    .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__text,
-    .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__count {
+    .sk-hierarchical-refinement-list__root
+      .sk-hierarchical-refinement-option__text,
+    .sk-hierarchical-refinement-list__root
+      .sk-hierarchical-refinement-option__count {
       color: $font-black;
     }
 
@@ -117,14 +120,16 @@ div.disabled {
 
     .sk-panel .sk-panel__content {
       .sk-item-list {
-
-        .is-selected, .is-active {
+        .is-selected,
+        .is-active {
           .sk-panel__content .sk-item-list-option__text,
           .sk-panel__content .sk-item-list-option__count,
           .sk-hierarchical-menu-list__root .sk-hierarchical-menu-option__text,
           .sk-hierarchical-menu-list__root .sk-hierarchical-menu-option__count,
-          .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__text,
-          .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__count {
+          .sk-hierarchical-refinement-list__root
+            .sk-hierarchical-refinement-option__text,
+          .sk-hierarchical-refinement-list__root
+            .sk-hierarchical-refinement-option__count {
             font-weight: 500 !important;
           }
         }
@@ -133,14 +138,14 @@ div.disabled {
           align-items: stretch;
         }
 
-        input[type=checkbox] + .sk-item-list-option__text {
+        input[type="checkbox"] + .sk-item-list-option__text {
           margin-left: 10px;
         }
       }
     }
 
     .sk-hierarchical-menu-list .sk-hierarchical-menu-list__root {
-      .sk-hierarchical-menu-option >div {
+      .sk-hierarchical-menu-option > div {
         justify-content: space-between;
       }
 
@@ -171,7 +176,8 @@ div.disabled {
       }
     }
 
-    .filter-visibility-toggle, .final-grade-wrapper {
+    .filter-visibility-toggle,
+    .final-grade-wrapper {
       display: flex;
       flex-direction: column;
 
@@ -198,7 +204,8 @@ div.disabled {
       padding-bottom: 10px;
     }
 
-    .filter--grade-average, .filter--final-grade {
+    .filter--grade-average,
+    .filter--final-grade {
       .sk-panel__content {
         padding-right: 25px;
       }
@@ -285,7 +292,7 @@ div.disabled {
       .sk-pagination-navigation * {
         font-size: 14px;
         font-weight: normal;
-        color: rgba(0,0,0,0.8);
+        color: rgba(0, 0, 0, 0.8);
 
         &.sk-toggle-height {
           text-align: center;
@@ -350,7 +357,7 @@ div.disabled {
     }
 
     .sk-selected-filters-option > div {
-      color: rgba(0,0,0,.7);
+      color: rgba(0, 0, 0, 0.7);
     }
 
     .sk-reset-filters {

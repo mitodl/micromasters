@@ -35,19 +35,19 @@ class PrivacyForm extends ProfileFormFields {
     {
       value:  "public",
       label:  "Public to the world",
-      helper: `Your MicroMasters profile will be 
+      helper: `Your MicroMasters profile will be
       visible to all website visitors.`
     },
     {
       value:  "public_to_mm",
       label:  "Public to other MicroMasters students",
-      helper: `Your profile will be 
+      helper: `Your profile will be
       visible to other MicroMasters learners, and to MIT faculty and staff.`
     },
     {
       value:  "private",
       label:  "Private",
-      helper: `Your MicroMasters profile will only 
+      helper: `Your MicroMasters profile will only
       be visible to MIT faculty and staff.`
     }
   ]

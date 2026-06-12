@@ -1,15 +1,14 @@
-version: '3.7'
+version: "3.7"
 
-x-environment:
-  &py-environment
-  DEBUG: 'False'
-  NODE_ENV: 'production'
-  DEV_ENV: 'True'  # necessary to have nginx connect to web container
+x-environment: &py-environment
+  DEBUG: "False"
+  NODE_ENV: "production"
+  DEV_ENV: "True" # necessary to have nginx connect to web container
   DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
-  MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
-  MICROMASTERS_DB_DISABLE_SSL: 'True'
+  MICROMASTERS_SECURE_SSL_REDIRECT: "False"
+  MICROMASTERS_DB_DISABLE_SSL: "True"
   OPENSEARCH_URL: opensearch-node1:9200
-  CELERY_ALWAYS_EAGER: 'False'
+  CELERY_ALWAYS_EAGER: "False"
   BROKER_URL: redis://redis:6379/4
   CELERY_RESULT_BACKEND: redis://redis:6379/4
   EXAMS_SFTP_HOST: sftp
@@ -70,7 +69,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      << : *py-environment
+      <<: *py-environment
       PORT: 8077
     env_file: .env
     command: >
@@ -101,9 +100,9 @@ services:
     ports:
       - "8078:8078"
     environment:
-      NODE_ENV: 'productions'
+      NODE_ENV: "productions"
       DOCKER_HOST: ${DOCKER_HOST:-missing}
-      CONTAINER_NAME: 'watch'
+      CONTAINER_NAME: "watch"
     env_file: .env
 
   celery:
@@ -125,7 +124,7 @@ services:
   sftp:
     image: atmoz/sftp
     ports:
-        - "2022:22"
+      - "2022:22"
     command: odl:123:1001:1001:results,results/topvue
 
 volumes:

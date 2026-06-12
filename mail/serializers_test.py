@@ -10,6 +10,7 @@ class AutomaticEmailSerializerTests(MockedESTestCase):
     """
     AutomaticEmailSerializerTests
     """
+
     def test_serializer_includes_correct_data(self):
         """
         Just testing that the right fields come through
@@ -22,5 +23,5 @@ class AutomaticEmailSerializerTests(MockedESTestCase):
             "email_body": automatic.email_body,
             "sender_name": automatic.sender_name,
             "id": automatic.id,
-            "query": PercolateQuerySerializer(automatic.query).data
+            "query": PercolateQuerySerializer(automatic.query).data,
         }

@@ -13,12 +13,16 @@ from search.base import MockedESTestCase
 from search.exceptions import ReindexException
 from search.factories import PercolateQueryFactory
 from search.indexing_api import create_backing_indices
-from search.tasks import (bulk_index_percolate_queries,
-                          bulk_index_program_enrollments,
-                          finish_recreate_index, index_program_enrolled_users,
-                          index_users, start_recreate_index)
+from search.tasks import (
+    bulk_index_percolate_queries,
+    bulk_index_program_enrollments,
+    finish_recreate_index,
+    index_program_enrolled_users,
+    index_users,
+    start_recreate_index,
+)
 
-FAKE_INDEX = 'fake'
+FAKE_INDEX = "fake"
 
 pytestmark = pytest.mark.django_db
 
@@ -51,6 +55,7 @@ def fail_first():
         if not first:
             first = True
             raise KeyError()
+
     return func
 
 
@@ -86,23 +91,24 @@ class SearchTasksTests(MockedESTestCase):
         assert self.index_program_enrolled_users_mock.call_count == 1
         assert sorted(
             self.index_program_enrolled_users_mock.call_args[0][0],
-            key=lambda _enrollment: _enrollment.id
-        ) == sorted(
-            [enrollment1, enrollment2],
-            key=lambda _enrollment: _enrollment.id
-        )
+            key=lambda _enrollment: _enrollment.id,
+        ) == sorted([enrollment1, enrollment2], key=lambda _enrollment: _enrollment.id)
         for enrollment in [enrollment1, enrollment2]:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
         self.refresh_index_mock.assert_called_with()
 
-    @data(*[
-        [True, True],
-        [True, False],
-        [False, True],
-        [False, False],
-    ])
+    @data(
+        *[
+            [True, True],
+            [True, False],
+            [False, True],
+            [False, False],
+        ]
+    )
     @unpack
-    def test_index_users_check_if_changed(self, enrollment1_needs_update, enrollment2_needs_update):
+    def test_index_users_check_if_changed(
+        self, enrollment1_needs_update, enrollment2_needs_update
+    ):
         """
         If check_if_changed is true we should only update documents which need updating
         """
@@ -131,7 +137,9 @@ class SearchTasksTests(MockedESTestCase):
         self.document_needs_updating_mock.assert_any_call(enrollment1)
         self.document_needs_updating_mock.assert_any_call(enrollment2)
         if len(needs_update_list) > 0:
-            self.index_program_enrolled_users_mock.assert_called_once_with(needs_update_list)
+            self.index_program_enrolled_users_mock.assert_called_once_with(
+                needs_update_list
+            )
             for enrollment in needs_update_list:
                 self.send_automatic_emails_mock.assert_any_call(enrollment)
         else:
@@ -146,9 +154,14 @@ class SearchTasksTests(MockedESTestCase):
         enrollment_ids = [enrollment.id for enrollment in enrollments]
 
         index_program_enrolled_users(enrollment_ids)
-        assert list(
-            self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)
-        ) == enrollment_ids
+        assert (
+            list(
+                self.index_program_enrolled_users_mock.call_args[0][0].values_list(
+                    "id", flat=True
+                )
+            )
+            == enrollment_ids
+        )
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
         self.refresh_index_mock.assert_called_with()
@@ -163,9 +176,14 @@ class SearchTasksTests(MockedESTestCase):
         self.send_automatic_emails_mock.side_effect = fail_first()
 
         index_program_enrolled_users(enrollment_ids)
-        assert list(
-            self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)
-        ) == enrollment_ids
+        assert (
+            list(
+                self.index_program_enrolled_users_mock.call_args[0][0].values_list(
+                    "id", flat=True
+                )
+            )
+            == enrollment_ids
+        )
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
         assert self.send_automatic_emails_mock.call_count == len(enrollments)
@@ -177,10 +195,18 @@ def test_start_recreate_index(mocker, mocked_celery):
     recreate_index should recreate the opensearch index and reindex all data with it
     """
     settings.OPENSEARCH_INDEXING_CHUNK_SIZE = 2
-    enrollments = sorted(ProgramEnrollmentFactory.create_batch(4), key=lambda enrollment: enrollment.id)
-    percolates = sorted(PercolateQueryFactory.create_batch(4), key=lambda percolate: percolate.id)
-    index_enrollments_mock = mocker.patch("search.tasks.bulk_index_program_enrollments", autospec=True)
-    index_percolates_mock = mocker.patch("search.tasks.bulk_index_percolate_queries", autospec=True)
+    enrollments = sorted(
+        ProgramEnrollmentFactory.create_batch(4), key=lambda enrollment: enrollment.id
+    )
+    percolates = sorted(
+        PercolateQueryFactory.create_batch(4), key=lambda percolate: percolate.id
+    )
+    index_enrollments_mock = mocker.patch(
+        "search.tasks.bulk_index_program_enrollments", autospec=True
+    )
+    index_percolates_mock = mocker.patch(
+        "search.tasks.bulk_index_percolate_queries", autospec=True
+    )
 
     test_backing_indices = create_backing_indices()
     enrollment_public_index = test_backing_indices[0][0]
@@ -202,14 +228,24 @@ def test_start_recreate_index(mocker, mocked_celery):
     finish_recreate_index_mock.s.assert_called_once_with(test_backing_indices)
 
     assert index_enrollments_mock.si.call_count == 2
-    index_enrollments_mock.si.assert_any_call([enrollments[0].id, enrollments[1].id], enrollment_public_index,
-                                              enrollment_private_index)
-    index_enrollments_mock.si.assert_any_call([enrollments[2].id, enrollments[3].id], enrollment_public_index,
-                                              enrollment_private_index)
+    index_enrollments_mock.si.assert_any_call(
+        [enrollments[0].id, enrollments[1].id],
+        enrollment_public_index,
+        enrollment_private_index,
+    )
+    index_enrollments_mock.si.assert_any_call(
+        [enrollments[2].id, enrollments[3].id],
+        enrollment_public_index,
+        enrollment_private_index,
+    )
 
     assert index_percolates_mock.si.call_count == 2
-    index_percolates_mock.si.assert_any_call([percolates[0].id, percolates[1].id], percolate_index)
-    index_percolates_mock.si.assert_any_call([percolates[2].id, percolates[3].id], percolate_index)
+    index_percolates_mock.si.assert_any_call(
+        [percolates[0].id, percolates[1].id], percolate_index
+    )
+    index_percolates_mock.si.assert_any_call(
+        [percolates[2].id, percolates[3].id], percolate_index
+    )
 
     assert mocked_celery.replace.call_count == 1
     assert mocked_celery.replace.call_args[0][1] == mocked_celery.chain.return_value
@@ -221,12 +257,16 @@ def test_bulk_index_program_enrollments(mocker):
     """
     enrollments = ProgramEnrollmentFactory.create_batch(2)
     enrollment_ids = [enrollment.id for enrollment in enrollments]
-    index_enrollments_mock = mocker.patch("search.tasks._index_program_enrolled_users", autospec=True)
+    index_enrollments_mock = mocker.patch(
+        "search.tasks._index_program_enrolled_users", autospec=True
+    )
 
     test_backing_indices = create_backing_indices()
     enrollment_public_index = test_backing_indices[0][0]
     enrollment_private_index = test_backing_indices[1][0]
-    bulk_index_program_enrollments(enrollment_ids, enrollment_public_index, enrollment_private_index)
+    bulk_index_program_enrollments(
+        enrollment_ids, enrollment_public_index, enrollment_private_index
+    )
     assert index_enrollments_mock.call_count == 1
 
 
@@ -237,7 +277,9 @@ def test_bulk_index_percolate_queries(mocker):
     percolates = PercolateQueryFactory.create_batch(2)
     percolate_ids = [percolate.id for percolate in percolates]
 
-    percolate_index_chunk_mock = mocker.patch("search.tasks._index_chunks", autospec=True)
+    percolate_index_chunk_mock = mocker.patch(
+        "search.tasks._index_chunks", autospec=True
+    )
 
     test_backing_indices = create_backing_indices()
     percolate_index = test_backing_indices[2][0]
@@ -251,7 +293,9 @@ def test_finish_recreate_index(mocker, with_error):
     finish_recreate_index should clear and delete all the backing indices
     """
     refresh_index_mock = mocker.patch("search.tasks.refresh_index", autospec=True)
-    delete_backing_indices_mock = mocker.patch("search.tasks.delete_backing_indices", autospec=True)
+    delete_backing_indices_mock = mocker.patch(
+        "search.tasks.delete_backing_indices", autospec=True
+    )
     results = ["error"] if with_error else []
     test_backing_indices = create_backing_indices()
 

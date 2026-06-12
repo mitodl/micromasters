@@ -50,7 +50,7 @@ def _get_how_personle_information_data():
         "type": "content",
         "value": {
             "heading": "How we collect personal information about you",
-            "detail": f"<p>We collect information, including Personal Information, when you create and maintain a profile and user account, participate in online courses, review application for financial assistance (if available), register for a paid certificate, send us email messages, complete an entrance or exit survey, and/or participate in our public forums and social media.<br/></p>"
+            "detail": "<p>We collect information, including Personal Information, when you create and maintain a profile and user account, participate in online courses, review application for financial assistance (if available), register for a paid certificate, send us email messages, complete an entrance or exit survey, and/or participate in our public forums and social media.<br/></p>"
             + "<p>We also collect certain usage information about student performance and patterns of learning. In addition, we track information indicating, among other things, which pages of our Site were visited, the order in which they were visited, when they were visited, and which hyperlinks and other user interface controls were used.<br/></p>"
             + "<p>We may log the IP address, operating system, and browser software used by each user of the Site, and we may be able to determine from an IP address a user's Internet Service Provider and the geographic location of his or her point of connectivity. Various web analytics tools are used to collect this information. Some of the information is collected through cookies (small text files placed on your computer that store information about you, which can be accessed by the Site). You should be able to control how and whether cookies will be accepted by your web browser. Most browsers offer instructions on how to reset the browser to reject cookies in the 'Help' section of the toolbar. If you reject our cookies, many functions and conveniences of this Site may not work properly.<br/></p>"
             + "<p>We currently collect financial information from individual registrants; however, when you register and pay for a course, you will be directed to our third party payment processor and the submission of your payment information will be subject to the terms of that third party processor’s privacy statement</p>",
@@ -63,7 +63,7 @@ def _get_usage_personale_information_data():
         "type": "content",
         "value": {
             "heading": "How we use your personal information",
-            "detail": f"<p>We collect, use and process your personal information (1) to process transactions requested by you and meet our contractual obligations; (2) to facilitate MIT Open Learning’s legitimate interests, and/or (3) with your explicit consent, where applicable.  Examples of the ways in which we use your personal information are as follows:</p>"
+            "detail": "<p>We collect, use and process your personal information (1) to process transactions requested by you and meet our contractual obligations; (2) to facilitate MIT Open Learning’s legitimate interests, and/or (3) with your explicit consent, where applicable.  Examples of the ways in which we use your personal information are as follows:</p>"
             + "<ul>"
             + "<li>To enable us to provide, administer, and improve our courses.<br/></li>"
             + "<li>To help us improve MIT Micromasters program, both individually (e.g., by course staff when working with a student) and in aggregate, and to individualize the experience and to evaluate the access and use of the Site and the impact of MIT Micromasters on the worldwide educational community.<br/></li>"
@@ -178,7 +178,6 @@ def populate_resource_page(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("cms", "0051_resourcepage"),
     ]

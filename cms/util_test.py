@@ -11,6 +11,7 @@ class UtilTestCase(SimpleTestCase):
     """
     Tests for get_coupon_code()
     """
+
     def setUp(self):
         super().setUp()
         self.request = HttpRequest()

@@ -16,7 +16,9 @@ from search.tasks import start_recreate_index
 
 User = get_user_model()
 from seed_data.management.commands import (  # pylint: disable=import-error
-    FAKE_PROGRAM_DESC_PREFIX, FAKE_USER_USERNAME_PREFIX)
+    FAKE_PROGRAM_DESC_PREFIX,
+    FAKE_USER_USERNAME_PREFIX,
+)
 
 
 @contextmanager
@@ -35,31 +37,29 @@ def remove_delete_protection(*models):
             yield
         finally:
             for table_name in reversed(table_names):
-                cursor.execute(f"CREATE RULE delete_protect AS ON DELETE TO {table_name} DO INSTEAD NOTHING")
+                cursor.execute(
+                    f"CREATE RULE delete_protect AS ON DELETE TO {table_name} DO INSTEAD NOTHING"
+                )
 
 
 def unseed_db():
     """
     Deletes all seed data from the database
     """
-    fake_program_ids = (
-        Program.objects
-        .filter(description__startswith=FAKE_PROGRAM_DESC_PREFIX)
-        .values_list('id', flat=True)
-    )
-    fake_user_ids = (
-        User.objects
-        .filter(username__startswith=FAKE_USER_USERNAME_PREFIX)
-        .values_list('id', flat=True)
-    )
-    fake_final_grade_ids = (
-        FinalGrade.objects
-        .filter(course_run__course__program__id__in=fake_program_ids)
-        .values_list('id', flat=True)
-    )
+    fake_program_ids = Program.objects.filter(
+        description__startswith=FAKE_PROGRAM_DESC_PREFIX
+    ).values_list("id", flat=True)
+    fake_user_ids = User.objects.filter(
+        username__startswith=FAKE_USER_USERNAME_PREFIX
+    ).values_list("id", flat=True)
+    fake_final_grade_ids = FinalGrade.objects.filter(
+        course_run__course__program__id__in=fake_program_ids
+    ).values_list("id", flat=True)
     with mute_signals(post_delete):
         for model_cls in [CachedEnrollment, CachedCertificate, CachedCurrentGrade]:
-            model_cls.objects.filter(course_run__course__program__id__in=fake_program_ids).delete()
+            model_cls.objects.filter(
+                course_run__course__program__id__in=fake_program_ids
+            ).delete()
         FinalGrade.objects.filter(id__in=fake_final_grade_ids).delete()
         Program.objects.filter(id__in=fake_program_ids).delete()
         User.objects.filter(id__in=fake_user_ids).delete()
@@ -69,9 +69,12 @@ class Command(BaseCommand):
     """
     Delete seeded data from the database, for development purposes.
     """
+
     help = "Delete seeded data from the database, for development purposes."
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
         unseed_db()
         start_recreate_index()  # pylint: disable=no-value-for-parameter
-        self.stdout.write(self.style.SUCCESS("Seed data has been removed from your database."))
+        self.stdout.write(
+            self.style.SUCCESS("Seed data has been removed from your database.")
+        )

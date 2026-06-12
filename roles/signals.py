@@ -14,7 +14,9 @@ log = logging.getLogger(__name__)
 
 
 @receiver(pre_save, sender=Role, dispatch_uid="save_remove_role_from_user")
-def save_remove_role_from_user(sender, instance, **kwargs):  # pylint: disable=unused-argument
+def save_remove_role_from_user(
+    sender, instance, **kwargs
+):  # pylint: disable=unused-argument
     """
     Signal handler that happens before a role assignment is done.
     If the the save happens for a modification, the previous role must be removed
@@ -33,7 +35,7 @@ def save_remove_role_from_user(sender, instance, **kwargs):  # pylint: disable=u
         return
 
     log.debug(
-        'removing role % for user %s',
+        "removing role % for user %s",
         instance.role,
         instance.user.username,
     )
@@ -41,13 +43,15 @@ def save_remove_role_from_user(sender, instance, **kwargs):  # pylint: disable=u
 
 
 @receiver(post_save, sender=Role, dispatch_uid="save_assign_role_to_user")
-def save_assign_role_to_user(sender, instance, **kwargs):  # pylint: disable=unused-argument
+def save_assign_role_to_user(
+    sender, instance, **kwargs
+):  # pylint: disable=unused-argument
     """
     Signal handler to assign a logical role to an user every time
     the same role is assigned to an user for a program
     """
     log.debug(
-        'assigning role %s to user %s',
+        "assigning role %s to user %s",
         instance.role,
         instance.user.username,
     )
@@ -55,7 +59,9 @@ def save_assign_role_to_user(sender, instance, **kwargs):  # pylint: disable=unu
 
 
 @receiver(post_delete, sender=Role, dispatch_uid="delete_remove_role_from_user")
-def delete_remove_role_from_user(sender, instance, **kwargs):  # pylint: disable=unused-argument
+def delete_remove_role_from_user(
+    sender, instance, **kwargs
+):  # pylint: disable=unused-argument
     """
     Signal handler that happens after a role removal is done.
     The role must be removed only if not correspondent to other programs.
@@ -66,7 +72,7 @@ def delete_remove_role_from_user(sender, instance, **kwargs):  # pylint: disable
         return
 
     log.debug(
-        'removing role % for user %s',
+        "removing role % for user %s",
         instance.role,
         instance.user.username,
     )

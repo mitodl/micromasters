@@ -24,9 +24,9 @@ from micromasters.utils import webpack_dev_server_host
 from roles.models import Instructor, Staff
 
 common_table_options = {
-    'startRows': 3,
-    'startCols': 2,
-    'renderer': 'html',
+    "startRows": 3,
+    "startCols": 2,
+    "renderer": "html",
 }
 
 
@@ -34,18 +34,23 @@ class HomePage(Page):
     """
     CMS page representing the homepage.
     """
+
     content_panels = []
-    subpage_types = ['ProgramPage', 'BenefitsPage', 'ResourcePage']
+    subpage_types = ["ProgramPage", "BenefitsPage", "ResourcePage"]
 
     def get_context(self, request, *args, **kwargs):
-        programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
+        programs = (
+            Program.objects.filter(live=True)
+            .select_related("programpage")
+            .order_by("id")
+        )
         benefits_page = BenefitsPage.objects.filter(live=True).first()
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
             "environment": settings.ENVIRONMENT,
             "sentry_dsn": settings.SENTRY_DSN,
-            "release_version": settings.VERSION
+            "release_version": settings.VERSION,
         }
 
         context = super().get_context(request)
@@ -63,7 +68,9 @@ class HomePage(Page):
         context["has_zendesk_widget"] = True
         context["google_maps_api"] = False
         context["authenticated"] = not request.user.is_anonymous
-        context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
+        context["is_staff"] = has_role(
+            request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]
+        )
         context["username"] = request.user.username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
@@ -73,13 +80,14 @@ class HomePage(Page):
 
         return context
 
+
 class ResourcePage(Page):
     """
     Basic resource page class for pages containing basic information (FAQ, etc.)
     """
 
     template = "cms/resource_page.html"
-    parent_page_types = ['HomePage']
+    parent_page_types = ["HomePage"]
 
     header_image = models.ForeignKey(
         Image,
@@ -107,7 +115,7 @@ class ResourcePage(Page):
             "host": webpack_dev_server_host(request),
             "environment": settings.ENVIRONMENT,
             "sentry_dsn": settings.SENTRY_DSN,
-            "release_version": settings.VERSION
+            "release_version": settings.VERSION,
         }
 
         context = super().get_context(request)
@@ -116,7 +124,9 @@ class ResourcePage(Page):
         context["has_zendesk_widget"] = True
         context["google_maps_api"] = False
         context["authenticated"] = not request.user.is_anonymous
-        context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
+        context["is_staff"] = has_role(
+            request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]
+        )
         context["username"] = request.user.username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
@@ -128,39 +138,56 @@ class ResourcePage(Page):
         context["site_name"] = settings.WAGTAIL_SITE_NAME
         return context
 
+
 class BenefitsPage(Page):
     """
     CMS page for benefits
     """
-    parent_page_types = ['HomePage']
+
+    parent_page_types = ["HomePage"]
 
     description = StreamField(
         [
-            ('paragraph', RichTextBlock(blank=True)),
-            ('image_with_link', ImageWithLinkBlock(help_text='Upload an image with a clickable link', blank=True))
+            ("paragraph", RichTextBlock(blank=True)),
+            (
+                "image_with_link",
+                ImageWithLinkBlock(
+                    help_text="Upload an image with a clickable link", blank=True
+                ),
+            ),
         ],
         blank=True,
-        help_text='The description shown on the benefits page')
+        help_text="The description shown on the benefits page",
+    )
 
     background_image = models.ForeignKey(
         Image,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
-        help_text='The hero image on the benefits page'
+        related_name="+",
+        help_text="The hero image on the benefits page",
     )
 
-    content = StreamField([
-        ('rich_text', RichTextBlock()),
-        ('image_with_link', ImageWithLinkBlock(help_text='Upload an image with a clickable link', blank=True)),
-        ('benefits_table', TableBlock(table_options=common_table_options)),
-    ], blank=True, help_text='The content of the benefits page')
+    content = StreamField(
+        [
+            ("rich_text", RichTextBlock()),
+            (
+                "image_with_link",
+                ImageWithLinkBlock(
+                    help_text="Upload an image with a clickable link", blank=True
+                ),
+            ),
+            ("benefits_table", TableBlock(table_options=common_table_options)),
+        ],
+        blank=True,
+        help_text="The content of the benefits page",
+    )
 
     content_panels = Page.content_panels + [
-        FieldPanel('description', classname="full"),
-        FieldPanel('background_image'),
-        FieldPanel('content'),
+        FieldPanel("description", classname="full"),
+        FieldPanel("background_image"),
+        FieldPanel("content"),
     ]
 
     def get_context(self, request, *args, **kwargs):
@@ -169,7 +196,7 @@ class BenefitsPage(Page):
             "host": webpack_dev_server_host(request),
             "environment": settings.ENVIRONMENT,
             "sentry_dsn": settings.SENTRY_DSN,
-            "release_version": settings.VERSION
+            "release_version": settings.VERSION,
         }
 
         context = super().get_context(request)
@@ -178,7 +205,9 @@ class BenefitsPage(Page):
         context["has_zendesk_widget"] = True
         context["google_maps_api"] = False
         context["authenticated"] = not request.user.is_anonymous
-        context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
+        context["is_staff"] = has_role(
+            request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]
+        )
         context["username"] = request.user.username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
@@ -199,16 +228,16 @@ class ProgramChildPage(Page):
     class Meta:
         abstract = True
 
-    parent_page_types = ['ProgramPage']
+    parent_page_types = ["ProgramPage"]
 
     def parent_page(self):
-        """ Get the parent ProgramPage"""
+        """Get the parent ProgramPage"""
         return ProgramPage.objects.ancestor_of(self).first()
 
     def get_context(self, request, *args, **kwargs):
         context = get_program_page_context(self.parent_page(), request)
-        context['child_page'] = self
-        context['active_tab'] = self.title
+        context["child_page"] = self
+        context["active_tab"] = self.title
         return context
 
 
@@ -216,30 +245,37 @@ class CategorizedFaqsPage(ProgramChildPage):
     """
     CMS page for categorized questions
     """
+
     content_panels = Page.content_panels + [
-        InlinePanel('faqs', label='Frequently Asked Questions'),
+        InlinePanel("faqs", label="Frequently Asked Questions"),
     ]
-    parent_page_types = ['FaqsPage']
+    parent_page_types = ["FaqsPage"]
 
 
 class FaqsPage(ProgramChildPage):
     """
     CMS page for questions
     """
-    subpage_types = ['CategorizedFaqsPage']
+
+    subpage_types = ["CategorizedFaqsPage"]
 
 
 class ProgramTabPage(ProgramChildPage):
     """
     CMS page for custom tabs on the program page
     """
-    content = StreamField([
-        ('rich_text', RichTextBlock()),
-        ('course_table', TableBlock(table_options=common_table_options)),
-    ], blank=True, help_text='The content of this tab on the program page')
+
+    content = StreamField(
+        [
+            ("rich_text", RichTextBlock()),
+            ("course_table", TableBlock(table_options=common_table_options)),
+        ],
+        blank=True,
+        help_text="The content of this tab on the program page",
+    )
 
     content_panels = Page.content_panels + [
-        FieldPanel('content'),
+        FieldPanel("content"),
     ]
 
 
@@ -247,58 +283,67 @@ class CourseTeamTabPage(ProgramChildPage):
     """
     CMS page for course team tab on the program page
     """
+
     address = RichTextField(
-        blank=True,
-        help_text='The address shown on the course team page')
+        blank=True, help_text="The address shown on the course team page"
+    )
 
     instructors_heading = models.CharField(
-        max_length=255, default='Instructors',
-        help_text='Heading to be shown for instructors on course team tab.'
+        max_length=255,
+        default="Instructors",
+        help_text="Heading to be shown for instructors on course team tab.",
     )
     administrators_heading = models.CharField(
-        max_length=255, default='Course Administrator',
-        help_text='Heading to be shown for course administrator on course team tab.'
+        max_length=255,
+        default="Course Administrator",
+        help_text="Heading to be shown for course administrator on course team tab.",
     )
     contributors_heading = models.CharField(
-        max_length=255, default='Course Contributors',
-        help_text='Heading to be shown for course contributors on course team tab.'
+        max_length=255,
+        default="Course Contributors",
+        help_text="Heading to be shown for course contributors on course team tab.",
     )
     teaching_assistants_heading = models.CharField(
-        max_length=255, default='Course TAs',
-        help_text='Heading to be shown for course TAs on course team tab.'
+        max_length=255,
+        default="Course TAs",
+        help_text="Heading to be shown for course TAs on course team tab.",
     )
 
     instructors = StreamField(
-        [("instructors", CourseTeamBlock())], blank=True,
+        [("instructors", CourseTeamBlock())],
+        blank=True,
     )
 
     administrators = StreamField(
-        [("administrator", CourseTeamBlock())], blank=True,
+        [("administrator", CourseTeamBlock())],
+        blank=True,
     )
     contributors = StreamField(
-        [("contributor", CourseTeamBlock())], blank=True,
+        [("contributor", CourseTeamBlock())],
+        blank=True,
     )
     teaching_assistants = StreamField(
-        [("TAs", CourseTeamBlock())], blank=True,
+        [("TAs", CourseTeamBlock())],
+        blank=True,
     )
 
     content_panels = Page.content_panels + [
-        FieldPanel('address'),
-        FieldPanel('instructors_heading'),
-        FieldPanel('instructors'),
-        FieldPanel('administrators_heading'),
-        FieldPanel('administrators'),
-        FieldPanel('contributors_heading'),
-        FieldPanel('contributors'),
-        FieldPanel('teaching_assistants_heading'),
-        FieldPanel('teaching_assistants'),
+        FieldPanel("address"),
+        FieldPanel("instructors_heading"),
+        FieldPanel("instructors"),
+        FieldPanel("administrators_heading"),
+        FieldPanel("administrators"),
+        FieldPanel("contributors_heading"),
+        FieldPanel("contributors"),
+        FieldPanel("teaching_assistants_heading"),
+        FieldPanel("teaching_assistants"),
     ]
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request)
 
         # this will help us to disable instructors carousel on course team page
-        context['course_team_tab_title'] = self.title
+        context["course_team_tab_title"] = self.title
         return context
 
 
@@ -306,47 +351,51 @@ class ProgramPage(Page):
     """
     CMS page representing the department e.g. Biology
     """
+
     description = StreamField(
         [
-            ('paragraph', RichTextBlock(blank=True)),
-            ('image_with_link', ImageWithLinkBlock(help_text='Upload an image with a clickable link', blank=True))
+            ("paragraph", RichTextBlock(blank=True)),
+            (
+                "image_with_link",
+                ImageWithLinkBlock(
+                    help_text="Upload an image with a clickable link", blank=True
+                ),
+            ),
         ],
         blank=True,
-        help_text='The description shown on the program page')
+        help_text="The description shown on the program page",
+    )
 
     faculty_description = models.CharField(
         max_length=500,
         blank=True,
         null=True,
-        help_text='The text to be shown as an introduction in the Faculty section'
+        help_text="The text to be shown as an introduction in the Faculty section",
     )
     program = models.OneToOneField(
-        'courses.Program',
+        "courses.Program",
         null=True,
         on_delete=models.SET_NULL,
-        help_text='The program for this page',
+        help_text="The program for this page",
     )
     program_home_page_url = models.URLField(
         blank=True,
         null=True,
-        help_text="A url for an external homepage. There will be a link to this url from the program page."
+        help_text="A url for an external homepage. There will be a link to this url from the program page.",
     )
     title_program_home_page_url = models.TextField(
-        blank=True,
-        help_text='The text for the link to an external homepage.'
+        blank=True, help_text="The text for the link to an external homepage."
     )
     program_contact_email = models.EmailField(
-        blank=True,
-        null=True,
-        help_text="A contact email for the program."
+        blank=True, null=True, help_text="A contact email for the program."
     )
     background_image = models.ForeignKey(
         Image,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
-        help_text='The hero image on the program page'
+        related_name="+",
+        help_text="The hero image on the program page",
     )
     title_over_image = RichTextField(blank=True)
 
@@ -355,10 +404,10 @@ class ProgramPage(Page):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
         help_text=(
-            'Thumbnail size must be at least 690x530 pixels. '
-            'Thumbnails are cropped down to this size, preserving aspect ratio.'
+            "Thumbnail size must be at least 690x530 pixels. "
+            "Thumbnails are cropped down to this size, preserving aspect ratio."
         ),
     )
     program_letter_logo = models.ForeignKey(
@@ -366,15 +415,15 @@ class ProgramPage(Page):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
         help_text=(
-            'The logo that will appear at the top of the program congratulation letter.'
+            "The logo that will appear at the top of the program congratulation letter."
         ),
     )
     program_letter_header_text = RichTextField(
         blank=True,
         null=True,
-        help_text="Header text that will appear next to the logo."
+        help_text="Header text that will appear next to the logo.",
     )
 
     program_letter_footer = models.ForeignKey(
@@ -382,89 +431,93 @@ class ProgramPage(Page):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name="+",
         help_text=(
-            'The logo that will appear at the bottom of the program congratulation letter.'
+            "The logo that will appear at the bottom of the program congratulation letter."
         ),
     )
 
     program_letter_text = RichTextField(
         blank=True,
         null=True,
-        help_text="Text that will appear on the program congratulation letter."
+        help_text="Text that will appear on the program congratulation letter.",
     )
 
     program_letter_footer_text = RichTextField(
         blank=True,
         null=True,
-        help_text="Footer text that will appear on the program congratulation letter."
+        help_text="Footer text that will appear on the program congratulation letter.",
     )
 
     program_subscribe_link = models.URLField(
         blank=True,
         null=True,
-        help_text="A url for Learn More button, if none the button won't display."
+        help_text="A url for Learn More button, if none the button won't display.",
     )
 
-    subpage_types = ['FaqsPage', 'CourseTeamTabPage', 'ProgramTabPage']
+    subpage_types = ["FaqsPage", "CourseTeamTabPage", "ProgramTabPage"]
     content_panels = Page.content_panels + [
-        FieldPanel('description'),
-        FieldPanel('program'),
-        FieldPanel('thumbnail_image'),
-        FieldPanel('program_home_page_url'),
-        FieldPanel('title_program_home_page_url'),
-        FieldPanel('program_contact_email'),
-        FieldPanel('background_image'),
-        FieldPanel('title_over_image'),
-        FieldPanel('faculty_description'),
-        FieldPanel('program_letter_logo'),
-        FieldPanel('program_letter_header_text'),
-        FieldPanel('program_letter_footer'),
-        FieldPanel('program_letter_text'),
-        FieldPanel('program_letter_footer_text'),
-        FieldPanel('program_subscribe_link'),
-        InlinePanel('courses', label='Program Courses'),
-        InlinePanel('info_links', label='More Info Links'),
-        InlinePanel('faculty_members', label='Faculty'),
-        InlinePanel('semester_dates', label='Future Semester Dates'),
-        InlinePanel('course_certificate_signatories', label='Course Certificate Signatories'),
-        InlinePanel('program_certificate_signatories', label='Program Certificate Signatories'),
-        InlinePanel('program_letter_signatories', label='Program Letter Signatories'),
+        FieldPanel("description"),
+        FieldPanel("program"),
+        FieldPanel("thumbnail_image"),
+        FieldPanel("program_home_page_url"),
+        FieldPanel("title_program_home_page_url"),
+        FieldPanel("program_contact_email"),
+        FieldPanel("background_image"),
+        FieldPanel("title_over_image"),
+        FieldPanel("faculty_description"),
+        FieldPanel("program_letter_logo"),
+        FieldPanel("program_letter_header_text"),
+        FieldPanel("program_letter_footer"),
+        FieldPanel("program_letter_text"),
+        FieldPanel("program_letter_footer_text"),
+        FieldPanel("program_subscribe_link"),
+        InlinePanel("courses", label="Program Courses"),
+        InlinePanel("info_links", label="More Info Links"),
+        InlinePanel("faculty_members", label="Faculty"),
+        InlinePanel("semester_dates", label="Future Semester Dates"),
+        InlinePanel(
+            "course_certificate_signatories", label="Course Certificate Signatories"
+        ),
+        InlinePanel(
+            "program_certificate_signatories", label="Program Certificate Signatories"
+        ),
+        InlinePanel("program_letter_signatories", label="Program Letter Signatories"),
     ]
 
     def get_context(self, request, *args, **kwargs):
         context = get_program_page_context(self, request)
-        context['active_tab'] = 'about'
+        context["active_tab"] = "about"
         child_pages = self.get_children()
         course_team_page = child_pages.type(CourseTeamTabPage).live().first()
 
         # the course team tab should always be second, first one is about tab
         # pylint: disable=unnecessary-comprehension
-        context['child_pages'] = [course_team_page] + [page for page in child_pages.not_type(CourseTeamTabPage)]
-        context['course_team_page'] = course_team_page
+        context["child_pages"] = [course_team_page] + [
+            page for page in child_pages.not_type(CourseTeamTabPage)
+        ]
+        context["course_team_page"] = course_team_page
 
         return context
 
     api_fields = [
-        APIField('title'),
-        APIField('description'),
-        APIField('program_id'),
-        APIField('program_letter_footer'),
-        APIField('program_letter_footer_text'),
-        APIField('program_letter_header_text'),
-        APIField('program_letter_logo'),
-        APIField('program_letter_text'),
-        APIField('program_letter_signatories'),
+        APIField("title"),
+        APIField("description"),
+        APIField("program_id"),
+        APIField("program_letter_footer"),
+        APIField("program_letter_footer_text"),
+        APIField("program_letter_header_text"),
+        APIField("program_letter_logo"),
+        APIField("program_letter_text"),
+        APIField("program_letter_signatories"),
     ]
 
 
 def get_program_page_context(programpage, request):
-    """ Get context for the program page"""
+    """Get context for the program page"""
     from cms.serializers import ProgramPageSerializer
 
-    courses_query = (
-        programpage.program.course_set.all()
-    )
+    courses_query = programpage.program.course_set.all()
     js_settings = {
         "gaTrackingID": settings.GA_TRACKING_ID,
         "host": webpack_dev_server_host(request),
@@ -495,67 +548,55 @@ class InfoLinks(Orderable):
     """
     Links listed under 'More Info' for the program
     """
-    program_page = ParentalKey(ProgramPage, related_name='info_links')
+
+    program_page = ParentalKey(ProgramPage, related_name="info_links")
     url = models.URLField(
         blank=True,
         null=True,
-        help_text="A url for an external page. There will be a link to this url from the program page."
+        help_text="A url for an external page. There will be a link to this url from the program page.",
     )
     title_url = models.TextField(
-        blank=True,
-        help_text='The text for the link to an external homepage.'
+        blank=True, help_text="The text for the link to an external homepage."
     )
 
-    panels = [
-        MultiFieldPanel(
-            [
-                FieldPanel('url'),
-                FieldPanel('title_url')
-            ]
-        )
-    ]
+    panels = [MultiFieldPanel([FieldPanel("url"), FieldPanel("title_url")])]
 
 
 class SemesterDate(Orderable):
     """
     Dates for future start dates of semesters
     """
-    program_page = ParentalKey(ProgramPage, related_name='semester_dates')
+
+    program_page = ParentalKey(ProgramPage, related_name="semester_dates")
     semester_name = models.CharField(
         max_length=50,
-        help_text='Name for the semester. For example: "Fall" or "Fall 2018"'
+        help_text='Name for the semester. For example: "Fall" or "Fall 2018"',
     )
     start_date = models.DateField()
 
-    panels = [
-        MultiFieldPanel(
-            [
-                FieldPanel('semester_name'),
-                FieldPanel('start_date')
-            ]
-        )
-    ]
+    panels = [MultiFieldPanel([FieldPanel("semester_name"), FieldPanel("start_date")])]
 
 
 class ProgramCourse(Orderable):
     """
     Courses listed for the program
     """
-    program_page = ParentalKey(ProgramPage, related_name='courses')
+
+    program_page = ParentalKey(ProgramPage, related_name="courses")
     course = models.OneToOneField(
-        'courses.Course',
+        "courses.Course",
         null=True,
         on_delete=models.SET_NULL,
-        help_text='The course for this ProgramCourse',
+        help_text="The course for this ProgramCourse",
     )
-    title = models.CharField(max_length=255, default='')
+    title = models.CharField(max_length=255, default="")
     description = RichTextField(blank=True, null=True)
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('course'),
-                FieldPanel('title'),
-                FieldPanel('description'),
+                FieldPanel("course"),
+                FieldPanel("title"),
+                FieldPanel("description"),
             ]
         )
     ]
@@ -565,8 +606,9 @@ class ProgramFaculty(Orderable):
     """
     Faculty for the program
     """
-    program_page = ParentalKey(ProgramPage, related_name='faculty_members')
-    name = models.CharField(max_length=255, help_text='Full name of the faculty member')
+
+    program_page = ParentalKey(ProgramPage, related_name="faculty_members")
+    name = models.CharField(max_length=255, help_text="Full name of the faculty member")
     title = models.CharField(max_length=20, blank=True)
     short_bio = models.CharField(max_length=200, blank=True)
     image = models.ForeignKey(
@@ -574,16 +616,16 @@ class ProgramFaculty(Orderable):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+',
-        help_text='Image for the faculty member. Should be 500px by 385px.'
+        related_name="+",
+        help_text="Image for the faculty member. Should be 500px by 385px.",
     )
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('name'),
-                FieldPanel('title'),
-                FieldPanel('short_bio'),
-                FieldPanel('image'),
+                FieldPanel("name"),
+                FieldPanel("title"),
+                FieldPanel("short_bio"),
+                FieldPanel("image"),
             ]
         )
     ]
@@ -593,33 +635,34 @@ class FrequentlyAskedQuestion(Orderable):
     """
     FAQs for the program
     """
-    faqs_page = ParentalKey(CategorizedFaqsPage, related_name='faqs', null=True)
+
+    faqs_page = ParentalKey(CategorizedFaqsPage, related_name="faqs", null=True)
     question = models.TextField()
     answer = RichTextField()
     slug = models.SlugField(unique=True, default=None, blank=True)
 
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         if not self.slug:
-            max_length = FrequentlyAskedQuestion._meta.get_field('slug').max_length
+            max_length = FrequentlyAskedQuestion._meta.get_field("slug").max_length
             slug = orig_slug = slugify(self.question)[:max_length]
-            slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=orig_slug).exists()
+            slug_is_unique = not FrequentlyAskedQuestion.objects.filter(
+                slug=orig_slug
+            ).exists()
             count = 1
             while not slug_is_unique:
                 slug = f"{orig_slug[:max_length - len(str(count)) - 1]}-{count}"
-                slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
+                slug_is_unique = not FrequentlyAskedQuestion.objects.filter(
+                    slug=slug
+                ).exists()
                 count += 1
             self.slug = slug
         super().save(*args, **kwargs)
 
     panels = [
         MultiFieldPanel(
-            [
-                FieldPanel('question'),
-                FieldPanel('answer'),
-                FieldPanel('slug')
-            ],
-            heading='Frequently Asked Questions',
-            classname='collapsible'
+            [FieldPanel("question"), FieldPanel("answer"), FieldPanel("slug")],
+            heading="Frequently Asked Questions",
+            classname="collapsible",
         )
     ]
 
@@ -628,37 +671,44 @@ class CourseCertificateSignatories(Orderable):
     """
     Signatories to appear on MicroMasters-generated course certificates
     """
-    program_page = ParentalKey(ProgramPage, related_name='course_certificate_signatories')
+
+    program_page = ParentalKey(
+        ProgramPage, related_name="course_certificate_signatories"
+    )
     course = models.ForeignKey(
-        'courses.Course',
-        related_name='signatories',
-        help_text='The course for this certificate.',
+        "courses.Course",
+        related_name="signatories",
+        help_text="The course for this certificate.",
         on_delete=models.CASCADE,
     )
-    name = models.CharField(max_length=255, help_text='Full name of the signatory')
-    title_line_1 = models.TextField(help_text='Signatory title (e.g.: Associate Professor)')
-    title_line_2 = models.TextField(blank=True, help_text='Signatory title (optional second line)')
+    name = models.CharField(max_length=255, help_text="Full name of the signatory")
+    title_line_1 = models.TextField(
+        help_text="Signatory title (e.g.: Associate Professor)"
+    )
+    title_line_2 = models.TextField(
+        blank=True, help_text="Signatory title (optional second line)"
+    )
     organization = models.CharField(
         max_length=255,
         default="Massachusetts Institute of Technology",
-        help_text='Name of the organization where the signatory holds the given title.'
+        help_text="Name of the organization where the signatory holds the given title.",
     )
     signature_image = models.ForeignKey(
         Image,
-        related_name='+',
-        help_text='Signature image.',
+        related_name="+",
+        help_text="Signature image.",
         on_delete=models.CASCADE,
     )
 
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('course'),
-                FieldPanel('name'),
-                FieldPanel('title_line_1'),
-                FieldPanel('title_line_2'),
-                FieldPanel('organization'),
-                FieldPanel('signature_image'),
+                FieldPanel("course"),
+                FieldPanel("name"),
+                FieldPanel("title_line_1"),
+                FieldPanel("title_line_2"),
+                FieldPanel("organization"),
+                FieldPanel("signature_image"),
             ]
         )
     ]
@@ -668,30 +718,37 @@ class ProgramCertificateSignatories(Orderable):
     """
     Signatories to appear on MicroMasters Program Certificates
     """
-    program_page = ParentalKey(ProgramPage, related_name='program_certificate_signatories')
-    name = models.CharField(max_length=255, help_text='Full name of the signatory')
-    title_line_1 = models.TextField(help_text='Signatory title (e.g.: Associate Professor)')
-    title_line_2 = models.TextField(blank=True, help_text='Signatory title (optional second line)')
+
+    program_page = ParentalKey(
+        ProgramPage, related_name="program_certificate_signatories"
+    )
+    name = models.CharField(max_length=255, help_text="Full name of the signatory")
+    title_line_1 = models.TextField(
+        help_text="Signatory title (e.g.: Associate Professor)"
+    )
+    title_line_2 = models.TextField(
+        blank=True, help_text="Signatory title (optional second line)"
+    )
     organization = models.CharField(
         max_length=255,
         default="Massachusetts Institute of Technology",
-        help_text='Name of the organization where the signatory holds the given title.'
+        help_text="Name of the organization where the signatory holds the given title.",
     )
     signature_image = models.ForeignKey(
         Image,
-        related_name='+',
-        help_text='Signature image.',
+        related_name="+",
+        help_text="Signature image.",
         on_delete=models.CASCADE,
     )
 
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('name'),
-                FieldPanel('title_line_1'),
-                FieldPanel('title_line_2'),
-                FieldPanel('organization'),
-                FieldPanel('signature_image'),
+                FieldPanel("name"),
+                FieldPanel("title_line_1"),
+                FieldPanel("title_line_2"),
+                FieldPanel("organization"),
+                FieldPanel("signature_image"),
             ]
         )
     ]
@@ -701,32 +758,37 @@ class ProgramLetterSignatory(Orderable):
     """
     Signatories to appear on MicroMasters congratulation letter
     """
-    program_page = ParentalKey(ProgramPage, related_name='program_letter_signatories')
-    name = models.CharField(max_length=255, help_text='Full name of the signatory')
-    title_line_1 = models.TextField(help_text='Signatory title (e.g.: Associate Professor)')
-    title_line_2 = models.TextField(blank=True, help_text='Signatory title (optional second line)')
+
+    program_page = ParentalKey(ProgramPage, related_name="program_letter_signatories")
+    name = models.CharField(max_length=255, help_text="Full name of the signatory")
+    title_line_1 = models.TextField(
+        help_text="Signatory title (e.g.: Associate Professor)"
+    )
+    title_line_2 = models.TextField(
+        blank=True, help_text="Signatory title (optional second line)"
+    )
 
     signature_image = models.ForeignKey(
         Image,
-        related_name='+',
-        help_text='Signature image.',
+        related_name="+",
+        help_text="Signature image.",
         on_delete=models.CASCADE,
     )
 
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('name'),
-                FieldPanel('title_line_1'),
-                FieldPanel('title_line_2'),
-                FieldPanel('signature_image'),
+                FieldPanel("name"),
+                FieldPanel("title_line_1"),
+                FieldPanel("title_line_2"),
+                FieldPanel("signature_image"),
             ]
         )
     ]
 
     api_fields = [
-        APIField('name'),
-        APIField('title_line_1'),
-        APIField('title_line_2'),
-        APIField('signature_image'),
+        APIField("name"),
+        APIField("title_line_1"),
+        APIField("title_line_2"),
+        APIField("signature_image"),
     ]

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0019_switch_jsonfield'),
+        ("profiles", "0019_switch_jsonfield"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='about_me',
+            model_name="profile",
+            name="about_me",
             field=models.TextField(blank=True, null=True),
         ),
     ]

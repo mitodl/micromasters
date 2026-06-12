@@ -18,7 +18,8 @@ from grades.models import (
     MicromastersProgramCertificate,
     CombinedFinalGrade,
     MicromastersCourseCertificate,
-    MicromastersProgramCommendation)
+    MicromastersProgramCommendation,
+)
 from exams.models import (
     ExamProfile,
     ExamAuthorization,
@@ -27,7 +28,9 @@ from exams.models import (
 from micromasters.utils import now_in_utc
 
 # maximum number of exam attempts per payment
-ATTEMPTS_PER_PAID_RUN_OLD = 2  # the number of attempts the user gets for payment before the first date
+ATTEMPTS_PER_PAID_RUN_OLD = (
+    2  # the number of attempts the user gets for payment before the first date
+)
 ATTEMPTS_PER_PAID_RUN = 1
 
 log = logging.getLogger(__name__)
@@ -39,6 +42,7 @@ class MMTrack:
     Needed because the user enrollment "verified" and user passed status
     can be checked in different ways depending on if the program offers financial aid or not.
     """
+
     # pylint: disable=too-many-instance-attributes, too-many-arguments, too-many-public-methods
 
     user = None
@@ -64,30 +68,39 @@ class MMTrack:
         self.enrollments = edx_user_data.enrollments
         self.current_grades = edx_user_data.current_grades
         self.certificates = edx_user_data.certificates
-        self.paid_course_fa = {}  # courses_id -> payment number association for financial aid courses
+        self.paid_course_fa = (
+            {}
+        )  # courses_id -> payment number association for financial aid courses
 
         with transaction.atomic():
             # Maps a CourseRun's edx_course_key to its parent Course id
             self.edx_key_course_map = dict(
-                CourseRun.objects.not_discontinued().filter(course__program=program).exclude(
-                    Q(edx_course_key__isnull=True) | Q(edx_course_key__exact='')
-                ).values_list("edx_course_key", "course__id")
+                CourseRun.objects.not_discontinued()
+                .filter(course__program=program)
+                .exclude(Q(edx_course_key__isnull=True) | Q(edx_course_key__exact=""))
+                .values_list("edx_course_key", "course__id")
             )
             self.edx_course_keys = set(self.edx_key_course_map.keys())
 
-            self.has_exams = ExamRun.objects.filter(course__program=self.program).exists()
+            self.has_exams = ExamRun.objects.filter(
+                course__program=self.program
+            ).exists()
             if self.has_exams:
                 # edx course keys for courses with no exam
-                self.edx_course_keys_no_exam = set(CourseRun.objects.not_discontinued().filter(
-                    course__program=program, course__exam_runs__isnull=True
-                ).values_list("edx_course_key", flat=True))
+                self.edx_course_keys_no_exam = set(
+                    CourseRun.objects.not_discontinued()
+                    .filter(course__program=program, course__exam_runs__isnull=True)
+                    .values_list("edx_course_key", flat=True)
+                )
 
                 # Payments are no longer accepted, so all courses are unpaid
                 for course in self.program.course_set.all():
                     self.paid_course_fa[course.id] = False
 
     def __str__(self):
-        return f'MMTrack for user {self.user.username} on program "{self.program.title}"'
+        return (
+            f'MMTrack for user {self.user.username} on program "{self.program.title}"'
+        )
 
     def _is_course_in_program(self, edx_course_key):
         """
@@ -99,7 +112,9 @@ class MMTrack:
         """
         Returns ProgramEnrollment for this mmtrack
         """
-        return ProgramEnrollment.objects.filter(user=self.user, program=self.program).first()
+        return ProgramEnrollment.objects.filter(
+            user=self.user, program=self.program
+        ).first()
 
     def get_course_ids(self):
         """
@@ -120,7 +135,9 @@ class MMTrack:
         Returns:
             bool: whether the user is enrolled audit in the course run
         """
-        return self._is_course_in_program(edx_course_key) and self.enrollments.is_enrolled_in(edx_course_key)
+        return self._is_course_in_program(
+            edx_course_key
+        ) and self.enrollments.is_enrolled_in(edx_course_key)
 
     def is_enrolled_mmtrack(self, edx_course_key):
         """
@@ -135,7 +152,9 @@ class MMTrack:
             bool: whether the user is enrolled mmtrack in the course run
         """
         enrollment = self.enrollments.get_enrollment_for_course(edx_course_key)
-        return self._is_course_in_program(edx_course_key) and bool(enrollment and enrollment.is_verified)
+        return self._is_course_in_program(edx_course_key) and bool(
+            enrollment and enrollment.is_verified
+        )
 
     def has_verified_enrollment(self, edx_course_key):
         """
@@ -167,7 +186,9 @@ class MMTrack:
     @property
     def final_grade_qset(self):
         """Base queryset for the MMTrack User's completed FinalGrades"""
-        return FinalGrade.objects.filter(user=self.user, status=FinalGradeStatus.COMPLETE)
+        return FinalGrade.objects.filter(
+            user=self.user, status=FinalGradeStatus.COMPLETE
+        )
 
     def get_final_grade(self, edx_course_key):
         """
@@ -214,7 +235,11 @@ class MMTrack:
         Returns:
             bool: whether or not a user has a final grade and has paid
         """
-        return self.final_grade_qset.paid_on_edx().for_course_run_key(edx_course_key).exists()
+        return (
+            self.final_grade_qset.paid_on_edx()
+            .for_course_run_key(edx_course_key)
+            .exists()
+        )
 
     def has_passed_course_run(self, edx_course_key):
         """
@@ -239,18 +264,26 @@ class MMTrack:
         """
         if self.has_exams:
             course_cert = MicromastersCourseCertificate.objects.filter(
-                user=self.user,
-                course_id=course.id).exists()
+                user=self.user, course_id=course.id
+            ).exists()
             if course_cert:
                 return True
             else:
-                return FinalGrade.objects.filter(
-                    user=self.user,
-                    course_run__course_id=course.id,
-                    course_run__start_date__gt=NEW_COMBINED_FINAL_GRADES_DATE,
-                ).passed().exists()
+                return (
+                    FinalGrade.objects.filter(
+                        user=self.user,
+                        course_run__course_id=course.id,
+                        course_run__start_date__gt=NEW_COMBINED_FINAL_GRADES_DATE,
+                    )
+                    .passed()
+                    .exists()
+                )
         else:
-            return self.final_grade_qset.filter(course_run__course_id=course.id).passed().exists()
+            return (
+                self.final_grade_qset.filter(course_run__course_id=course.id)
+                .passed()
+                .exists()
+            )
 
     def get_final_grade_percent(self, edx_course_key):
         """
@@ -271,11 +304,9 @@ class MMTrack:
         Returns:
             dict: dictionary of course_ids: FinalGrade objects
         """
-        grades = (
-            self.final_grade_qset
-            .for_course_run_keys(self.edx_course_keys)
-            .select_related('course_run')
-        )
+        grades = self.final_grade_qset.for_course_run_keys(
+            self.edx_course_keys
+        ).select_related("course_run")
         return {grade.course_run.edx_course_key: grade for grade in grades}
 
     def get_final_grades_for_course(self, course):
@@ -286,7 +317,9 @@ class MMTrack:
         Returns:
             qset: a queryset of all final grades for course
         """
-        return self.final_grade_qset.filter(course_run__in=course.courserun_set.all()).order_by('-grade')
+        return self.final_grade_qset.filter(
+            course_run__in=course.courserun_set.all()
+        ).order_by("-grade")
 
     def get_best_final_grade_for_course(self, course):
         """
@@ -314,7 +347,9 @@ class MMTrack:
         if not course.has_exam or best_grade.is_already_combined:
             return str(round(best_grade.grade_percent))
 
-        combined_grade = CombinedFinalGrade.objects.filter(user=self.user, course=course)
+        combined_grade = CombinedFinalGrade.objects.filter(
+            user=self.user, course=course
+        )
         if combined_grade.exists():
             return str(round(combined_grade.first().grade))
         return ""
@@ -333,7 +368,11 @@ class MMTrack:
             if course_id in final_grades or self.enrollments.is_enrolled_in(course_id):
                 enrolled_course_ids.append(course_id)
 
-        return list(CourseRun.objects.not_discontinued().filter(edx_course_key__in=enrolled_course_ids).select_related('course'))
+        return list(
+            CourseRun.objects.not_discontinued()
+            .filter(edx_course_key__in=enrolled_course_ids)
+            .select_related("course")
+        )
 
     def calculate_final_grade_average(self):
         """
@@ -345,8 +384,8 @@ class MMTrack:
         final_grades = self.final_grade_qset.for_course_run_keys(self.edx_course_keys)
         if final_grades:
             return round(
-                sum(Decimal(final_grade.grade_percent) for final_grade in final_grades) /
-                len(final_grades)
+                sum(Decimal(final_grade.grade_percent) for final_grade in final_grades)
+                / len(final_grades)
             )
         return None
 
@@ -374,10 +413,14 @@ class MMTrack:
             int: A number of passed courses.
         """
         if self.has_exams:
-            return sum([
-                CombinedFinalGrade.objects.filter(user=self.user, course__program=self.program).count(),
-                self.count_passing_courses_for_keys(self.edx_course_keys_no_exam)
-            ])
+            return sum(
+                [
+                    CombinedFinalGrade.objects.filter(
+                        user=self.user, course__program=self.program
+                    ).count(),
+                    self.count_passing_courses_for_keys(self.edx_course_keys_no_exam),
+                ]
+            )
         else:
             return self.count_passing_courses_for_keys(self.edx_course_keys)
 
@@ -391,9 +434,11 @@ class MMTrack:
             int: A number of passed courses
         """
         return (
-            self.final_grade_qset.for_course_run_keys(edx_course_keys).passed()
-            .values_list('course_run__course__id', flat=True)
-            .distinct().count()
+            self.final_grade_qset.for_course_run_keys(edx_course_keys)
+            .passed()
+            .values_list("course_run__course__id", flat=True)
+            .distinct()
+            .count()
         )
 
     def count_passed_final_grades_for_course_ids(self, course_ids):
@@ -407,9 +452,11 @@ class MMTrack:
             int: the number of passed unique courses
         """
         return (
-            self.final_grade_qset.filter(
-                course_run__course_id__in=course_ids
-            ).passed().values_list('course_run__course__id', flat=True).distinct().count()
+            self.final_grade_qset.filter(course_run__course_id__in=course_ids)
+            .passed()
+            .values_list("course_run__course__id", flat=True)
+            .distinct()
+            .count()
         )
 
     def get_number_of_passed_courses(self, course_ids):
@@ -422,15 +469,25 @@ class MMTrack:
             int: the number of passed unique courses
         """
         if self.has_exams:
-            course_ids_passing_grade = FinalGrade.objects.filter(
-                user=self.user,
-                course_run__course_id__in=course_ids,
-                course_run__start_date__gt=NEW_COMBINED_FINAL_GRADES_DATE,
-            ).passed().values_list('course_run__course__id', flat=True).distinct()
-            num_certs = MicromastersCourseCertificate.objects.filter(
-                user=self.user,
-                course_id__in=list(set(course_ids) - set(course_ids_passing_grade))
-            ).values_list('course__id', flat=True).distinct().count()
+            course_ids_passing_grade = (
+                FinalGrade.objects.filter(
+                    user=self.user,
+                    course_run__course_id__in=course_ids,
+                    course_run__start_date__gt=NEW_COMBINED_FINAL_GRADES_DATE,
+                )
+                .passed()
+                .values_list("course_run__course__id", flat=True)
+                .distinct()
+            )
+            num_certs = (
+                MicromastersCourseCertificate.objects.filter(
+                    user=self.user,
+                    course_id__in=list(set(course_ids) - set(course_ids_passing_grade)),
+                )
+                .values_list("course__id", flat=True)
+                .distinct()
+                .count()
+            )
             return num_certs + len(course_ids_passing_grade)
         else:
             return self.count_passed_final_grades_for_course_ids(course_ids)
@@ -448,13 +505,22 @@ class MMTrack:
         if self.program.electives_set.exists():
             passed_courses = 0
             for electives_set in self.program.electives_set.all():
-                elective_courses_id = set(electives_set.electivecourse_set.all().values_list('course__id', flat=True))
+                elective_courses_id = set(
+                    electives_set.electivecourse_set.all().values_list(
+                        "course__id", flat=True
+                    )
+                )
 
                 # each elective set should be fulfilled
                 passed_courses += min(
-                    electives_set.required_number, self.get_number_of_passed_courses(elective_courses_id)
+                    electives_set.required_number,
+                    self.get_number_of_passed_courses(elective_courses_id),
                 )
-            core_courses_ids = set(self.program.course_set.filter(electivecourse=None).values_list('id', flat=True))
+            core_courses_ids = set(
+                self.program.course_set.filter(electivecourse=None).values_list(
+                    "id", flat=True
+                )
+            )
 
             # checking the number of core courses passed
             passed_courses += self.get_number_of_passed_courses(core_courses_ids)
@@ -482,7 +548,7 @@ class MMTrack:
 
         user = self.user
         try:
-            ExamProfile.objects.only('status').get(profile=user.profile)
+            ExamProfile.objects.only("status").get(profile=user.profile)
         except ExamProfile.DoesNotExist:
             return ExamProfile.PROFILE_ABSENT
 
@@ -497,7 +563,6 @@ class MMTrack:
             return ExamProfile.PROFILE_SUCCESS
 
     def get_best_proctored_exam_grade(self, course):
-
         """
         Returns the best exam grade
 
@@ -507,9 +572,12 @@ class MMTrack:
         Returns:
             grades.models.ProctoredExamGrade: the best exam grade
         """
-        return self.get_course_proctorate_exam_results(course).filter(
-            passed=True
-        ).order_by('-percentage_grade').first()
+        return (
+            self.get_course_proctorate_exam_results(course)
+            .filter(passed=True)
+            .order_by("-percentage_grade")
+            .first()
+        )
 
     def get_course_proctorate_exam_results(self, course):
         """
@@ -532,9 +600,12 @@ class MMTrack:
         Returns:
             grades.models.MicromastersCourseCertificate: a course certificate
         """
-        return MicromastersCourseCertificate.objects.filter(user=self.user, course=course).annotate(
-            signatories=Count('course__signatories')
-        ).filter(signatories__gt=0).first()
+        return (
+            MicromastersCourseCertificate.objects.filter(user=self.user, course=course)
+            .annotate(signatories=Count("course__signatories"))
+            .filter(signatories__gt=0)
+            .first()
+        )
 
     def program_certificate_qset(self):
         """
@@ -543,7 +614,9 @@ class MMTrack:
         Returns:
             qset: a queryset of grades.models.MicromastersProgramCertificate
         """
-        return MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
+        return MicromastersProgramCertificate.objects.filter(
+            user=self.user, program=self.program
+        )
 
     def get_program_certificate_url(self):
         """
@@ -552,12 +625,19 @@ class MMTrack:
         Returns:
             str: a string with url or empty string
         """
-        certificate = self.program_certificate_qset().annotate(
-            signatories=Count('program__programpage__program_certificate_signatories')
-        ).filter(signatories__gt=0).first()
+        certificate = (
+            self.program_certificate_qset()
+            .annotate(
+                signatories=Count(
+                    "program__programpage__program_certificate_signatories"
+                )
+            )
+            .filter(signatories__gt=0)
+            .first()
+        )
         if certificate is None:
             return ""
-        return reverse('program-certificate', args=[certificate.hash])
+        return reverse("program-certificate", args=[certificate.hash])
 
     def program_letter_qset(self):
         """
@@ -566,7 +646,9 @@ class MMTrack:
         Returns:
             qset: a queryset of grades.models.MicromastersProgramCommendation
         """
-        return MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
+        return MicromastersProgramCommendation.objects.filter(
+            user=self.user, program=self.program
+        )
 
     def get_program_letter_url(self):
         """
@@ -575,16 +657,24 @@ class MMTrack:
         Returns:
             str: a string with url or empty string
         """
-        letter = self.program_letter_qset().filter(
-            program__programpage__program_letter_text__isnull=False,
-            program__programpage__program_letter_logo__isnull=False, is_active=True).annotate(
-                signatories=Count('program__programpage__program_letter_signatories')).filter(
-                    signatories__gt=0).first()
+        letter = (
+            self.program_letter_qset()
+            .filter(
+                program__programpage__program_letter_text__isnull=False,
+                program__programpage__program_letter_logo__isnull=False,
+                is_active=True,
+            )
+            .annotate(
+                signatories=Count("program__programpage__program_letter_signatories")
+            )
+            .filter(signatories__gt=0)
+            .first()
+        )
 
         if not letter:
             return ""
         else:
-            return reverse('program_letter', args=[letter.uuid])
+            return reverse("program_letter", args=[letter.uuid])
 
 
 def get_mmtrack(user, program):
@@ -599,23 +689,19 @@ def get_mmtrack(user, program):
         mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
     """
     edx_user_data = CachedEdxUserData(user, program=program)
-    return MMTrack(
-        user,
-        program,
-        edx_user_data
-    )
+    return MMTrack(user, program, edx_user_data)
 
 
 def convert_to_letter(grade):
     """Convert a decimal number to letter grade"""
     grade = round(grade, 1)
     if grade >= 82.5:
-        return 'A'
+        return "A"
     elif grade >= 65:
-        return 'B'
+        return "B"
     elif grade >= 55:
-        return 'C'
+        return "C"
     elif grade >= 50:
-        return 'D'
+        return "D"
     else:
-        return 'F'
+        return "F"

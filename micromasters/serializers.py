@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     Serializer for User objects. Note that this will only work with
     logged-in users, not anonymous users.
     """
+
     username = serializers.SerializerMethodField()
     first_name = serializers.SerializerMethodField()
     last_name = serializers.SerializerMethodField()
@@ -26,8 +27,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            "username", "email",
-            "first_name", "last_name", "preferred_name",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "preferred_name",
             "social_auth_providers",
         )
 

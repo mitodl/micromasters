@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0006_fuzzy_date__remove_program_from_course'),
+        ("courses", "0006_fuzzy_date__remove_program_from_course"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='position_in_program',
+            model_name="course",
+            name="position_in_program",
             field=models.PositiveSmallIntegerField(null=True),
         ),
         migrations.AlterUniqueTogether(
-            name='course',
-            unique_together={('program', 'position_in_program')},
+            name="course",
+            unique_together={("program", "position_in_program")},
         ),
     ]

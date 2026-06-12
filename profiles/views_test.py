@@ -10,23 +10,23 @@ import ddt
 from django.db.models.signals import post_save
 from django.urls import resolve, reverse
 from factory.django import mute_signals
-from rest_framework.fields import (DateField, ReadOnlyField,
-                                   SerializerMethodField)
+from rest_framework.fields import DateField, ReadOnlyField, SerializerMethodField
 from rest_framework.serializers import ListSerializer
-from rest_framework.status import (HTTP_404_NOT_FOUND,
-                                   HTTP_405_METHOD_NOT_ALLOWED)
+from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_405_METHOD_NOT_ALLOWED
 from rest_framework.test import APIClient
 
 from backends.edxorg import EdxOrgOAuth2
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import SocialUserFactory
-from profiles.factories import (EducationFactory, EmploymentFactory,
-                                ProfileFactory)
+from profiles.factories import EducationFactory, EmploymentFactory, ProfileFactory
 from profiles.models import Profile
 from profiles.permissions import CanEditIfOwner, CanSeeIfNotPrivate
-from profiles.serializers import (ProfileFilledOutSerializer,
-                                  ProfileLimitedSerializer, ProfileSerializer)
+from profiles.serializers import (
+    ProfileFilledOutSerializer,
+    ProfileLimitedSerializer,
+    ProfileSerializer,
+)
 from profiles.test_mixins import ProfileImageCleanupMixin
 from profiles.util import make_temp_image_file
 from profiles.views import ProfileViewSet
@@ -37,7 +37,7 @@ from search.base import MockedESTestCase
 
 def format_image_expectation(profile):
     """formats a profile image to match what will be in JSON"""
-    image_fields = ['image', 'image_medium', 'image_small']
+    image_fields = ["image", "image_medium", "image_small"]
     for field in image_fields:
         if field in profile:
             profile[field] = f"http://testserver{profile[field]}"
@@ -56,14 +56,15 @@ class ProfileBaseTests(MockedESTestCase):
         """
         with mute_signals(post_save):
             cls.user1 = SocialUserFactory.create()
-        cls.url1 = reverse('profile-detail', kwargs={'user': cls.user1.username})
+        cls.url1 = reverse("profile-detail", kwargs={"user": cls.user1.username})
         with mute_signals(post_save):
             cls.user2 = SocialUserFactory.create()
-        cls.url2 = reverse('profile-detail', kwargs={'user': cls.user2.username})
+        cls.url2 = reverse("profile-detail", kwargs={"user": cls.user2.username})
 
 
 class ProfileGETTests(ProfileBaseTests):
     """Tests for GET requests on profiles"""
+
     def test_viewset(self):
         """
         Assert that the URL links up with the viewset
@@ -75,7 +76,10 @@ class ProfileGETTests(ProfileBaseTests):
         """
         Assert that we set permissions correctly
         """
-        assert set(ProfileViewSet.permission_classes) == {CanEditIfOwner, CanSeeIfNotPrivate}
+        assert set(ProfileViewSet.permission_classes) == {
+            CanEditIfOwner,
+            CanSeeIfNotPrivate,
+        }
 
     def test_check_object_permissions(self):
         """
@@ -85,7 +89,9 @@ class ProfileGETTests(ProfileBaseTests):
             ProfileFactory.create(user=self.user1, account_privacy=Profile.PUBLIC)
         self.client.force_login(self.user1)
 
-        with patch.object(ProfileViewSet, 'check_object_permissions', autospec=True) as check_object_permissions:
+        with patch.object(
+            ProfileViewSet, "check_object_permissions", autospec=True
+        ) as check_object_permissions:
             self.client.get(self.url1)
         assert check_object_permissions.called
 
@@ -106,7 +112,9 @@ class ProfileGETTests(ProfileBaseTests):
         An anonymous user gets another user's public profile.
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC)
+            profile = ProfileFactory.create(
+                user=self.user2, account_privacy=Profile.PUBLIC
+            )
         profile_data = ProfileLimitedSerializer(profile).data
         self.client.logout()
         resp = self.client.get(self.url2)
@@ -117,7 +125,9 @@ class ProfileGETTests(ProfileBaseTests):
         An unverified mm user gets another user's public profile.
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC)
+            profile = ProfileFactory.create(
+                user=self.user2, account_privacy=Profile.PUBLIC
+            )
             ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
         profile_data = ProfileLimitedSerializer(profile).data
         self.client.force_login(self.user1)
@@ -129,7 +139,9 @@ class ProfileGETTests(ProfileBaseTests):
         A verified mm user gets another user's public profile.
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC)
+            profile = ProfileFactory.create(
+                user=self.user2, account_privacy=Profile.PUBLIC
+            )
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
         profile_data = ProfileLimitedSerializer(profile).data
         self.client.force_login(self.user1)
@@ -162,7 +174,9 @@ class ProfileGETTests(ProfileBaseTests):
         A verified mm user gets  user's public_to_mm profile.
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC_TO_MM)
+            profile = ProfileFactory.create(
+                user=self.user2, account_privacy=Profile.PUBLIC_TO_MM
+            )
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
             program = ProgramFactory.create()
             ProgramEnrollment.objects.create(
@@ -216,7 +230,7 @@ class ProfileGETTests(ProfileBaseTests):
         If a user profile has a weird profile setting, it defaults to private
         """
         with mute_signals(post_save):
-            ProfileFactory.create(user=self.user2, account_privacy='weird_setting')
+            ProfileFactory.create(user=self.user2, account_privacy="weird_setting")
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
@@ -227,7 +241,9 @@ class ProfileGETTests(ProfileBaseTests):
         An instructor should be able to see the entire profile despite the account privacy
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
+            profile = ProfileFactory.create(
+                user=self.user2, account_privacy=Profile.PRIVATE
+            )
             ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
 
         program = ProgramFactory.create()
@@ -251,7 +267,9 @@ class ProfileGETTests(ProfileBaseTests):
         Staff should be able to see the entire profile despite the account privacy
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
+            profile = ProfileFactory.create(
+                user=self.user2, account_privacy=Profile.PRIVATE
+            )
             ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
 
         program = ProgramFactory.create()
@@ -276,6 +294,7 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
     """
     Tests for profile PATCH
     """
+
     client_class = APIClient
 
     def test_patch_own_profile(self):
@@ -283,30 +302,41 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
         A user PATCHes their own profile
         """
         with mute_signals(post_save):
-            ProfileFactory.create(user=self.user1, filled_out=False, agreed_to_terms_of_service=False)
+            ProfileFactory.create(
+                user=self.user1, filled_out=False, agreed_to_terms_of_service=False
+            )
         self.client.force_login(self.user1)
 
         with mute_signals(post_save):
             new_profile = ProfileFactory.create(filled_out=False)
         new_profile.user.social_auth.create(
-            provider=EdxOrgOAuth2.name,
-            uid=f"{new_profile.user.username}_edx"
+            provider=EdxOrgOAuth2.name, uid=f"{new_profile.user.username}_edx"
         )
         patch_data = ProfileSerializer(new_profile).data
-        del patch_data['image']
+        del patch_data["image"]
 
-        resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
+        resp = self.client.patch(
+            self.url1, content_type="application/json", data=json.dumps(patch_data)
+        )
         assert resp.status_code == 200
 
         old_profile = Profile.objects.get(user__username=self.user1.username)
         for key, value in patch_data.items():
             field = ProfileSerializer().fields[key]
 
-            if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)) or field.read_only is True:
+            if (
+                isinstance(
+                    field, (ListSerializer, SerializerMethodField, ReadOnlyField)
+                )
+                or field.read_only is True
+            ):
                 # these fields are readonly
                 continue
             if isinstance(field, DateField):
-                assert getattr(old_profile, key) == datetime.datetime.strptime(value, "%Y-%m-%d").date()
+                assert (
+                    getattr(old_profile, key)
+                    == datetime.datetime.strptime(value, "%Y-%m-%d").date()
+                )
             else:
                 assert getattr(old_profile, key) == value
 
@@ -321,15 +351,17 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
         patch_data = ProfileSerializer(profile).data
         # PATCH may not succeed, we just care that the right serializer was used
         with patch(
-            'profiles.views.ProfileFilledOutSerializer.__new__',
+            "profiles.views.ProfileFilledOutSerializer.__new__",
             autospec=True,
-            side_effect=ProfileFilledOutSerializer.__new__
+            side_effect=ProfileFilledOutSerializer.__new__,
         ) as mocked_filled_out, patch(
-            'profiles.views.ProfileSerializer.__new__',
+            "profiles.views.ProfileSerializer.__new__",
             autospec=True,
-            side_effect=ProfileSerializer.__new__
+            side_effect=ProfileSerializer.__new__,
         ) as mocked:
-            self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
+            self.client.patch(
+                self.url1, content_type="application/json", data=json.dumps(patch_data)
+            )
         assert mocked.called
         assert not mocked_filled_out.called
 
@@ -344,11 +376,13 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
         patch_data = ProfileSerializer(profile).data
         # PATCH may not succeed, we just care that the right serializer was used
         with patch(
-            'profiles.views.ProfileFilledOutSerializer.__new__',
+            "profiles.views.ProfileFilledOutSerializer.__new__",
             autospec=True,
-            side_effect=ProfileFilledOutSerializer.__new__
+            side_effect=ProfileFilledOutSerializer.__new__,
         ) as mocked:
-            self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
+            self.client.patch(
+                self.url1, content_type="application/json", data=json.dumps(patch_data)
+            )
         assert mocked.called
 
     def test_forbidden_methods(self):
@@ -373,24 +407,26 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
         # create a dummy image file in memory for upload
         with make_temp_image_file(width=50, height=50) as image_file:
             # format patch using multipart upload
-            resp = self.client.patch(self.url1, data={
-                'image': image_file
-            }, format='multipart')
+            resp = self.client.patch(
+                self.url1, data={"image": image_file}, format="multipart"
+            )
 
-        assert resp.status_code == 200, resp.content.decode('utf-8')
+        assert resp.status_code == 200, resp.content.decode("utf-8")
         assert profile.education.count() == 1
         assert profile.work_history.count() == 1
 
-    @ddt.data(
-        *itertools.product([True, False], [True, False])
-    )
+    @ddt.data(*itertools.product([True, False], [True, False]))
     @ddt.unpack
-    def test_no_thumbnail_change_if_image_upload(self, image_already_exists, thumb_already_exists):
+    def test_no_thumbnail_change_if_image_upload(
+        self, image_already_exists, thumb_already_exists
+    ):
         """
         A patch without an image upload should not touch the image or the thumbnail
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user1, filled_out=False, agreed_to_terms_of_service=False)
+            profile = ProfileFactory.create(
+                user=self.user1, filled_out=False, agreed_to_terms_of_service=False
+            )
             if image_already_exists is False:
                 profile.image = None
             if thumb_already_exists is False:
@@ -400,11 +436,13 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
         self.client.force_login(self.user1)
 
         patch_data = ProfileSerializer(profile).data
-        del patch_data['image']
-        del patch_data['image_small']
-        del patch_data['image_medium']
+        del patch_data["image"]
+        del patch_data["image_small"]
+        del patch_data["image_medium"]
 
-        resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
+        resp = self.client.patch(
+            self.url1, content_type="application/json", data=json.dumps(patch_data)
+        )
         assert resp.status_code == 200
 
         profile.refresh_from_db()
@@ -412,16 +450,18 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
         assert bool(profile.image_small) == thumb_already_exists
         assert bool(profile.image_medium) == thumb_already_exists
 
-    @ddt.data(
-        *itertools.product([True, False], [True, False])
-    )
+    @ddt.data(*itertools.product([True, False], [True, False]))
     @ddt.unpack
-    def test_upload_image_creates_thumbnail(self, image_already_exists, thumb_already_exists):
+    def test_upload_image_creates_thumbnail(
+        self, image_already_exists, thumb_already_exists
+    ):
         """
         An image upload should cause the thumbnail to be updated
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user1, filled_out=False, agreed_to_terms_of_service=False)
+            profile = ProfileFactory.create(
+                user=self.user1, filled_out=False, agreed_to_terms_of_service=False
+            )
             if image_already_exists is False:
                 profile.image = None
             if thumb_already_exists is False:
@@ -433,10 +473,10 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
         # create a dummy image file in memory for upload
         with make_temp_image_file() as image_file:
             # format patch using multipart upload
-            resp = self.client.patch(self.url1, data={
-                'image': image_file
-            }, format='multipart')
-        assert resp.status_code == 200, resp.content.decode('utf-8')
+            resp = self.client.patch(
+                self.url1, data={"image": image_file}, format="multipart"
+            )
+        assert resp.status_code == 200, resp.content.decode("utf-8")
 
         profile.refresh_from_db()
         assert profile.image.height == 500
@@ -458,25 +498,24 @@ class ProfilePATCHTests(ProfileImageCleanupMixin, ProfileBaseTests):
 
         # create a dummy image file in memory for upload
         with make_temp_image_file() as image_file:
-
             # save old thumbnail - use proper file opening
             resized_field = getattr(profile, image_key)
-            resized_field.open('rb')
+            resized_field.open("rb")
             try:
                 backup_thumb_bytes = resized_field.read()
             finally:
                 resized_field.close()
 
             # format patch using multipart upload
-            resp = self.client.patch(self.url1, data={
-                image_key: image_file
-            }, format='multipart')
-        assert resp.status_code == 200, resp.content.decode('utf-8')
+            resp = self.client.patch(
+                self.url1, data={image_key: image_file}, format="multipart"
+            )
+        assert resp.status_code == 200, resp.content.decode("utf-8")
 
         profile.refresh_from_db()
         # resized image should not have changed - use proper file opening
         new_resized_field = getattr(profile, image_key)
-        new_resized_field.open('rb')
+        new_resized_field.open("rb")
         try:
             thumb_bytes = new_resized_field.read()
         finally:

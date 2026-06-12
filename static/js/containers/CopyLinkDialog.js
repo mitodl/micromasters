@@ -93,7 +93,4 @@ const mapDispatchToProps = dispatch =>
     ["setRecordShareLink", setRecordShareLink]
   ])
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CopyLinkDialog)
+export default connect(mapStateToProps, mapDispatchToProps)(CopyLinkDialog)

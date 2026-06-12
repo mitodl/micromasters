@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0035_program_attempts'),
+        ("courses", "0035_program_attempts"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='courserun',
-            name='courseware_backend',
-            field=models.CharField(choices=[('mitxonline', 'mitxonline'), ('edxorg', 'edxorg')], default='edxorg', max_length=32),
+            model_name="courserun",
+            name="courseware_backend",
+            field=models.CharField(
+                choices=[("mitxonline", "mitxonline"), ("edxorg", "edxorg")],
+                default="edxorg",
+                max_length=32,
+            ),
         ),
     ]

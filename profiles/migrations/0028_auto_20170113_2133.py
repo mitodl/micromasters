@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0027_remove_profile_linkedin'),
+        ("profiles", "0027_remove_profile_linkedin"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='profile',
-            name='phone_country_code',
+            model_name="profile",
+            name="phone_country_code",
         ),
         migrations.AlterField(
-            model_name='profile',
-            name='phone_number',
+            model_name="profile",
+            name="phone_number",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
     ]

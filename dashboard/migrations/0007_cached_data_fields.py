@@ -7,42 +7,43 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0006_remove_all_cache'),
+        ("dashboard", "0006_remove_all_cache"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cachedcertificate',
-            name='last_request',
+            model_name="cachedcertificate",
+            name="last_request",
         ),
         migrations.RemoveField(
-            model_name='cachedcurrentgrade',
-            name='last_request',
+            model_name="cachedcurrentgrade",
+            name="last_request",
         ),
         migrations.RemoveField(
-            model_name='cachedenrollment',
-            name='last_request',
+            model_name="cachedenrollment",
+            name="last_request",
         ),
         migrations.AlterField(
-            model_name='cachedcertificate',
-            name='data',
+            model_name="cachedcertificate",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(),
         ),
         migrations.AlterField(
-            model_name='cachedcurrentgrade',
-            name='data',
+            model_name="cachedcurrentgrade",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(),
         ),
         migrations.AlterField(
-            model_name='cachedenrollment',
-            name='data',
+            model_name="cachedenrollment",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(),
         ),
         migrations.AlterField(
-            model_name='usercacherefreshtime',
-            name='user',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="usercacherefreshtime",
+            name="user",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

@@ -4,15 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ecommerce', '0014_unique_coupon_code'),
+        ("ecommerce", "0014_unique_coupon_code"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='coupon',
-            name='amount_type',
-            field=models.CharField(choices=[('percent-discount', 'percent-discount'), ('fixed-discount', 'fixed-discount'), ('fixed-price', 'fixed-price')], help_text='Whether amount is a percent or fixed discount', max_length=30),
+            model_name="coupon",
+            name="amount_type",
+            field=models.CharField(
+                choices=[
+                    ("percent-discount", "percent-discount"),
+                    ("fixed-discount", "fixed-discount"),
+                    ("fixed-price", "fixed-price"),
+                ],
+                help_text="Whether amount is a percent or fixed discount",
+                max_length=30,
+            ),
         ),
     ]

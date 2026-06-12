@@ -5,28 +5,31 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0003_added_timestamps'),
+        ("financialaid", "0003_added_timestamps"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='financialaidaudit',
-            old_name='user',
-            new_name='acting_user',
+            model_name="financialaidaudit",
+            old_name="user",
+            new_name="acting_user",
         ),
         migrations.RemoveField(
-            model_name='financialaidaudit',
-            name='date',
+            model_name="financialaidaudit",
+            name="date",
         ),
         migrations.RemoveField(
-            model_name='financialaidaudit',
-            name='table_changed',
+            model_name="financialaidaudit",
+            name="table_changed",
         ),
         migrations.AddField(
-            model_name='financialaidaudit',
-            name='financial_aid',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='financialaid.FinancialAid'),
+            model_name="financialaidaudit",
+            name="financial_aid",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="financialaid.FinancialAid",
+            ),
         ),
     ]

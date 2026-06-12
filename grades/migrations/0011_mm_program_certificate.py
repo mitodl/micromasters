@@ -6,27 +6,46 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('courses', '0025_remove_unused_fields'),
-        ('grades', '0010_final_grade_certificates_related_name'),
+        ("courses", "0025_remove_unused_fields"),
+        ("grades", "0010_final_grade_certificates_related_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MicromastersProgramCertificate',
+            name="MicromastersProgramCertificate",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('hash', models.CharField(max_length=32, unique=True)),
-                ('program', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.Program')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                ("hash", models.CharField(max_length=32, unique=True)),
+                (
+                    "program",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="courses.Program",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='micromastersprogramcertificate',
-            unique_together={('user', 'program')},
+            name="micromastersprogramcertificate",
+            unique_together={("user", "program")},
         ),
     ]

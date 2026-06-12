@@ -2,12 +2,13 @@
 
 html {
   scroll-behavior: smooth;
-  }
+}
 
 .resource-banner {
   width: 100%;
   padding: 75px 0;
-  background: rgba(53, 53, 53, .97) url("/static/images/resource-page-banner-bg.png") repeat-x 0 0;
+  background: rgba(53, 53, 53, 0.97)
+    url("/static/images/resource-page-banner-bg.png") repeat-x 0 0;
   min-height: 200px;
 
   .container {
@@ -86,4 +87,3 @@ html {
     }
   }
 }
-

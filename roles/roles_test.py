@@ -15,12 +15,12 @@ class RolesTest(TestCase):
         """
         Test for the Staff role ID
         """
-        assert hasattr(roles.Staff, 'ROLE_ID')
-        assert roles.Staff.ROLE_ID == 'staff'
+        assert hasattr(roles.Staff, "ROLE_ID")
+        assert roles.Staff.ROLE_ID == "staff"
 
     def test_instructor_role_id(self):
         """
         Test for the Instructor role ID
         """
-        assert hasattr(roles.Instructor, 'ROLE_ID')
-        assert roles.Instructor.ROLE_ID == 'instructor'
+        assert hasattr(roles.Instructor, "ROLE_ID")
+        assert roles.Instructor.ROLE_ID == "instructor"

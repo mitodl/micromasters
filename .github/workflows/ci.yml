@@ -21,7 +21,7 @@ jobs:
           POSTGRES_DB: postgres
         ports:
           - 5432:5432
-      
+
       redis:
         image: redis:5.0.14
         ports:
@@ -38,7 +38,7 @@ jobs:
           cluster.max_shards_per_node: "10000"
         ports:
           - 9200:9200
-  
+
     steps:
       - uses: actions/checkout@v4
 
@@ -62,14 +62,14 @@ jobs:
       - name: Lint
         run: uv run pylint ./**/*.py
         env:
-          DEBUG: 'False'
-          NODE_ENV: 'production'
+          DEBUG: "False"
+          NODE_ENV: "production"
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
-          MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
-          MICROMASTERS_DB_DISABLE_SSL: 'True'
+          MICROMASTERS_SECURE_SSL_REDIRECT: "False"
+          MICROMASTERS_DB_DISABLE_SSL: "True"
           OPENSEARCH_URL: localhost:9200
           OPENSEARCH_INDEX: testindex
-          CELERY_TASK_ALWAYS_EAGER: 'True'
+          CELERY_TASK_ALWAYS_EAGER: "True"
           BROKER_URL: redis://localhost:6379/4
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
           MAILGUN_URL: https://api.mailgun.net/v3/fake.mailgun.org
@@ -111,34 +111,34 @@ jobs:
       - name: Tests
         run: |
           export MEDIA_ROOT="$(mktemp -d)"
-          sudo mkdir /var/media 
+          sudo mkdir /var/media
           sudo chown -R $USER:$USER /var/media
           uv run pytest
           ./scripts/test/detect_missing_migrations.sh
           ./scripts/test/no_auto_migrations.sh
         env:
-          DEBUG: 'False'
-          NODE_ENV: 'production'
+          DEBUG: "False"
+          NODE_ENV: "production"
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
-          MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
-          MICROMASTERS_DB_DISABLE_SSL: 'True'
+          MICROMASTERS_SECURE_SSL_REDIRECT: "False"
+          MICROMASTERS_DB_DISABLE_SSL: "True"
           OPENSEARCH_URL: localhost:9200
           OPENSEARCH_INDEX: testindex
-          CELERY_TASK_ALWAYS_EAGER: 'True'
+          CELERY_TASK_ALWAYS_EAGER: "True"
           BROKER_URL: redis://localhost:6379/4
           CELERY_RESULT_BACKEND: redis://localhost:6379/4
           DJANGO_SETTINGS_MODULE: micromasters.settings
           MAILGUN_URL: https://api.mailgun.net/v3/fake.mailgun.org
           MAILGUN_KEY: fake_mailgun_key
           OPEN_DISCUSSIONS_SITE_KEY: mm_test
-          SENTRY_DSN: ''
-          DISABLE_WEBPACK_LOADER_STATS: 'True'
+          SENTRY_DSN: ""
+          DISABLE_WEBPACK_LOADER_STATS: "True"
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
-  
+
   javascript-tests:
     runs-on: ubuntu-latest
     steps:
@@ -148,7 +148,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "14.18.2"
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Set up environment
         run: sudo apt-get install libelf1

@@ -17,8 +17,16 @@ IMAGE_PATH_MAX_LENGTH = 100
 IMAGE_SMALL_MAX_DIMENSION = 64
 IMAGE_MEDIUM_MAX_DIMENSION = 128
 COMPULSORY_FIELDS = [
-    'first_name', 'last_name', 'preferred_name', 'date_of_birth', 'gender',
-    'country', 'state_or_territory', 'city', 'nationality', 'preferred_language'
+    "first_name",
+    "last_name",
+    "preferred_name",
+    "date_of_birth",
+    "gender",
+    "country",
+    "state_or_territory",
+    "city",
+    "nationality",
+    "preferred_language",
 ]
 
 
@@ -82,10 +90,12 @@ def _generate_upload_to_uri(suffix=""):
             timestamp=timestamp.strftime("%Y-%m-%dT%H%M%S-%z"),
             suffix=suffix,
             ext=ext,
-            name='',
+            name="",
         )
         if len(path_without_name) >= IMAGE_PATH_MAX_LENGTH:
-            raise ValueError(f"path is longer than max length even without name: {path_without_name}")
+            raise ValueError(
+                f"path is longer than max length even without name: {path_without_name}"
+            )
 
         max_name_length = IMAGE_PATH_MAX_LENGTH - len(path_without_name)
         full_path = path_format.format(
@@ -96,6 +106,7 @@ def _generate_upload_to_uri(suffix=""):
         )
 
         return full_path
+
     return _upload_to
 
 
@@ -155,10 +166,10 @@ def make_thumbnail(full_size_image, max_dimension):
     pil_image = Image.open(full_size_image)
     pil_image.thumbnail(
         shrink_dimensions(pil_image.width, pil_image.height, max_dimension),
-        Image.Resampling.LANCZOS
+        Image.Resampling.LANCZOS,
     )
     buffer = BytesIO()
-    pil_image.convert('RGB').save(buffer, "JPEG", quality=90)
+    pil_image.convert("RGB").save(buffer, "JPEG", quality=90)
     buffer.seek(0)
     return buffer
 
@@ -190,8 +201,8 @@ def make_temp_image_file(*, width=500, height=500):
     """
     with NamedTemporaryFile(suffix=".png") as image_file:
         # Color channels must be in 0-255; use a valid solid red.
-        image = Image.new('RGBA', size=(width, height), color=(255, 0, 0, 255))
-        image.save(image_file, 'png')
+        image = Image.new("RGBA", size=(width, height), color=(255, 0, 0, 255))
+        image.save(image_file, "png")
         image_file.seek(0)
         yield image_file
 

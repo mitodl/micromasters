@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cms', '0037_programpage_add_fileds_for_letter'),
+        ("cms", "0037_programpage_add_fileds_for_letter"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programpage',
-            name='program_subscribe_link',
-            field=models.URLField(blank=True, help_text="A url for I'm interested button, if there is no course(s) available.", null=True),
+            model_name="programpage",
+            name="program_subscribe_link",
+            field=models.URLField(
+                blank=True,
+                help_text="A url for I'm interested button, if there is no course(s) available.",
+                null=True,
+            ),
         ),
     ]

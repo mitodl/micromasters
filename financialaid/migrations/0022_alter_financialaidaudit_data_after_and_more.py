@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0021_financial_aid_reset_status'),
+        ("financialaid", "0021_financial_aid_reset_status"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='financialaidaudit',
-            name='data_after',
+            model_name="financialaidaudit",
+            name="data_after",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='financialaidaudit',
-            name='data_before',
+            model_name="financialaidaudit",
+            name="data_before",
             field=models.JSONField(blank=True, null=True),
         ),
     ]

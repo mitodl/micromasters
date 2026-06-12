@@ -5,25 +5,52 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0011_add_employment_history_table'),
+        ("profiles", "0011_add_employment_history_table"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Education',
+            name="Education",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('degree_name', models.CharField(choices=[('p', 'Doctorate'), ('m', "Master's or professional degree"), ('b', "Bachelor's degree"), ('a', 'Associate degree'), ('hs', 'High school'), ('other', 'Other education')], max_length=30)),
-                ('graduation_date', models.DateField()),
-                ('field_of_study', models.TextField()),
-                ('online_degree', models.BooleanField(default=False)),
-                ('school_name', models.TextField()),
-                ('school_city', models.TextField()),
-                ('school_state_or_territory', models.TextField()),
-                ('school_country', models.TextField()),
-                ('profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='education', to='profiles.Profile')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "degree_name",
+                    models.CharField(
+                        choices=[
+                            ("p", "Doctorate"),
+                            ("m", "Master's or professional degree"),
+                            ("b", "Bachelor's degree"),
+                            ("a", "Associate degree"),
+                            ("hs", "High school"),
+                            ("other", "Other education"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                ("graduation_date", models.DateField()),
+                ("field_of_study", models.TextField()),
+                ("online_degree", models.BooleanField(default=False)),
+                ("school_name", models.TextField()),
+                ("school_city", models.TextField()),
+                ("school_state_or_territory", models.TextField()),
+                ("school_country", models.TextField()),
+                (
+                    "profile",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="education",
+                        to="profiles.Profile",
+                    ),
+                ),
             ],
         ),
     ]

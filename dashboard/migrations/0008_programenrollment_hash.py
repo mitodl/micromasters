@@ -6,25 +6,24 @@ from micromasters.utils import generate_hash_32
 
 
 def populate_enrollment_hash(apps, schema_editor):
-    ProgramEnrollment = apps.get_model('dashboard', 'ProgramEnrollment')
+    ProgramEnrollment = apps.get_model("dashboard", "ProgramEnrollment")
     for enrollment in ProgramEnrollment.objects.all():
         enrollment.hash = generate_hash_32(
-            f'{enrollment.user_id}|{enrollment.program_id}'.encode()
+            f"{enrollment.user_id}|{enrollment.program_id}".encode()
         )
         enrollment.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0007_cached_data_fields'),
+        ("dashboard", "0007_cached_data_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='programenrollment',
-            name='hash',
-            field=models.CharField(default='hash', max_length=32),
+            model_name="programenrollment",
+            name="hash",
+            field=models.CharField(default="hash", max_length=32),
         ),
         migrations.RunPython(populate_enrollment_hash, migrations.RunPython.noop),
     ]

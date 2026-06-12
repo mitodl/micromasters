@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('search', '0006_remove_discussion_channel_type'),
+        ("search", "0006_remove_discussion_channel_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='percolatequery',
-            name='original_query',
+            model_name="percolatequery",
+            name="original_query",
             field=models.JSONField(),
         ),
         migrations.AlterField(
-            model_name='percolatequery',
-            name='query',
+            model_name="percolatequery",
+            name="query",
             field=models.JSONField(),
         ),
     ]

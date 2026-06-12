@@ -6,15 +6,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0029_merge_address_fields'),
+        ("profiles", "0029_merge_address_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='mail_id',
+            model_name="profile",
+            name="mail_id",
             field=models.UUIDField(default=uuid.uuid4, unique=False),
         ),
     ]

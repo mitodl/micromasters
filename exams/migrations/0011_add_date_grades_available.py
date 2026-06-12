@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0010_remove_unused_fields'),
+        ("exams", "0010_remove_unused_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='examrun',
-            name='date_grades_available',
+            model_name="examrun",
+            name="date_grades_available",
             field=models.DateTimeField(null=True),
         ),
     ]

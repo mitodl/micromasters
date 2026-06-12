@@ -29,30 +29,35 @@ def test_catalog_program_serializer(has_page, has_thumbnail):
     serialized = {
         **serialized,
         "courses": [
-            {
-                **course,
-                "course_runs": [dict(run) for run in course["course_runs"]]
-            } for course in serialized["courses"]
-        ]
+            {**course, "course_runs": [dict(run) for run in course["course_runs"]]}
+            for course in serialized["courses"]
+        ],
     }
     assert serialized == {
         "id": program.id,
         "title": program.title,
         "programpage_url": page.get_full_url() if has_page else None,
         "thumbnail_url": (
-            page.thumbnail_image.get_rendition('fill-300x186').url
-            if has_page and has_thumbnail else None
+            page.thumbnail_image.get_rendition("fill-300x186").url
+            if has_page and has_thumbnail
+            else None
         ),
-        "courses": [{
-            "id": course.id,
-            "edx_key": course.edx_key,
-            "position_in_program": course.position_in_program,
-            "course_runs": [{
-                "id": course_run.id,
-                "edx_course_key": course_run.edx_course_key,
-            } for course_run in course.courserun_set.all()]
-        } for course in courses],
-        'topics': [{'name': topic.name} for topic in program.topics.iterator()],
+        "courses": [
+            {
+                "id": course.id,
+                "edx_key": course.edx_key,
+                "position_in_program": course.position_in_program,
+                "course_runs": [
+                    {
+                        "id": course_run.id,
+                        "edx_course_key": course_run.edx_course_key,
+                    }
+                    for course_run in course.courserun_set.all()
+                ],
+            }
+            for course in courses
+        ],
+        "topics": [{"name": topic.name} for topic in program.topics.iterator()],
         "instructors": [{"name": faculty_name}] if has_page else [],
         "start_date": courses[0].first_unexpired_run().start_date,
         "enrollment_start": courses[0].first_unexpired_run().enrollment_start,

@@ -1,81 +1,81 @@
 [
-    {
-        "course_details": {
-            "course_end": null,
-            "course_id": "course-v1:edX+DemoX+Demo_Course",
-            "course_modes": [
-                {
-                    "currency": "usd",
-                    "description": null,
-                    "expiration_datetime": null,
-                    "min_price": 0,
-                    "name": "Verified",
-                    "sku": null,
-                    "slug": "verified",
-                    "suggested_prices": ""
-                }
-            ],
-            "course_start": "2013-02-05T05:00:00Z",
-            "course_end": "2015-05-10T23:59:00Z",
-            "enrollment_end": "2015-05-10T23:58:00Z",
-            "enrollment_start": "2013-02-05T05:00:01Z",
-            "invite_only": false
-        },
-        "created": "2015-12-22T02:47:17Z",
-        "is_active": true,
-        "mode": "verified",
-        "user": "staff"
+  {
+    "course_details": {
+      "course_end": null,
+      "course_id": "course-v1:edX+DemoX+Demo_Course",
+      "course_modes": [
+        {
+          "currency": "usd",
+          "description": null,
+          "expiration_datetime": null,
+          "min_price": 0,
+          "name": "Verified",
+          "sku": null,
+          "slug": "verified",
+          "suggested_prices": ""
+        }
+      ],
+      "course_start": "2013-02-05T05:00:00Z",
+      "course_end": "2015-05-10T23:59:00Z",
+      "enrollment_end": "2015-05-10T23:58:00Z",
+      "enrollment_start": "2013-02-05T05:00:01Z",
+      "invite_only": false
     },
-    {
-        "course_details": {
-            "course_end": "2015-05-10T23:59:00Z",
-            "course_id": "course-v1:MITx+8.MechCX+2014_T1",
-            "course_modes": [
-                {
-                    "currency": "usd",
-                    "description": null,
-                    "expiration_datetime": null,
-                    "min_price": 0,
-                    "name": "Audit",
-                    "sku": null,
-                    "slug": "audit",
-                    "suggested_prices": ""
-                }
-            ],
-            "course_start": "2015-01-08T14:00:00Z",
-            "enrollment_end": "2015-05-10T23:59:00Z",
-            "enrollment_start": null,
-            "invite_only": false
-        },
-        "created": "2016-01-27T18:10:35Z",
-        "is_active": true,
-        "mode": "audit",
-        "user": "staff"
+    "created": "2015-12-22T02:47:17Z",
+    "is_active": true,
+    "mode": "verified",
+    "user": "staff"
+  },
+  {
+    "course_details": {
+      "course_end": "2015-05-10T23:59:00Z",
+      "course_id": "course-v1:MITx+8.MechCX+2014_T1",
+      "course_modes": [
+        {
+          "currency": "usd",
+          "description": null,
+          "expiration_datetime": null,
+          "min_price": 0,
+          "name": "Audit",
+          "sku": null,
+          "slug": "audit",
+          "suggested_prices": ""
+        }
+      ],
+      "course_start": "2015-01-08T14:00:00Z",
+      "enrollment_end": "2015-05-10T23:59:00Z",
+      "enrollment_start": null,
+      "invite_only": false
     },
-    {
-        "course_details": {
-            "course_end": "2015-05-10T23:59:00Z",
-            "course_id": "course-v1:odl+FOO101+CR-FALL15",
-            "course_modes": [
-                {
-                    "currency": "usd",
-                    "description": null,
-                    "expiration_datetime": null,
-                    "min_price": 0,
-                    "name": "Verified",
-                    "sku": null,
-                    "slug": "Verified",
-                    "suggested_prices": ""
-                }
-            ],
-            "course_start": "2015-01-08T14:00:00Z",
-            "enrollment_end": "2015-05-10T23:59:00Z",
-            "enrollment_start": null,
-            "invite_only": false
-        },
-        "created": "2016-01-27T18:10:35Z",
-        "is_active": true,
-        "mode": "Verified",
-        "user": "staff"
-    }
+    "created": "2016-01-27T18:10:35Z",
+    "is_active": true,
+    "mode": "audit",
+    "user": "staff"
+  },
+  {
+    "course_details": {
+      "course_end": "2015-05-10T23:59:00Z",
+      "course_id": "course-v1:odl+FOO101+CR-FALL15",
+      "course_modes": [
+        {
+          "currency": "usd",
+          "description": null,
+          "expiration_datetime": null,
+          "min_price": 0,
+          "name": "Verified",
+          "sku": null,
+          "slug": "Verified",
+          "suggested_prices": ""
+        }
+      ],
+      "course_start": "2015-01-08T14:00:00Z",
+      "enrollment_end": "2015-05-10T23:59:00Z",
+      "enrollment_start": null,
+      "invite_only": false
+    },
+    "created": "2016-01-27T18:10:35Z",
+    "is_active": true,
+    "mode": "Verified",
+    "user": "staff"
+  }
 ]

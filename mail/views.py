@@ -25,10 +25,12 @@ from mail.api import (
 )
 from mail.exceptions import SendBatchException
 from mail.models import AutomaticEmail, PartnerSchool
-from mail.permissions import (MailGunWebHookPermission,
-                              UserCanMessageCourseTeamPermission,
-                              UserCanMessageLearnersPermission,
-                              UserCanMessageSpecificLearnerPermission)
+from mail.permissions import (
+    MailGunWebHookPermission,
+    UserCanMessageCourseTeamPermission,
+    UserCanMessageLearnersPermission,
+    UserCanMessageSpecificLearnerPermission,
+)
 from mail.serializers import AutomaticEmailSerializer, GenericMailSerializer
 from mail.utils import generate_mailgun_response_json, get_email_footer
 from profiles.models import Profile
@@ -43,12 +45,16 @@ class LearnerMailView(GenericAPIView):
     """
     View class that handles HTTP requests to learner mail API
     """
+
     serializer_class = GenericMailSerializer
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, UserCanMessageSpecificLearnerPermission, )
+    permission_classes = (
+        permissions.IsAuthenticated,
+        UserCanMessageSpecificLearnerPermission,
+    )
     lookup_field = "student_id"
     lookup_url_kwarg = "student_id"
     queryset = Profile.objects.all()
@@ -62,15 +68,15 @@ class LearnerMailView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         mailgun_response = MailgunClient.send_individual_email(
-            subject=request.data['email_subject'],
-            body=request.data['email_body'],
+            subject=request.data["email_subject"],
+            body=request.data["email_body"],
             recipient=recipient_user.email,
             sender_address=sender_user.email,
             sender_name=sender_user.profile.display_name,
         )
         return Response(
             status=mailgun_response.status_code,
-            data=generate_mailgun_response_json(mailgun_response)
+            data=generate_mailgun_response_json(mailgun_response),
         )
 
 
@@ -78,15 +84,19 @@ class AutomaticEmailView(ListAPIView, UpdateModelMixin, GenericViewSet):
     """
     View class that deals with listing and editing automatic mails
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, )
+    permission_classes = (
+        permissions.IsAuthenticated,
+        UserCanMessageLearnersPermission,
+    )
     serializer_class = AutomaticEmailSerializer
     lookup_field = "id"
     lookup_url_kwarg = "email_id"
-    lookup_value_regex = r'[-\w.]+'
+    lookup_value_regex = r"[-\w.]+"
 
     def get_queryset(self):
         """Get the queryset which should be serialized"""
@@ -98,9 +108,7 @@ def _make_batch_response_dict(response, exception):
     Helper function to format a portion of a batch response
     """
     if exception is not None:
-        return {
-            "data": str(exception)
-        }
+        return {"data": str(exception)}
     return {
         "status_code": response.status_code,
         "data": generate_mailgun_response_json(response),
@@ -111,30 +119,36 @@ class SearchResultMailView(APIView):
     """
     View class that handles HTTP requests to search results mail API
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, )
+    permission_classes = (
+        permissions.IsAuthenticated,
+        UserCanMessageLearnersPermission,
+    )
 
     def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
         POST method handler
         """
-        email_subject = request.data['email_subject']
-        email_body = request.data['email_body'] + get_email_footer(request.build_absolute_uri('/settings'))
+        email_subject = request.data["email_subject"]
+        email_body = request.data["email_body"] + get_email_footer(
+            request.build_absolute_uri("/settings")
+        )
         sender_name = full_name(request.user)
         search_obj = create_search_obj(
             request.user,
-            search_param_dict=request.data.get('search_request'),
-            filter_on_email_optin=True
+            search_param_dict=request.data.get("search_request"),
+            filter_on_email_optin=True,
         )
         emails = get_all_query_matching_emails(search_obj)
 
-        if request.data.get('send_automatic_emails'):
+        if request.data.get("send_automatic_emails"):
             automatic_email = add_automatic_email(
                 search_obj,
-                email_subject=request.data['email_subject'],
+                email_subject=request.data["email_subject"],
                 email_body=email_body,
                 sender_name=sender_name,
                 staff_user=request.user,
@@ -144,15 +158,24 @@ class SearchResultMailView(APIView):
                 with mark_emails_as_sent(automatic_email, emails) as user_ids:
                     # user_ids should be all users with the matching email in emails
                     # except some who were already sent email in the meantime
-                    recipient_emails = list(User.objects.filter(id__in=user_ids).values_list('email', flat=True))
+                    recipient_emails = list(
+                        User.objects.filter(id__in=user_ids).values_list(
+                            "email", flat=True
+                        )
+                    )
                     MailgunClient.send_batch(
                         subject=email_subject,
                         body=email_body,
-                        recipients=((context['email'], context) for context in get_mail_vars(recipient_emails)),
+                        recipients=(
+                            (context["email"], context)
+                            for context in get_mail_vars(recipient_emails)
+                        ),
                         sender_name=sender_name,
                     )
             except SendBatchException as send_batch_exception:
-                success_emails = set(emails).difference(send_batch_exception.failed_recipient_emails)
+                success_emails = set(emails).difference(
+                    send_batch_exception.failed_recipient_emails
+                )
                 with mark_emails_as_sent(automatic_email, success_emails):
                     pass
                 raise
@@ -161,7 +184,9 @@ class SearchResultMailView(APIView):
             MailgunClient.send_batch(
                 subject=email_subject,
                 body=email_body,
-                recipients=((context['email'], context) for context in get_mail_vars(emails)),
+                recipients=(
+                    (context["email"], context) for context in get_mail_vars(emails)
+                ),
                 sender_name=sender_name,
             )
 
@@ -172,12 +197,16 @@ class CourseTeamMailView(GenericAPIView):
     """
     View class that handles HTTP requests to course team mail API
     """
+
     serializer_class = GenericMailSerializer
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, UserCanMessageCourseTeamPermission)
+    permission_classes = (
+        permissions.IsAuthenticated,
+        UserCanMessageCourseTeamPermission,
+    )
     lookup_field = "id"
     lookup_url_kwarg = "course_id"
     queryset = Course.objects.all()
@@ -193,12 +222,12 @@ class CourseTeamMailView(GenericAPIView):
         mailgun_response = MailgunClient.send_course_team_email(
             user=user,
             course=course,
-            subject=serializer.data['email_subject'],
-            body=serializer.data['email_body']
+            subject=serializer.data["email_subject"],
+            body=serializer.data["email_body"],
         )
         return Response(
             status=mailgun_response.status_code,
-            data=generate_mailgun_response_json(mailgun_response)
+            data=generate_mailgun_response_json(mailgun_response),
         )
 
 
@@ -206,11 +235,12 @@ class GradesRecordMailView(GenericAPIView):
     """
     View for sending program grades emails to partner schools
     """
+
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     )
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
     lookup_field = "id"
     lookup_url_kwarg = "partner_id"
     queryset = PartnerSchool.objects.all()
@@ -221,37 +251,40 @@ class GradesRecordMailView(GenericAPIView):
         """
         sender_user = request.user
         school = self.get_object()
-        enrollment = get_object_or_404(ProgramEnrollment, share_hash=request.data['enrollment_hash'])
+        enrollment = get_object_or_404(
+            ProgramEnrollment, share_hash=request.data["enrollment_hash"]
+        )
         mailgun_response = MailgunClient.send_individual_email(
             subject="MicroMasters Program Record",
             body=render_to_string(
-                'grades_record_email.html',
+                "grades_record_email.html",
                 {
-                    'user_full_name': sender_user.profile.full_name,
-                    'pathway_name': school.name,
-                    'program_name': enrollment.program.title,
-                    'record_link': request.build_absolute_uri(
-                        reverse("shared_grade_records", kwargs={
+                    "user_full_name": sender_user.profile.full_name,
+                    "pathway_name": school.name,
+                    "program_name": enrollment.program.title,
+                    "record_link": request.build_absolute_uri(
+                        reverse(
+                            "shared_grade_records",
+                            kwargs={
                                 "enrollment_id": enrollment.id,
-                                "record_share_hash": enrollment.share_hash
-                            }
+                                "record_share_hash": enrollment.share_hash,
+                            },
                         )
                     ),
-                }),
+                },
+            ),
             recipient=school.email,
             sender_address=sender_user.email,
             sender_name=sender_user.profile.display_name,
         )
         if mailgun_response.status_code == 200:
             _ = MicromastersLearnerRecordShare.objects.get_or_create(
-                user=sender_user,
-                program=enrollment.program,
-                partner_school=school
+                user=sender_user, program=enrollment.program, partner_school=school
             )
 
         return Response(
             status=mailgun_response.status_code,
-            data=generate_mailgun_response_json(mailgun_response)
+            data=generate_mailgun_response_json(mailgun_response),
         )
 
 
@@ -259,7 +292,8 @@ class MailWebhookView(APIView):
     """
     View class that handles Mailgun webhooks
     """
-    permission_classes = (MailGunWebHookPermission, )
+
+    permission_classes = (MailGunWebHookPermission,)
 
     def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
@@ -270,9 +304,7 @@ class MailWebhookView(APIView):
         error = request.POST.get("error", None)
         message_headers = request.POST.get("message-headers", None)
         log_error_on_bounce = request.POST.get("log_error_on_bounce", "")
-        error_msg = (
-            f"Webhook event {event} received by Mailgun for recipient {recipient}: {error} {message_headers}"
-        )
+        error_msg = f"Webhook event {event} received by Mailgun for recipient {recipient}: {error} {message_headers}"
 
         if log_error_on_bounce.lower() == "true" and event == "bounced":
             log.error(error_msg)

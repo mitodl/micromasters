@@ -15,24 +15,27 @@ from search import api
 from search.api import document_needs_updating as _document_needs_updating
 from search.connection import get_conn, make_alias_name
 from search.exceptions import ReindexException, RetryException
-from search.indexing_api import (_get_percolate_documents, _index_chunks,
-                                 create_backing_indices,
-                                 delete_backing_indices)
-from search.indexing_api import \
-    delete_percolate_query as _delete_percolate_query
-from search.indexing_api import \
-    index_percolate_queries as _index_percolate_queries
-from search.indexing_api import \
-    index_program_enrolled_users as _index_program_enrolled_users
-from search.indexing_api import \
-    refresh_all_default_indices as _refresh_all_default_indices
+from search.indexing_api import (
+    _get_percolate_documents,
+    _index_chunks,
+    create_backing_indices,
+    delete_backing_indices,
+)
+from search.indexing_api import delete_percolate_query as _delete_percolate_query
+from search.indexing_api import index_percolate_queries as _index_percolate_queries
+from search.indexing_api import (
+    index_program_enrolled_users as _index_program_enrolled_users,
+)
+from search.indexing_api import (
+    refresh_all_default_indices as _refresh_all_default_indices,
+)
 from search.indexing_api import refresh_index
-from search.indexing_api import \
-    remove_program_enrolled_user as _remove_program_enrolled_user
+from search.indexing_api import (
+    remove_program_enrolled_user as _remove_program_enrolled_user,
+)
 from search.models import PercolateQuery
 
 # The imports which are prefixed with _ are mocked to be ignored in MockedESTestCase
-
 
 
 log = logging.getLogger(__name__)
@@ -50,7 +53,9 @@ def post_indexing_handler(program_enrollments):
         try:
             _send_automatic_emails(program_enrollment)
         except:  # pylint: disable=bare-except
-            log.exception("Error sending automatic email for enrollment %s", program_enrollment)
+            log.exception(
+                "Error sending automatic email for enrollment %s", program_enrollment
+            )
 
 
 @app.task
@@ -72,7 +77,9 @@ def index_program_enrolled_users(program_enrollment_ids):
     Args:
         program_enrollment_ids (list of int): A list of program enrollment ids
     """
-    program_enrollments = ProgramEnrollment.objects.filter(id__in=program_enrollment_ids)
+    program_enrollments = ProgramEnrollment.objects.filter(
+        id__in=program_enrollment_ids
+    )
     _index_program_enrolled_users(program_enrollments)
 
     # Send email for profiles that newly fit the search query for an automatic email
@@ -94,7 +101,9 @@ def index_users(user_ids, check_if_changed=False):
 
     if check_if_changed:
         enrollments = [
-            enrollment for enrollment in enrollments if _document_needs_updating(enrollment)
+            enrollment
+            for enrollment in enrollments
+            if _document_needs_updating(enrollment)
         ]
 
     if len(enrollments) > 0:
@@ -113,7 +122,11 @@ def index_percolate_queries(percolate_query_ids):
         percolate_query_ids (iterable of int):
             Database ids for PercolateQuery instances to index
     """
-    _index_percolate_queries(PercolateQuery.objects.filter(id__in=percolate_query_ids).exclude(is_deleted=True))
+    _index_percolate_queries(
+        PercolateQuery.objects.filter(id__in=percolate_query_ids).exclude(
+            is_deleted=True
+        )
+    )
 
 
 @app.task
@@ -140,8 +153,11 @@ def populate_query_memberships(percolate_query_id):
 
 # pylint: disable=inconsistent-return-statements
 @app.task(autoretry_for=(RetryException,), retry_backoff=True, rate_limit="600/m")
-def bulk_index_program_enrollments(program_enrollment_ids, enrollment_public_backing_index,
-                                   enrollment_private_backing_index):
+def bulk_index_program_enrollments(
+    program_enrollment_ids,
+    enrollment_public_backing_index,
+    enrollment_private_backing_index,
+):
     """
     Bulk index user enrollments for provided program enrollment Ids
 
@@ -152,7 +168,9 @@ def bulk_index_program_enrollments(program_enrollment_ids, enrollment_public_bac
     """
 
     try:
-        program_enrollments = ProgramEnrollment.objects.filter(id__in=program_enrollment_ids)
+        program_enrollments = ProgramEnrollment.objects.filter(
+            id__in=program_enrollment_ids
+        )
         log.info("Indexing %d program enrollments...", program_enrollments.count())
         _index_program_enrolled_users(
             program_enrollments,
@@ -178,10 +196,15 @@ def bulk_index_percolate_queries(percolate_ids, percolate_backing_index):
         percolate_ids (list of int): Ids of percolates queries to index
     """
     try:
-        percolates = PercolateQuery.objects.filter(id__in=percolate_ids).exclude(is_deleted=True)
+        percolates = PercolateQuery.objects.filter(id__in=percolate_ids).exclude(
+            is_deleted=True
+        )
         log.info("Indexing %d percolator queries...", percolates.count())
 
-        _index_chunks(_get_percolate_documents(percolates.iterator()), index=percolate_backing_index)
+        _index_chunks(
+            _get_percolate_documents(percolates.iterator()),
+            index=percolate_backing_index,
+        )
     except (RetryException, Ignore):
         raise
     except:  # pylint: disable=bare-except
@@ -207,7 +230,9 @@ def start_recreate_index(self, backing_indices=None):
 
         index_tasks = []
         index_tasks = index_tasks + [
-            bulk_index_program_enrollments.si(enrollment_ids, backing_index_tuples[0][0], backing_index_tuples[1][0])
+            bulk_index_program_enrollments.si(
+                enrollment_ids, backing_index_tuples[0][0], backing_index_tuples[1][0]
+            )
             for enrollment_ids in chunks(
                 ProgramEnrollment.objects.order_by("id").values_list("id", flat=True),
                 chunk_size=settings.OPENSEARCH_INDEXING_CHUNK_SIZE,
@@ -250,30 +275,36 @@ def finish_recreate_index(results, backing_indices):
     conn = get_conn(verify=False)
 
     # Point default alias to new index and delete the old backing index, if any
-    log.info("Done with temporary index. Pointing default aliases to newly created backing indexes...")
+    log.info(
+        "Done with temporary index. Pointing default aliases to newly created backing indexes..."
+    )
     for new_backing_index, index_type in backing_indices:
         actions = []
         old_backing_indexes = []
         default_alias = make_alias_name(index_type, is_reindexing=False)
         if conn.indices.exists_alias(name=default_alias):
             # Should only be one backing index in normal circumstances
-            old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
+            old_backing_indexes = list(
+                conn.indices.get_alias(name=default_alias).keys()
+            )
             for index in old_backing_indexes:
-                actions.append({
-                    "remove": {
-                        "index": index,
-                        "alias": default_alias,
+                actions.append(
+                    {
+                        "remove": {
+                            "index": index,
+                            "alias": default_alias,
+                        }
                     }
-                })
-        actions.append({
-            "add": {
-                "index": new_backing_index,
-                "alias": default_alias,
-            },
-        })
-        conn.indices.update_aliases({
-            "actions": actions
-        })
+                )
+        actions.append(
+            {
+                "add": {
+                    "index": new_backing_index,
+                    "alias": default_alias,
+                },
+            }
+        )
+        conn.indices.update_aliases({"actions": actions})
         refresh_index(new_backing_index)
         for index in old_backing_indexes:
             conn.indices.delete(index)

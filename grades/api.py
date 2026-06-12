@@ -13,9 +13,14 @@ from dashboard.models import CachedCurrentGrade, CachedEnrollment
 from dashboard.utils import get_mmtrack
 from grades.constants import COURSE_GRADE_WEIGHT, EXAM_GRADE_WEIGHT
 from grades.exceptions import FreezeGradeFailedException
-from grades.models import (CombinedFinalGrade, FinalGrade, FinalGradeStatus,
-                           MicromastersProgramCertificate,
-                           MicromastersProgramCommendation, ProctoredExamGrade)
+from grades.models import (
+    CombinedFinalGrade,
+    FinalGrade,
+    FinalGradeStatus,
+    MicromastersProgramCertificate,
+    MicromastersProgramCommendation,
+    ProctoredExamGrade,
+)
 
 User = get_user_model()
 
@@ -23,7 +28,7 @@ CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
 
 log = logging.getLogger(__name__)
 
-UserFinalGrade = namedtuple('UserFinalGrade', ['grade', 'passed', 'payed_on_edx'])
+UserFinalGrade = namedtuple("UserFinalGrade", ["grade", "passed", "payed_on_edx"])
 
 
 def _compute_grade_for_fa(user_edx_run_data):
@@ -38,12 +43,12 @@ def _compute_grade_for_fa(user_edx_run_data):
             of the user in the course run and whether she passed it
     """
     run_passed = user_edx_run_data.current_grade.passed
-    payed_on_edx = user_edx_run_data.enrollment.mode in ['verified', 'honor']
+    payed_on_edx = user_edx_run_data.enrollment.mode in ["verified", "honor"]
     # making sure the grade is a float
     try:
         grade = float(user_edx_run_data.current_grade.percent)
     except (ValueError, TypeError):
-        grade = 0.
+        grade = 0.0
     return UserFinalGrade(grade=grade, passed=run_passed, payed_on_edx=payed_on_edx)
 
 
@@ -61,16 +66,19 @@ def _compute_grade_for_non_fa(user_edx_run_data):
             of the user in the course run and whether she passed it
     """
     if user_edx_run_data.certificate is not None:
-        run_passed = user_edx_run_data.certificate.status == 'downloadable'
-        payed_on_edx = user_edx_run_data.certificate.certificate_type in ['honor', 'verified']
+        run_passed = user_edx_run_data.certificate.status == "downloadable"
+        payed_on_edx = user_edx_run_data.certificate.certificate_type in [
+            "honor",
+            "verified",
+        ]
     else:
         run_passed = False
-        payed_on_edx = user_edx_run_data.enrollment.mode in ['honor', 'verified']
+        payed_on_edx = user_edx_run_data.enrollment.mode in ["honor", "verified"]
     # making sure the grade is a float
     try:
         grade = float(user_edx_run_data.current_grade.percent)
     except (ValueError, TypeError):
-        grade = 0.
+        grade = 0.0
     return UserFinalGrade(grade=grade, passed=run_passed, payed_on_edx=payed_on_edx)
 
 
@@ -88,7 +96,11 @@ def _get_compute_func(course_run):
     Returns:
         function: a function to be called to compute the final grade
     """
-    return _compute_grade_for_fa if course_run.course.has_exam else _compute_grade_for_non_fa
+    return (
+        _compute_grade_for_fa
+        if course_run.course.has_exam
+        else _compute_grade_for_non_fa
+    )
 
 
 def get_final_grade(user, course_run):
@@ -129,7 +141,9 @@ def get_users_without_frozen_final_grade(course_run):
     )
     # get all the users with already frozen final grade
     users_already_processed = set(FinalGrade.get_frozen_users(course_run))
-    return User.objects.filter(pk__in=users_in_cache.difference(users_already_processed))
+    return User.objects.filter(
+        pk__in=users_in_cache.difference(users_already_processed)
+    )
 
 
 def freeze_user_final_grade(user, course_run, raise_on_exception=False):
@@ -149,7 +163,8 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
         if not raise_on_exception:
             log.info(
                 'The grade for user "%s" course "%s" cannot be frozen yet',
-                user.username, course_run.edx_course_key
+                user.username,
+                course_run.edx_course_key,
             )
             return None
         else:
@@ -158,15 +173,19 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
             )
     # update one last time the user's certificates and current grades
     try:
-        CachedEdxDataApi.update_all_cached_grade_data(user, course_run.courseware_backend)
+        CachedEdxDataApi.update_all_cached_grade_data(
+            user, course_run.courseware_backend
+        )
     except Exception as ex:  # pylint: disable=broad-except
         con = get_redis_connection("redis")
-        con.lpush(CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id)
+        con.lpush(
+            CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id
+        )
         if not raise_on_exception:
             log.exception(
                 'Impossible to refresh the edX cache for user "%s" in course %s',
                 user.username,
-                course_run.edx_course_key
+                course_run.edx_course_key,
             )
             return None
         else:
@@ -179,10 +198,15 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
     except Exception as ex:  # pylint: disable=broad-except
         # If user doesn't have a grade no need to freeze
         con = get_redis_connection("redis")
-        con.lpush(CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id)
+        con.lpush(
+            CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id
+        )
         if not raise_on_exception:
             log.exception(
-                'Impossible to get final grade for user "%s" in course %s', user.username, course_run.edx_course_key)
+                'Impossible to get final grade for user "%s" in course %s',
+                user.username,
+                course_run.edx_course_key,
+            )
             return None
         else:
             raise FreezeGradeFailedException(
@@ -196,7 +220,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
         grade=final_grade.grade,
         passed=final_grade.passed,
         status=FinalGradeStatus.COMPLETE,
-        course_run_paid_on_edx=final_grade.payed_on_edx
+        course_run_paid_on_edx=final_grade.payed_on_edx,
     )
     return final_grade_obj
 
@@ -211,15 +235,19 @@ def generate_program_certificate(user, program):
         program (programs.models.Program): program where the user is enrolled.
     """
 
-    if MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
-        log.warning('User [%s] already has a certificate for program [%s]', user, program)
+    if MicromastersProgramCertificate.objects.filter(
+        user=user, program=program
+    ).exists():
+        log.warning(
+            "User [%s] already has a certificate for program [%s]", user, program
+        )
         return
     if completed_program(user, program):
         MicromastersProgramCertificate.objects.create(user=user, program=program)
         log.info(
-            'Created MM program certificate for [%s] in program [%s]',
+            "Created MM program certificate for [%s] in program [%s]",
             user.username,
-            program.title
+            program.title,
         )
 
 
@@ -237,14 +265,20 @@ def completed_program(user, program):
     """
     mmtrack = get_mmtrack(user, program)
     for electives_set in ElectivesSet.objects.filter(program=program):
-        elective_courses_id = set(electives_set.electivecourse_set.all().values_list('course__id', flat=True))
+        elective_courses_id = set(
+            electives_set.electivecourse_set.all().values_list("course__id", flat=True)
+        )
 
         # each elective set should be fulfilled
-        if electives_set.required_number > mmtrack.get_number_of_passed_courses(elective_courses_id):
+        if electives_set.required_number > mmtrack.get_number_of_passed_courses(
+            elective_courses_id
+        ):
             return False
 
     # filtering out the courses that are not elective
-    core_courses_ids = set(program.course_set.filter(electivecourse=None).values_list('id', flat=True))
+    core_courses_ids = set(
+        program.course_set.filter(electivecourse=None).values_list("id", flat=True)
+    )
 
     # checking all core courses are passed
     if len(core_courses_ids) > mmtrack.get_number_of_passed_courses(core_courses_ids):
@@ -265,18 +299,21 @@ def generate_program_letter(user, program):
         user (User): a Django user.
         program (programs.models.Program): program where the user is enrolled.
     """
-    if MicromastersProgramCommendation.objects.filter(user=user, program=program, is_active=True).exists():
-        log.info('User [%s] already has a letter for program [%s]', user, program)
+    if MicromastersProgramCommendation.objects.filter(
+        user=user, program=program, is_active=True
+    ).exists():
+        log.info("User [%s] already has a letter for program [%s]", user, program)
         return
 
     if completed_program(user, program):
-        _, created = MicromastersProgramCommendation.objects.update_or_create(user=user, program=program,
-                                                                              defaults={"is_active": True})
+        _, created = MicromastersProgramCommendation.objects.update_or_create(
+            user=user, program=program, defaults={"is_active": True}
+        )
         log.info(
-            '[%s] MM program letter for [%s] in program [%s]',
-            'Created' if created else 'Activated',
+            "[%s] MM program letter for [%s] in program [%s]",
+            "Created" if created else "Activated",
             user.username,
-            program.title
+            program.title,
         )
 
 
@@ -293,19 +330,23 @@ def update_or_create_combined_final_grade(user, course):
     mmtrack = get_mmtrack(user, course.program)
     final_grade = mmtrack.get_best_final_grade_for_course(course)
     if final_grade is None:
-        log.warning('User [%s] does not have a final for course [%s]', user, course)
+        log.warning("User [%s] does not have a final for course [%s]", user, course)
         return
 
     best_exam = mmtrack.get_best_proctored_exam_grade(course)
     if best_exam is None:
-        log.warning('User [%s] does not have a passing exam grade for course [%s]', user, course)
+        log.warning(
+            "User [%s] does not have a passing exam grade for course [%s]", user, course
+        )
         return
 
-    calculated_grade = round(final_grade.grade_percent * COURSE_GRADE_WEIGHT + best_exam.score * EXAM_GRADE_WEIGHT, 1)
+    calculated_grade = round(
+        final_grade.grade_percent * COURSE_GRADE_WEIGHT
+        + best_exam.score * EXAM_GRADE_WEIGHT,
+        1,
+    )
     combined_grade, _ = CombinedFinalGrade.objects.update_or_create(
-        user=user,
-        course=course,
-        defaults={'grade': calculated_grade}
+        user=user, course=course, defaults={"grade": calculated_grade}
     )
     combined_grade.save_and_log(None)
 
@@ -318,10 +359,14 @@ def update_existing_combined_final_grade_for_exam_run(exam_run):
     Args:
         exam_run (ExamRun): an exam run that was updated
     """
-    users_with_grade = set(CombinedFinalGrade.objects.filter(course=exam_run.course).values_list('user', flat=True))
+    users_with_grade = set(
+        CombinedFinalGrade.objects.filter(course=exam_run.course).values_list(
+            "user", flat=True
+        )
+    )
     exam_grades = ProctoredExamGrade.objects.filter(
         exam_run=exam_run, user_id__in=users_with_grade
-    ).select_related('user')
+    ).select_related("user")
 
     for exam_grade in exam_grades:
         update_or_create_combined_final_grade(exam_grade.user, exam_run.course)

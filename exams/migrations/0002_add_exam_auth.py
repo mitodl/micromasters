@@ -6,34 +6,88 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0021_add_exam_codes'),
+        ("courses", "0021_add_exam_codes"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('exams', '0001_add_exam_profile'),
+        ("exams", "0001_add_exam_profile"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ExamAuthorization',
+            name="ExamAuthorization",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(auto_now_add=True)),
-                ('updated_on', models.DateTimeField(auto_now=True)),
-                ('operation', models.CharField(choices=[('add', 'Add'), ('update', 'Update'), ('delete', 'Delete')], default='add', max_length=30)),
-                ('status', models.CharField(choices=[('pending', 'Sync Pending'), ('in-progress', 'Sync in Progress'), ('failed', 'Sync Failed'), ('success', 'Sync Suceeded')], default='pending', max_length=30)),
-                ('date_first_eligible', models.DateField()),
-                ('date_last_eligible', models.DateField()),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exam_authorizations', to='courses.Course')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exam_authorizations', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("updated_on", models.DateTimeField(auto_now=True)),
+                (
+                    "operation",
+                    models.CharField(
+                        choices=[
+                            ("add", "Add"),
+                            ("update", "Update"),
+                            ("delete", "Delete"),
+                        ],
+                        default="add",
+                        max_length=30,
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Sync Pending"),
+                            ("in-progress", "Sync in Progress"),
+                            ("failed", "Sync Failed"),
+                            ("success", "Sync Suceeded"),
+                        ],
+                        default="pending",
+                        max_length=30,
+                    ),
+                ),
+                ("date_first_eligible", models.DateField()),
+                ("date_last_eligible", models.DateField()),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exam_authorizations",
+                        to="courses.Course",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="exam_authorizations",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AlterField(
-            model_name='examprofile',
-            name='status',
-            field=models.CharField(choices=[('pending', 'Sync Pending'), ('in-progress', 'Sync in Progress'), ('failed', 'Sync Failed'), ('success', 'Sync Succeeded'), ('invalid', 'Profile Invalid')], default='pending', max_length=30),
+            model_name="examprofile",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("pending", "Sync Pending"),
+                    ("in-progress", "Sync in Progress"),
+                    ("failed", "Sync Failed"),
+                    ("success", "Sync Succeeded"),
+                    ("invalid", "Profile Invalid"),
+                ],
+                default="pending",
+                max_length=30,
+            ),
         ),
     ]

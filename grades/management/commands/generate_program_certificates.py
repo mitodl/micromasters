@@ -12,6 +12,7 @@ class Command(BaseCommand):
     """
     Finds all completed programs
     """
+
     help = "Finds all users that completed the program"
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument

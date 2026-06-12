@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('exams', '0014_examauthorization_exam_no_show'),
+        ("exams", "0014_examauthorization_exam_no_show"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='examrun',
-            name='description',
+            model_name="examrun",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='examrun',
-            name='semester',
+            model_name="examrun",
+            name="semester",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
     ]

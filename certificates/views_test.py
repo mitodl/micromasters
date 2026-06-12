@@ -7,18 +7,23 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from cms.factories import (CourseCertificateSignatoriesFactory, ImageFactory,
-                           ProgramCertificateSignatoriesFactory,
-                           ProgramLetterSignatoryFactory)
+from cms.factories import (
+    CourseCertificateSignatoriesFactory,
+    ImageFactory,
+    ProgramCertificateSignatoriesFactory,
+    ProgramLetterSignatoryFactory,
+)
 from dashboard.factories import ProgramEnrollmentFactory
-from grades.factories import (MicromastersCourseCertificateFactory,
-                              MicromastersProgramCertificateFactory,
-                              MicromastersProgramCommendationFactory)
+from grades.factories import (
+    MicromastersCourseCertificateFactory,
+    MicromastersProgramCertificateFactory,
+    MicromastersProgramCommendationFactory,
+)
 from micromasters.factories import UserFactory
 from micromasters.utils import is_subset_dict
 
 pytestmark = [
-    pytest.mark.usefixtures('mocked_opensearch'),
+    pytest.mark.usefixtures("mocked_opensearch"),
     pytest.mark.django_db,
 ]
 
@@ -35,22 +40,34 @@ def program_certificate_url(certificate_hash):
 
 def program_letter_url(letter_uuid):
     """Helper method to generate a letter URL"""
-    return reverse('program_letter', args=[letter_uuid])
+    return reverse("program_letter", args=[letter_uuid])
 
 
 def test_bad_cert_hash_404(client):
     """Test that a request for a non-existent certificate results in a 404"""
-    assert client.get(certificate_url('not-a-certificate-hash')).status_code == status.HTTP_404_NOT_FOUND
-    assert client.get(program_certificate_url('not-a-certificate-hash')).status_code == status.HTTP_404_NOT_FOUND
+    assert (
+        client.get(certificate_url("not-a-certificate-hash")).status_code
+        == status.HTTP_404_NOT_FOUND
+    )
+    assert (
+        client.get(program_certificate_url("not-a-certificate-hash")).status_code
+        == status.HTTP_404_NOT_FOUND
+    )
 
 
 def test_no_signatories_404(client):
     """Test that a 404 is returned for a request for a certificate that has no signatories set for the course"""
     certificate = MicromastersCourseCertificateFactory.create()
-    assert client.get(certificate_url(certificate.hash)).status_code == status.HTTP_404_NOT_FOUND
+    assert (
+        client.get(certificate_url(certificate.hash)).status_code
+        == status.HTTP_404_NOT_FOUND
+    )
 
     certificate = MicromastersProgramCertificateFactory.create()
-    assert client.get(program_certificate_url(certificate.hash)).status_code == status.HTTP_404_NOT_FOUND
+    assert (
+        client.get(program_certificate_url(certificate.hash)).status_code
+        == status.HTTP_404_NOT_FOUND
+    )
 
 
 def test_valid_certificate_200(client):
@@ -61,35 +78,41 @@ def test_valid_certificate_200(client):
     assert resp.status_code == status.HTTP_200_OK
     assert is_subset_dict(
         {
-            'certificate_hash': certificate.hash,
-            'course_title': certificate.course.title,
-            'program_title': certificate.course.program.title,
-            'name': certificate.user.profile.full_name,
-            'signatories': [signatory],
-            'certificate': certificate
+            "certificate_hash": certificate.hash,
+            "course_title": certificate.course.title,
+            "program_title": certificate.course.program.title,
+            "name": certificate.user.profile.full_name,
+            "signatories": [signatory],
+            "certificate": certificate,
         },
-        resp.context_data
+        resp.context_data,
     )
-    assert reverse('certificate', args=[certificate.hash]) in resp.content.decode('utf-8')
+    assert reverse("certificate", args=[certificate.hash]) in resp.content.decode(
+        "utf-8"
+    )
 
 
 def test_valid_program_certificate_200(client):
     """Test that a request for a valid program certificate with signatories results in a 200"""
     certificate = MicromastersProgramCertificateFactory.create()
-    signatory = ProgramCertificateSignatoriesFactory.create(program_page__program=certificate.program)
+    signatory = ProgramCertificateSignatoriesFactory.create(
+        program_page__program=certificate.program
+    )
     resp = client.get(program_certificate_url(certificate.hash))
     assert resp.status_code == status.HTTP_200_OK
     assert is_subset_dict(
         {
-            'certificate_hash': certificate.hash,
-            'program_title': certificate.program.title,
-            'name': certificate.user.profile.full_name,
-            'signatories': [signatory],
-            'certificate': certificate
+            "certificate_hash": certificate.hash,
+            "program_title": certificate.program.title,
+            "name": certificate.user.profile.full_name,
+            "signatories": [signatory],
+            "certificate": certificate,
         },
-        resp.context_data
+        resp.context_data,
     )
-    assert reverse('program-certificate', args=[certificate.hash]) in resp.content.decode('utf-8')
+    assert reverse(
+        "program-certificate", args=[certificate.hash]
+    ) in resp.content.decode("utf-8")
 
 
 def test_program_record_anonymously(client):
@@ -117,15 +140,13 @@ def test_program_record(client):
     assert resp.status_code == status.HTTP_200_OK
     assert is_subset_dict(
         {
-            'is_public': False,
-            'is_owner': True,
-            'program_title': enrollment.program.title,
-            'program_status': 'partially',
-            'profile': {
-                'username': enrollment.user.username
-            }
+            "is_public": False,
+            "is_owner": True,
+            "program_title": enrollment.program.title,
+            "program_status": "partially",
+            "profile": {"username": enrollment.user.username},
         },
-        resp.context_data
+        resp.context_data,
     )
 
 
@@ -147,7 +168,9 @@ def test_program_letter_without_logo(client):
 def test_program_letter_without_text(client):
     """Verify that view returns 404 if no letter text available."""
     letter = MicromastersProgramCommendationFactory.create()
-    signatory = ProgramLetterSignatoryFactory.create(program_page__program=letter.program)
+    signatory = ProgramLetterSignatoryFactory.create(
+        program_page__program=letter.program
+    )
     program_letter_logo = ImageFactory()
     signatory.program_page.program_letter_logo = program_letter_logo
     signatory.program_page.save()
@@ -184,15 +207,13 @@ def test_valid_program_letter(client):
     assert resp.status_code == status.HTTP_200_OK
     assert is_subset_dict(
         {
-            'program_title': program.title,
-            'letter_logo': program_letter_logo,
-            'name': letter.user.profile.full_name,
-            'letter_text': program_letter_text,
-            'signatories': [signatory],
-            'letter': letter,
-
+            "program_title": program.title,
+            "letter_logo": program_letter_logo,
+            "name": letter.user.profile.full_name,
+            "letter_text": program_letter_text,
+            "signatories": [signatory],
+            "letter": letter,
         },
-
-        resp.context_data
+        resp.context_data,
     )
-    assert reverse('program_letter', args=[letter.uuid]) in resp.content.decode('utf-8')
+    assert reverse("program_letter", args=[letter.uuid]) in resp.content.decode("utf-8")

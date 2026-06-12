@@ -1,4 +1,5 @@
-.profile-form, .dialog {
+.profile-form,
+.dialog {
   &.collapsed {
     padding: 20px 24px 20px;
     height: 100px;
@@ -20,12 +21,14 @@
     font-weight: 400;
   }
 
-  label.react-select-label, legend {
+  label.react-select-label,
+  legend {
     display: block;
     font-size: 13px;
     color: rgba(0, 0, 0, 0.5);
 
-    .Select-value, .Select-multi-value-wrapper {
+    .Select-value,
+    .Select-multi-value-wrapper {
       font-size: 16px;
     }
   }
@@ -37,7 +40,7 @@
     font-weight: 600;
   }
 
-  [data-id='tooltip'] {
+  [data-id="tooltip"] {
     max-width: 450px;
     font-size: 14px;
   }
@@ -46,7 +49,7 @@
     color: $link-text;
     cursor: pointer;
     display: inline-block;
-    margin-left: .5em;
+    margin-left: 0.5em;
   }
 
   .input-text {
@@ -89,7 +92,6 @@
   }
 
   .dialog-title {
-
     h2 {
       font-size: 22px;
       line-height: 32px;

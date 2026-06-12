@@ -5,13 +5,12 @@ from django.db import migrations
 
 def mark_all_fake_profiles(apps, schema_editor):
     Profile = apps.get_model("profiles", "Profile")
-    Profile.objects.filter(user__username__startswith='fake.').update(fake_user=True)
+    Profile.objects.filter(user__username__startswith="fake.").update(fake_user=True)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('profiles', '0035_profile_fake_user'),
+        ("profiles", "0035_profile_fake_user"),
     ]
 
     operations = [

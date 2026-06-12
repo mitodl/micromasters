@@ -2,9 +2,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('financialaid', '0018_alter_audit_nullability'),
+        ("financialaid", "0018_alter_audit_nullability"),
     ]
 
     operations = [
