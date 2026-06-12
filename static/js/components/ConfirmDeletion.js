@@ -30,7 +30,7 @@ export default class ConfirmDeletion extends React.Component {
     return (
       <Dialog
         classes={{
-          root: "deletion-confirmation-dialog-wrapper",
+          root:  "deletion-confirmation-dialog-wrapper",
           paper: "dialog deletion-confirmation-dialog",
         }}
         open={open}

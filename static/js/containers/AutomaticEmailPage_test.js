@@ -29,8 +29,8 @@ describe("AutomaticEmailPage", () => {
 
     SETTINGS.roles = [
       {
-        role: "staff",
-        program: 1,
+        role:        "staff",
+        program:     1,
         permissions: [],
       },
     ]
@@ -88,7 +88,7 @@ describe("AutomaticEmailPage", () => {
           .find(".email-campaigns-card")
           .hostNodes()
           .text()
-        GET_AUTOMATIC_EMAILS_RESPONSE.forEach((email) => {
+        GET_AUTOMATIC_EMAILS_RESPONSE.forEach(email => {
           assert.include(cardText, email.email_subject)
         })
       },
@@ -117,10 +117,10 @@ describe("AutomaticEmailPage", () => {
         assert.equal(
           opts.body,
           JSON.stringify({
-            email_subject: GET_AUTOMATIC_EMAILS_RESPONSE[0].email_subject,
-            email_body: GET_AUTOMATIC_EMAILS_RESPONSE[0].email_body,
+            email_subject:       GET_AUTOMATIC_EMAILS_RESPONSE[0].email_subject,
+            email_body:          GET_AUTOMATIC_EMAILS_RESPONSE[0].email_body,
             sendAutomaticEmails: true,
-            id: GET_AUTOMATIC_EMAILS_RESPONSE[0].id,
+            id:                  GET_AUTOMATIC_EMAILS_RESPONSE[0].id,
           }),
         )
         return { body: JSON.stringify(GET_AUTOMATIC_EMAILS_RESPONSE[0]) }

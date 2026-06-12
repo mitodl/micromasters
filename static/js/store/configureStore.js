@@ -26,14 +26,14 @@ const middleware = () => {
 }
 
 const devTools = () =>
-  notProd() && window.devToolsExtension ? window.devToolsExtension() : (f) => f
+  notProd() && window.devToolsExtension ? window.devToolsExtension() : f => f
 
-const storage = (paths) => compose(filter(paths))(adapter(window.localStorage))
+const storage = paths => compose(filter(paths))(adapter(window.localStorage))
 
-const createPersistentStore = (persistence) =>
+const createPersistentStore = persistence =>
   compose(middleware(), persistence, devTools())(createStore)
 
-const createPersistentTestStore = (persistence) =>
+const createPersistentTestStore = persistence =>
   compose(persistence)(configureTestStore)
 
 export default function configureStore(initialState: ?Object) {

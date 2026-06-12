@@ -40,20 +40,20 @@ describe("enrollments", () => {
   })
 
   const newEnrollment = {
-    id: 999,
+    id:    999,
     title: "New enrollment",
   }
 
   describe("enrollments reducer", () => {
     let dispatchThen, fetchDashboardStub
     beforeEach(() => {
-      dispatchThen = store.createDispatchThen((state) => state.programs)
+      dispatchThen = store.createDispatchThen(state => state.programs)
       fetchDashboardStub = sandbox.stub(dashboardActions, "fetchDashboard")
       fetchDashboardStub.returns({ type: "fake" })
     })
 
     it("should have an empty default state", () => {
-      return dispatchThen({ type: "unknown" }, ["unknown"]).then((state) => {
+      return dispatchThen({ type: "unknown" }, ["unknown"]).then(state => {
         assert.deepEqual(state, {
           availablePrograms: [],
         })
@@ -66,7 +66,7 @@ describe("enrollments", () => {
       return dispatchThen(fetchProgramEnrollments(), [
         REQUEST_GET_PROGRAM_ENROLLMENTS,
         RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-      ]).then((enrollmentsState) => {
+      ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.getStatus, FETCH_SUCCESS)
         assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS)
         assert.equal(getPrograms.callCount, 1)
@@ -80,7 +80,7 @@ describe("enrollments", () => {
       return dispatchThen(fetchProgramEnrollments(), [
         REQUEST_GET_PROGRAM_ENROLLMENTS,
         RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
-      ]).then((enrollmentsState) => {
+      ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.getStatus, FETCH_FAILURE)
         assert.equal(enrollmentsState.getErrorInfo, "error")
         assert.deepEqual(enrollmentsState.availablePrograms, [])
@@ -97,7 +97,7 @@ describe("enrollments", () => {
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
         SET_TOAST_MESSAGE,
-      ]).then((enrollmentsState) => {
+      ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_SUCCESS)
         assert.deepEqual(
           enrollmentsState.availablePrograms,
@@ -109,7 +109,7 @@ describe("enrollments", () => {
 
         assert.deepEqual(store.getState().ui.toastMessage, {
           message: `You are now enrolled in the ${newEnrollment.title} MicroMasters`,
-          icon: TOAST_SUCCESS,
+          icon:    TOAST_SUCCESS,
         })
       })
     })
@@ -122,7 +122,7 @@ describe("enrollments", () => {
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
         SET_TOAST_MESSAGE,
-      ]).then((enrollmentsState) => {
+      ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_FAILURE)
         assert.equal(enrollmentsState.postErrorInfo, "addError")
         assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS)
@@ -132,7 +132,7 @@ describe("enrollments", () => {
 
         assert.deepEqual(store.getState().ui.toastMessage, {
           message: "There was an error during enrollment",
-          icon: TOAST_FAILURE,
+          icon:    TOAST_FAILURE,
         })
       })
     })
@@ -141,7 +141,7 @@ describe("enrollments", () => {
       store.dispatch(receiveGetProgramEnrollmentsSuccess(PROGRAMS))
 
       return dispatchThen(clearEnrollments(), [CLEAR_ENROLLMENTS]).then(
-        (enrollmentsState) => {
+        enrollmentsState => {
           assert.deepEqual(enrollmentsState, {
             availablePrograms: [],
           })
@@ -154,7 +154,7 @@ describe("enrollments", () => {
     let dispatchThen
     beforeEach(() => {
       dispatchThen = store.createDispatchThen(
-        (state) => state.currentProgramEnrollment,
+        state => state.currentProgramEnrollment,
       )
     })
 
@@ -165,7 +165,7 @@ describe("enrollments", () => {
     it("should set the current enrollment", () => {
       return dispatchThen(setCurrentProgramEnrollment(PROGRAMS[1]), [
         SET_CURRENT_PROGRAM_ENROLLMENT,
-      ]).then((state) => {
+      ]).then(state => {
         assert.deepEqual(state, PROGRAMS[1])
       })
     })

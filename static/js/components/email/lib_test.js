@@ -57,7 +57,7 @@ describe("Specific email config", () => {
   ) => {
     const fullEmailState = {
       currentlyActive: emailKey,
-      [emailKey]: emailState,
+      [emailKey]:      emailState,
     }
     return mount(
       <MuiThemeProvider theme={createMuiTheme()}>
@@ -90,12 +90,12 @@ describe("Specific email config", () => {
 
     const filledOutEmailState = _.merge(R.clone(INITIAL_EMAIL_STATE), {
       params: {
-        studentId: 123,
+        studentId:    123,
         profileImage: "img.jpg",
       },
       inputs: {
         subject: "subject",
-        body: "body",
+        body:    "body",
       },
       subheading: "first_name last_name",
     })
@@ -134,7 +134,7 @@ describe("Specific email config", () => {
 
       return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
         emailButton.simulate("click")
-      }).then((state) => {
+      }).then(state => {
         const emailParams = state.email[LEARNER_EMAIL_TYPE].params
         assert.equal(emailParams.studentId, profile.student_id)
         assert.isDefined(emailParams.profileImage)
@@ -212,7 +212,7 @@ describe("Specific email config", () => {
   describe("helper functions", () => {
     describe("convertEmailEdit", () => {
       it("should turn any keys like `email_foo` to be `foo`", () => {
-        ;[
+        [
           [{ email_foo: "a" }, { foo: "a" }],
           [{ email_subject: "a" }, { subject: "a" }],
           [{ email_body: "a" }, { body: "a" }],
@@ -224,28 +224,28 @@ describe("Specific email config", () => {
       it("it should preserve any other keys", () => {
         const obj = {
           email_subject: "potato",
-          other_field: "should be here!",
+          other_field:   "should be here!",
         }
         const expectation = {
-          subject: "potato",
+          subject:     "potato",
           other_field: "should be here!",
         }
         assert.deepEqual(convertEmailEdit(obj), expectation)
       })
 
       it("should transform `subject` and `body` by prefixing `email_`", () => {
-        ;[
+        [
           [{ subject: "a" }, { email_subject: "a" }],
           [{ body: "a" }, { email_body: "a" }],
         ].forEach(([obj, exp]) => assert.deepEqual(convertEmailEdit(obj), exp))
       })
 
       it("should be a symmetric relation (sorta)", () => {
-        ;[
+        [
           { email_subject: "a", no: "way" },
           { email_body: "a", what: "even" },
           { other_field: "yea..." },
-        ].forEach((obj) => {
+        ].forEach(obj => {
           assert.deepEqual(convertEmailEdit(convertEmailEdit(obj)), obj)
         })
       })
@@ -254,8 +254,8 @@ describe("Specific email config", () => {
         const filters = getFilters(JSON.parse(queryFilters))
         assert.deepEqual(filters, [
           {
-            id: "profile.country",
-            name: "profile.country",
+            id:    "profile.country",
+            name:  "profile.country",
             value: "US",
           },
         ])
@@ -266,8 +266,8 @@ describe("Specific email config", () => {
           const filters = getFilters(JSON.parse(queryFilters))
           assert.deepEqual(filters, [
             {
-              id: "profile.country",
-              name: "profile.country",
+              id:    "profile.country",
+              name:  "profile.country",
               value: "US",
             },
           ])

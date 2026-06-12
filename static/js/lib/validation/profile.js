@@ -92,19 +92,19 @@ export const profileImageValidation = () => ({})
  * Personal Validation
  */
 const personalMessages: ErrorMessages = {
-  first_name: "Given name is required",
-  last_name: "Family name is required",
-  preferred_name: "Nickname / Preferred name is required",
-  gender: "Gender is required",
+  first_name:         "Given name is required",
+  last_name:          "Family name is required",
+  preferred_name:     "Nickname / Preferred name is required",
+  gender:             "Gender is required",
   preferred_language: "Preferred language is required",
-  address: "Street address is required",
-  city: "City is required",
+  address:            "Street address is required",
+  city:               "City is required",
   state_or_territory: "State or Territory is required",
-  country: "Country is required",
-  birth_country: "Country is required",
-  nationality: "Nationality is required",
-  date_of_birth: "Please enter a valid date of birth",
-  phone_number: "A phone number is required",
+  country:            "Country is required",
+  birth_country:      "Country is required",
+  nationality:        "Nationality is required",
+  date_of_birth:      "Please enter a valid date of birth",
+  phone_number:       "A phone number is required",
 }
 
 export const checkLatin = R.curry((key, label, profile) =>
@@ -130,7 +130,7 @@ export const checkDateOfBirth: Validator = checkProp(
   personalMessages.date_of_birth,
   [
     R.complement(isNilOrEmptyString),
-    (dob) => moment(dob).isBefore(moment(), "day"),
+    dob => moment(dob).isBefore(moment(), "day"),
   ],
 )
 
@@ -155,7 +155,7 @@ export const checkRomanizedNames: Validator = R.ifElse(
   R.always({}),
 )
 
-export const checkPostalCode: Validator = (profile) => {
+export const checkPostalCode: Validator = profile => {
   if (["US", "CA"].includes(profile.country)) {
     if (isNilOrEmptyString(profile.postal_code)) {
       return { postal_code: "Postal code is required" }
@@ -184,7 +184,7 @@ export const checkPhoneNumber: Validator = checkProp(
   "Please enter a valid phone number",
   [
     R.complement(isNilOrEmptyString),
-    (phoneNumber) => new PhoneNumber(phoneNumber).isValid(),
+    phoneNumber => new PhoneNumber(phoneNumber).isValid(),
   ],
 )
 
@@ -245,14 +245,14 @@ const extraErrorCheck = R.curry((key, msg, predicate, entry, errors) =>
  * Education Validation
  */
 const educationMessages: ErrorMessages = {
-  degree_name: "Degree level is required",
-  graduation_date: "Please enter a valid graduation date",
-  field_of_study: "Field of study is required",
-  online_degree: "Online Degree is required",
-  school_name: "School name is required",
-  school_city: "City is required",
+  degree_name:               "Degree level is required",
+  graduation_date:           "Please enter a valid graduation date",
+  field_of_study:            "Field of study is required",
+  online_degree:             "Online Degree is required",
+  school_name:               "School name is required",
+  school_city:               "City is required",
   school_state_or_territory: "State is required",
-  school_country: "Country is required",
+  school_country:            "Country is required",
 }
 
 const isHighSchool: (e: EducationEntry) => boolean = R.compose(
@@ -273,7 +273,7 @@ const educationKeys: (e: EducationEntry) => string[] = R.ifElse(
 const schoolLocationIsValid = extraErrorCheck(
   "location",
   "City, state/territory, and country are required.",
-  (entry) =>
+  entry =>
     isNilOrEmptyString(entry.school_city) ||
     isNilOrEmptyString(entry.school_state_or_territory) ||
     isNilOrEmptyString(entry.school_country),
@@ -284,7 +284,7 @@ const additionalSchoolValidation = R.converge(mergeListOfArgs, [
 ])
 
 const educationErrors: (xs: EducationEntry[]) => ValidationErrors[] = R.map(
-  (entry) =>
+  entry =>
     additionalSchoolValidation(
       entry,
       findErrors(entry, educationKeys(entry), educationMessages),
@@ -297,12 +297,12 @@ export const educationValidation = nestedValidator("education", educationErrors)
  * Work History Validation
  */
 const workMessages: ErrorMessages = {
-  position: "Position is required",
-  industry: "Industry is required",
-  company_name: "Name of Employer is required",
-  start_date: "Please enter a valid start date",
-  city: "City is required",
-  country: "Country is required",
+  position:           "Position is required",
+  industry:           "Industry is required",
+  company_name:       "Name of Employer is required",
+  start_date:         "Please enter a valid start date",
+  city:               "City is required",
+  country:            "Country is required",
   state_or_territory: "State or Territory is required",
 }
 
@@ -315,7 +315,7 @@ const workMessages: ErrorMessages = {
 const endDateNotBeforeStart = extraErrorCheck(
   "end_date",
   "End date cannot be before start date",
-  (entry) =>
+  entry =>
     !isNilOrEmptyString(entry.end_date) &&
     moment(entry.end_date).isBefore(entry.start_date, "month"),
 )
@@ -323,13 +323,13 @@ const endDateNotBeforeStart = extraErrorCheck(
 const endDateNotInFuture = extraErrorCheck(
   "end_date",
   "End date cannot be in the future",
-  (entry) => moment(entry.end_date).isAfter(moment(), "month"),
+  entry => moment(entry.end_date).isAfter(moment(), "month"),
 )
 
 const workLocationIsValid = extraErrorCheck(
   "location",
   "City, state/territory, and country are required.",
-  (entry) =>
+  entry =>
     isNilOrEmptyString(entry.city) ||
     isNilOrEmptyString(entry.state_or_territory) ||
     isNilOrEmptyString(entry.country),
@@ -338,7 +338,7 @@ const workLocationIsValid = extraErrorCheck(
 const dateIsValid = extraErrorCheck(
   "end_date",
   "Please enter a valid end date or leave it blank",
-  (entry) => {
+  entry => {
     const editIsEmpty =
       _.isEmpty(entry.end_date_edit) ||
       (entry.end_date_edit !== undefined &&
@@ -356,7 +356,7 @@ const additionalWorkValidation = R.converge(mergeListOfArgs, [
 ])
 
 const workHistoryErrors: (xs: WorkHistoryEntry[]) => ValidationErrors[] = R.map(
-  (entry) =>
+  entry =>
     additionalWorkValidation(
       entry,
       findErrors(entry, R.keys(workMessages), workMessages),
@@ -384,7 +384,7 @@ export const privacyValidation = (profile: Profile): ValidationErrors =>
  */
 const emailMessages: ErrorMessages = {
   subject: "Please fill in a subject",
-  body: "Please fill in a body",
+  body:    "Please fill in a body",
 }
 
 const emailLinksValid = R.ifElse(
@@ -464,5 +464,5 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
  */
 export function combineValidators(...validators: Array<Function>): Function {
   return (...args) =>
-    _.merge({}, ...validators.map((validator) => validator(...args)))
+    _.merge({}, ...validators.map(validator => validator(...args)))
 }

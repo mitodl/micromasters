@@ -5,18 +5,18 @@ import React from "react"
 import FacultyTile from "./FacultyTile"
 
 describe("FacultyTile", () => {
-  const renderFacultyTile = (props) => {
+  const renderFacultyTile = props => {
     return shallow(
       <FacultyTile
         name="Frank Professor"
         title="Ph.D"
         short_bio="He does things."
         image={{
-          alt: "An impressive image",
+          alt:       "An impressive image",
           rendition: {
-            width: "50",
+            width:  "50",
             height: "50",
-            file: "frank.jpg",
+            file:   "frank.jpg",
           },
         }}
         {...props}

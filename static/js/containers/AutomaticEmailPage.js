@@ -26,7 +26,7 @@ const noEmailsMessage = () => (
   <div>You haven't created any Email Campaigns yet.</div>
 )
 
-const emptyMessage = (automaticEmails) =>
+const emptyMessage = automaticEmails =>
   fetchingEmail(automaticEmails) ? <CircularProgress /> : noEmailsMessage()
 
 const notEmpty = R.compose(R.not, R.isEmpty)
@@ -72,7 +72,7 @@ class AutomaticEmailPage extends React.Component {
     )
   }
 
-  toggleEmailActive = (email) => {
+  toggleEmailActive = email => {
     const {
       dispatch,
       automaticEmails: { emailsInFlight },
@@ -111,10 +111,10 @@ class AutomaticEmailPage extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   automaticEmails: state.automaticEmails,
-  email: state.email,
-  ui: state.ui,
+  email:           state.email,
+  ui:              state.ui,
 })
 
 export default R.compose(

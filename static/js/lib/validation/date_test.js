@@ -22,7 +22,7 @@ describe("Date validation", () => {
     describe("sanitizeNumberString", () => {
       describe("string input", () => {
         it("should remove any non-numerical characters", () => {
-          ;[
+          [
             ["-", 2, ""],
             ["-32", 2, "32"],
             ["asdf", 19, ""],
@@ -34,7 +34,7 @@ describe("Date validation", () => {
         })
 
         it("should trim the input down to the desired length", () => {
-          ;[
+          [
             ["1999", 2, "19"],
             ["1x9", 2, "19"],
             ["1", 4, "1"],
@@ -61,7 +61,7 @@ describe("Date validation", () => {
         })
 
         it("should trim a number down to the correct number of places", () => {
-          ;[
+          [
             [1999, 4, "1999"],
             [1999, 2, "19"],
             [112341234, 1, "1"],
@@ -160,7 +160,7 @@ describe("Date validation", () => {
   })
 
   describe("year validation functions", () => {
-    ;[
+    [
       [validateYear, "validateYear"],
       [validateNearFutureYear, "validateNearFutureYear"],
     ].forEach(([func, name]) => {

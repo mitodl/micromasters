@@ -350,9 +350,9 @@ def set_course_run_past(
 
 
 @accepts_or_calculates_now
-def set_course_run_current(
+def set_course_run_current(  # pylint: disable=too-many-arguments
     course_run,
-    enrollable_now=True,  # pylint: disable=too-many-arguments
+    enrollable_now=True,
     enrollable_past=False,
     upgradeable=True,
     save=True,

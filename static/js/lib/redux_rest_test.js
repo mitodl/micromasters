@@ -30,7 +30,7 @@ describe("redux REST", () => {
 
     it("should include all reducers that we expect it to", () => {
       const state = store.getState()
-      endpoints.forEach((endpoint) => {
+      endpoints.forEach(endpoint => {
         const expected = R.propOr(INITIAL_STATE, "initialState", endpoint)
         assert.deepEqual(expected, state[endpoint.name])
       })

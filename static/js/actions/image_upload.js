@@ -44,7 +44,7 @@ export function updateUserPhoto(
       () => {
         dispatch(receivePatchUserPhotoSuccess())
       },
-      (error) => {
+      error => {
         dispatch(receivePatchUserPhotoFailure(error))
       },
     )

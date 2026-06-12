@@ -21,7 +21,7 @@ import { assertCreatedActionHelper } from "./test_util"
 
 describe("coupons actions", () => {
   it("should create all action creators", () => {
-    ;[
+    [
       [requestAttachCoupon, REQUEST_ATTACH_COUPON],
       [receiveAttachCouponSuccess, RECEIVE_ATTACH_COUPON_SUCCESS],
       [receiveAttachCouponFailure, RECEIVE_ATTACH_COUPON_FAILURE],

@@ -50,7 +50,7 @@ export default class LearnerPagePersonalDialog extends React.Component {
       <Dialog
         classes={{
           paper: "dialog personal-dialog",
-          root: "personal-dialog-wrapper",
+          root:  "personal-dialog-wrapper",
         }}
         open={learnerPageDialogVisibility}
         onClose={this.closePersonalDialog}

@@ -5,7 +5,7 @@ import Popover from "@material-ui/core/Popover"
 import PopoverNullAnimation from "../util/popover_animation"
 import type { ProgramPageCourse } from "../flow/programTypes"
 
-const popoverLink = (url) =>
+const popoverLink = url =>
   url ? (
     <a className="edx-link" href={url}>
       Learn More
@@ -19,7 +19,7 @@ export default class CourseListItemWithPopover extends React.Component {
   }
 
   state = {
-    isOpen: false,
+    isOpen:   false,
     anchorEl: undefined,
   }
 
@@ -29,7 +29,7 @@ export default class CourseListItemWithPopover extends React.Component {
 
     // eslint-disable-next-line no-invalid-this
     this.setState({
-      isOpen: true,
+      isOpen:   true,
       anchorEl: event.currentTarget,
     })
   }

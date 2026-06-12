@@ -21,9 +21,9 @@ describe("Google Analytics", () => {
       assert(
         event.calledWith({
           category: "category",
-          action: "action",
-          label: "label",
-          value: 1,
+          action:   "action",
+          label:    "label",
+          value:    1,
         }),
         "should be called with the right values",
       )
@@ -34,8 +34,8 @@ describe("Google Analytics", () => {
       assert(
         event.calledWith({
           category: "category",
-          action: "action",
-          label: "label",
+          action:   "action",
+          label:    "label",
         }),
         "there should not be a value for 'value'",
       )
@@ -49,8 +49,8 @@ describe("Google Analytics", () => {
       assert.ok(
         event.calledWith({
           category: "profile-form-field",
-          action: "completed-some-keys-wow",
-          label: "jane",
+          action:   "completed-some-keys-wow",
+          label:    "jane",
         }),
       )
     })

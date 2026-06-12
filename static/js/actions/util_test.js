@@ -15,9 +15,9 @@ describe("action creator utils", () => {
       const creator = withUsername(TYPE)
       const action = creator("username", { my: "payload" })
       assert.deepEqual(action, {
-        type: TYPE,
+        type:    TYPE,
         payload: { my: "payload" },
-        meta: "username",
+        meta:    "username",
       })
     })
   })

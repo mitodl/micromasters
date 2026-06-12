@@ -41,7 +41,7 @@ import CardContent from "@material-ui/core/CardContent"
 import DialogContent from "@material-ui/core/DialogContent"
 
 class EmploymentForm extends ProfileFormFields {
-  industryOptions: Array<Option> = INDUSTRIES.map((industry) => ({
+  industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
     value: industry,
     label: industry,
   }))

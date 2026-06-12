@@ -79,13 +79,13 @@ describe("utility functions", () => {
   describe("generateNewWorkHistory", () => {
     it("generates a new work history object", () => {
       assert.deepEqual(generateNewWorkHistory(), {
-        position: "",
-        industry: "",
-        company_name: "",
-        start_date: "",
-        end_date: null,
-        city: "",
-        country: null,
+        position:           "",
+        industry:           "",
+        company_name:       "",
+        start_date:         "",
+        end_date:           null,
+        city:               "",
+        country:            null,
         state_or_territory: null,
       })
     })
@@ -95,14 +95,14 @@ describe("utility functions", () => {
     it("generates a new education object", () => {
       const level = "level"
       assert.deepEqual(generateNewEducation(level), {
-        degree_name: level,
-        graduation_date: "",
-        field_of_study: null,
-        online_degree: false,
-        school_name: null,
-        school_city: null,
+        degree_name:               level,
+        graduation_date:           "",
+        field_of_study:            null,
+        online_degree:             false,
+        school_name:               null,
+        school_city:               null,
         school_state_or_territory: null,
-        school_country: null,
+        school_country:            null,
       })
     })
   })
@@ -128,7 +128,7 @@ describe("utility functions", () => {
         makeProfileImageUrl(
           {
             image_medium: url,
-            image_small: smallUrl,
+            image_small:  smallUrl,
           },
           true,
         ),
@@ -140,10 +140,10 @@ describe("utility functions", () => {
     let profile
     beforeEach(() => {
       profile = {
-        username: "jane_username",
+        username:       "jane_username",
         preferred_name: "jane preferred",
-        first_name: "jane",
-        last_name: "doe",
+        first_name:     "jane",
+        last_name:      "doe",
       }
     })
 
@@ -175,9 +175,9 @@ describe("utility functions", () => {
         "romanized_jane romanized_doe",
         getRomanizedName({
           romanized_first_name: "romanized_jane",
-          romanized_last_name: "romanized_doe",
-          first_name: "jane",
-          last_name: "doe",
+          romanized_last_name:  "romanized_doe",
+          first_name:           "jane",
+          last_name:            "doe",
         }),
       )
     })
@@ -187,7 +187,7 @@ describe("utility functions", () => {
         "jane doe",
         getRomanizedName({
           first_name: "jane",
-          last_name: "doe",
+          last_name:  "doe",
         }),
       )
     })
@@ -196,18 +196,18 @@ describe("utility functions", () => {
   describe("getLocation", () => {
     it("should return `${city}, ${country}` for a non-us location", () => {
       const nonUS = {
-        country: "AF",
+        country:            "AF",
         state_or_territory: "AF-KAB",
-        city: "Kabul",
+        city:               "Kabul",
       }
       assert.equal(getLocation(nonUS), "Kabul, Afghanistan")
     })
 
     it("should return `${city}, ${state}, US` for a US location", () => {
       const us = {
-        country: "US",
+        country:            "US",
         state_or_territory: "US-ME",
-        city: "Portland",
+        city:               "Portland",
       }
       assert.equal(getLocation(us), "Portland, ME, US")
       // assert hide state
@@ -216,27 +216,27 @@ describe("utility functions", () => {
 
     it("should return `${city}, ` when no country code", () => {
       const us = {
-        country: null,
+        country:            null,
         state_or_territory: "US-ME",
-        city: "Portland",
+        city:               "Portland",
       }
       assert.equal(getLocation(us, false), "Portland, ")
     })
 
     it("should return `US` when no city", () => {
       const us = {
-        country: "US",
+        country:            "US",
         state_or_territory: "US-ME",
-        city: null,
+        city:               null,
       }
       assert.equal(getLocation(us, false), "US")
     })
 
     it("should return `-` when no city and no country", () => {
       const us = {
-        country: null,
+        country:            null,
         state_or_territory: "US-ME",
-        city: null,
+        city:               null,
       }
       assert.equal(getLocation(us, false), "")
     })
@@ -253,7 +253,7 @@ describe("utility functions", () => {
       const clone = R.clone(USER_PROFILE_RESPONSE)
       clone.work_history.push({
         company_name: "Foobarcorp",
-        end_date: null,
+        end_date:     null,
       })
       assertMaybeEquality(Just("Foobarcorp"), getEmployer(clone))
     })
@@ -270,7 +270,7 @@ describe("utility functions", () => {
     it("renders the right active display", () => {
       const keys = [...PROFILE_STEP_LABELS.keys()]
       PROFILE_STEP_LABELS.forEach((label, step) => {
-        const i = keys.findIndex((k) => k === step)
+        const i = keys.findIndex(k => k === step)
 
         const svg = makeProfileProgressDisplay(step)
         const desc = svg.props.children[0]
@@ -408,7 +408,7 @@ describe("utility functions", () => {
         const clone = {
           ...USER_PROFILE_RESPONSE,
           edx_level_of_education: outerValue,
-          education: [],
+          education:              [],
         }
         assert.deepEqual(copy, calculateDegreeInclusions(clone))
       })
@@ -423,7 +423,7 @@ describe("utility functions", () => {
       const clone = {
         ...USER_PROFILE_RESPONSE,
         edx_level_of_education: null,
-        education: [],
+        education:              [],
       }
       assert.deepEqual(defaults, calculateDegreeInclusions(clone))
     })
@@ -432,7 +432,7 @@ describe("utility functions", () => {
       const clone = {
         ...USER_PROFILE_RESPONSE,
         edx_level_of_education: HIGH_SCHOOL,
-        education: [
+        education:              [
           {
             degree_name: HIGH_SCHOOL,
           },
@@ -443,18 +443,18 @@ describe("utility functions", () => {
       }
       assert.deepEqual(calculateDegreeInclusions(clone), {
         [HIGH_SCHOOL]: true,
-        [DOCTORATE]: true,
-        [BACHELORS]: false,
-        [MASTERS]: false,
-        [ASSOCIATE]: false,
+        [DOCTORATE]:   true,
+        [BACHELORS]:   false,
+        [MASTERS]:     false,
+        [ASSOCIATE]:   false,
       })
     })
   })
 
   describe("callFunctionArray", () => {
     it("should take an array of functions, call them in series with given args, and return list of results", () => {
-      const testFunctionA = (arg) => `testFunctionA ${arg}`
-      const testFunctionB = (arg) => `testFunctionB ${arg}`
+      const testFunctionA = arg => `testFunctionA ${arg}`
+      const testFunctionB = arg => `testFunctionB ${arg}`
       const arg = "arg"
       const testFunctionArray = [testFunctionA, testFunctionA, testFunctionB]
       const results = callFunctionArray(testFunctionArray, arg)
@@ -526,36 +526,36 @@ describe("utility functions", () => {
   describe("findCourseRun", () => {
     it("iterates and finds the course run, course, and program", () => {
       const run = {
-        id: 3,
+        id:        3,
         course_id: "xyz",
       }
       const course = {
         runs: [run],
-        id: 2,
+        id:   2,
       }
       const program = {
         courses: [course],
-        id: 1,
+        id:      1,
       }
 
       assert.deepEqual(
-        findCourseRun([program], (_run) => run.course_id === _run.course_id),
+        findCourseRun([program], _run => run.course_id === _run.course_id),
         [run, course, program],
       )
     })
 
     it("skips runs when there is an exception", () => {
       const run = {
-        id: 3,
+        id:        3,
         course_id: "xyz",
       }
       const course = {
         runs: [run],
-        id: 2,
+        id:   2,
       }
       const program = {
         courses: [course],
-        id: 1,
+        id:      1,
       }
 
       assert.deepEqual(
@@ -569,11 +569,11 @@ describe("utility functions", () => {
     it("finds courses with no course runs", () => {
       const course = {
         runs: [],
-        id: 2,
+        id:   2,
       }
       const program = {
         courses: [course],
-        id: 1,
+        id:      1,
       }
 
       assert.deepEqual(
@@ -585,7 +585,7 @@ describe("utility functions", () => {
     it("finds a program with no courses", () => {
       const program = {
         courses: [],
-        id: 1,
+        id:      1,
       }
 
       assert.deepEqual(
@@ -646,9 +646,9 @@ describe("utility functions", () => {
     let profile
     beforeEach(() => {
       profile = {
-        username: "jane_username",
-        first_name: "jane",
-        last_name: "doe",
+        username:       "jane_username",
+        first_name:     "jane",
+        last_name:      "doe",
         preferred_name: "test",
       }
     })
@@ -743,7 +743,7 @@ describe("utility functions", () => {
 
   describe("isNilOrBlank", () => {
     it("returns true for undefined, null, and a blank string", () => {
-      ;[undefined, null, ""].forEach((value) => {
+      [undefined, null, ""].forEach(value => {
         assert.isTrue(isNilOrBlank(value))
       })
     })
@@ -869,7 +869,7 @@ describe("utility functions", () => {
     })
   })
 
-  it("waits some milliseconds", (done) => {
+  it("waits some milliseconds", done => {
     let executed = false
     wait(30).then(() => {
       executed = true
@@ -888,7 +888,7 @@ describe("utility functions", () => {
 
   describe("findObjByName", () => {
     const obj = {
-      foo: "bar",
+      foo:  "bar",
       bool: {
         must: [
           {

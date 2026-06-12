@@ -134,7 +134,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     if (isEnrollableRun(firstRun)) {
       messages.push({
         message: `${courseStartMessage(firstRun)}`,
-        action: courseAction(firstRun, COURSE_ACTION_ENROLL),
+        action:  courseAction(firstRun, COURSE_ACTION_ENROLL),
       })
     } else if (
       firstRun.fuzzy_start_date &&
@@ -208,9 +208,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       messages.push(
         S.maybe(
           null,
-          (run) => ({
+          run => ({
             message: `Next course starts ${formatDate(run.course_start_date)}.`,
-            action: courseAction(run, COURSE_ACTION_REENROLL),
+            action:  courseAction(run, COURSE_ACTION_REENROLL),
           }),
           futureEnrollableRun(course),
         ),
@@ -229,8 +229,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     !hasCurrentlyEnrolledCourseRun(course)
   ) {
     // the course finished and the upgrade deadline passed
-    const date = (run) => formatDate(run.course_start_date)
-    const msg = (run) => {
+    const date = run => formatDate(run.course_start_date)
+    const msg = run => {
       return `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date(
         run,
       )}.${enrollmentDateMessage(run)}`
@@ -241,9 +241,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           message:
             "You missed the upgrade deadline and will not receive MicroMasters credit for this course. There are no future runs of this course scheduled at this time.",
         },
-        (run) => ({
+        run => ({
           message: msg(run),
-          action: courseAction(run, COURSE_ACTION_REENROLL),
+          action:  courseAction(run, COURSE_ACTION_REENROLL),
         }),
         futureEnrollableRun(course),
       ),
@@ -253,7 +253,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(
       S.maybe(
         messages.concat({ message: "You did not pass the course." }),
-        (run) =>
+        run =>
           messages.concat({
             message: `You did not pass the course, but you can re-enroll. ${courseStartMessage(
               run,
@@ -270,7 +270,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
 const formatMessages = R.addIndex(R.map)(formatMessage)
 
-const wrapMessages = (messages) => (
+const wrapMessages = messages => (
   <div className="course-status-messages">{messages}</div>
 )
 

@@ -42,7 +42,7 @@ describe("LearnerPageAboutMeDialog", () => {
         />
       </MuiThemeProvider>,
       {
-        context: { router: {} },
+        context:           { router: {} },
         childContextTypes: { router: PropTypes.object },
       },
     )

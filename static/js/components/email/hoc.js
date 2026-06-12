@@ -61,7 +61,7 @@ export const withEmailDialog = R.curry(
           const cloneErrors = emailValidation(inputsClone)
           dispatch(
             updateEmailValidation({
-              type: currentlyActive,
+              type:   currentlyActive,
               errors: cloneErrors,
             }),
           )

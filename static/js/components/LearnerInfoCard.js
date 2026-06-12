@@ -17,13 +17,13 @@ import { mstr } from "../lib/sanctuary"
 import type { Profile } from "../flow/profileTypes"
 import CardContent from "@material-ui/core/CardContent"
 
-const showLegalNameIfStaff = (profile) => {
+const showLegalNameIfStaff = profile => {
   return hasAnyStaffRole(SETTINGS.roles) ? (
     <div className="legal-name">{`(Legal name: ${profile.first_name} ${profile.last_name})`}</div>
   ) : null
 }
 
-const showIdIfStaff = (profile) => {
+const showIdIfStaff = profile => {
   return hasAnyStaffRole(SETTINGS.roles) ? (
     <div className="student-id">{`(Student Id: ${profile.student_id})`}</div>
   ) : null

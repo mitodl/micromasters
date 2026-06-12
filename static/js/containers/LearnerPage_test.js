@@ -71,7 +71,7 @@ import Grades, {
 } from "../components/dashboard/courses/Grades"
 import { COURSE_GRADE } from "./DashboardPage"
 
-describe("LearnerPage", function () {
+describe("LearnerPage", function() {
   this.timeout(10000)
 
   let listenForActions, renderComponent, helper, patchUserProfileStub
@@ -158,7 +158,7 @@ describe("LearnerPage", function () {
       return renderComponent(`/learner/${username}`, userActions).then(
         ([, div]) => {
           const logout = [...div.getElementsByTagName("a")].find(
-            (link) => link.textContent === "Logout",
+            link => link.textContent === "Logout",
           )
           assert.ok(logout)
         },
@@ -166,8 +166,8 @@ describe("LearnerPage", function () {
     })
 
     describe("validation", () => {
-      const inputs = (dialog) => [...dialog.getElementsByTagName("input")]
-      const getEditPersonalButton = (div) =>
+      const inputs = dialog => [...dialog.getElementsByTagName("input")]
+      const getEditPersonalButton = div =>
         div.querySelector(".edit-profile-holder .edit-personal-info-button")
       const getDialog = () => document.querySelector(".personal-dialog")
       const getSave = () => getDialog().querySelector(".save-button")
@@ -251,8 +251,8 @@ describe("LearnerPage", function () {
       }
 
       describe("text field", () => {
-        const preferredName = (dialog) =>
-          inputs(dialog).find((i) => i.name === "Nickname / Preferred name")
+        const preferredName = dialog =>
+          inputs(dialog).find(i => i.name === "Nickname / Preferred name")
 
         it("should clearValidation when filling out a required text field", () => {
           return clearValidation(
@@ -280,8 +280,8 @@ describe("LearnerPage", function () {
       })
 
       describe("date field", () => {
-        const dobMonth = (dialog) =>
-          inputs(dialog).find((i) => i.placeholder === "MM")
+        const dobMonth = dialog =>
+          inputs(dialog).find(i => i.placeholder === "MM")
         it("should clearValidation when filling out a required date field", () => {
           return clearValidation(
             userProfileActions.concat([
@@ -306,14 +306,14 @@ describe("LearnerPage", function () {
       })
 
       describe("select field", () => {
-        const languageField = (dialog) => {
+        const languageField = dialog => {
           const select = dialog.querySelector(
             ".select-field.preferred-language",
           )
           clearSelectField(select)
         }
 
-        const removeError = (dialog) => {
+        const removeError = dialog => {
           const select = dialog.querySelector(
             ".select-field.preferred-language",
           )
@@ -345,8 +345,8 @@ describe("LearnerPage", function () {
       })
 
       describe("radio field", () => {
-        const genderField = (dialog) =>
-          inputs(dialog).find((i) => i.name === "gender")
+        const genderField = dialog =>
+          inputs(dialog).find(i => i.name === "gender")
 
         it("should clearValidationErrors when filling out a required radio field", () => {
           const createValidationError = () => {
@@ -358,7 +358,7 @@ describe("LearnerPage", function () {
             )
           }
 
-          const removeErrorValue = (dialog) => {
+          const removeErrorValue = dialog => {
             genderField(dialog).click()
           }
 
@@ -389,7 +389,7 @@ describe("LearnerPage", function () {
 
     describe("Education History", () => {
       let userProfile
-      const deleteButton = (div) => {
+      const deleteButton = div => {
         return div
           .getElementsByClassName("profile-form")[1]
           .getElementsByClassName("delete-button")[0]
@@ -398,15 +398,15 @@ describe("LearnerPage", function () {
       beforeEach(() => {
         userProfile = _.cloneDeep(USER_PROFILE_RESPONSE)
         userProfile.education.push({
-          id: 3,
-          degree_name: DOCTORATE,
-          graduation_date: "2015-12-01",
-          field_of_study: "Philosophy",
-          school_name: "Harvard",
-          school_city: "Cambridge",
+          id:                        3,
+          degree_name:               DOCTORATE,
+          graduation_date:           "2015-12-01",
+          field_of_study:            "Philosophy",
+          school_name:               "Harvard",
+          school_city:               "Cambridge",
           school_state_or_territory: "US-MA",
-          school_country: "US",
-          online_degree: false,
+          school_country:            "US",
+          online_degree:             false,
         })
         helper.profileGetStub
           .withArgs(SETTINGS.user.username)
@@ -581,16 +581,16 @@ describe("LearnerPage", function () {
             const expectedProfile = _.cloneDeep(userProfile)
             const entry = {
               ...generateNewEducation(HIGH_SCHOOL),
-              graduation_date: "1999-12-01",
+              graduation_date:      "1999-12-01",
               graduation_date_edit: {
-                year: "1999",
+                year:  "1999",
                 month: "12",
-                day: undefined,
+                day:   undefined,
               },
-              school_name: "A School",
-              school_country: "AF",
+              school_name:               "A School",
+              school_country:            "AF",
               school_state_or_territory: "AF-BAL",
-              school_city: "FoobarVille",
+              school_city:               "FoobarVille",
             }
             expectedProfile.education.push(entry)
 
@@ -685,7 +685,7 @@ describe("LearnerPage", function () {
     })
 
     describe("Employment History", () => {
-      const deleteButton = (div) => {
+      const deleteButton = div => {
         return div
           .getElementsByClassName("profile-form")[2]
           .getElementsByClassName("delete-button")[0]
@@ -770,7 +770,7 @@ describe("LearnerPage", function () {
               .textContent.split(",")[0]
 
             const indexToDelete = USER_PROFILE_RESPONSE.work_history.findIndex(
-              (entry) => entry.company_name === employerName,
+              entry => entry.company_name === employerName,
             )
 
             updatedProfile.work_history.splice(indexToDelete, 1)
@@ -869,23 +869,23 @@ describe("LearnerPage", function () {
             updatedProfile.username = SETTINGS.user.username
             const entry = {
               ...generateNewWorkHistory(),
-              position: "Assistant Foobar",
-              industry: "Accounting",
-              company_name: "FoobarCorp",
-              start_date: "2001-12-01",
+              position:        "Assistant Foobar",
+              industry:        "Accounting",
+              company_name:    "FoobarCorp",
+              start_date:      "2001-12-01",
               start_date_edit: {
-                year: "2001",
+                year:  "2001",
                 month: "12",
-                day: undefined,
+                day:   undefined,
               },
-              end_date: "2002-01-01",
+              end_date:      "2002-01-01",
               end_date_edit: {
-                year: "2002",
+                year:  "2002",
                 month: "01",
-                day: undefined,
+                day:   undefined,
               },
-              city: "FoobarVille",
-              country: "AF",
+              city:               "FoobarVille",
+              country:            "AF",
               state_or_territory: "AF-BAL",
             }
             updatedProfile.work_history.push(entry)
@@ -1068,7 +1068,7 @@ describe("LearnerPage", function () {
                       dialog.querySelector(".save-button"),
                     )
                   },
-                ).then((state) => {
+                ).then(state => {
                   assert.deepEqual(
                     state.profiles[username].profile,
                     expectedProfile,
@@ -1126,7 +1126,7 @@ describe("LearnerPage", function () {
                       dialog.querySelector(".save-button"),
                     )
                   },
-                ).then((state) => {
+                ).then(state => {
                   assert.deepEqual(
                     state.profiles[username].profile,
                     expectedProfile,
@@ -1216,7 +1216,7 @@ describe("LearnerPage", function () {
 
     it("should show the staff learner info card, if the user has a staff role", () => {
       const smallDashboard = {
-        programs: DASHBOARD_RESPONSE.programs.slice(0, 1),
+        programs:       DASHBOARD_RESPONSE.programs.slice(0, 1),
         isEdxDataFresh: true,
       }
       helper.dashboardStub.returns(Promise.resolve(smallDashboard))

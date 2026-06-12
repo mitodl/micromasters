@@ -35,10 +35,10 @@ describe("coupon reducers", () => {
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen((state) => state.coupons)
+    dispatchThen = store.createDispatchThen(state => state.coupons)
     assertReducerResultState = createAssertReducerResultState(
       store,
-      (state) => state.coupons,
+      state => state.coupons,
     )
     getCouponsStub = sandbox.stub(api, "getCoupons")
     attachCouponStub = sandbox.stub(api, "attachCoupon")
@@ -51,7 +51,7 @@ describe("coupon reducers", () => {
   it("should process attaching a coupon", () => {
     return dispatchThen(requestAttachCoupon("a b"), [
       REQUEST_ATTACH_COUPON,
-    ]).then((state) => {
+    ]).then(state => {
       assert.equal(state.fetchPostStatus, FETCH_PROCESSING)
     })
   })
@@ -62,10 +62,10 @@ describe("coupon reducers", () => {
     return dispatchThen(attachCoupon(code), [
       REQUEST_ATTACH_COUPON,
       RECEIVE_ATTACH_COUPON_SUCCESS,
-    ]).then((state) => {
+    ]).then(state => {
       const expectation = {
-        fetchPostStatus: FETCH_SUCCESS,
-        coupons: [],
+        fetchPostStatus:        FETCH_SUCCESS,
+        coupons:                [],
         recentlyAttachedCoupon: null,
       }
       assert.deepEqual(state, expectation)
@@ -79,10 +79,10 @@ describe("coupon reducers", () => {
     return dispatchThen(attachCoupon(code), [
       REQUEST_ATTACH_COUPON,
       RECEIVE_ATTACH_COUPON_FAILURE,
-    ]).then((state) => {
+    ]).then(state => {
       const expectation = {
-        fetchPostStatus: FETCH_FAILURE,
-        coupons: [],
+        fetchPostStatus:        FETCH_FAILURE,
+        coupons:                [],
         recentlyAttachedCoupon: null,
       }
       assert.deepEqual(state, expectation)
@@ -96,10 +96,10 @@ describe("coupon reducers", () => {
     return dispatchThen(fetchCoupons(), [
       REQUEST_FETCH_COUPONS,
       RECEIVE_FETCH_COUPONS_SUCCESS,
-    ]).then((state) => {
+    ]).then(state => {
       assert.deepEqual(state, {
-        fetchGetStatus: FETCH_SUCCESS,
-        coupons: coupons,
+        fetchGetStatus:         FETCH_SUCCESS,
+        coupons:                coupons,
         recentlyAttachedCoupon: null,
       })
       assert.isTrue(getCouponsStub.calledWith())
@@ -114,10 +114,10 @@ describe("coupon reducers", () => {
     return dispatchThen(fetchCoupons(), [
       REQUEST_FETCH_COUPONS,
       RECEIVE_FETCH_COUPONS_FAILURE,
-    ]).then((state) => {
+    ]).then(state => {
       assert.deepEqual(state, {
-        fetchGetStatus: FETCH_FAILURE,
-        coupons: [],
+        fetchGetStatus:         FETCH_FAILURE,
+        coupons:                [],
         recentlyAttachedCoupon: null,
       })
       assert.isTrue(getCouponsStub.calledWith())
@@ -127,7 +127,7 @@ describe("coupon reducers", () => {
   it("should let you set a recently attached coupon", () => {
     assertReducerResultState(
       setRecentlyAttachedCoupon,
-      (coupons) => coupons.recentlyAttachedCoupon,
+      coupons => coupons.recentlyAttachedCoupon,
       null,
     )
   })

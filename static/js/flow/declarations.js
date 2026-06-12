@@ -35,8 +35,8 @@ declare var describe: Function
 declare var __webpack_public_path__: string // eslint-disable-line camelcase
 
 declare class FormData {
-  get(s: string): any;
-  append(x: any, y: any): void;
+  get(s: string): any,
+  append(x: any, y: any): void,
 }
 
 declare var module: {

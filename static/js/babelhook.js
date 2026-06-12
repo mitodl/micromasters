@@ -9,7 +9,7 @@ require("jsdom-global")(undefined, {
 // We need to explicitly change the URL when window.location is used
 const changeURL = require("jsdom/lib/old-api").changeURL
 Object.defineProperty(window, "location", {
-  set: (value) => {
+  set: value => {
     if (!value.startsWith("http")) {
       value = `http://fake${value}`
     }

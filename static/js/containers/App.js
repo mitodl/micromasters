@@ -281,7 +281,7 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const user = SETTINGS.user
   let profile = {
     profile: {},
@@ -290,13 +290,13 @@ const mapStateToProps = (state) => {
     profile = state.profiles[user.username]
   }
   return {
-    userProfile: profile,
-    ui: state.ui,
+    userProfile:              profile,
+    ui:                       state.ui,
     currentProgramEnrollment: state.currentProgramEnrollment,
-    programs: state.programs,
-    courseEnrollments: state.courseEnrollments,
-    signupDialog: state.signupDialog,
-    shareDialog: state.shareDialog,
+    programs:                 state.programs,
+    courseEnrollments:        state.courseEnrollments,
+    signupDialog:             state.signupDialog,
+    shareDialog:              state.shareDialog,
   }
 }
 

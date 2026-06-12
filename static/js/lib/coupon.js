@@ -61,18 +61,18 @@ export const calculatePrices = (
     // Currently only one coupon per program is allowed, even if that coupon only affects one course
     const coupon = couponLookup.get(program.id)
     const priceExclCoupon = {
-      price: originalPrice,
+      price:  originalPrice,
       coupon: null,
     }
     const priceInclCoupon = coupon
       ? {
-          price: calculateDiscount(
-            originalPrice,
-            coupon.amount_type,
-            coupon.amount,
-          ),
-          coupon: coupon,
-        }
+        price: calculateDiscount(
+          originalPrice,
+          coupon.amount_type,
+          coupon.amount,
+        ),
+        coupon: coupon,
+      }
       : priceExclCoupon
 
     const priceExclCouponByProgram = priceExclCoupon
@@ -111,15 +111,15 @@ export const _calculateDiscount = (
 ): Decimal => {
   let newPrice = price
   switch (amountType) {
-    case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
-      newPrice = price.times(Decimal("1").minus(amount))
-      break
-    case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
-      newPrice = price.minus(amount)
-      break
-    case COUPON_AMOUNT_TYPE_FIXED_PRICE:
-      newPrice = amount
-      break
+  case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
+    newPrice = price.times(Decimal("1").minus(amount))
+    break
+  case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
+    newPrice = price.minus(amount)
+    break
+  case COUPON_AMOUNT_TYPE_FIXED_PRICE:
+    newPrice = amount
+    break
   }
   if (newPrice.lessThan(0)) {
     newPrice = Decimal("0")
@@ -135,13 +135,13 @@ import { calculateDiscount } from "./coupon"
 
 export function _makeAmountMessage(coupon: Coupon): string {
   switch (coupon.amount_type) {
-    case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
-    case COUPON_AMOUNT_TYPE_FIXED_PRICE:
-      return `$${coupon.amount}`
-    case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
-      return `${coupon.amount.times(100).toDecimalPlaces(0).toString()}%`
-    default:
-      return ""
+  case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
+  case COUPON_AMOUNT_TYPE_FIXED_PRICE:
+    return `$${coupon.amount}`
+  case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
+    return `${coupon.amount.times(100).toDecimalPlaces(0).toString()}%`
+  default:
+    return ""
   }
 }
 // allow mocking of function

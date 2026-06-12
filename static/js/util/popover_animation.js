@@ -9,30 +9,30 @@ function getStyles(props, context, state) {
 
   return {
     root: {
-      opacity: open ? 1 : 0,
+      opacity:    open ? 1 : 0,
       transition: 0,
-      position: "fixed",
-      zIndex: muiTheme.zIndex.popover,
-      maxHeight: "100%",
+      position:   "fixed",
+      zIndex:     muiTheme.zIndex.popover,
+      maxHeight:  "100%",
     },
   }
 }
 
 export default class PopoverNullAnimation extends Component {
   static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    open: PropTypes.bool.isRequired,
+    children:     PropTypes.node,
+    className:    PropTypes.string,
+    open:         PropTypes.bool.isRequired,
     /**
      * Override the inline-styles of the root element.
      */
-    style: PropTypes.object,
+    style:        PropTypes.object,
     targetOrigin: PropTypes.string.isRequired,
-    zDepth: PropTypes.number,
+    zDepth:       PropTypes.number,
   }
 
   static defaultProps = {
-    style: {},
+    style:  {},
     zDepth: 1,
   }
 

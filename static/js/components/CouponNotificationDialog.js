@@ -123,7 +123,7 @@ const CouponNotificationDialog = ({
     <Dialog
       classes={{
         paper: "dialog coupon-notification-dialog",
-        root: "coupon-notification-dialog-wrapper",
+        root:  "coupon-notification-dialog-wrapper",
       }}
       open={open}
       onClose={() => setDialogVisibility(false)}

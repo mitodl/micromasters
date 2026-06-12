@@ -34,7 +34,7 @@ import { assertCreatedActionHelper } from "./test_util"
 
 describe("program enrollment actions", () => {
   it("should create all action creators", () => {
-    ;[
+    [
       [requestGetProgramEnrollments, REQUEST_GET_PROGRAM_ENROLLMENTS],
       [
         receiveGetProgramEnrollmentsSuccess,
@@ -83,11 +83,11 @@ describe("unEnrollProgramEnrollments", () => {
       Promise.resolve([
         {
           title: "Program 1",
-          id: 1,
+          id:    1,
         },
         {
           title: "Program 2",
-          id: 2,
+          id:    2,
         },
       ]),
     )

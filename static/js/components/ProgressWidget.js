@@ -45,7 +45,7 @@ export const circularProgressWidget = (
           r={radiusForMeasures}
           strokeWidth={`${strokeWidth}px`}
           style={{
-            strokeDasharray: dashArray,
+            strokeDasharray:  dashArray,
             strokeDashoffset: dashOffset,
           }}
         />

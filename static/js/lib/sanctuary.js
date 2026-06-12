@@ -34,13 +34,13 @@ export const ifNil = R.ifElse(R.isNil, () => S.Nothing)
  */
 export const guard =
   (func: Function) =>
-  (...args: any) => {
-    if (R.any(R.isNil, args)) {
-      return S.Nothing
-    } else {
-      return S.Just(func(...args))
+    (...args: any) => {
+      if (R.any(R.isNil, args)) {
+        return S.Nothing
+      } else {
+        return S.Just(func(...args))
+      }
     }
-  }
 
 // getm :: String -> Object -> Maybe a
 export const getm = R.curry((prop, obj) => S.toMaybe(R.prop(prop, obj)))
@@ -59,7 +59,7 @@ export const parseJSON = S.encaseEither(() => ({}), JSON.parse)
 export const filterE = R.curry((predicate, either) =>
   S.either(
     S.Left,
-    (right) => (predicate(right) ? S.Right(right) : S.Left(right)),
+    right => (predicate(right) ? S.Right(right) : S.Left(right)),
     either,
   ),
 )

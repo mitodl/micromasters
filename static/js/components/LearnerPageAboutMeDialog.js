@@ -51,7 +51,7 @@ export default class LearnerPageAboutMeDialog extends ProfileFormFields {
       <Dialog
         classes={{
           paper: "dialog about-me-dialog",
-          root: "about-me-dialog-wrapper",
+          root:  "about-me-dialog-wrapper",
         }}
         open={learnerPageAboutMeDialogVisibility}
         onClose={this.closeAboutMeDialog}

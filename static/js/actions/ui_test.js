@@ -62,7 +62,7 @@ import { assertCreatedActionHelper } from "./test_util"
 
 describe("generated UI action helpers", () => {
   it("should create all action creators", () => {
-    ;[
+    [
       [clearUI, CLEAR_UI],
       [setWorkDialogVisibility, SET_WORK_DIALOG_VISIBILITY],
       [setWorkDialogIndex, SET_WORK_DIALOG_INDEX],

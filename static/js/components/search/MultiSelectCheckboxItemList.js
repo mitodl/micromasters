@@ -26,10 +26,10 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
 
   static defaultProps: any = {
     itemComponent: CheckboxItem,
-    mod: "sk-item-list",
-    showCount: true,
-    multiselect: true,
-    selectItems: [],
+    mod:           "sk-item-list",
+    showCount:     true,
+    multiselect:   true,
+    selectItems:   [],
   }
 
   constructor() {
@@ -71,7 +71,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
 
     if (newState) {
       this.setState({ allOptionClass: "is-active" })
-      setItems(items.map((item) => item.key))
+      setItems(items.map(item => item.key))
     } else {
       this.setState(selectAllInitialState)
       setItems([])
@@ -86,16 +86,16 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
       toggleItem,
       translate,
     } = this.props
-    const toggleFunc = multiselect ? toggleItem : (key) => setItems([key])
+    const toggleFunc = multiselect ? toggleItem : key => setItems([key])
 
-    return _.map(items, (option) => {
+    return _.map(items, option => {
       const label: string = option.title || option.label || option.key
       const props = {
-        label: translate(label),
+        label:   translate(label),
         onClick: () => toggleFunc(option.key),
-        key: option.key,
-        count: option.doc_count,
-        active: this.isActive(option),
+        key:     option.key,
+        count:   option.doc_count,
+        active:  this.isActive(option),
       }
       return <CheckboxItem {...props} />
     })
@@ -126,7 +126,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
 
     const bemBlocks = {
       container: block(mod).el,
-      option: block(`${mod}-option`).el,
+      option:    block(`${mod}-option`).el,
     }
 
     return (

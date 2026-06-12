@@ -29,7 +29,7 @@ export default class WorkHistoryFilter extends SearchkitComponent {
         title=""
         operator="OR"
         fieldOptions={{
-          type: "nested",
+          type:    "nested",
           options: { path: "profile.work_history" },
         }}
         listComponent={ModifiedMultiSelect}

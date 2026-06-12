@@ -74,10 +74,10 @@ class LearnerSearchPage extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
-    ui: state.ui,
-    email: state.email,
+    ui:                       state.ui,
+    email:                    state.email,
     currentProgramEnrollment: state.currentProgramEnrollment,
   }
 }
@@ -87,7 +87,7 @@ export default R.compose(
   // withSearchkitManager uses currentProgramEnrollment so it must come after connect(...)
   withSearchkitManager,
   withEmailDialog({
-    [SEARCH_EMAIL_TYPE]: SEARCH_RESULT_EMAIL_CONFIG,
+    [SEARCH_EMAIL_TYPE]:  SEARCH_RESULT_EMAIL_CONFIG,
     [LEARNER_EMAIL_TYPE]: LEARNER_EMAIL_CONFIG,
   }),
 )(LearnerSearchPage)

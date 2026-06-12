@@ -33,7 +33,7 @@ describe("SocialAuthDialog", () => {
         beforeEach(() => {
           availablePrograms = Object.keys(COURSEWARE_BACKEND_NAMES)
           SETTINGS.user.social_auth_providers = availablePrograms.filter(
-            (backend) => backend !== missingBackend,
+            backend => backend !== missingBackend,
           )
           authenticatedEnrollment = makeAvailableProgram(
             undefined,
@@ -41,7 +41,7 @@ describe("SocialAuthDialog", () => {
           )
           unauthenticatedEnrollment = makeAvailableProgram(
             undefined,
-            availablePrograms.filter((backend) => backend === missingBackend),
+            availablePrograms.filter(backend => backend === missingBackend),
           )
         })
 

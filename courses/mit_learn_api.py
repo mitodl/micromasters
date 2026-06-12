@@ -20,7 +20,6 @@ class MITLearnAPIError(Exception):
 
 LEARN_API_COURSES_LIST_URL = "https://api.learn.mit.edu/api/v1/courses/"
 
-<<<<<<< Updated upstream
 EDX_PLATFORM_CODES = {"edx", "edxorg"}
 MITXONLINE_PLATFORM_CODES = {"mitxonline"}
 
@@ -51,9 +50,6 @@ def get_courseware_backend(platform_code, course_key):
     )
     return BACKEND_MITX_ONLINE
 
-||||||| Stash base
-=======
->>>>>>> Stashed changes
 
 def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
     """
@@ -87,23 +83,7 @@ def fetch_course_from_mit_learn(course_id) -> dict[str, Any]:
     return {}
 
 
-<<<<<<< Updated upstream
-
-
 def sync_mit_learn_courseruns_for_course(course, raw_course) -> int:
-||||||| Stash base
-
-
-
-
-
-
-def sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns: list[dict[str, Any]]) -> list[dict[str, Any]]:
-=======
-def sync_mit_learn_courseruns_for_course(
-    course, enrollment_url, raw_courseruns: list[dict[str, Any]]
-) -> list[dict[str, Any]]:
->>>>>>> Stashed changes
     """
     Process raw course data from MIT Learn API and update or create course runs,
     but only for courses that already exist in the database.
@@ -143,7 +123,6 @@ def sync_mit_learn_courseruns_for_course(
         log.info("Syncing course run: %s", run_id)
         run_defaults = {
             "title": raw_courserun.get("title", ""),
-<<<<<<< Updated upstream
             "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get(
                 "enrollment_start") else None,
             "enrollment_end": parse_datetime(raw_courserun.get("enrollment_end")) if raw_courserun.get(
@@ -154,48 +133,13 @@ def sync_mit_learn_courseruns_for_course(
                 "upgrade_deadline") else None,
             "courseware_backend": courseware_backend,
             "enrollment_url": raw_courserun.get("url", ""),
-||||||| Stash base
-            "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start")) if raw_courserun.get("enrollment_start") else None,
-            "enrollment_end": parse_datetime(raw_courserun.get("enrollment_end")) if raw_courserun.get("enrollment_end") else None,
-            "start_date": parse_datetime(raw_courserun.get("start_date")) if raw_courserun.get("start_date") else None,
-            "end_date": parse_datetime(raw_courserun.get("end_date"))if raw_courserun.get("end_date") else None,
-            "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline")) if raw_courserun.get("upgrade_deadline") else None,
-            "courseware_backend": raw_courserun.get("courseware_backend", ""),
-            "enrollment_url": enrollment_url,
-=======
-            "enrollment_start": parse_datetime(raw_courserun.get("enrollment_start"))
-            if raw_courserun.get("enrollment_start")
-            else None,
-            "enrollment_end": parse_datetime(raw_courserun.get("enrollment_end"))
-            if raw_courserun.get("enrollment_end")
-            else None,
-            "start_date": parse_datetime(raw_courserun.get("start_date"))
-            if raw_courserun.get("start_date")
-            else None,
-            "end_date": parse_datetime(raw_courserun.get("end_date"))
-            if raw_courserun.get("end_date")
-            else None,
-            "upgrade_deadline": parse_datetime(raw_courserun.get("upgrade_deadline"))
-            if raw_courserun.get("upgrade_deadline")
-            else None,
-            "courseware_backend": raw_courserun.get("courseware_backend", ""),
-            "enrollment_url": enrollment_url,
->>>>>>> Stashed changes
         }
         course_run, created = CourseRun.objects.update_or_create(
             course=course, edx_course_key=run_id, defaults=run_defaults
         )
         if created:
             num_created += 1
-<<<<<<< Updated upstream
             log.info("Created course run: %s for course %s", course_run.edx_course_key, course.title)
         else:
             log.info("Updated course run: %s for course %s", course_run.edx_course_key, course.title)
-||||||| Stash base
-            print(f"Created course run: {course_run.edx_course_key} for course {course.title}")
-=======
-            print(
-                f"Created course run: {course_run.edx_course_key} for course {course.title}"
-            )
->>>>>>> Stashed changes
     return num_created

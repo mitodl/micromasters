@@ -33,7 +33,7 @@ describe("CourseListCard", () => {
     program = _.cloneDeep(DASHBOARD_RESPONSE.programs[1])
     coursePrice = _.cloneDeep(
       (COURSE_PRICES_RESPONSE.find(
-        (coursePrice) => coursePrice.program_id === program.id,
+        coursePrice => coursePrice.program_id === program.id,
       ): any),
     )
 
@@ -81,7 +81,7 @@ describe("CourseListCard", () => {
         </Provider>
       </MuiThemeProvider>,
       {
-        context: { router: { push: routerPushStub } },
+        context:           { router: { push: routerPushStub } },
         childContextTypes: {
           router: PropTypes.object.isRequired,
         },
@@ -93,7 +93,7 @@ describe("CourseListCard", () => {
     const now = moment()
     const prices = calculatePrices([program], [coursePrice], [])
     const wrapper = renderCourseListCard({
-      now: now,
+      now:    now,
       prices: prices,
     })
     assert.equal(wrapper.find(CourseRow).length, program.courses.length)
@@ -110,7 +110,7 @@ describe("CourseListCard", () => {
     const wrapper = renderCourseListCard()
     const nows = wrapper
       .find(CourseRow)
-      .map((courseRow) => courseRow.props().now)
+      .map(courseRow => courseRow.props().now)
     assert.isAbove(nows.length, 0)
     for (const now of nows) {
       // Each now must be exactly the same object
@@ -126,7 +126,7 @@ describe("CourseListCard", () => {
 
     it("should pass the showStaffView to relevant child components", () => {
       const wrapper = renderCourseListCard({ showStaffView: true })
-      wrapper.find(CourseRow).forEach((row) => {
+      wrapper.find(CourseRow).forEach(row => {
         assert.isTrue(row.props().showStaffView)
       })
     })

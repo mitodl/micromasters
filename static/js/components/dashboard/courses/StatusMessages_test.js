@@ -84,14 +84,14 @@ describe("Course Status Messages", () => {
       sandbox = sinon.sandbox.create()
 
       calculateMessagesProps = {
-        courseAction: sandbox.stub(),
-        firstRun: course.runs[0],
-        course: course,
-        expandedStatuses: new Set(),
-        setShowExpandedCourseStatus: sandbox.stub(),
+        courseAction:                      sandbox.stub(),
+        firstRun:                          course.runs[0],
+        course:                            course,
+        expandedStatuses:                  new Set(),
+        setShowExpandedCourseStatus:       sandbox.stub(),
         setExamEnrollmentDialogVisibility: sandbox.stub(),
-        setSelectedExamCouponCourse: sandbox.stub(),
-        coupon: undefined,
+        setSelectedExamCouponCourse:       sandbox.stub(),
+        coupon:                            undefined,
       }
       calculateMessagesProps.courseAction.returns("course action was called")
     })
@@ -289,7 +289,7 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message: `You missed the upgrade deadline, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
-            action: "course action was called",
+            action:  "course action was called",
           },
         ])
         assert(
@@ -385,7 +385,7 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message: `You did not pass the course, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
-            action: "course action was called",
+            action:  "course action was called",
           },
         ])
         assert(

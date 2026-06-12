@@ -114,8 +114,8 @@ describe("LearnerResult", () => {
   it("should include the user's current program grade when a grade is available", () => {
     SETTINGS.roles = [
       {
-        role: "staff",
-        program: 1,
+        role:        "staff",
+        program:     1,
         permissions: ["can_advance_search"],
       },
     ]
@@ -133,8 +133,8 @@ describe("LearnerResult", () => {
   it("should show an indicator when a user has a missing/null program grade", () => {
     SETTINGS.roles = [
       {
-        role: "staff",
-        program: 1,
+        role:        "staff",
+        program:     1,
         permissions: ["can_advance_search"],
       },
     ]
@@ -188,7 +188,7 @@ describe("LearnerResult", () => {
       },
     })
     assert.deepEqual(
-      result.find(".display-name .highlight").map((node) => node.text()),
+      result.find(".display-name .highlight").map(node => node.text()),
       ["Query"],
     )
     assert.equal(result.find(".user-name .highlight").text(), "query")

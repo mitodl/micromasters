@@ -50,8 +50,8 @@ describe("coupon utility functions", () => {
 
     it("returns an empty set of maps if there are no programs", () => {
       assert.deepEqual(calculatePrices([], [], []), {
-        pricesInclCouponByRun: new Map(),
-        pricesInclCouponByCourse: new Map(),
+        pricesInclCouponByRun:     new Map(),
+        pricesInclCouponByCourse:  new Map(),
         pricesInclCouponByProgram: new Map(),
         pricesExclCouponByProgram: new Map(),
       })
@@ -64,17 +64,17 @@ describe("coupon utility functions", () => {
       for (const program of programs) {
         expectedProgramPrices.set(program.id, {
           coupon: null,
-          price: pricesLookup.get(program.id),
+          price:  pricesLookup.get(program.id),
         })
         for (const course of program.courses) {
           expectedCoursePrices.set(course.id, {
             coupon: null,
-            price: pricesLookup.get(program.id),
+            price:  pricesLookup.get(program.id),
           })
           for (const run of course.runs) {
             expectedRunPrices.set(run.id, {
               coupon: null,
-              price: pricesLookup.get(program.id),
+              price:  pricesLookup.get(program.id),
             })
           }
         }
@@ -84,8 +84,8 @@ describe("coupon utility functions", () => {
       assert.deepEqual(prices, {
         pricesExclCouponByProgram: expectedProgramPrices,
         pricesInclCouponByProgram: expectedProgramPrices,
-        pricesInclCouponByCourse: expectedCoursePrices,
-        pricesInclCouponByRun: expectedRunPrices,
+        pricesInclCouponByCourse:  expectedCoursePrices,
+        pricesInclCouponByRun:     expectedRunPrices,
       })
     })
 
@@ -97,22 +97,22 @@ describe("coupon utility functions", () => {
       const prices = calculatePrices(programs, coursePrices, [coupon])
 
       assert.deepEqual(prices.pricesInclCouponByProgram.get(program.id), {
-        price: priceWithCoupon,
+        price:  priceWithCoupon,
         coupon: coupon,
       })
       assert.deepEqual(prices.pricesExclCouponByProgram.get(program.id), {
-        price: programPrice,
+        price:  programPrice,
         coupon: null,
       })
 
       for (const course of program.courses) {
         assert.deepEqual(prices.pricesInclCouponByCourse.get(course.id), {
-          price: priceWithCoupon,
+          price:  priceWithCoupon,
           coupon: coupon,
         })
         for (const run of course.runs) {
           assert.deepEqual(prices.pricesInclCouponByRun.get(run.id), {
-            price: priceWithCoupon,
+            price:  priceWithCoupon,
             coupon: coupon,
           })
         }
@@ -130,21 +130,21 @@ describe("coupon utility functions", () => {
       const prices = calculatePrices(programs, coursePrices, [coupon])
 
       assert.deepEqual(prices.pricesInclCouponByProgram.get(program.id), {
-        price: programPrice,
+        price:  programPrice,
         coupon: null,
       })
       assert.deepEqual(prices.pricesExclCouponByProgram.get(program.id), {
-        price: programPrice,
+        price:  programPrice,
         coupon: null,
       })
 
       assert.deepEqual(prices.pricesInclCouponByCourse.get(course.id), {
-        price: priceWithCoupon,
+        price:  priceWithCoupon,
         coupon: coupon,
       })
       for (const run of course.runs) {
         assert.deepEqual(prices.pricesInclCouponByRun.get(run.id), {
-          price: priceWithCoupon,
+          price:  priceWithCoupon,
           coupon: coupon,
         })
       }

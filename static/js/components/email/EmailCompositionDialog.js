@@ -52,7 +52,7 @@ const editorStateFromProps = R.compose(
 
 const draftWysiwygToolbar = {
   options: ["inline", "list", "link", "history", "remove", "blockType"],
-  inline: {
+  inline:  {
     options: ["bold", "italic", "underline"],
   },
   list: {
@@ -122,7 +122,7 @@ export default class EmailCompositionDialog extends React.Component {
     // insert a blank space after the variable
     selection = newEditorState.getSelection().merge({
       anchorOffset: selection.get("anchorOffset") + variableName.length,
-      focusOffset: selection.get("anchorOffset") + variableName.length,
+      focusOffset:  selection.get("anchorOffset") + variableName.length,
     })
     newEditorState = EditorState.acceptSelection(newEditorState, selection)
     contentState = Modifier.insertText(
@@ -241,7 +241,7 @@ export default class EmailCompositionDialog extends React.Component {
       <Dialog
         classes={{
           paper: "dialog email-composition-dialog",
-          root: "email-composition-dialog-wrapper",
+          root:  "email-composition-dialog-wrapper",
         }}
         open={dialogVisibility}
         onClose={this.closeEmailComposeAndClear}
@@ -253,8 +253,8 @@ export default class EmailCompositionDialog extends React.Component {
           <div className="email-composition-contents">
             {supportsAutomaticEmails
               ? this.renderAutomaticEmailSettings(
-                  inputs.sendAutomaticEmails || false,
-                )
+                inputs.sendAutomaticEmails || false,
+              )
               : null}
             {this.renderSubheading()}
             {renderRecipients ? renderRecipients(filters) : null}

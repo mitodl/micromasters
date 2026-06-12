@@ -34,7 +34,7 @@ import IntegrationTestHelper from "../util/integration_test_helper"
 import * as api from "../lib/api"
 import { activeDialog } from "../util/test_utils"
 
-describe("ProfilePage", function () {
+describe("ProfilePage", function() {
   this.timeout(5000) // eslint-disable-line no-invalid-this
 
   let listenForActions,
@@ -109,7 +109,7 @@ describe("ProfilePage", function () {
     beforeEach(() => {
       const userProfile = {
         ...USER_PROFILE_RESPONSE,
-        education: [],
+        education:    [],
         work_history: [],
       }
       helper.profileGetStub
@@ -191,8 +191,8 @@ describe("ProfilePage", function () {
       it(`respects the current value (${filledOutValue}) when saving on ${step}`, () => {
         const updatedProfile = {
           ...USER_PROFILE_RESPONSE,
-          filled_out: filledOutValue,
-          education: [],
+          filled_out:   filledOutValue,
+          education:    [],
           work_history: [],
         }
         helper.profileGetStub

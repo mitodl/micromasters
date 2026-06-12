@@ -33,7 +33,7 @@ describe("StaffLearnerInfoCard", () => {
             [
               {
                 program_id: program.id,
-                price: price,
+                price:      price,
               },
             ],
             [],

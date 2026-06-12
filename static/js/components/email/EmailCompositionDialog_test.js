@@ -29,7 +29,7 @@ describe("EmailCompositionDialog", () => {
 
   const updateObject = (objectToUpdate = {}, updatedProps = {}) => {
     const cloned = _.cloneDeep(objectToUpdate)
-    _.forEach(updatedProps, function (value, key) {
+    _.forEach(updatedProps, function(value, key) {
       cloned[key] = value
     })
     return cloned
@@ -83,7 +83,7 @@ describe("EmailCompositionDialog", () => {
   it("renders a radio button for setting whether an email is automatic or not", () => {
     renderDialog({
       supportsAutomaticEmails: true,
-      inputs: {
+      inputs:                  {
         sendAutomaticEmails: false,
       },
     })
@@ -263,18 +263,18 @@ describe("EmailCompositionDialog", () => {
       {
         filters: [
           {
-            id: "1",
-            name: "program.course_runs.semester",
+            id:    "1",
+            name:  "program.course_runs.semester",
             value: "2015",
           },
           {
-            id: "2",
-            name: "ES",
+            id:    "2",
+            name:  "ES",
             value: "foo",
           },
           {
-            id: "3",
-            name: "profile.birth_country",
+            id:    "3",
+            name:  "profile.birth_country",
             value: "ES",
           },
         ],

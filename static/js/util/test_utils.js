@@ -68,15 +68,15 @@ export function generateCourseFromExisting(
       throw new Error("Need a course run to copy.")
     }
     const runsNeeded = desiredRuns - currentRunCount
-    let idMax = _.max(_.map(course.runs, (run) => run.id)) || 0
-    let positionMax = _.max(_.map(course.runs, (run) => run.position)) || 0
+    let idMax = _.max(_.map(course.runs, run => run.id)) || 0
+    let positionMax = _.max(_.map(course.runs, run => run.position)) || 0
     for (let i = 0; i < runsNeeded; i++) {
       const newCourseRun = _.cloneDeep(courseRun)
       positionMax++
       idMax++
       Object.assign(newCourseRun, {
-        position: positionMax,
-        id: idMax,
+        position:  positionMax,
+        id:        idMax,
         course_id: `${newCourseRun.course_id}-new-${i}`,
       })
       course.runs.push(newCourseRun)
@@ -85,7 +85,7 @@ export function generateCourseFromExisting(
     course.runs = _.take(course.runs, desiredRuns)
   }
   Object.assign(course, {
-    id: 1,
+    id:                  1,
     position_in_program: 0,
   })
   return course
@@ -98,9 +98,9 @@ export const modifyTextArea = (
   field.value = text
   ReactTestUtils.Simulate.change(field)
   ReactTestUtils.Simulate.keyDown(field, {
-    key: "Enter",
+    key:     "Enter",
     keyCode: 13,
-    which: 13,
+    which:   13,
   })
 }
 
@@ -111,9 +111,9 @@ export const modifyTextField = (
   field.value = text
   ReactTestUtils.Simulate.change(field)
   ReactTestUtils.Simulate.keyDown(field, {
-    key: "Enter",
+    key:     "Enter",
     keyCode: 13,
-    which: 13,
+    which:   13,
   })
 }
 
@@ -175,13 +175,13 @@ export const localStorageMock = (init: any = {}) => {
 
   const sandbox = sinon.sandbox.create()
 
-  const getItem = sandbox.spy((key) => storage[key] || null)
+  const getItem = sandbox.spy(key => storage[key] || null)
 
   const setItem = sandbox.spy((key, value) => {
     storage[key] = value || ""
   })
 
-  const removeItem = sandbox.spy((key) => {
+  const removeItem = sandbox.spy(key => {
     delete storage[key]
   })
 
@@ -191,10 +191,10 @@ export const localStorageMock = (init: any = {}) => {
   }
 
   return {
-    getItem: getItem,
-    setItem: setItem,
+    getItem:    getItem,
+    setItem:    setItem,
     removeItem: removeItem,
-    reset: reset,
+    reset:      reset,
   }
 }
 

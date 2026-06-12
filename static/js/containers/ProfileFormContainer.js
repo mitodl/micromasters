@@ -78,7 +78,7 @@ export type ProfileContainerProps = ProfileContainerParentProps & {
 }
 
 export const childrenWithProps = (children: any, props: Object) => {
-  return React.Children.map(children, (child) =>
+  return React.Children.map(children, child =>
     React.cloneElement(child, props),
   )
 }
@@ -245,21 +245,21 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
       }
 
       return {
-        addProgramEnrollment: this.addProgramEnrollment,
-        dispatch: dispatch,
-        errors: errors,
-        fetchProfile: this.fetchProfile,
-        profile: profile,
-        profilePatchStatus: patchStatus,
-        uneditedProfile: uneditedProfile,
-        programs: programs.availablePrograms,
-        saveProfile: this.saveProfile.bind(this, isEdit),
-        currentProgramEnrollment: currentProgramEnrollment,
-        setProgram: this.setProgram,
-        startProfileEdit: this.startProfileEdit,
-        ui: ui,
-        updateProfile: this.updateProfile.bind(this, isEdit),
-        updateProfileValidation: this.updateProfileValidation,
+        addProgramEnrollment:       this.addProgramEnrollment,
+        dispatch:                   dispatch,
+        errors:                     errors,
+        fetchProfile:               this.fetchProfile,
+        profile:                    profile,
+        profilePatchStatus:         patchStatus,
+        uneditedProfile:            uneditedProfile,
+        programs:                   programs.availablePrograms,
+        saveProfile:                this.saveProfile.bind(this, isEdit),
+        currentProgramEnrollment:   currentProgramEnrollment,
+        setProgram:                 this.setProgram,
+        startProfileEdit:           this.startProfileEdit,
+        ui:                         ui,
+        updateProfile:              this.updateProfile.bind(this, isEdit),
+        updateProfileValidation:    this.updateProfileValidation,
         updateValidationVisibility: this.updateValidationVisibility,
         ...this.simpleActionHelpers(),
         ...this.asyncActionHelpers(),

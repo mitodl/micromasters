@@ -19,17 +19,17 @@ import type {
 
 export const NEW_EMAIL_EDIT: EmailInputs = {
   subject: null,
-  body: null,
+  body:    null,
 }
 
 export const INITIAL_EMAIL_STATE: EmailState = {
-  inputs: { ...NEW_EMAIL_EDIT },
-  params: {},
-  validationErrors: {},
-  sendError: {},
-  subheading: undefined,
+  inputs:                  { ...NEW_EMAIL_EDIT },
+  params:                  {},
+  validationErrors:        {},
+  sendError:               {},
+  subheading:              undefined,
   supportsAutomaticEmails: false,
-  filters: undefined,
+  filters:                 undefined,
 }
 
 export const INITIAL_ALL_EMAILS_STATE: AllEmailsState = {
@@ -64,37 +64,37 @@ export const email = (
   const emailType = getEmailType(action.payload)
 
   switch (action.type) {
-    case START_EMAIL_EDIT:
-      const newState = { ...state } // eslint-disable-line no-case-declarations
-      newState[emailType] = {
-        ...INITIAL_EMAIL_STATE,
-        params: action.payload.params || {},
-        subheading: action.payload.subheading,
-        supportsAutomaticEmails: action.payload.supportsAutomaticEmails,
-        filters: action.payload.filters,
-        inputs: action.payload.inputs || NEW_EMAIL_EDIT,
-      }
-      newState.currentlyActive = emailType
-      return newState
-    case UPDATE_EMAIL_EDIT:
-      return updatedState(state, emailType, { inputs: action.payload.inputs })
-    case CLEAR_EMAIL_EDIT:
-      return resetState(state, emailType)
-    case UPDATE_EMAIL_VALIDATION:
-      return updatedState(state, emailType, {
-        validationErrors: action.payload.errors,
-      })
+  case START_EMAIL_EDIT:
+    const newState = { ...state } // eslint-disable-line no-case-declarations
+    newState[emailType] = {
+      ...INITIAL_EMAIL_STATE,
+      params:                  action.payload.params || {},
+      subheading:              action.payload.subheading,
+      supportsAutomaticEmails: action.payload.supportsAutomaticEmails,
+      filters:                 action.payload.filters,
+      inputs:                  action.payload.inputs || NEW_EMAIL_EDIT,
+    }
+    newState.currentlyActive = emailType
+    return newState
+  case UPDATE_EMAIL_EDIT:
+    return updatedState(state, emailType, { inputs: action.payload.inputs })
+  case CLEAR_EMAIL_EDIT:
+    return resetState(state, emailType)
+  case UPDATE_EMAIL_VALIDATION:
+    return updatedState(state, emailType, {
+      validationErrors: action.payload.errors,
+    })
 
-    case INITIATE_SEND_EMAIL:
-      return updatedState(state, emailType, { fetchStatus: FETCH_PROCESSING })
-    case SEND_EMAIL_SUCCESS:
-      return updatedState(state, emailType, { fetchStatus: FETCH_SUCCESS })
-    case SEND_EMAIL_FAILURE:
-      return updatedState(state, emailType, {
-        fetchStatus: FETCH_FAILURE,
-        sendError: action.payload.error,
-      })
-    default:
-      return state
+  case INITIATE_SEND_EMAIL:
+    return updatedState(state, emailType, { fetchStatus: FETCH_PROCESSING })
+  case SEND_EMAIL_SUCCESS:
+    return updatedState(state, emailType, { fetchStatus: FETCH_SUCCESS })
+  case SEND_EMAIL_FAILURE:
+    return updatedState(state, emailType, {
+      fetchStatus: FETCH_FAILURE,
+      sendError:   action.payload.error,
+    })
+  default:
+    return state
   }
 }

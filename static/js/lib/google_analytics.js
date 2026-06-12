@@ -5,9 +5,9 @@ import R from "ramda"
 
 const makeGAEvent = (category, action, label, value) => ({
   category: category,
-  action: action,
-  label: label,
-  value: value,
+  action:   action,
+  label:    label,
+  value:    value,
 })
 
 const removeNilValue = R.when(

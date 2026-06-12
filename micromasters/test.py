@@ -13,9 +13,7 @@ class FakeSiteMiddleware(MiddlewareMixin):
     that doesn't make any database calls.
     """
 
-    def process_request(
-        self, request
-    ):  # pylint: disable=missing-docstring,useless-return
+    def process_request(self, request):  # pylint: disable=missing-docstring,useless-return
         request.site = None
         return None
 

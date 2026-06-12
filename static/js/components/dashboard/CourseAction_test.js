@@ -49,7 +49,7 @@ describe("CourseAction", () => {
     sandbox.restore()
   })
 
-  const assertCourseRunSelected = (courseRun) => {
+  const assertCourseRunSelected = courseRun => {
     sinon.assert.calledWith(setEnrollSelectedCourseRunStub, courseRun)
   }
 
@@ -106,7 +106,7 @@ describe("CourseAction", () => {
 
         const wrapper = renderCourseAction({
           actionType: COURSE_ACTION_REENROLL,
-          courseRun: run,
+          courseRun:  run,
         })
         assert.equal(wrapper.find(SpinnerButton).props().disabled, data[2])
       })
@@ -126,13 +126,13 @@ describe("CourseAction", () => {
 
   it("shows a pending disabled button if the user has status pending-enrollment", () => {
     const course = findCourse(
-      (course) =>
+      course =>
         course.runs.length > 0 &&
         course.runs[0].status === STATUS_PENDING_ENROLLMENT,
     )
     const firstRun = course.runs[0]
     const wrapper = renderCourseAction({
-      courseRun: firstRun,
+      courseRun:  firstRun,
       actionType: COURSE_ACTION_ENROLL,
     })
     const buttonProps = wrapper.find("SpinnerButton").props()
@@ -144,7 +144,7 @@ describe("CourseAction", () => {
 
     beforeEach(() => {
       course = findAndCloneCourse(
-        (course) =>
+        course =>
           course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED,
       )
     })
@@ -156,7 +156,7 @@ describe("CourseAction", () => {
       firstRun.status = STATUS_OFFERED
 
       const wrapper = renderCourseAction({
-        courseRun: firstRun,
+        courseRun:  firstRun,
         actionType: COURSE_ACTION_ENROLL,
       })
       const button = wrapper.find(SpinnerButton)
@@ -166,7 +166,7 @@ describe("CourseAction", () => {
 
     it("indicates that a user must calculate the course price to upgrade to paid", () => {
       const course = findAndCloneCourse(
-        (course) =>
+        course =>
           course.runs.length > 0 &&
           course.runs[0].status === STATUS_CAN_UPGRADE,
       )
@@ -175,7 +175,7 @@ describe("CourseAction", () => {
       })
 
       const wrapper = renderCourseAction({
-        courseRun: firstRun,
+        courseRun:  firstRun,
         actionType: COURSE_ACTION_CALCULATE_PRICE,
       })
 
@@ -186,7 +186,7 @@ describe("CourseAction", () => {
 
     it("indicates that a user can't pay for course while FA is pending", () => {
       const course = findAndCloneCourse(
-        (course) =>
+        course =>
           course.runs.length > 0 &&
           course.runs[0].status === STATUS_CAN_UPGRADE,
       )
@@ -195,7 +195,7 @@ describe("CourseAction", () => {
       })
 
       const wrapper = renderCourseAction({
-        courseRun: firstRun,
+        courseRun:  firstRun,
         actionType: COURSE_ACTION_PAY,
       })
 

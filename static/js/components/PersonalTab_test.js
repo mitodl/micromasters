@@ -28,7 +28,7 @@ describe("PersonalTab", () => {
         </Provider>
       </MuiThemeProvider>,
       {
-        context: { router: {} },
+        context:           { router: {} },
         childContextTypes: { router: PropTypes.object },
       },
     )

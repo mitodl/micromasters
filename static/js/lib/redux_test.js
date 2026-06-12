@@ -11,10 +11,10 @@ import {
 describe("redux helpers", () => {
   const MY_ACTION = "MY_ACTION"
   const dispatch = sinon.spy()
-  const actionCreator = (arg) => ({
-    type: MY_ACTION,
+  const actionCreator = arg => ({
+    type:    MY_ACTION,
     payload: arg,
-    meta: null,
+    meta:    null,
   })
 
   describe("createActionHelper", () => {
@@ -36,9 +36,9 @@ describe("redux helpers", () => {
       helper(3)
       assert(
         dispatch.calledWith({
-          type: MY_ACTION,
+          type:    MY_ACTION,
           payload: 3,
-          meta: null,
+          meta:    null,
         }),
       )
     })
@@ -63,9 +63,9 @@ describe("redux helpers", () => {
       actionCreator(3)
       assert(
         dispatch.calledWith({
-          type: MY_ACTION,
+          type:    MY_ACTION,
           payload: 3,
-          meta: null,
+          meta:    null,
         }),
       )
     })
@@ -73,15 +73,15 @@ describe("redux helpers", () => {
 
   describe("createAsyncActionHelpers", () => {
     const MY_ASYNC_ACTION = "MY_ASYNC_ACTION"
-    const asyncActionCreator = (arg) => (dispatch) =>
+    const asyncActionCreator = arg => dispatch =>
       dispatch({
-        type: MY_ASYNC_ACTION,
+        type:    MY_ASYNC_ACTION,
         payload: arg,
       })
     const actionList = [["asyncActionCreator", asyncActionCreator]]
 
     const dispatchSpy = sinon.stub().returns(Promise.resolve())
-    const asyncDispatch = (createdActionFunc) => {
+    const asyncDispatch = createdActionFunc => {
       if (typeof createdActionFunc === "function") {
         return createdActionFunc(dispatchSpy)
       }
@@ -104,7 +104,7 @@ describe("redux helpers", () => {
       assert.isFulfilled(dispatched)
       assert(
         dispatchSpy.calledWith({
-          type: MY_ASYNC_ACTION,
+          type:    MY_ASYNC_ACTION,
           payload: 2,
         }),
       )

@@ -85,7 +85,7 @@ describe("CourseRow", () => {
     course.is_elective = true
     const wrapper = renderRow(
       {
-        course: course,
+        course:              course,
         programHasElectives: true,
       },
       true,
@@ -108,7 +108,7 @@ describe("CourseRow", () => {
     const course = programs[0].courses[0]
     makeRunCurrent(course.runs[0])
     const wrapper = renderRow({
-      course: course,
+      course:        course,
       showStaffView: true,
     })
     assert.lengthOf(wrapper.find(CourseAction), 0)

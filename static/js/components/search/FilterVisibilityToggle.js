@@ -8,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton"
 import { getAppliedFilterValue, matchFieldName } from "./util"
 
 export const FILTER_ID_ADJUST = {
-  courses: "program.courses.course_title",
+  courses:  "program.courses.course_title",
   semester: "program.course_runs.semester",
 }
 

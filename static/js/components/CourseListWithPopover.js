@@ -8,7 +8,7 @@ import type {
 } from "../flow/programTypes"
 import { EXTRA_ELECTIVE_REQUIREMENT_TITLES } from "../constants"
 
-const listItems = (courses) => {
+const listItems = courses => {
   return courses.map((course, index) => (
     <CourseListItemWithPopover key={index} course={course} />
   ))
@@ -70,7 +70,7 @@ export default class CourseListWithPopover extends React.Component {
         </div>
 
         <div>
-          {this.props.electiveSets.map((electiveSet) =>
+          {this.props.electiveSets.map(electiveSet =>
             populateElectivesList(electiveSet),
           )}
         </div>

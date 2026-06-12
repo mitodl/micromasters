@@ -9,35 +9,35 @@ export default class FacultyCarousel extends React.Component {
   }
   render() {
     const settings = {
-      dots: true,
-      dotsClass: "slick-dots",
-      infinite: false,
-      speed: 500,
-      slidesToShow: 2.2,
+      dots:           true,
+      dotsClass:      "slick-dots",
+      infinite:       false,
+      speed:          500,
+      slidesToShow:   2.2,
       slidesToScroll: 1,
       adaptiveHeight: false,
-      responsive: [
+      responsive:     [
         {
           breakpoint: 600,
-          settings: {
+          settings:   {
             slidesToShow: 1,
           },
         },
         {
           breakpoint: 840,
-          settings: {
+          settings:   {
             slidesToShow: 2,
           },
         },
         {
           breakpoint: 1000,
-          settings: {
+          settings:   {
             slidesToShow: 1.5,
           },
         },
         {
           breakpoint: 1200,
-          settings: {
+          settings:   {
             slidesToShow: 2,
           },
         },

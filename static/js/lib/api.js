@@ -44,7 +44,7 @@ export function patchUserProfile(
   }
   return fetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
     method: "PATCH",
-    body: JSON.stringify(profile),
+    body:   JSON.stringify(profile),
   })
 }
 
@@ -66,10 +66,10 @@ export function sendSearchResultMail(
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF("/api/v0/mail/search/", {
     method: "POST",
-    body: JSON.stringify({
-      email_subject: subject,
-      email_body: body,
-      search_request: searchRequest,
+    body:   JSON.stringify({
+      email_subject:         subject,
+      email_body:            body,
+      search_request:        searchRequest,
       send_automatic_emails: sendAutomaticEmails,
     }),
   })
@@ -82,9 +82,9 @@ export function sendCourseTeamMail(
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF(`/api/v0/mail/course/${courseId}/`, {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       email_subject: subject,
-      email_body: body,
+      email_body:    body,
     }),
   })
 }
@@ -96,9 +96,9 @@ export function sendLearnerMail(
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF(`/api/v0/mail/learner/${studentId}/`, {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       email_subject: subject,
-      email_body: body,
+      email_body:    body,
     }),
   })
 }
@@ -109,7 +109,7 @@ export function sendGradesRecordMail(
 ): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF(`/api/v0/mail/grades/${partnerId}/`, {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       enrollment_hash: enrollmentHash,
     }),
   })
@@ -136,7 +136,7 @@ export function addProgramEnrollment(
 ): Promise<AvailableProgram> {
   return fetchJSONWithCSRF("/api/v0/enrolledprograms/", {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       program_id: programId,
     }),
   })
@@ -154,7 +154,7 @@ export function updateProfileImage(
       Accept: "text/html",
     },
     method: "PATCH",
-    body: formData,
+    body:   formData,
   })
 }
 
@@ -166,14 +166,14 @@ export function getPearsonSSO(): Promise<PearsonSSOParameters> {
 export function addCourseEnrollment(courseId: string) {
   return fetchJSONWithCSRF("/api/v0/course_enrollments/", {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       course_id: courseId,
     }),
   })
 }
 
 export function getCoupons(): Promise<Coupons> {
-  return fetchJSONWithCSRF("/api/v0/coupons/").then((coupons) => {
+  return fetchJSONWithCSRF("/api/v0/coupons/").then(coupons => {
     // turn `amount` from string into decimal
     return R.map(R.evolve({ amount: Decimal }), coupons)
   })
@@ -185,16 +185,16 @@ export function attachCoupon(
   const code = encodeURI(couponCode)
   return fetchJSONWithCSRF(`/api/v0/coupons/${code}/users/`, {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       username: SETTINGS.user.username,
     }),
-  }).then((response) => R.evolve({ coupon: { amount: Decimal } }, response))
+  }).then(response => R.evolve({ coupon: { amount: Decimal } }, response))
 }
 
 export function unEnrollProgramEnrollments(programIds: Array<number>) {
   return fetchJSONWithCSRF("/api/v0/unenroll_programs/", {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       program_ids: programIds,
     }),
   })
@@ -203,7 +203,7 @@ export function unEnrollProgramEnrollments(programIds: Array<number>) {
 export function getEnrollmentShareHash(enrollmentId: number) {
   return fetchJSONWithCSRF("/api/v0/enrollment_share_hash/", {
     method: "POST",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       enrollment_id: enrollmentId,
     }),
   })
@@ -212,7 +212,7 @@ export function getEnrollmentShareHash(enrollmentId: number) {
 export function revokeEnrollmentShareHash(enrollmentId: number) {
   return fetchJSONWithCSRF("/api/v0/enrollment_share_hash/", {
     method: "DELETE",
-    body: JSON.stringify({
+    body:   JSON.stringify({
       enrollment_id: enrollmentId,
     }),
   })

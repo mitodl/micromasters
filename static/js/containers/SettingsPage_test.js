@@ -27,7 +27,7 @@ import IntegrationTestHelper from "../util/integration_test_helper"
 import * as api from "../lib/api"
 import { USER_PROFILE_RESPONSE } from "../test_constants"
 
-describe("SettingsPage", function () {
+describe("SettingsPage", function() {
   this.timeout(5000)
   const nextButtonSelector = ".next"
   let listenForActions, renderComponent, helper, patchUserProfileStub
@@ -110,7 +110,7 @@ describe("SettingsPage", function () {
         const receivedProfile = {
           ...USER_PROFILE_RESPONSE,
           account_privacy: "public",
-          email_optin: true,
+          email_optin:     true,
         }
         helper.store.dispatch(
           receiveGetUserProfileSuccess(SETTINGS.user.username, receivedProfile),
@@ -120,7 +120,7 @@ describe("SettingsPage", function () {
         const updatedProfile = {
           ...receivedProfile,
           email_optin: true,
-          filled_out: true,
+          filled_out:  true,
         }
         return confirmSaveButtonBehavior(updatedProfile, { button: button })
       })
@@ -154,7 +154,7 @@ describe("SettingsPage", function () {
 
         return listenForActions([SHOW_DIALOG], () => {
           unEnrollBtn.click()
-        }).then((state) => {
+        }).then(state => {
           assert.isTrue(state.ui.dialogVisibility[UNENROLL_PROGRAM_DIALOG])
         })
       })

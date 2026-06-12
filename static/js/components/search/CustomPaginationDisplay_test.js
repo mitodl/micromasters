@@ -9,7 +9,7 @@ import CustomPaginationDisplay from "./CustomPaginationDisplay"
 describe("CustomPaginationDisplay", () => {
   const toggleItemStub = sinon.stub()
   const props = {
-    disabled: false,
+    disabled:   false,
     toggleItem: toggleItemStub,
   }
 
@@ -33,7 +33,7 @@ describe("CustomPaginationDisplay", () => {
     const previousOption = wrapper.find('[data-key="previous"]')
     const event = {
       preventDefault: (): void => {},
-      target: {
+      target:         {
         getAttribute: (): string => {
           return "previous"
         },
@@ -49,7 +49,7 @@ describe("CustomPaginationDisplay", () => {
     const nextOption = wrapper.find('[data-key="next"]')
     const event = {
       preventDefault: (): void => {},
-      target: {
+      target:         {
         getAttribute: (): string => {
           return "next"
         },

@@ -3,7 +3,7 @@ import React from "react"
 import Dialog from "@material-ui/core/Dialog"
 import IconButton from "@material-ui/core/IconButton"
 
-const dialogTitle = (setDialogVisibility) => (
+const dialogTitle = setDialogVisibility => (
   <div className="title">
     <div className="text" key={1}>
       Income Verification Instructions

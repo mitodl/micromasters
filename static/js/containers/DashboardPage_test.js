@@ -58,7 +58,7 @@ import Grades, {
 import { COURSE_GRADE } from "./DashboardPage"
 import * as api from "../lib/api"
 
-describe("DashboardPage", function () {
+describe("DashboardPage", function() {
   this.timeout(10000)
 
   let renderComponent, helper, listenForActions, addProgramEnrollmentStub
@@ -83,9 +83,9 @@ describe("DashboardPage", function () {
           "Found spinner but no fetch in progress",
         )
         helper.store.dispatch({
-          type: REQUEST_DASHBOARD,
+          type:    REQUEST_DASHBOARD,
           payload: false,
-          meta: SETTINGS.user.username,
+          meta:    SETTINGS.user.username,
         })
 
         assert(div.querySelector(".loader"), "Unable to find spinner")
@@ -107,7 +107,7 @@ describe("DashboardPage", function () {
   it("doesnt show LearnersCard if no learners", () => {
     helper.programLearnersStub.returns(
       Promise.resolve({
-        learners: [],
+        learners:       [],
         learners_count: 0,
       }),
     )
@@ -238,11 +238,11 @@ describe("DashboardPage", function () {
     // Since financial aid is removed, all messages show "verified learners"
     const faExpectedStateList = [
       {
-        hasFA: true,
+        hasFA:           true,
         expectedMessage: "This is a premium feature for verified learners.",
       },
       {
-        hasFA: false,
+        hasFA:           false,
         expectedMessage: "This is a premium feature for verified learners.",
       },
     ]
@@ -269,7 +269,7 @@ describe("DashboardPage", function () {
 
           return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
             contactLink.simulate("click")
-          }).then((state) => {
+          }).then(state => {
             assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
 
             modifyTextField(document.querySelector(".email-subject"), "subject")
@@ -292,7 +292,7 @@ describe("DashboardPage", function () {
                   .querySelector(".email-composition-dialog .save-button")
                   .click()
               },
-            ).then((state) => {
+            ).then(state => {
               assert.isFalse(
                 state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG],
               )
@@ -337,7 +337,7 @@ describe("DashboardPage", function () {
 
           return listenForActions(COURSE_ENROLL_DIALOG_ACTIONS, () => {
             enrollButton.simulate("click")
-          }).then((state) => {
+          }).then(state => {
             assert.isTrue(state.ui.enrollCourseDialogVisibility)
             assert.deepEqual(state.ui.enrollSelectedCourseRun, course.runs[0])
           })

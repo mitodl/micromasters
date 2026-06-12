@@ -28,9 +28,9 @@ export default class EducationFilter extends SearchkitComponent {
   degreeTranslations: Object = makeDegreeTranslations()
 
   bucketsTransform = (buckets: Array<Object>) =>
-    buckets.map((bucket) => ({
+    buckets.map(bucket => ({
       doc_count: R.pathOr(0, ["school_name_count", "doc_count"], bucket),
-      key: bucket.key,
+      key:       bucket.key,
     }))
 
   render() {
@@ -41,7 +41,7 @@ export default class EducationFilter extends SearchkitComponent {
         title=""
         field="profile.education.degree_name"
         fieldOptions={{
-          type: "nested",
+          type:    "nested",
           options: { path: "profile.education" },
         }}
         translations={this.degreeTranslations}

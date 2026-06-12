@@ -10,11 +10,11 @@ export const INITIAL_PROGRAM_LEARNERS_STATE = {
 }
 
 export const programLearnersEndpoint: Endpoint = {
-  name: "programLearners",
-  namespaceOnUsername: true,
-  checkNoSpinner: true,
-  verbs: [GET],
-  getFunc: getProgramLearners,
-  initialState: {},
+  name:                 "programLearners",
+  namespaceOnUsername:  true,
+  checkNoSpinner:       true,
+  verbs:                [GET],
+  getFunc:              getProgramLearners,
+  initialState:         {},
   usernameInitialState: INITIAL_PROGRAM_LEARNERS_STATE,
 }

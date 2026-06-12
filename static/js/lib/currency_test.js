@@ -9,9 +9,9 @@ import {
 describe("currency", () => {
   describe("currencyOptions", () => {
     it("shouldnt include any options in the excluded list", () => {
-      excludedCurrencyCodes.forEach((code) => {
+      excludedCurrencyCodes.forEach(code => {
         assert.isUndefined(
-          currencyOptions.find((option) => option.value === code),
+          currencyOptions.find(option => option.value === code),
         )
       })
     })
@@ -19,7 +19,7 @@ describe("currency", () => {
 
   describe("currencyForCountry", () => {
     it("should return a valid currency code for a country", () => {
-      ;[
+      [
         ["US", "USD"],
         ["AF", "AFN"],
         ["JP", "JPY"],
@@ -37,7 +37,7 @@ describe("currency", () => {
     })
 
     it("should return an empty string if a countrys currency is in the excluded list", () => {
-      ;["UY", "CH", "SS"].forEach((country) => {
+      ["UY", "CH", "SS"].forEach(country => {
         assert.equal("", currencyForCountry(country))
       })
     })

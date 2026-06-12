@@ -17,7 +17,7 @@ import { assertWithUsernameActionHelper } from "./test_util"
 
 describe("dashboard actions", () => {
   it("should have properly created withUsername creators", () => {
-    ;[
+    [
       [requestDashboard, REQUEST_DASHBOARD],
       [receiveDashboardSuccess, RECEIVE_DASHBOARD_SUCCESS],
       [receiveDashboardFailure, RECEIVE_DASHBOARD_FAILURE],
@@ -27,11 +27,11 @@ describe("dashboard actions", () => {
 
   it("updateCourseStatus has courseId and status in its payload", () => {
     assert.deepEqual(updateCourseStatus("username", "course_id", "status"), {
-      meta: "username",
-      type: UPDATE_COURSE_STATUS,
+      meta:    "username",
+      type:    UPDATE_COURSE_STATUS,
       payload: {
         courseId: "course_id",
-        status: "status",
+        status:   "status",
       },
     })
   })

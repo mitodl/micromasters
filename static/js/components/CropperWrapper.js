@@ -24,11 +24,11 @@ export default class CropperWrapper extends React.Component {
       } else {
         // eslint-disable-next-line no-invalid-this
         canvas = this.cropper.getCroppedCanvas({
-          width: 512,
+          width:  512,
           height: 512,
         })
       }
-      canvas.toBlob((blob) => updatePhotoEdit(blob), "image/jpeg")
+      canvas.toBlob(blob => updatePhotoEdit(blob), "image/jpeg")
     }
   }
 
@@ -38,7 +38,7 @@ export default class CropperWrapper extends React.Component {
 
     return (
       <Cropper
-        ref={(cropper) => (this.cropper = cropper)}
+        ref={cropper => (this.cropper = cropper)}
         style={{ height: uploaderBodyHeight() }}
         className="photo-active-item cropper"
         src={photo.preview}

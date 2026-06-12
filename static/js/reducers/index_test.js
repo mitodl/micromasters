@@ -49,13 +49,13 @@ describe("reducers", () => {
   describe("profile reducers", () => {
     let getUserProfileStub, patchUserProfileStub
     beforeEach(() => {
-      dispatchThen = store.createDispatchThen((state) => state.profiles)
+      dispatchThen = store.createDispatchThen(state => state.profiles)
       getUserProfileStub = sandbox.stub(api, "getUserProfile")
       patchUserProfileStub = sandbox.stub(api, "patchUserProfile")
     })
 
     it("should have initial state", () => {
-      return dispatchThen({ type: "unknown" }, ["unknown"]).then((state) => {
+      return dispatchThen({ type: "unknown" }, ["unknown"]).then(state => {
         assert.deepEqual(state, INITIAL_PROFILES_STATE)
       })
     })
@@ -68,14 +68,14 @@ describe("reducers", () => {
       return dispatchThen(fetchUserProfile("jane"), [
         REQUEST_GET_USER_PROFILE,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.deepEqual(profileState["jane"].profile, USER_PROFILE_RESPONSE)
         assert.equal(profileState["jane"].getStatus, FETCH_SUCCESS)
 
         assert.ok(getUserProfileStub.calledWith("jane"))
 
         return dispatchThen(clearProfile("jane"), [CLEAR_PROFILE]).then(
-          (state) => {
+          state => {
             assert.deepEqual(state, INITIAL_PROFILES_STATE)
           },
         )
@@ -85,7 +85,7 @@ describe("reducers", () => {
     it("should fail to fetch user profile", () => {
       const errorInfo = {
         errorStatusCode: 404,
-        detail: "not found",
+        detail:          "not found",
       }
       getUserProfileStub
         .withArgs(SETTINGS.user.username)
@@ -94,7 +94,7 @@ describe("reducers", () => {
       return dispatchThen(fetchUserProfile("jane"), [
         REQUEST_GET_USER_PROFILE,
         RECEIVE_GET_USER_PROFILE_FAILURE,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.equal(profileState["jane"].getStatus, FETCH_FAILURE)
         assert.deepEqual(profileState["jane"].errorInfo, errorInfo)
         assert.ok(getUserProfileStub.calledWith("jane"))
@@ -113,7 +113,7 @@ describe("reducers", () => {
       return dispatchThen(saveProfile("jane", USER_PROFILE_RESPONSE), [
         REQUEST_PATCH_USER_PROFILE,
         RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.equal(profileState["jane"].patchStatus, FETCH_SUCCESS)
         assert.deepEqual(profileState["jane"].profile, updatedProfile)
 
@@ -132,7 +132,7 @@ describe("reducers", () => {
       return dispatchThen(saveProfile("jane", USER_PROFILE_RESPONSE), [
         REQUEST_PATCH_USER_PROFILE,
         RECEIVE_PATCH_USER_PROFILE_FAILURE,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.equal(profileState["jane"].patchStatus, FETCH_FAILURE)
         assert.deepEqual(profileState["jane"].errorInfo, errorInfo)
         assert.ok(
@@ -150,10 +150,10 @@ describe("reducers", () => {
         ),
       )
       return dispatchThen(startProfileEdit("jane"), [START_PROFILE_EDIT]).then(
-        (profileState) => {
+        profileState => {
           assert.deepEqual(profileState["jane"].edit, {
-            profile: USER_PROFILE_RESPONSE,
-            errors: {},
+            profile:    USER_PROFILE_RESPONSE,
+            errors:     {},
             visibility: [],
           })
 
@@ -164,16 +164,16 @@ describe("reducers", () => {
 
           return dispatchThen(updateProfile("jane", newProfile), [
             UPDATE_PROFILE,
-          ]).then((profileState) => {
+          ]).then(profileState => {
             assert.deepEqual(profileState["jane"].edit, {
-              profile: newProfile,
-              errors: {},
+              profile:    newProfile,
+              errors:     {},
               visibility: [],
             })
 
             return dispatchThen(clearProfileEdit("jane"), [
               CLEAR_PROFILE_EDIT,
-            ]).then((profileState) => {
+            ]).then(profileState => {
               assert.deepEqual(profileState["jane"].edit, undefined)
             })
           })
@@ -192,10 +192,10 @@ describe("reducers", () => {
       const errors = { error: "I am an error" }
       return dispatchThen(updateProfileValidation("jane", errors), [
         UPDATE_PROFILE_VALIDATION,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.deepEqual(profileState["jane"].edit, {
-          profile: USER_PROFILE_RESPONSE,
-          errors: errors,
+          profile:    USER_PROFILE_RESPONSE,
+          errors:     errors,
           visibility: [ALL_ERRORS_VISIBLE],
         })
       })
@@ -211,7 +211,7 @@ describe("reducers", () => {
 
       return dispatchThen(updateProfileValidation("jane", {}), [
         UPDATE_PROFILE_VALIDATION,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.deepEqual(profileState["jane"].edit.errors, {})
       })
     })
@@ -228,7 +228,7 @@ describe("reducers", () => {
       }
       return dispatchThen(updateProfileValidation("jane", errors), [
         UPDATE_PROFILE_VALIDATION,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.deepEqual(profileState["jane"].edit.errors, errors)
       })
     })
@@ -250,14 +250,14 @@ describe("reducers", () => {
       store.dispatch(updateValidationVisibility("jane", ALL_ERRORS_VISIBLE))
       return dispatchThen(updateProfileValidation("jane", errors), [
         UPDATE_PROFILE_VALIDATION,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.deepEqual(profileState["jane"].edit.errors, errors)
       })
     })
 
     it("can't edit a profile if we never get it successfully", () => {
       return dispatchThen(startProfileEdit("jane"), [START_PROFILE_EDIT]).then(
-        (profileState) => {
+        profileState => {
           assert.deepEqual(profileState["jane"], undefined)
         },
       )
@@ -266,7 +266,7 @@ describe("reducers", () => {
     it("can't edit a profile if edit doesn't exist", () => {
       return dispatchThen(updateProfile("jane", USER_PROFILE_RESPONSE), [
         UPDATE_PROFILE,
-      ]).then((profileState) => {
+      ]).then(profileState => {
         assert.deepEqual(profileState["jane"], undefined)
       })
     })
@@ -275,7 +275,7 @@ describe("reducers", () => {
       return dispatchThen(
         updateProfileValidation("jane", { error: "an error" }),
         [UPDATE_PROFILE_VALIDATION],
-      ).then((profileState) => {
+      ).then(profileState => {
         assert.deepEqual(profileState["jane"], undefined)
       })
     })

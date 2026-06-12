@@ -38,7 +38,7 @@ describe("Profile validation functions", () => {
 
   describe("isNilOrEmptyString", () => {
     it("should match nil values and empty strings, nothing else", () => {
-      ;[
+      [
         [null, true],
         [undefined, true],
         ["", true],
@@ -59,7 +59,7 @@ describe("Profile validation functions", () => {
     const check = checkProp(
       "name",
       "invalid name",
-      (name) => name !== "invalid",
+      name => name !== "invalid",
     )
 
     it("should validate a valid property", () => {
@@ -165,13 +165,13 @@ describe("Profile validation functions", () => {
     it("should error when first_name is non cp-1252 and romanized fields are missing", () => {
       const profile = {
         ...USER_PROFILE_RESPONSE,
-        first_name: "عامر",
+        first_name:           "عامر",
         romanized_first_name: undefined,
-        romanized_last_name: undefined,
+        romanized_last_name:  undefined,
       }
       const errors = {
         romanized_first_name: "Latin given name is required",
-        romanized_last_name: "Latin family name is required",
+        romanized_last_name:  "Latin family name is required",
       }
       assert.deepEqual(personalValidation(profile), errors)
     })
@@ -179,13 +179,13 @@ describe("Profile validation functions", () => {
     it("should error when last_name is non cp-1252 and romanized fields are missing", () => {
       const profile = {
         ...USER_PROFILE_RESPONSE,
-        last_name: "عامر",
+        last_name:            "عامر",
         romanized_first_name: undefined,
-        romanized_last_name: undefined,
+        romanized_last_name:  undefined,
       }
       const errors = {
         romanized_first_name: "Latin given name is required",
-        romanized_last_name: "Latin family name is required",
+        romanized_last_name:  "Latin family name is required",
       }
       assert.deepEqual(personalValidation(profile), errors)
     })
@@ -193,9 +193,9 @@ describe("Profile validation functions", () => {
     it("should error when romanized_first_name is non cp-1252", () => {
       const profile = {
         ...USER_PROFILE_RESPONSE,
-        first_name: "عامر",
+        first_name:           "عامر",
         romanized_first_name: "عامر",
-        romanized_last_name: "test",
+        romanized_last_name:  "test",
       }
       const errors = {
         romanized_first_name: "Latin given name must be in Latin characters",
@@ -206,9 +206,9 @@ describe("Profile validation functions", () => {
     it("should error when romanized_last_name is non cp-1252", () => {
       const profile = {
         ...USER_PROFILE_RESPONSE,
-        first_name: "عامر",
+        first_name:           "عامر",
         romanized_first_name: "test",
-        romanized_last_name: "عامر",
+        romanized_last_name:  "عامر",
       }
       const errors = {
         romanized_last_name: "Latin family name must be in Latin characters",
@@ -245,9 +245,9 @@ describe("Profile validation functions", () => {
       it(`should error when romanized_first_name contains ${invalidChar}`, () => {
         const profile = {
           ...USER_PROFILE_RESPONSE,
-          first_name: "ر",
+          first_name:           "ر",
           romanized_first_name: invalidChar,
-          romanized_last_name: "name",
+          romanized_last_name:  "name",
         }
         const errors = {
           romanized_first_name: `Latin given name ${invalidCharErrorSuffix}`,
@@ -258,9 +258,9 @@ describe("Profile validation functions", () => {
       it(`should error when romanized_last_name contains ${invalidChar}`, () => {
         const profile = {
           ...USER_PROFILE_RESPONSE,
-          first_name: "ر",
+          first_name:           "ر",
           romanized_first_name: "name",
-          romanized_last_name: invalidChar,
+          romanized_last_name:  invalidChar,
         }
         const errors = {
           romanized_last_name: `Latin family name ${invalidCharErrorSuffix}`,
@@ -272,14 +272,14 @@ describe("Profile validation functions", () => {
     it("should error when any name is too long", () => {
       const profile = {
         ...USER_PROFILE_RESPONSE,
-        first_name: "ر".repeat(31),
-        last_name: "ر".repeat(51),
+        first_name:           "ر".repeat(31),
+        last_name:            "ر".repeat(51),
         romanized_first_name: "b".repeat(31),
-        romanized_last_name: "b".repeat(51),
+        romanized_last_name:  "b".repeat(51),
       }
       const errors = {
-        first_name: "Given name must be no more than 30 characters",
-        last_name: "Family name must be no more than 50 characters",
+        first_name:           "Given name must be no more than 30 characters",
+        last_name:            "Family name must be no more than 50 characters",
         romanized_first_name:
           "Latin given name must be no more than 30 characters",
         romanized_last_name:
@@ -346,7 +346,7 @@ describe("Profile validation functions", () => {
       it(`should error when country is ${country} and no postal code`, () => {
         const profile = {
           ...USER_PROFILE_RESPONSE,
-          country: country,
+          country:     country,
           postal_code: "",
         }
         const errors = {
@@ -356,10 +356,10 @@ describe("Profile validation functions", () => {
       })
 
       it(`should reject invalid postal codes for ${country}`, () => {
-        inValidPostalCodes[country].forEach((badCode) => {
+        inValidPostalCodes[country].forEach(badCode => {
           const profile = {
             ...USER_PROFILE_RESPONSE,
-            country: country,
+            country:     country,
             postal_code: badCode,
           }
           assert.deepEqual(personalValidation(profile), {
@@ -369,10 +369,10 @@ describe("Profile validation functions", () => {
       })
 
       it(`should accept valid postal codes for ${country}`, () => {
-        validPostalCodes[country].forEach((goodCode) => {
+        validPostalCodes[country].forEach(goodCode => {
           const profile = {
             ...USER_PROFILE_RESPONSE,
-            country: country,
+            country:     country,
             postal_code: goodCode,
           }
           assert.deepEqual(personalValidation(profile), {})
@@ -383,7 +383,7 @@ describe("Profile validation functions", () => {
     it(`should not error when country does not require postal code`, () => {
       const profile = {
         ...USER_PROFILE_RESPONSE,
-        country: "DE",
+        country:     "DE",
         postal_code: "",
       }
       assert.deepEqual(personalValidation(profile), {})
@@ -411,8 +411,8 @@ describe("Profile validation functions", () => {
           isValid
             ? {}
             : {
-                phone_number: "Please enter a valid phone number",
-              },
+              phone_number: "Please enter a valid phone number",
+            },
         )
       })
     })
@@ -468,7 +468,7 @@ describe("Profile validation functions", () => {
         education: [
           {
             school_name: "School name is required",
-            location: "City, state/territory, and country are required.",
+            location:    "City, state/territory, and country are required.",
             school_city: "City is required",
           },
           {},
@@ -504,8 +504,8 @@ describe("Profile validation functions", () => {
       assert.deepEqual(employmentValidation(clone), {
         work_history: [
           {
-            location: "City, state/territory, and country are required.",
-            city: "City is required",
+            location:     "City, state/territory, and country are required.",
+            city:         "City is required",
             company_name: "Name of Employer is required",
           },
           {},
@@ -571,7 +571,7 @@ describe("Profile validation functions", () => {
         profile.work_history[1].end_date = null
         profile.work_history[1].end_date_edit = Object.assign(
           {
-            year: "",
+            year:  "",
             month: "",
           },
           {
@@ -594,7 +594,7 @@ describe("Profile validation functions", () => {
       const profile = _.cloneDeep(USER_PROFILE_RESPONSE)
       profile.work_history[1].end_date = null
       profile.work_history[1].end_date_edit = {
-        year: 1943,
+        year:  1943,
         month: "",
       }
       assert.deepEqual(employmentValidation(profile), errors)
@@ -604,7 +604,7 @@ describe("Profile validation functions", () => {
       const profile = _.cloneDeep(USER_PROFILE_RESPONSE)
       profile.work_history[1].end_date = null
       profile.work_history[1].end_date_edit = {
-        year: "",
+        year:  "",
         month: "",
       }
       assert.deepEqual(employmentValidation(profile), {})
@@ -621,18 +621,18 @@ describe("Profile validation functions", () => {
       const errors = Object.assign(
         {},
         ...Object.entries({
-          first_name: "Given name",
-          last_name: "Family name",
-          preferred_name: "Nickname / Preferred name",
-          gender: "Gender",
+          first_name:         "Given name",
+          last_name:          "Family name",
+          preferred_name:     "Nickname / Preferred name",
+          gender:             "Gender",
           preferred_language: "Preferred language",
-          address: "Street address",
-          city: "City",
+          address:            "Street address",
+          city:               "City",
           state_or_territory: "State or Territory",
-          country: "Country",
-          nationality: "Nationality",
-          birth_country: "Country",
-          phone_number: "A phone number",
+          country:            "Country",
+          nationality:        "Nationality",
+          birth_country:      "Country",
+          phone_number:       "A phone number",
         }).map(([k, v]) => ({ [k]: `${v} is required` })),
       )
       errors.date_of_birth = "Please enter a valid date of birth"
@@ -671,7 +671,7 @@ describe("Profile validation functions", () => {
           work_history: [
             {
               location: "City, state/territory, and country are required.",
-              country: "Country is required",
+              country:  "Country is required",
             },
             {},
           ],
@@ -721,11 +721,11 @@ describe("Email validation", () => {
   beforeEach(() => {
     email = {
       subject: "a great email",
-      body: "hi, how are you?",
+      body:    "hi, how are you?",
     }
   })
 
-  const blank = (field) => ({
+  const blank = field => ({
     ...email,
     [field]: null,
   })
@@ -743,7 +743,7 @@ describe("Email validation", () => {
   })
 
   it("should require any links in the body to begin with (http|https)", () => {
-    ;[
+    [
       ['<a href="foo.bar">my bad link :(</a>', true],
       ['<a href="http://foo.bar">my good link :)</a>', false],
       ['<a href="https://foo.bar">my better link :D</a>', false],
@@ -754,8 +754,8 @@ describe("Email validation", () => {
         emailValidation(email),
         shouldFail
           ? {
-              body: "All link URLs must start with 'http', 'https', or 'mailto:'",
-            }
+            body: "All link URLs must start with 'http', 'https', or 'mailto:'",
+          }
           : {},
       )
     })
@@ -767,7 +767,7 @@ describe("Email validation", () => {
   })
 
   it("should not allow broken tags", () => {
-    ;[
+    [
       [
         ["[Emai<b />l]", "Email"],
         ["<strong>[Pref</strong>erredName]<i />", "PreferredName"],
@@ -779,8 +779,8 @@ describe("Email validation", () => {
           emailValidation(email),
           failName
             ? {
-                body: `"[${failName}]" appears to be broken up by markup. Please delete and insert it again.`,
-              }
+              body: `"[${failName}]" appears to be broken up by markup. Please delete and insert it again.`,
+            }
             : {},
         )
       }),

@@ -17,7 +17,7 @@ import StateSelectField from "./StateSelectField"
 describe("Profile inputs", () => {
   let inputProps, sandbox, updateProfileStub
 
-  const change = (newProfile) => (inputProps.profile = newProfile)
+  const change = newProfile => (inputProps.profile = newProfile)
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -28,7 +28,7 @@ describe("Profile inputs", () => {
     sandbox.restore()
   })
 
-  const renderTestSelectField = (props) => mount(<SelectField {...props} />)
+  const renderTestSelectField = props => mount(<SelectField {...props} />)
 
   describe("Select field", () => {
     let selectField, gaEvent
@@ -42,9 +42,9 @@ describe("Profile inputs", () => {
     const renderGenderSelectField = (props = {}) => {
       return renderTestSelectField({
         ...inputProps,
-        keySet: ["gender"],
-        label: "Gender",
-        options: genderOptions,
+        keySet:        ["gender"],
+        label:         "Gender",
+        options:       genderOptions,
         updateProfile: updateProfileStub,
         ...props,
       })
@@ -55,19 +55,19 @@ describe("Profile inputs", () => {
       inputProps = {
         profile: {
           account_privacy: "private",
-          first_name: "",
-          date_of_birth: "",
-          gender: undefined,
-          date_field: "",
+          first_name:      "",
+          date_of_birth:   "",
+          gender:          undefined,
+          date_field:      "",
         },
         errors: {
-          first_name: "First name is required",
-          date_of_birth: "Date of birth is required",
-          gender: "Gender is required",
-          date_field: "Date field is required",
+          first_name:      "First name is required",
+          date_of_birth:   "Date of birth is required",
+          gender:          "Gender is required",
+          date_field:      "Date field is required",
           account_privacy: "Account privacy is required",
         },
-        updateProfile: change,
+        updateProfile:              change,
         updateValidationVisibility: sandbox.stub(),
       }
     })
@@ -85,10 +85,10 @@ describe("Profile inputs", () => {
       assert.ok(
         updateProfileStub.calledWith({
           account_privacy: "private",
-          first_name: "",
-          date_of_birth: "",
-          gender: "f",
-          date_field: "",
+          first_name:      "",
+          date_of_birth:   "",
+          gender:          "f",
+          date_field:      "",
         }),
       )
     })
@@ -107,10 +107,10 @@ describe("Profile inputs", () => {
       assert.ok(
         updateProfileStub.calledWith({
           account_privacy: "private",
-          first_name: "",
-          date_of_birth: "",
-          gender: "genderqueer",
-          date_field: "",
+          first_name:      "",
+          date_of_birth:   "",
+          gender:          "genderqueer",
+          date_field:      "",
         }),
         "should be called with the right thing",
       )
@@ -134,19 +134,19 @@ describe("Profile inputs", () => {
       modifyWrapperSelectField(selectField, "genderqueer")
       const newOption = selectField
         .props()
-        .options.find((option) => option.value === "genderqueer")
+        .options.find(option => option.value === "genderqueer")
       assert.deepEqual(newOption, {
-        value: "genderqueer",
-        label: "genderqueer",
+        value:     "genderqueer",
+        label:     "genderqueer",
         className: "Select-create-option-placeholder",
       })
     })
 
     it("should broadcast the new option back to the store", () => {
       selectField = renderGenderSelectField({
-        allowCreate: true,
+        allowCreate:   true,
         updateProfile: change,
-        profile: {},
+        profile:       {},
       }).find(VirtualizedSelect)
       modifyWrapperSelectField(selectField, "genderqueer")
       assert.equal(inputProps.profile.gender, "genderqueer")
@@ -155,7 +155,7 @@ describe("Profile inputs", () => {
     it("should properly add options to this.state", () => {
       inputProps.profile = {}
       const props = {
-        allowCreate: true,
+        allowCreate:   true,
         updateProfile: change,
       }
       selectField = renderGenderSelectField(props)
@@ -172,7 +172,7 @@ describe("Profile inputs", () => {
     it("should add a previously saved custom option to this.state", () => {
       selectField = renderGenderSelectField({
         allowCreate: true,
-        profile: {
+        profile:     {
           gender: "agender",
         },
       })
@@ -196,8 +196,8 @@ describe("Profile inputs", () => {
       assert(
         gaEvent.calledWith({
           category: "profile-form-field",
-          action: "completed-gender",
-          label: "jane",
+          action:   "completed-gender",
+          label:    "jane",
         }),
       )
     })
@@ -206,11 +206,11 @@ describe("Profile inputs", () => {
   describe("State select field", () => {
     beforeEach(() => {
       inputProps = {
-        stateKeySet: ["state_key"],
+        stateKeySet:   ["state_key"],
         countryKeySet: ["country_key"],
-        label: "State",
-        profile: { ...USER_PROFILE_RESPONSE },
-        errors: {},
+        label:         "State",
+        profile:       { ...USER_PROFILE_RESPONSE },
+        errors:        {},
         updateProfile: change,
       }
     })
@@ -228,10 +228,10 @@ describe("Profile inputs", () => {
       // Get a list of US state values (eg: 'US-MA') ordered by the state name
       const orderedUSStateValues = _(iso3166.data[country].sub)
         .toPairs()
-        .sortBy((keyValueList) => {
+        .sortBy(keyValueList => {
           return keyValueList[1]["name"]
         })
-        .map((keyValueList) => {
+        .map(keyValueList => {
           return keyValueList[0]
         })
         .value()
@@ -240,7 +240,7 @@ describe("Profile inputs", () => {
       const optionValueList = stateField
         .find(SelectField)
         .props()
-        .options.map((option) => {
+        .options.map(option => {
           return option.value
         })
       assert.deepEqual(optionValueList, orderedUSStateValues)
@@ -250,11 +250,11 @@ describe("Profile inputs", () => {
   describe("Country select field", () => {
     beforeEach(() => {
       inputProps = {
-        stateKeySet: ["state_key"],
+        stateKeySet:   ["state_key"],
         countryKeySet: ["country_key"],
-        label: "Country",
-        profile: { ...USER_PROFILE_RESPONSE },
-        errors: {},
+        label:         "Country",
+        profile:       { ...USER_PROFILE_RESPONSE },
+        errors:        {},
         updateProfile: change,
       }
     })
@@ -262,7 +262,7 @@ describe("Profile inputs", () => {
     const renderCountrySelect = () =>
       mount(<CountrySelectField {...inputProps} />)
 
-    const checkFieldText = (text) => {
+    const checkFieldText = text => {
       const countryField = renderCountrySelect()
       assert.include(countryField.text(), text)
     }

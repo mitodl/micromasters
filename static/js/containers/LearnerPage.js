@@ -145,8 +145,8 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       loaded = profiles[username].getStatus !== FETCH_PROCESSING
 
       const props = {
-        dashboard: S.maybe({}, R.identity, this.getFocusedDashboard()),
-        email: email,
+        dashboard:                S.maybe({}, R.identity, this.getFocusedDashboard()),
+        email:                    email,
         openLearnerEmailComposer: R.partial(
           openEmailComposer(LEARNER_EMAIL_TYPE),
           [profile.profile],
@@ -171,12 +171,12 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     dashboard: state.dashboard,
-    prices: state.prices,
-    coupons: state.coupons,
-    email: state.email,
+    prices:    state.prices,
+    coupons:   state.coupons,
+    email:     state.email,
     ...mapStateToProfileProps(state),
   }
 }

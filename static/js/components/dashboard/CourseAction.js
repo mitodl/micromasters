@@ -36,7 +36,7 @@ export default class CourseAction extends React.Component {
   }
 
   statusDescriptionClasses = {
-    [STATUS_PASSED]: "passed",
+    [STATUS_PASSED]:     "passed",
     [STATUS_NOT_PASSED]: "not-passed",
   }
 

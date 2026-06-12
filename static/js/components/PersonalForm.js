@@ -34,7 +34,7 @@ export default class PersonalForm extends ProfileFormFields {
     { value: "o", label: "Other/Prefer not to say" },
   ]
   languageOptions: Array<Option> = _.sortBy(
-    LANGUAGE_CODES.map((language) => ({
+    LANGUAGE_CODES.map(language => ({
       value: language.alpha2,
       label: language.English,
     })),
@@ -84,7 +84,7 @@ export default class PersonalForm extends ProfileFormFields {
       validator,
       updateValidationVisibility,
     } = this.props
-    const onChange = (e) => {
+    const onChange = e => {
       const clone = _.cloneDeep(profile)
       let value = e.target.value
       if (value === "true") {

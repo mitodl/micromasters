@@ -43,10 +43,10 @@ export function fetchProgramEnrollments(): Dispatcher<void> {
   return (dispatch: Dispatch) => {
     dispatch(requestGetProgramEnrollments())
     return api.getPrograms().then(
-      (enrollments) => {
+      enrollments => {
         dispatch(receiveGetProgramEnrollmentsSuccess(enrollments))
       },
-      (error) => {
+      error => {
         dispatch(receiveGetProgramEnrollmentsFailure(error))
         // the exception is assumed handled and will not be propagated
       },
@@ -77,23 +77,23 @@ export const addProgramEnrollment = (
   return (dispatch: Dispatch) => {
     dispatch(requestAddProgramEnrollment(programId))
     return api.addProgramEnrollment(programId).then(
-      (enrollment) => {
+      enrollment => {
         dispatch(receiveAddProgramEnrollmentSuccess(enrollment))
         dispatch(
           setToastMessage({
             message: `You are now enrolled in the ${enrollment.title} MicroMasters`,
-            icon: TOAST_SUCCESS,
+            icon:    TOAST_SUCCESS,
           }),
         )
         dispatch(setEnrollProgramDialogVisibility(false))
         dispatch(fetchDashboard(SETTINGS.user.username))
       },
-      (error) => {
+      error => {
         dispatch(receiveAddProgramEnrollmentFailure(error))
         dispatch(
           setToastMessage({
             message: "There was an error during enrollment",
-            icon: TOAST_FAILURE,
+            icon:    TOAST_FAILURE,
           }),
         )
         return Promise.reject(error)
@@ -114,14 +114,14 @@ export const unEnrollProgramEnrollments = (
     return api
       .unEnrollProgramEnrollments(programIds)
       .then(
-        (programs) => {
+        programs => {
           dispatch(setProgramsToUnEnroll([]))
           dispatch(fetchProgramEnrollments())
-          const programTitles = programs.map((program) => program["title"])
+          const programTitles = programs.map(program => program["title"])
           dispatch(
             setToastMessage({
               message: `You left the ${programTitles.join(", ")} program(s).`,
-              icon: TOAST_SUCCESS,
+              icon:    TOAST_SUCCESS,
             }),
           )
         },
@@ -129,7 +129,7 @@ export const unEnrollProgramEnrollments = (
           dispatch(
             setToastMessage({
               message: "There was an error during unenrollment",
-              icon: TOAST_FAILURE,
+              icon:    TOAST_FAILURE,
             }),
           )
           return Promise.reject()
@@ -145,8 +145,8 @@ export const unEnrollProgramEnrollments = (
 export const getEnrollmentShareHash = (enrollmentId: number): Promise<void> => {
   return api
     .getEnrollmentShareHash(enrollmentId)
-    .then((data) => data)
-    .catch((error) => {
+    .then(data => data)
+    .catch(error => {
       console.error(error)
     })
 }
@@ -156,8 +156,8 @@ export const revokeEnrollmentShareHash = (
 ): Promise<void> => {
   return api
     .revokeEnrollmentShareHash(enrollmentId)
-    .then((data) => data)
-    .catch((error) => {
+    .then(data => data)
+    .catch(error => {
       console.error(error)
     })
 }

@@ -80,11 +80,11 @@ class MailgunClient:
         return response
 
     @classmethod
-    def send_batch(
+    def send_batch(  # pylint: disable=too-many-arguments, too-many-locals
         cls,
         subject,
         body,
-        recipients,  # pylint: disable=too-many-arguments, too-many-locals
+        recipients,
         sender_address=None,
         sender_name=None,
         chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
@@ -144,9 +144,9 @@ class MailgunClient:
         exception_pairs = []
 
         for chunk in chunks(recipients, chunk_size=chunk_size):
-            chunk_dict = {
+            chunk_dict = {  # pylint: disable=unnecessary-comprehension
                 email: context for email, context in chunk
-            }  # pylint: disable=unnecessary-comprehension
+            }
             emails = list(chunk_dict.keys())
 
             params = {
@@ -183,11 +183,11 @@ class MailgunClient:
         return responses
 
     @classmethod
-    def send_individual_email(
+    def send_individual_email(  # pylint: disable=too-many-arguments
         cls,
         subject,
         body,
-        recipient,  # pylint: disable=too-many-arguments
+        recipient,
         recipient_variables=None,
         sender_address=None,
         sender_name=None,

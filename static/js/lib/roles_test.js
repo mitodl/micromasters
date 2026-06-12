@@ -16,13 +16,13 @@ describe("roles library", () => {
   beforeEach(() => {
     roles = [
       {
-        role: "staff",
-        program: 1,
+        role:        "staff",
+        program:     1,
         permissions: [],
       },
       {
-        role: "student",
-        program: 2,
+        role:        "student",
+        program:     2,
         permissions: [],
       },
     ]

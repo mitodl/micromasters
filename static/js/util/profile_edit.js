@@ -20,15 +20,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 // this expects that the `updateProfile` and `profile` props are passed
 // in to whatever component it is used in.
 
-const radioButtonLabelSelector = (label) => `radio-label-${classify(label)}`
+const radioButtonLabelSelector = label => `radio-label-${classify(label)}`
 
-const radioButtonLabel = (label) => (
+const radioButtonLabel = label => (
   <label id={radioButtonLabelSelector(label)} className="radio-label">
     {label}
   </label>
 )
 
-export const radioButtons = R.map((option) => (
+export const radioButtons = R.map(option => (
   <FormControlLabel
     classes={{ root: "profile-radio-button" }}
     value={option.value}
@@ -62,7 +62,7 @@ export function boundTextField(
     updateProfileValidation,
   } = this.props
 
-  const onChange = (e) => {
+  const onChange = e => {
     const clone = _.cloneDeep(profile)
     _.set(clone, keySet, e.target.value)
     updateValidationVisibility(keySet)
@@ -159,7 +159,7 @@ export function boundCheckbox(
     updateValidationVisibility,
   } = this.props
 
-  const onChange = (e) => {
+  const onChange = e => {
     const clone = _.cloneDeep(profile)
     _.set(clone, keySet, e.target.checked)
     updateValidationVisibility(keySet)

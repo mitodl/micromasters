@@ -151,29 +151,29 @@ describe("ProgramEnrollmentDialog", () => {
 
   it("only shows programs which the user is not already enrolled in", () => {
     const enrollmentLookup = new Map(
-      PROGRAMS.map((enrollment) => [enrollment.id, null]),
+      PROGRAMS.map(enrollment => [enrollment.id, null]),
     )
     let unenrolledPrograms = DASHBOARD_RESPONSE.programs.filter(
-      (program) => !enrollmentLookup.has(program.id),
+      program => !enrollmentLookup.has(program.id),
     )
     unenrolledPrograms = _.sortBy(unenrolledPrograms, "title")
-    unenrolledPrograms = unenrolledPrograms.map((program) => ({
+    unenrolledPrograms = unenrolledPrograms.map(program => ({
       title: program.title,
-      id: program.id,
+      id:    program.id,
     }))
 
     const selectedEnrollment = PROGRAMS[0]
 
     const wrapper = renderEnrollmentDialog({
-      visibility: false,
+      visibility:      false,
       selectedProgram: selectedEnrollment,
     })
 
-    const list = wrapper.find(MenuItem).map((menuItem) => {
+    const list = wrapper.find(MenuItem).map(menuItem => {
       const props = menuItem.props()
       return {
         title: props.primaryText,
-        id: props.value,
+        id:    props.value,
       }
     })
 
@@ -185,7 +185,7 @@ describe("ProgramEnrollmentDialog", () => {
 
     const wrapper = renderEnrollmentDialog({
       selectedProgram: selectedEnrollment,
-      visibility: false,
+      visibility:      false,
     })
     const select = wrapper.find(Select)
     assert.equal(select.props().value, selectedEnrollment)

@@ -9,7 +9,7 @@ import { findAndCloneCourse } from "../../../util/test_utils"
 
 describe("Course Progress", () => {
   const course = findAndCloneCourse(
-    (course) =>
+    course =>
       course !== null && course !== undefined && course.runs.length > 0,
   )
   course.runs[0].current_grade = 92

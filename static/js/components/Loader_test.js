@@ -15,21 +15,21 @@ describe("Loader", () => {
     )
   const dataSet = [
     {
-      shouldRenderAll: true,
+      shouldRenderAll:  true,
       childrenExpected: true,
-      expectedMessage: "render children",
+      expectedMessage:  "render children",
     },
     {
-      shouldRenderAll: false,
+      shouldRenderAll:  false,
       childrenExpected: false,
-      expectedMessage: "not render children",
+      expectedMessage:  "not render children",
     },
   ]
 
   for (const data of dataSet) {
     it(`should ${data.expectedMessage}`, () => {
       const wrapper = renderLoader({
-        loaded: false,
+        loaded:          false,
         shouldRenderAll: data.shouldRenderAll,
       })
       assert.equal(wrapper.find(".loader").exists(), true)

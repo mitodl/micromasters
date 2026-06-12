@@ -35,14 +35,14 @@ describe("sorting functions", () => {
       ]
       assert.deepEqual(
         expected,
-        moments.map((m) => m.format("YYYY-MM")),
+        moments.map(m => m.format("YYYY-MM")),
       )
     })
   })
 
   describe("dateOrderDesc", () => {
     const entries = ["1969-01", "1997-01", "1992-01", "1934-01"].map(
-      (year) => ({
+      year => ({
         end_date: moment(year, format).format(format),
       }),
     )
@@ -126,7 +126,7 @@ describe("sorting functions", () => {
       "1962-12",
       "1961-08",
       "2001-12",
-    ].map((date) => {
+    ].map(date => {
       const entry = generateNewEducation(HIGH_SCHOOL)
       entry.graduation_date = moment(date, format).format(format)
       return entry

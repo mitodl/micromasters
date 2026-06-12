@@ -26,16 +26,16 @@ export const EDUCATION_LEVELS = [
 ]
 
 export const SEARCH_FACET_FIELD_LABEL_MAP = {
-  "program.courses.course_title": "Course",
-  "program.course_runs.semester": "Semester",
-  "program.grade_average": "Average Grade in Program",
-  "grade-average": "Average Grade in Program",
-  "profile.birth_country": "Country of Birth",
-  "profile.country": "Current Residence",
-  "profile.education.degree_name": "Degree",
+  "program.courses.course_title":      "Course",
+  "program.course_runs.semester":      "Semester",
+  "program.grade_average":             "Average Grade in Program",
+  "grade-average":                     "Average Grade in Program",
+  "profile.birth_country":             "Country of Birth",
+  "profile.country":                   "Current Residence",
+  "profile.education.degree_name":     "Degree",
   "profile.work_history.company_name": "Company",
-  "num-courses-passed": "# of Courses Passed",
-  "program.courses.final_grade": "Final Grade",
+  "num-courses-passed":                "# of Courses Passed",
+  "program.courses.final_grade":       "Final Grade",
 }
 
 // NOTE: these need to be kept in sync with ui/url_utils.py
@@ -108,15 +108,15 @@ export const MITXONLINE_DASHBOARD_LINK = urljoin(
 export const COURSEWARE_BACKEND_EDXORG = "edxorg"
 export const COURSEWARE_BACKEND_MITXONLINE = "mitxonline"
 export const COURSEWARE_BACKEND_NAMES = {
-  [COURSEWARE_BACKEND_EDXORG]: "edX",
+  [COURSEWARE_BACKEND_EDXORG]:     "edX",
   [COURSEWARE_BACKEND_MITXONLINE]: "MITx Online",
 }
 export const COURSEWARE_BACKEND_BASE_URLS = {
-  [COURSEWARE_BACKEND_EDXORG]: EDX_LINK_BASE,
+  [COURSEWARE_BACKEND_EDXORG]:     EDX_LINK_BASE,
   [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_LINK_BASE,
 }
 export const DASHBOARD_BACKEND_BASE_URLS = {
-  [COURSEWARE_BACKEND_EDXORG]: EDX_LINK_BASE,
+  [COURSEWARE_BACKEND_EDXORG]:     EDX_LINK_BASE,
   [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_DASHBOARD_LINK,
 }
 

@@ -33,7 +33,7 @@ describe("Course Grades", () => {
 
   it("should display placeholders if no grades are present", () => {
     const grades = renderGrades()
-    grades.find(".number").forEach((wrapper) => {
+    grades.find(".number").forEach(wrapper => {
       assert.equal(wrapper.text(), "--")
     })
   })
@@ -48,7 +48,7 @@ describe("Course Grades", () => {
   it("should display the highest exam grade", () => {
     course.proctorate_exams_grades = [1, 2, 3].map(makeProctoredExamResult)
     let highest = 0
-    course.proctorate_exams_grades.forEach((grade) => {
+    course.proctorate_exams_grades.forEach(grade => {
       highest =
         grade.percentage_grade > highest ? grade.percentage_grade : highest
     })
@@ -69,7 +69,7 @@ describe("Course Grades", () => {
   })
 
   it("should only display the course grade if has_exam == false", () => {
-    ;[
+    [
       [true, 3],
       [false, 1],
     ].forEach(([hasExam, expectedGradeCount]) => {
@@ -100,12 +100,12 @@ describe("Course Grades", () => {
   })
 
   it("should not display passed if a user did not pass (exam course)", () => {
-    ;[
+    [
       [STATUS_PASSED, false],
       [STATUS_OFFERED, false],
       [STATUS_OFFERED, true],
     ].forEach(([courseStatus, examPassed]) => {
-      course.runs.forEach((run) => {
+      course.runs.forEach(run => {
         run.status = courseStatus
       })
       course.proctorate_exams_grades = [makeProctoredExamResult()]

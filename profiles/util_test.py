@@ -103,9 +103,9 @@ class ImageTests(TestCase):
         """
         filename = f"{'a' * 150}.jpg"
         with self.assertRaises(ValueError) as ex:
-            util._generate_upload_to_uri("x" * 150)(
+            util._generate_upload_to_uri("x" * 150)(  # pylint: disable=protected-access
                 None, filename
-            )  # pylint: disable=protected-access
+            )
         assert ex.exception.args[0].startswith(
             "path is longer than max length even without name"
         )

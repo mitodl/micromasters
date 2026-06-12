@@ -50,8 +50,8 @@ describe("CustomSortingSelect", () => {
       it(`should display '${description} ${arrow}' when sort is '${key}'`, () => {
         SETTINGS.roles = [
           {
-            role: "staff",
-            program: PROGRAMS[0].id,
+            role:        "staff",
+            program:     PROGRAMS[0].id,
             permissions: ["can_advance_search"],
           },
         ]
@@ -59,8 +59,8 @@ describe("CustomSortingSelect", () => {
           selectedItems: [key],
         })
         const lookup = {
-          Name: wrapper.find("ForwardRef(Grid).name"),
-          Residence: wrapper.find("ForwardRef(Grid).residence"),
+          Name:            wrapper.find("ForwardRef(Grid).name"),
+          Residence:       wrapper.find("ForwardRef(Grid).residence"),
           "Program grade": wrapper.find("ForwardRef(Grid).grade"),
         }
         assert.equal(lookup[description].text(), `${description} ${arrow}`)

@@ -13,7 +13,7 @@ import { assertCreatedActionHelper } from "./test_util"
 
 describe("generated email action helpers", () => {
   it("should create all action creators", () => {
-    ;[
+    [
       [startEmailEdit, START_EMAIL_EDIT],
       [updateEmailEdit, UPDATE_EMAIL_EDIT],
       [clearEmailEdit, CLEAR_EMAIL_EDIT],

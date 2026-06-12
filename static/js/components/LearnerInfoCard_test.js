@@ -108,7 +108,7 @@ describe("LearnerInfoCard", () => {
     SETTINGS.user.username = "My user"
     SETTINGS.roles = [
       {
-        role: "staff",
+        role:    "staff",
         program: 1,
       },
     ]
@@ -116,7 +116,7 @@ describe("LearnerInfoCard", () => {
       profile: {
         ...USER_PROFILE_RESPONSE,
         first_name: "FIRST",
-        last_name: "LAST",
+        last_name:  "LAST",
       },
     })
     assert.equal(wrapper.find(".legal-name").text(), "(Legal name: FIRST LAST)")
@@ -131,7 +131,7 @@ describe("LearnerInfoCard", () => {
     SETTINGS.user.username = "My user"
     SETTINGS.roles = [
       {
-        role: "staff",
+        role:    "staff",
         program: 1,
       },
     ]
@@ -151,7 +151,7 @@ describe("LearnerInfoCard", () => {
       SETTINGS.user.username = "My user"
       SETTINGS.roles = [
         {
-          role: "staff",
+          role:    "staff",
           program: 1,
         },
       ]
@@ -161,7 +161,7 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email: "learner@example.com",
+          email:       "learner@example.com",
           email_optin: true,
         },
       })
@@ -172,7 +172,7 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email: "learner@example.com",
+          email:       "learner@example.com",
           email_optin: false,
         },
       })
@@ -183,7 +183,7 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email: null,
+          email:       null,
           email_optin: true,
         },
       })
@@ -195,7 +195,7 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email: "learner@example.com",
+          email:       "learner@example.com",
           email_optin: true,
         },
       })
@@ -207,7 +207,7 @@ describe("LearnerInfoCard", () => {
       const card = renderInfoCard({
         profile: {
           ...USER_PROFILE_RESPONSE,
-          email: "learner@example.com",
+          email:       "learner@example.com",
           email_optin: true,
         },
       })

@@ -17,15 +17,15 @@ import { GET, POST } from "../constants"
 import type { Endpoint } from "../flow/restTypes"
 
 export const couponEndpoint: Endpoint = {
-  name: "coupons",
+  name:                "coupons",
   namespaceOnUsername: false,
-  checkNoSpinner: false,
-  getPrefix: "FETCH",
-  postPrefix: "ATTACH",
-  getFunc: getCoupons,
-  postFunc: attachCoupon,
-  verbs: [GET, POST],
-  extraActions: {
+  checkNoSpinner:      false,
+  getPrefix:           "FETCH",
+  postPrefix:          "ATTACH",
+  getFunc:             getCoupons,
+  postFunc:            attachCoupon,
+  verbs:               [GET, POST],
+  extraActions:        {
     [SET_RECENTLY_ATTACHED_COUPON]: (
       state: Object,
       action: Action<any, any>,
@@ -44,7 +44,7 @@ export type CouponsState = {
 }
 
 export const INITIAL_COUPONS_STATE: CouponsState = {
-  coupons: [],
+  coupons:                [],
   recentlyAttachedCoupon: null,
 }
 
@@ -53,27 +53,27 @@ export const coupons = (
   action: Action<any, null>,
 ) => {
   switch (action.type) {
-    case REQUEST_ATTACH_COUPON:
-      return { ...state, fetchPostStatus: FETCH_PROCESSING }
-    case RECEIVE_ATTACH_COUPON_SUCCESS:
-      return { ...state, fetchPostStatus: FETCH_SUCCESS }
-    case RECEIVE_ATTACH_COUPON_FAILURE:
-      return { ...state, fetchPostStatus: FETCH_FAILURE }
-    case REQUEST_FETCH_COUPONS:
-      return { ...state, fetchGetStatus: FETCH_PROCESSING }
-    case RECEIVE_FETCH_COUPONS_SUCCESS:
-      return {
-        ...state,
-        fetchGetStatus: FETCH_SUCCESS,
-        coupons: action.payload,
-      }
-    case RECEIVE_FETCH_COUPONS_FAILURE:
-      return { ...state, fetchGetStatus: FETCH_FAILURE }
-    case CLEAR_COUPONS:
-      return INITIAL_COUPONS_STATE
-    case SET_RECENTLY_ATTACHED_COUPON:
-      return { ...state, recentlyAttachedCoupon: action.payload }
-    default:
-      return state
+  case REQUEST_ATTACH_COUPON:
+    return { ...state, fetchPostStatus: FETCH_PROCESSING }
+  case RECEIVE_ATTACH_COUPON_SUCCESS:
+    return { ...state, fetchPostStatus: FETCH_SUCCESS }
+  case RECEIVE_ATTACH_COUPON_FAILURE:
+    return { ...state, fetchPostStatus: FETCH_FAILURE }
+  case REQUEST_FETCH_COUPONS:
+    return { ...state, fetchGetStatus: FETCH_PROCESSING }
+  case RECEIVE_FETCH_COUPONS_SUCCESS:
+    return {
+      ...state,
+      fetchGetStatus: FETCH_SUCCESS,
+      coupons:        action.payload,
+    }
+  case RECEIVE_FETCH_COUPONS_FAILURE:
+    return { ...state, fetchGetStatus: FETCH_FAILURE }
+  case CLEAR_COUPONS:
+    return INITIAL_COUPONS_STATE
+  case SET_RECENTLY_ATTACHED_COUPON:
+    return { ...state, recentlyAttachedCoupon: action.payload }
+  default:
+    return state
   }
 }

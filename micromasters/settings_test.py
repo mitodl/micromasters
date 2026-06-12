@@ -3,9 +3,6 @@ Validate that our settings functions work
 """
 
 import importlib
-from pathlib import Path
-import re
-import tomllib
 import sys
 from unittest import mock
 

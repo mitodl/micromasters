@@ -3,7 +3,7 @@ __webpack_public_path__ = `${SETTINGS.public_path}` // eslint-disable-line no-un
 import * as Sentry from "@sentry/browser"
 
 Sentry.init({
-  dsn: SETTINGS.sentry_dsn,
-  release: SETTINGS.release_version,
+  dsn:         SETTINGS.sentry_dsn,
+  release:     SETTINGS.release_version,
   environment: SETTINGS.environment,
 })

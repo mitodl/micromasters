@@ -17,10 +17,10 @@ describe("ProfileImage", () => {
   let helper, sandbox, updateProfileImageStub, div
 
   const thatProfile = {
-    username: "rfeather",
-    email: "rf@example.com",
-    first_name: "Reginald",
-    last_name: "Feathersworth",
+    username:       "rfeather",
+    email:          "rf@example.com",
+    first_name:     "Reginald",
+    last_name:      "Feathersworth",
     preferred_name: "Reggie",
   }
 

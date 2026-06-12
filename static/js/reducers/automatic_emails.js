@@ -9,16 +9,16 @@ import { INITIAL_STATE } from "../lib/redux_rest_constants"
 import { TOGGLE_EMAIL_PATCH_IN_FLIGHT } from "../actions/automatic_emails"
 
 export const automaticEmailsEndpoint: Endpoint = {
-  name: "automaticEmails",
+  name:                "automaticEmails",
   namespaceOnUsername: false,
-  checkNoSpinner: false,
-  verbs: [GET, PATCH],
-  getUrl: "/api/v0/mail/automatic_email/",
-  patchUrl: (email) => `/api/v0/mail/automatic_email/${email.id}/`,
-  fetchFunc: fetchJSONWithCSRF,
-  patchOptions: (emailRecord) => ({
+  checkNoSpinner:      false,
+  verbs:               [GET, PATCH],
+  getUrl:              "/api/v0/mail/automatic_email/",
+  patchUrl:            email => `/api/v0/mail/automatic_email/${email.id}/`,
+  fetchFunc:           fetchJSONWithCSRF,
+  patchOptions:        emailRecord => ({
     method: PATCH,
-    body: JSON.stringify(emailRecord),
+    body:   JSON.stringify(emailRecord),
   }),
   patchSuccessHandler: (payload, oldData) =>
     R.update(

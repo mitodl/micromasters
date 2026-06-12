@@ -33,20 +33,20 @@ class PrivacyForm extends ProfileFormFields {
 
   privacyOptions: Array<Option> = [
     {
-      value: "public",
-      label: "Public to the world",
+      value:  "public",
+      label:  "Public to the world",
       helper: `Your MicroMasters profile will be
       visible to all website visitors.`,
     },
     {
-      value: "public_to_mm",
-      label: "Public to other MicroMasters students",
+      value:  "public_to_mm",
+      label:  "Public to other MicroMasters students",
       helper: `Your profile will be
       visible to other MicroMasters learners, and to MIT faculty and staff.`,
     },
     {
-      value: "private",
-      label: "Private",
+      value:  "private",
+      label:  "Private",
       helper: `Your MicroMasters profile will only
       be visible to MIT faculty and staff.`,
     },
@@ -67,7 +67,7 @@ class PrivacyForm extends ProfileFormFields {
   ): React$Element<*> {
     const { profile, updateProfile, validator, updateValidationVisibility } =
       this.props
-    const onChange = (e) => {
+    const onChange = e => {
       const clone = _.cloneDeep(profile)
       let value = e.target.value
       if (value === "true") {

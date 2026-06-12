@@ -110,10 +110,10 @@ export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
       this.key,
       _.omitBy(
         {
-          size: this.size,
-          order: this.getOrder(),
-          include: this.options.include,
-          exclude: this.options.exclude,
+          size:          this.size,
+          order:         this.getOrder(),
+          include:       this.options.include,
+          exclude:       this.options.exclude,
           min_doc_count: this.options.min_doc_count,
         },
         _.isUndefined,
@@ -155,7 +155,7 @@ export default class NestedAggregatingMenuFilter extends MenuFilter {
    */
   getItems() {
     const items = super.getItems()
-    return items.map((item) => ({
+    return items.map(item => ({
       ...item,
       doc_count: item[REVERSE_NESTED_AGG_KEY]
         ? item[REVERSE_NESTED_AGG_KEY].doc_count

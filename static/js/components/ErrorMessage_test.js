@@ -44,7 +44,7 @@ describe("ErrorMessage", () => {
   contactExpectation = contactExpectation.replace(/\s\s+/g, " ")
 
   describe("unit tests", () => {
-    const renderErrorMessage = (props) => {
+    const renderErrorMessage = props => {
       return makeStrippedHtml(<ErrorMessage {...props} />)
     }
     const codeAttributes = [
@@ -62,7 +62,7 @@ describe("ErrorMessage", () => {
           const that = {
             errorInfo: {
               [codeAttribute]: code,
-              [msgAttribute]: message,
+              [msgAttribute]:  message,
             },
           }
           const errorMessage = renderErrorMessage(that)
@@ -212,7 +212,7 @@ describe("ErrorMessage", () => {
       it("should show an error for profile GET", () => {
         const fourOhFour = {
           errorStatusCode: 404,
-          detail: "some error messsage",
+          detail:          "some error messsage",
         }
         helper.profileGetStub
           .withArgs(SETTINGS.user.username)

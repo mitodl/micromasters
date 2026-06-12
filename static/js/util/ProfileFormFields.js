@@ -28,11 +28,11 @@ export default class ProfileFormFields extends React.Component {
 
   defaultInputComponentProps = (): Object => {
     return {
-      profile: this.props.profile,
-      updateProfile: this.props.updateProfile,
-      saveProfile: this.props.saveProfile,
-      errors: this.props.errors,
-      validator: this.props.validator,
+      profile:                    this.props.profile,
+      updateProfile:              this.props.updateProfile,
+      saveProfile:                this.props.saveProfile,
+      errors:                     this.props.errors,
+      validator:                  this.props.validator,
       updateValidationVisibility: this.props.updateValidationVisibility,
     }
   }
@@ -42,16 +42,16 @@ export default class ProfileFormFields extends React.Component {
   }
 
   static propTypes = {
-    profile: PropTypes.object,
-    updateProfile: PropTypes.func,
-    saveProfile: PropTypes.func,
-    errors: PropTypes.object,
-    setDeletionIndex: PropTypes.func,
-    setShowWorkDeleteDialog: PropTypes.func,
+    profile:                      PropTypes.object,
+    updateProfile:                PropTypes.func,
+    saveProfile:                  PropTypes.func,
+    errors:                       PropTypes.object,
+    setDeletionIndex:             PropTypes.func,
+    setShowWorkDeleteDialog:      PropTypes.func,
     setShowEducationDeleteDialog: PropTypes.func,
-    showSwitch: PropTypes.bool,
-    validator: PropTypes.func,
-    updateValidationVisibility: PropTypes.func,
+    showSwitch:                   PropTypes.bool,
+    validator:                    PropTypes.func,
+    updateValidationVisibility:   PropTypes.func,
   }
 
   closeConfirmDeleteDialog = (): void => {

@@ -26,9 +26,9 @@ describe("FilterVisibilityToggle", () => {
     sandbox = sinon.sandbox.create()
     props = {
       checkFilterVisibility: checkFilterVisibility,
-      setFilterVisibility: setFilterVisibility,
-      filterName: filterName,
-      disabled: false,
+      setFilterVisibility:   setFilterVisibility,
+      filterName:            filterName,
+      disabled:              false,
     }
   })
 
@@ -74,7 +74,7 @@ describe("FilterVisibilityToggle", () => {
       aggregations: {
         test: {
           doc_count: 10,
-          inner: {
+          inner:     {
             doc_count: 0,
           },
         },
@@ -119,7 +119,7 @@ describe("FilterVisibilityToggle", () => {
       aggregations: {
         test: {
           doc_count: 10,
-          inner: {
+          inner:     {
             doc_count: 0,
           },
         },

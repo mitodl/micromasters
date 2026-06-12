@@ -63,21 +63,21 @@ export function makeProfileProgressDisplay(active: ?string) {
   const lightGrayText = "#888"
   const colors = {
     completed: {
-      fill: "#a31f34",
+      fill:       "#a31f34",
       circleText: "white",
-      text: lightGrayText,
+      text:       lightGrayText,
       fontWeight: 400,
     },
     current: {
-      fill: "#a31f34",
+      fill:       "#a31f34",
       circleText: "white",
-      text: lightGrayText,
+      text:       lightGrayText,
       fontWeight: 400,
     },
     future: {
-      fill: "#ffffff",
+      fill:       "#ffffff",
       circleText: "#444444",
-      text: lightGrayText,
+      text:       lightGrayText,
       fontWeight: 400,
     },
   }
@@ -85,7 +85,7 @@ export function makeProfileProgressDisplay(active: ?string) {
   const elements = []
 
   const activeTab = [...PROFILE_STEP_LABELS.keys()].findIndex(
-    (k) => k === active,
+    k => k === active,
   )
   ;[...PROFILE_STEP_LABELS.entries()].forEach(([, label], i) => {
     let colorScheme
@@ -126,9 +126,9 @@ export function makeProfileProgressDisplay(active: ?string) {
             textAnchor="middle"
             dominantBaseline="middle"
             style={{
-              fill: colorScheme.circleText,
+              fill:       colorScheme.circleText,
               fontWeight: 700,
-              fontSize: i < activeTab ? "16pt" : "12pt",
+              fontSize:   i < activeTab ? "16pt" : "12pt",
             }}
           >
             {i + 1}
@@ -151,9 +151,9 @@ export function makeProfileProgressDisplay(active: ?string) {
         y={textY}
         textAnchor="middle"
         style={{
-          fill: colorScheme.text,
+          fill:       colorScheme.text,
           fontWeight: colorScheme.fontWeight,
-          fontSize: "12pt",
+          fontSize:   "12pt",
         }}
       >
         {label}
@@ -205,14 +205,14 @@ export const currentOrFirstIncompleteStep = R.compose(
  */
 export function generateNewEducation(level: string): EducationEntry {
   return {
-    degree_name: level,
-    graduation_date: "",
-    field_of_study: null,
-    online_degree: false,
-    school_name: null,
-    school_city: null,
+    degree_name:               level,
+    graduation_date:           "",
+    field_of_study:            null,
+    online_degree:             false,
+    school_name:               null,
+    school_city:               null,
     school_state_or_territory: null,
-    school_country: null,
+    school_country:            null,
   }
 }
 
@@ -221,13 +221,13 @@ export function generateNewEducation(level: string): EducationEntry {
  */
 export function generateNewWorkHistory(): WorkHistoryEntry {
   return {
-    position: "",
-    industry: "",
-    company_name: "",
-    start_date: "",
-    end_date: null,
-    city: "",
-    country: null,
+    position:           "",
+    industry:           "",
+    company_name:       "",
+    start_date:         "",
+    end_date:           null,
+    city:               "",
+    country:            null,
     state_or_territory: null,
   }
 }
@@ -345,7 +345,7 @@ export function calculateDegreeInclusions(profile: Profile) {
   // turn on all switches where the user has data
   for (const { value } of EDUCATION_LEVELS) {
     if (
-      profile.education.filter((education) => education.degree_name === value)
+      profile.education.filter(education => education.degree_name === value)
         .length > 0
     ) {
       inclusions[value] = true
@@ -357,11 +357,11 @@ export function calculateDegreeInclusions(profile: Profile) {
 /**
  * Calls an array of functions in series with a given argument and returns an array of the results
  */
-export function callFunctionArray<R: any, F: (a: any) => R>(
+export function callFunctionArray<R: any, F:(a: any) => R>(
   functionArray: Array<F>,
   arg: any,
 ): R[] {
-  return functionArray.map((func) => func(arg))
+  return functionArray.map(func => func(arg))
 }
 
 /**
@@ -499,7 +499,7 @@ export function getUserDisplayName(profile: Profile): string {
  */
 const intersperse = R.curry((elementFunc: Function, arr: Array<any>) => {
   let i = 0
-  const addGeneratedElement = (el) => [el, elementFunc(i++)]
+  const addGeneratedElement = el => [el, elementFunc(i++)]
   return R.dropLast(1, R.chain(addGeneratedElement, arr))
 })
 
@@ -511,7 +511,7 @@ export function renderSeparatedComponents(
   separator: string,
 ): Array<React$Element<*> | null> {
   return intersperse(
-    (i) => <span key={`separator-${i}`}>{separator}</span>,
+    i => <span key={`separator-${i}`}>{separator}</span>,
     components,
   )
 }
@@ -563,7 +563,7 @@ export const mapObj = R.curry((fn, obj) =>
  * Returns a promise which resolves after a number of milliseconds have elapsed
  */
 export const wait = (millis: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, millis))
+  new Promise(resolve => setTimeout(resolve, millis))
 
 /**
  * extract object from json

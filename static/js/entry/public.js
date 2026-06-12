@@ -199,17 +199,17 @@ function mailchimpCallback(resp) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
   $(".mailchimp").ajaxChimp({
     callback: mailchimpCallback,
     // Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
-    url: "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78",
+    url:      "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78",
   })
 
   $("#mce-MMERGE4").hide()
   $("#mce-MMERGE3").hide()
 
-  $("input[name=MMERGE2]").click(function () {
+  $("input[name=MMERGE2]").click(function() {
     if ($("#university").prop("checked")) {
       $("#mce-MMERGE3").show()
       $("#mce-MMERGE4").hide()
@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
 /**
  * Set social media sharing links
  */
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
   const description =
     "MicroMasters is a " +
     "new digital credential for online learners. The MicroMasters " +
@@ -247,11 +247,11 @@ document.addEventListener("DOMContentLoaded", function () {
   $(".rrssb-buttons").rrssb({
     // required:
     title: "MITx MicroMasters",
-    url: CURRENT_PAGE_URL,
+    url:   CURRENT_PAGE_URL,
 
     // optional:
     description: description,
-    emailBody: description + CURRENT_PAGE_URL,
+    emailBody:   description + CURRENT_PAGE_URL,
   })
   const tweetUrl = `https://twitter.com/intent/tweet?text=${twitterDescription}%20${CURRENT_PAGE_URL}`
   document.querySelector(".rrssb-buttons .rrssb-twitter a").href = tweetUrl
@@ -260,10 +260,10 @@ document.addEventListener("DOMContentLoaded", function () {
 /**
  * FAQs accordion on the program page
  */
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
   $(".accordion")
     .find(".accordion-toggle")
-    .click(function () {
+    .click(function() {
       // Expand or collapse this panel
       $(this).next().slideToggle("fast")
       // Rotate the icon

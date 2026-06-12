@@ -45,7 +45,7 @@ export default class ExamEnrollmentDialog extends React.Component {
       <Dialog
         classes={{
           paper: "dialog exam-enrollment-dialog",
-          root: "exam-enrollment-dialog-wrapper",
+          root:  "exam-enrollment-dialog-wrapper",
         }}
         open={open}
         onClose={() => setVisibility(false)}

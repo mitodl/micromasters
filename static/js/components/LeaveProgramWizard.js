@@ -31,10 +31,10 @@ import InputLabel from "@material-ui/core/InputLabel"
 
 const selectStyle = {
   backgroundColor: "#ffff",
-  border: "1px solid #c3c1c1",
-  padding: "0 10px",
-  borderRadius: "3px",
-  height: "40px",
+  border:          "1px solid #c3c1c1",
+  padding:         "0 10px",
+  borderRadius:    "3px",
+  height:          "40px",
 }
 
 const formControl = {
@@ -78,7 +78,7 @@ class LeaveProgramWizard extends ProfileFormFields {
         selected={R.and(
           R.not(R.isEmpty(programsToUnEnroll)),
           R.not(
-            _.isUndefined(programsToUnEnroll.find((id) => id === program.id)),
+            _.isUndefined(programsToUnEnroll.find(id => id === program.id)),
           ),
         )}
         value={program.id}

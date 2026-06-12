@@ -62,7 +62,7 @@ export const makeTranslations: () => Object = () => {
 const SEMESTER_SEASON_NUMBER_VALUE = {
   Spring: "1",
   Summer: "2",
-  Fall: "3",
+  Fall:   "3",
 }
 
 // Produces a descending date-ordered list from bucket values like '2016 - Fall'
@@ -71,7 +71,7 @@ const sortSemesterBuckets = R.compose(
   R.sortBy(
     // '2016 - Fall' -> '20163', '2016 - Spring' -> '20161'
     R.compose(
-      (yearSeasonArr) =>
+      yearSeasonArr =>
         `${yearSeasonArr[0]}${SEMESTER_SEASON_NUMBER_VALUE[yearSeasonArr[1]]}`,
       R.split(/[^\w]+/),
       R.prop("key"),
@@ -81,16 +81,16 @@ const sortSemesterBuckets = R.compose(
 
 export const sortOptions: Array<SearchSortItem> = [
   {
-    label: "Last Name A-Z",
-    key: "name_a_z",
+    label:  "Last Name A-Z",
+    key:    "name_a_z",
     fields: [
       { field: "profile.last_name", options: { order: "asc" } },
       { field: "profile.first_name", options: { order: "asc" } },
     ],
   },
   {
-    label: "Last Name Z-A",
-    key: "name_z_a",
+    label:  "Last Name Z-A",
+    key:    "name_z_a",
     fields: [
       { field: "profile.last_name", options: { order: "desc" } },
       { field: "profile.first_name", options: { order: "desc" } },
@@ -100,25 +100,25 @@ export const sortOptions: Array<SearchSortItem> = [
     label: "Grade High-to-low",
     field: "program.grade_average",
     order: "desc",
-    key: "grade-high-low",
+    key:   "grade-high-low",
   },
   {
     label: "Grade Low-to-High",
     field: "program.grade_average",
     order: "asc",
-    key: "grade-low-high",
+    key:   "grade-low-high",
   },
   {
-    label: "Country A-Z",
-    key: "loc-a-z",
+    label:  "Country A-Z",
+    key:    "loc-a-z",
     fields: [
       { field: "profile.country", options: { order: "asc" } },
       { field: "profile.city", options: { order: "asc" } },
     ],
   },
   {
-    label: "Country Z-A",
-    key: "loc-z-a",
+    label:  "Country Z-A",
+    key:    "loc-z-a",
     fields: [
       { field: "profile.country", options: { order: "desc" } },
       { field: "profile.city", options: { order: "desc" } },
@@ -198,7 +198,7 @@ export default class LearnerSearch extends SearchkitComponent {
             ]}
             queryOptions={{
               analyzer: "folding",
-              type: "phrase_prefix",
+              type:     "phrase_prefix",
             }}
           />
           <Pagination
@@ -261,7 +261,7 @@ export default class LearnerSearch extends SearchkitComponent {
           <NestedAggregatingMenuFilter
             field="program.courses.course_title"
             fieldOptions={{
-              type: "nested",
+              type:    "nested",
               options: { path: "program.courses" },
             }}
             title=""
@@ -273,7 +273,7 @@ export default class LearnerSearch extends SearchkitComponent {
             <FinalGradeRangeFilter
               field="program.courses.final_grade"
               fieldOptions={{
-                type: "nested",
+                type:    "nested",
                 options: { path: "program.courses" },
               }}
               id="final-grade"
@@ -294,7 +294,7 @@ export default class LearnerSearch extends SearchkitComponent {
             id="semester"
             title=""
             fieldOptions={{
-              type: "nested",
+              type:    "nested",
               options: { path: "program.course_runs" },
             }}
             field="program.course_runs.semester"

@@ -25,7 +25,7 @@ import { showDialog, hideDialog } from "../actions/ui"
 
 export const PROFILE_IMAGE_DIALOG = "PROFILE_IMAGE_DIALOG"
 
-const formatPhotoName = (photo) => `${photo.name.replace(/\.\w*$/, "")}.jpg`
+const formatPhotoName = photo => `${photo.name.replace(/\.\w*$/, "")}.jpg`
 
 class ProfileImage extends React.Component {
   props: {
@@ -129,17 +129,17 @@ class ProfileImage extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   photoDialogOpen: state.ui.dialogVisibility[PROFILE_IMAGE_DIALOG] || false,
-  imageUpload: state.imageUpload,
+  imageUpload:     state.imageUpload,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  startPhotoEdit: createActionHelper(dispatch, startPhotoEdit),
-  clearPhotoEdit: createActionHelper(dispatch, clearPhotoEdit),
+const mapDispatchToProps = dispatch => ({
+  startPhotoEdit:  createActionHelper(dispatch, startPhotoEdit),
+  clearPhotoEdit:  createActionHelper(dispatch, clearPhotoEdit),
   updatePhotoEdit: createActionHelper(dispatch, updatePhotoEdit),
-  setPhotoError: createActionHelper(dispatch, setPhotoError),
-  dispatch: dispatch,
+  setPhotoError:   createActionHelper(dispatch, setPhotoError),
+  dispatch:        dispatch,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileImage)
