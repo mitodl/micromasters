@@ -33,7 +33,7 @@ describe("CustomSortingSelect", () => {
           selectedItems={null}
           {...props}
         />
-      </Provider>,
+      </Provider>
     )
   }
 
@@ -45,30 +45,30 @@ describe("CustomSortingSelect", () => {
       ["loc-z-a", "Residence", "▼"],
       ["grade-high-low", "Program grade", "▼"],
       ["grade-low-high", "Program grade", "▲"],
-      ["other", "Program grade", ""],
+      ["other", "Program grade", ""]
     ]) {
       it(`should display '${description} ${arrow}' when sort is '${key}'`, () => {
         SETTINGS.roles = [
           {
             role:        "staff",
             program:     PROGRAMS[0].id,
-            permissions: ["can_advance_search"],
-          },
+            permissions: ["can_advance_search"]
+          }
         ]
         const wrapper = renderSelect({
-          selectedItems: [key],
+          selectedItems: [key]
         })
         const lookup = {
           Name:            wrapper.find("ForwardRef(Grid).name"),
           Residence:       wrapper.find("ForwardRef(Grid).residence"),
-          "Program grade": wrapper.find("ForwardRef(Grid).grade"),
+          "Program grade": wrapper.find("ForwardRef(Grid).grade")
         }
         assert.equal(lookup[description].text(), `${description} ${arrow}`)
 
         // assert that it's only selected when it needs to be
         assert.equal(
           lookup[description].props()["className"].includes("selected"),
-          Boolean(arrow),
+          Boolean(arrow)
         )
       })
     }
@@ -88,7 +88,7 @@ describe("CustomSortingSelect", () => {
 
   it("chooses the second sorting key if the first sorting key is already selected", () => {
     const wrapper = renderSelect({
-      selectedItems: ["name_a_z"],
+      selectedItems: ["name_a_z"]
     })
     wrapper.find("ForwardRef(Grid).name").simulate("click")
     assert.isTrue(setItemsStub.calledWith(["name_z_a"]))

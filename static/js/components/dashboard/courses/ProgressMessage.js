@@ -14,7 +14,7 @@ import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PAID_BUT_NOT_ENROLLED,
   DASHBOARD_FORMAT,
-  COURSEWARE_BACKEND_NAMES,
+  COURSEWARE_BACKEND_NAMES
 } from "../../../constants"
 import { renderSeparatedComponents } from "../../../util/util"
 import { courseRunUrl } from "../../../util/courseware"
@@ -27,7 +27,7 @@ import {
   courseUpcomingOrCurrent,
   hasPassedCourseRun,
   hasCanUpgradeCourseRun,
-  hasMissedDeadlineCourseRun,
+  hasMissedDeadlineCourseRun
 } from "./util"
 import { hasPassingExamGrade } from "../../../lib/grades"
 
@@ -63,7 +63,7 @@ export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
     if (courseRun.status === STATUS_CAN_UPGRADE) {
       if (courseCurrentlyInProgress(courseRun)) {
         return `Auditing (Upgrade deadline ${moment(
-          courseRun.course_upgrade_deadline,
+          courseRun.course_upgrade_deadline
         ).format(DASHBOARD_FORMAT)})`
       }
       return "Auditing"
@@ -96,13 +96,13 @@ export default class ProgressMessage extends React.Component {
     course: Course,
     courseRun: CourseRun,
     openCourseContactDialog: () => void,
-    showStaffView: boolean,
+    showStaffView: boolean
   }
 
   isCurrentOrPastEnrolled = (courseRun: CourseRun): boolean => {
     if (
       [STATUS_CURRENTLY_ENROLLED, STATUS_PASSED, STATUS_NOT_PASSED].includes(
-        courseRun.status,
+        courseRun.status
       )
     ) {
       return true
@@ -176,7 +176,7 @@ export default class ProgressMessage extends React.Component {
     const courseLinks = R.reject(R.isNil, [
       this.renderViewCourseEdxLink(courseRun),
       this.renderCourseContactLink(),
-      this.renderCourseCertificateLink(),
+      this.renderCourseCertificateLink()
     ])
 
     return courseLinks.length > 0 ? (
@@ -197,10 +197,10 @@ export default class ProgressMessage extends React.Component {
               R.reject(R.isNil, [
                 courseMessage(courseRun),
                 this.renderCourseLinks(),
-                showStaffView ? staffCourseInfo(courseRun, course) : null,
-              ]),
+                showStaffView ? staffCourseInfo(courseRun, course) : null
+              ])
             ),
-            " - ",
+            " - "
           )}
         </div>
         <Progress courseRun={courseRun} className="second-col" />

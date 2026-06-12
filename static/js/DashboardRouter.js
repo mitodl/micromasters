@@ -12,7 +12,7 @@ export default class DashboardRouter extends React.Component {
     browserHistory: Object,
     onRouteUpdate: () => void,
     store: Store,
-    routes: Object,
+    routes: Object
   }
 
   // eslint-disable-next-line require-jsdoc

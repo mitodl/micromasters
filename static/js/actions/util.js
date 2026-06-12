@@ -14,5 +14,5 @@ import type { ActionType } from "../flow/reduxTypes"
 // withUsername :: Payload a => Type -> (Username -> a -> UsernameAction a)
 export const withUsername = (
   type: ActionType,
-  payloadFunc: Function = R.nthArg(1),
+  payloadFunc: Function = R.nthArg(1)
 ) => createAction(type, payloadFunc, R.identity)

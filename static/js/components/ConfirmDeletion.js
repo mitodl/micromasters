@@ -15,7 +15,7 @@ export default class ConfirmDeletion extends React.Component {
     deleteFunc: () => Promise<*>,
     open: boolean,
     inFlight: boolean,
-    itemText: string,
+    itemText: string
   }
 
   deleteAndClose = (): void => {
@@ -31,7 +31,7 @@ export default class ConfirmDeletion extends React.Component {
       <Dialog
         classes={{
           root:  "deletion-confirmation-dialog-wrapper",
-          paper: "dialog deletion-confirmation-dialog",
+          paper: "dialog deletion-confirmation-dialog"
         }}
         open={open}
         onClose={close}
@@ -45,7 +45,7 @@ export default class ConfirmDeletion extends React.Component {
             this.deleteAndClose,
             inFlight,
             "Delete",
-            "delete-button",
+            "delete-button"
           )}
         </DialogActions>
       </Dialog>

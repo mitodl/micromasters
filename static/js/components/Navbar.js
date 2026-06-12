@@ -9,7 +9,7 @@ import Swipeable from "react-swipeable"
 
 import type {
   AvailableProgram,
-  AvailablePrograms,
+  AvailablePrograms
 } from "../flow/enrollmentTypes"
 import ProgramSelector from "./ProgramSelector"
 import ProfileImage from "../containers/ProfileImage"
@@ -38,7 +38,7 @@ const navLink = (
   label,
   iconName,
   external = false,
-  newTab = false,
+  newTab = false
 ) => (
   <div className="link">
     <Icon aria-hidden="true">{iconName}</Icon>
@@ -73,7 +73,7 @@ export default class Navbar extends React.Component {
     setEnrollProgramDialogError: (error: ?string) => void,
     setEnrollProgramDialogVisibility: (open: boolean) => void,
     setEnrollSelectedProgram: (programId: ?number) => void,
-    setNavDrawerOpen: (b: boolean) => void,
+    setNavDrawerOpen: (b: boolean) => void
   }
 
   renderProfileHeader = () => [
@@ -81,7 +81,7 @@ export default class Navbar extends React.Component {
       src="/static/images/micromasters_logo_white.svg"
       alt="MicroMasters Programs"
       key="header-logo"
-    />,
+    />
   ]
 
   renderAuthenticatedHeader = (link: string) => [
@@ -90,7 +90,7 @@ export default class Navbar extends React.Component {
         src="/static/images/micromasters_logo_white.svg"
         alt="MicroMasters Programs"
       />
-    </Link>,
+    </Link>
   ]
 
   renderUnauthenticatedHeader = (link: string) => [
@@ -99,7 +99,7 @@ export default class Navbar extends React.Component {
         src="/static/images/micromasters_logo_white.svg"
         alt="MicroMasters Programs"
       />
-    </a>,
+    </a>
   ]
 
   programSelector = (): React$Element<*> => {
@@ -108,7 +108,7 @@ export default class Navbar extends React.Component {
       enrollProgramDialogVisibility,
       setEnrollProgramDialogError,
       setEnrollProgramDialogVisibility,
-      pathname,
+      pathname
     } = this.props
     return (
       <ProgramSelector
@@ -155,7 +155,7 @@ export default class Navbar extends React.Component {
                 {reactLink(
                   closeDrawer,
                   `/learner/${SETTINGS.user.username}`,
-                  getPreferredName(profile),
+                  getPreferredName(profile)
                 )}
               </div>
               {this.programSelector()}
@@ -168,21 +168,21 @@ export default class Navbar extends React.Component {
                 "Learners",
                 "people",
                 true,
-                true,
+                true
               )}
               {adminLink(closeDrawer, "/cms", "CMS", "description", true, true)}
               {adminLink(
                 closeDrawer,
                 "/automaticemails",
                 "Email Campaigns",
-                "email",
+                "email"
               )}
               {learnerLink(closeDrawer, "/dashboard", "Dashboard", "dashboard")}
               {navLink(
                 closeDrawer,
                 `/learner/${SETTINGS.user.username}`,
                 "My Profile",
-                "person",
+                "person"
               )}
               {navLink(closeDrawer, "/settings", "Settings", "settings")}
             </div>
@@ -196,7 +196,7 @@ export default class Navbar extends React.Component {
   }
 
   renderMenu = (
-    setNavDrawerOpen: (b: boolean) => void,
+    setNavDrawerOpen: (b: boolean) => void
   ): React$Element<*> | null =>
     SETTINGS.user ? (
       <div className="mobile-visible">

@@ -15,13 +15,13 @@ import EmailCompositionDialog from "./EmailCompositionDialog"
 import {
   TEST_EMAIL_TYPE,
   TEST_EMAIL_CONFIG,
-  INITIAL_TEST_EMAIL_STATE,
+  INITIAL_TEST_EMAIL_STATE
 } from "./test_constants"
 import {
   AUTOMATIC_EMAIL_ADMIN_TYPE,
   LEARNER_EMAIL_TYPE,
   COURSE_EMAIL_TYPE,
-  SEARCH_EMAIL_TYPE,
+  SEARCH_EMAIL_TYPE
 } from "./constants"
 
 describe("EmailCompositionDialog", () => {
@@ -52,7 +52,7 @@ describe("EmailCompositionDialog", () => {
   const renderDialog = (updatedEmailState = {}, props = {}) => {
     const emailState = updateObject(
       INITIAL_TEST_EMAIL_STATE[TEST_EMAIL_TYPE],
-      updatedEmailState,
+      updatedEmailState
     )
     return mount(
       <MuiThemeProvider theme={createMuiTheme()}>
@@ -68,7 +68,7 @@ describe("EmailCompositionDialog", () => {
           subheadingRenderer={TEST_EMAIL_CONFIG.renderSubheading}
           {...props}
         />
-      </MuiThemeProvider>,
+      </MuiThemeProvider>
     )
   }
 
@@ -76,7 +76,7 @@ describe("EmailCompositionDialog", () => {
     renderDialog()
     assert.equal(
       document.querySelector(".dialog-title").textContent,
-      "Test Email Dialog",
+      "Test Email Dialog"
     )
   })
 
@@ -84,18 +84,18 @@ describe("EmailCompositionDialog", () => {
     renderDialog({
       supportsAutomaticEmails: true,
       inputs:                  {
-        sendAutomaticEmails: false,
-      },
+        sendAutomaticEmails: false
+      }
     })
     const radioGroupDiv = document.querySelector(".type-radio-group")
     assert.equal(radioGroupDiv.childElementCount, 2)
     assert.include(
       document.querySelector(".type-radio-group").textContent,
-      "Send a one-time email",
+      "Send a one-time email"
     )
     assert.include(
       document.querySelector(".type-radio-group").textContent,
-      "Create an Email Campaign",
+      "Create an Email Campaign"
     )
   })
 
@@ -108,27 +108,27 @@ describe("EmailCompositionDialog", () => {
   it('should show a "Save" label when the dialog is being used to edit an email', () => {
     renderDialog(
       { inputs: { subject: "abc", body: "abc" } },
-      { dialogType: AUTOMATIC_EMAIL_ADMIN_TYPE },
+      { dialogType: AUTOMATIC_EMAIL_ADMIN_TYPE }
     )
     assert.equal(
       getDialog().querySelector(".save-button").textContent,
-      "Save Changes",
+      "Save Changes"
     )
   })
 
   for (const dialogType of [
     LEARNER_EMAIL_TYPE,
     COURSE_EMAIL_TYPE,
-    SEARCH_EMAIL_TYPE,
+    SEARCH_EMAIL_TYPE
   ]) {
     it('should show a "Send" label when the dialog is being used to send an email', () => {
       renderDialog(
         { inputs: { subject: "abc", body: "abc" } },
-        { dialogType: dialogType },
+        { dialogType: dialogType }
       )
       assert.equal(
         getDialog().querySelector(".save-button").textContent,
-        "Send",
+        "Send"
       )
     })
   }
@@ -145,7 +145,7 @@ describe("EmailCompositionDialog", () => {
 
     // assert that inFlight is true
     assert.isTrue(
-      dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, true),
+      dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, true)
     )
     assert.equal(dialogActionsSpy.callCount, 1)
   })
@@ -166,7 +166,7 @@ describe("EmailCompositionDialog", () => {
     renderDialog({}, { title: undefined })
     assert.equal(
       document.querySelector(".dialog-title").textContent,
-      "New Email",
+      "New Email"
     )
   })
 
@@ -215,20 +215,20 @@ describe("EmailCompositionDialog", () => {
     it("should display passed-in HTML", () => {
       renderDialog({
         inputs: {
-          body: "<h1>TITLE IS BIG</h1>",
-        },
+          body: "<h1>TITLE IS BIG</h1>"
+        }
       })
       assert.equal(
         getEditorContents().querySelector("h1").textContent,
-        "TITLE IS BIG",
+        "TITLE IS BIG"
       )
     })
 
     it("shouldnt mangle links in the passed-in HTML", () => {
       renderDialog({
         inputs: {
-          body: '<a href="https://en.wikipedia.org/wiki/Potato">A Link!</a>',
-        },
+          body: '<a href="https://en.wikipedia.org/wiki/Potato">A Link!</a>'
+        }
       })
       const link = getEditorContents().querySelector("a")
       assert.equal(link.textContent, "A Link!")
@@ -245,14 +245,14 @@ describe("EmailCompositionDialog", () => {
       [LEARNER_EMAIL_TYPE, false],
       [COURSE_EMAIL_TYPE, false],
       [SEARCH_EMAIL_TYPE, true],
-      [AUTOMATIC_EMAIL_ADMIN_TYPE, true],
+      [AUTOMATIC_EMAIL_ADMIN_TYPE, true]
     ]) {
       it(`should ${!dialogType[1] ? "display" : "not display"}
         recipient variables for ${dialogType[0]}`, () => {
         renderDialog({}, { supportBulkEmails: dialogType[1] })
         assert.equal(
           _.isNull(getDialog().querySelector(".toolbar-below")),
-          !dialogType[1],
+          !dialogType[1]
         )
       })
     }
@@ -265,34 +265,34 @@ describe("EmailCompositionDialog", () => {
           {
             id:    "1",
             name:  "program.course_runs.semester",
-            value: "2015",
+            value: "2015"
           },
           {
             id:    "2",
             name:  "ES",
-            value: "foo",
+            value: "foo"
           },
           {
             id:    "3",
             name:  "profile.birth_country",
-            value: "ES",
-          },
-        ],
+            value: "ES"
+          }
+        ]
       },
-      { renderRecipients: SEARCH_RESULT_EMAIL_CONFIG.renderRecipients },
+      { renderRecipients: SEARCH_RESULT_EMAIL_CONFIG.renderRecipients }
     )
 
     assert.include(
       getDialog().querySelector(".sk-selected-filters").textContent,
-      "Semester: 2015",
+      "Semester: 2015"
     )
     assert.include(
       getDialog().querySelector(".sk-selected-filters").textContent,
-      "Spain: foo",
+      "Spain: foo"
     )
     assert.include(
       getDialog().querySelector(".sk-selected-filters").textContent,
-      "Country of Birth: Spain",
+      "Country of Birth: Spain"
     )
   })
 })

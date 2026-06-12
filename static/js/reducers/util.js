@@ -8,7 +8,7 @@ import type { DashboardsState } from "../flow/dashboardTypes"
 
 export const getInfoByUsername = R.curry(
   (reducer, defaultTo, username, state) =>
-    R.pathOr(defaultTo, [reducer, username], state),
+    R.pathOr(defaultTo, [reducer, username], state)
 )
 
 const usernameIfPresent = () => (SETTINGS.user ? SETTINGS.user.username : "")
@@ -18,15 +18,15 @@ export const getOwnDashboard = (state: { dashboard?: DashboardsState }) =>
     "dashboard",
     INITIAL_DASHBOARD_STATE,
     usernameIfPresent(),
-    state,
+    state
   )
 
 export const getDashboard = guard((username, dashboard) =>
-  R.pathOr(INITIAL_DASHBOARD_STATE, [username], dashboard),
+  R.pathOr(INITIAL_DASHBOARD_STATE, [username], dashboard)
 )
 
 export const updateStateByUsername = (
   state: Object,
   username: string,
-  update: Object,
+  update: Object
 ) => _.merge({}, state, { [username]: update })

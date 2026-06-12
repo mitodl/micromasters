@@ -22,7 +22,7 @@ export const EDUCATION_LEVELS = [
   { value: ASSOCIATE, label: "Associate degree" },
   { value: BACHELORS, label: "Bachelor's degree" },
   { value: MASTERS, label: "Master's or professional degree" },
-  { value: DOCTORATE, label: "Doctorate" },
+  { value: DOCTORATE, label: "Doctorate" }
 ]
 
 export const SEARCH_FACET_FIELD_LABEL_MAP = {
@@ -35,7 +35,7 @@ export const SEARCH_FACET_FIELD_LABEL_MAP = {
   "profile.education.degree_name":     "Degree",
   "profile.work_history.company_name": "Company",
   "num-courses-passed":                "# of Courses Passed",
-  "program.courses.final_grade":       "Final Grade",
+  "program.courses.final_grade":       "Final Grade"
 }
 
 // NOTE: these need to be kept in sync with ui/url_utils.py
@@ -50,13 +50,13 @@ export const ALL_ERRORS_VISIBLE = "ALL_ERRORS_VISIBLE"
 export const PROFILE_STEP_LABELS = new Map([
   [PERSONAL_STEP, "Personal"],
   [EDUCATION_STEP, "Education"],
-  [EMPLOYMENT_STEP, "Professional"],
+  [EMPLOYMENT_STEP, "Professional"]
 ])
 
 export const PROFILE_STEP_ORDER = [
   PERSONAL_STEP,
   EDUCATION_STEP,
-  EMPLOYMENT_STEP,
+  EMPLOYMENT_STEP
 ]
 
 export const DEFAULT_OPTION_LIMIT_COUNT = 10
@@ -84,7 +84,7 @@ export const ALL_COURSE_STATUSES = [
   STATUS_WILL_ATTEND,
   STATUS_PENDING_ENROLLMENT,
   STATUS_MISSED_DEADLINE,
-  STATUS_PAID_BUT_NOT_ENROLLED,
+  STATUS_PAID_BUT_NOT_ENROLLED
 ]
 
 export const TOAST_SUCCESS = "done"
@@ -93,31 +93,31 @@ export const TOAST_FAILURE = "error"
 export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, "courses/")
 export const EDX_BASE_DASHBOARD_LINK = urljoin(
   SETTINGS.edx_base_url,
-  "dashboard/programs/",
+  "dashboard/programs/"
 )
 export const MITXONLINE_LINK_BASE = urljoin(
   SETTINGS.mitxonline_base_url,
-  "courses/",
+  "courses/"
 )
 
 export const MITXONLINE_DASHBOARD_LINK = urljoin(
   SETTINGS.mitxonline_url,
-  "dashboard/",
+  "dashboard/"
 )
 
 export const COURSEWARE_BACKEND_EDXORG = "edxorg"
 export const COURSEWARE_BACKEND_MITXONLINE = "mitxonline"
 export const COURSEWARE_BACKEND_NAMES = {
   [COURSEWARE_BACKEND_EDXORG]:     "edX",
-  [COURSEWARE_BACKEND_MITXONLINE]: "MITx Online",
+  [COURSEWARE_BACKEND_MITXONLINE]: "MITx Online"
 }
 export const COURSEWARE_BACKEND_BASE_URLS = {
   [COURSEWARE_BACKEND_EDXORG]:     EDX_LINK_BASE,
-  [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_LINK_BASE,
+  [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_LINK_BASE
 }
 export const DASHBOARD_BACKEND_BASE_URLS = {
   [COURSEWARE_BACKEND_EDXORG]:     EDX_LINK_BASE,
-  [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_DASHBOARD_LINK,
+  [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_DASHBOARD_LINK
 }
 
 export const COUPON_CONTENT_TYPE_COURSE = "course"

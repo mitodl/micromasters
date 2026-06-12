@@ -8,7 +8,7 @@ import {
   REQUEST_ADD_PROGRAM_ENROLLMENT,
   RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
   REQUEST_GET_PROGRAM_ENROLLMENTS,
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
 } from "../actions/programs"
 import {
   requestGetUserProfile,
@@ -20,13 +20,13 @@ import {
   START_PROFILE_EDIT,
   UPDATE_PROFILE_VALIDATION,
   UPDATE_VALIDATION_VISIBILITY,
-  CLEAR_PROFILE_EDIT,
+  CLEAR_PROFILE_EDIT
 } from "../actions/profile"
 import {
   setProgram,
   SET_PROFILE_STEP,
   SET_TOAST_MESSAGE,
-  SET_PROGRAM,
+  SET_PROGRAM
 } from "../actions/ui"
 import { USER_PROFILE_RESPONSE, PROGRAMS } from "../test_constants"
 import { PERSONAL_STEP, EDUCATION_STEP, EMPLOYMENT_STEP } from "../constants"
@@ -53,7 +53,7 @@ describe("ProfilePage", function() {
     REQUEST_GET_PROGRAM_ENROLLMENTS,
     RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
     START_PROFILE_EDIT,
-    SET_PROFILE_STEP,
+    SET_PROFILE_STEP
   ]
 
   const SUCCESS_SET_PROGRAM_ACTIONS = SUCCESS_ACTIONS.concat(SET_PROGRAM)
@@ -78,7 +78,7 @@ describe("ProfilePage", function() {
   const confirmSaveButtonBehavior = (
     updatedProfile,
     pageElements,
-    additionalActions = [],
+    additionalActions = []
   ) => {
     let { button } = pageElements
     const { div } = pageElements
@@ -94,7 +94,7 @@ describe("ProfilePage", function() {
       REQUEST_PATCH_USER_PROFILE,
       RECEIVE_PATCH_USER_PROFILE_SUCCESS,
       CLEAR_PROFILE_EDIT,
-      SET_PROFILE_STEP,
+      SET_PROFILE_STEP
     ].concat(additionalActions)
 
     return listenForActions(actions, () => {
@@ -110,7 +110,7 @@ describe("ProfilePage", function() {
       const userProfile = {
         ...USER_PROFILE_RESPONSE,
         education:    [],
-        work_history: [],
+        work_history: []
       }
       helper.profileGetStub
         .withArgs(SETTINGS.user.username)
@@ -124,7 +124,7 @@ describe("ProfilePage", function() {
         activeDialog("education-dialog-wrapper")
       }
       return renderComponent("/profile/education", SUCCESS_ACTIONS).then(
-        dialogTest,
+        dialogTest
       )
     })
 
@@ -135,7 +135,7 @@ describe("ProfilePage", function() {
         activeDialog("employment-dialog-wrapper")
       }
       return renderComponent("/profile/professional", SUCCESS_ACTIONS).then(
-        dialogTest,
+        dialogTest
       )
     })
   })
@@ -144,7 +144,7 @@ describe("ProfilePage", function() {
     it("redirects to /profile/personal if profile is not complete", () => {
       const response = {
         ...USER_PROFILE_RESPONSE,
-        first_name: undefined,
+        first_name: undefined
       }
       helper.profileGetStub
         .withArgs(SETTINGS.user.username)
@@ -152,7 +152,7 @@ describe("ProfilePage", function() {
 
       return renderComponent(
         "/profile/education",
-        REDIRECT_ACTIONS.concat(SET_PROGRAM),
+        REDIRECT_ACTIONS.concat(SET_PROGRAM)
       ).then(() => {
         assert.equal(window.location.pathname, "/profile/personal")
         assert.equal(getStep(), PERSONAL_STEP)
@@ -170,7 +170,7 @@ describe("ProfilePage", function() {
         () => {
           assert.equal(window.location.pathname, "/profile/education")
           assert.equal(getStep(), EDUCATION_STEP)
-        },
+        }
       )
     })
   })
@@ -182,7 +182,7 @@ describe("ProfilePage", function() {
         assert.equal(getStep(), EDUCATION_STEP)
         ReactTestUtils.Simulate.click(button)
         assert.equal(getStep(), PERSONAL_STEP)
-      },
+      }
     )
   })
 
@@ -193,7 +193,7 @@ describe("ProfilePage", function() {
           ...USER_PROFILE_RESPONSE,
           filled_out:   filledOutValue,
           education:    [],
-          work_history: [],
+          work_history: []
         }
         helper.profileGetStub
           .withArgs(SETTINGS.user.username)
@@ -204,7 +204,7 @@ describe("ProfilePage", function() {
           return confirmSaveButtonBehavior(
             updatedProfile,
             { div: div },
-            step === PERSONAL_STEP ? [REQUEST_ADD_PROGRAM_ENROLLMENT] : [],
+            step === PERSONAL_STEP ? [REQUEST_ADD_PROGRAM_ENROLLMENT] : []
           )
         })
       })
@@ -214,7 +214,7 @@ describe("ProfilePage", function() {
   it("shows a spinner when profile get is processing", () => {
     return renderComponent(
       "/profile/personal",
-      SUCCESS_SET_PROGRAM_ACTIONS,
+      SUCCESS_SET_PROGRAM_ACTIONS
     ).then(([wrapper]) => {
       wrapper.update()
       assert.equal(wrapper.find(".loader").length, 0)
@@ -227,11 +227,11 @@ describe("ProfilePage", function() {
 
   for (const activity of [true, false]) {
     it(`has proper button state when the profile patch is processing when activity=${String(
-      activity,
+      activity
     )}`, () => {
       return renderComponent(
         "/profile/personal",
-        SUCCESS_SET_PROGRAM_ACTIONS,
+        SUCCESS_SET_PROGRAM_ACTIONS
       ).then(([wrapper]) => {
         wrapper.update()
         if (activity) {
@@ -267,23 +267,26 @@ describe("ProfilePage", function() {
               RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
               SET_PROFILE_STEP,
               UPDATE_VALIDATION_VISIBILITY,
-              SET_TOAST_MESSAGE,
+              SET_TOAST_MESSAGE
             ],
             () => {
-              wrapper.find(".next").hostNodes().simulate("click")
-            },
+              wrapper
+                .find(".next")
+                .hostNodes()
+                .simulate("click")
+            }
           )
           .then(() => {
             assert.isTrue(addProgramEnrollmentStub.called)
           })
-      },
+      }
     )
   })
 
   for (const [step, component] of [
     [PERSONAL_STEP, "PersonalTab"],
     [EDUCATION_STEP, "EducationTab"],
-    [EMPLOYMENT_STEP, "EmploymentTab"],
+    [EMPLOYMENT_STEP, "EmploymentTab"]
   ]) {
     it(`sends the right props to tab components for step ${step}`, () => {
       const actions =
@@ -294,11 +297,11 @@ describe("ProfilePage", function() {
         assert.deepEqual(props["ui"], helper.store.getState().ui)
         assert.deepEqual(
           props["programs"],
-          helper.store.getState().programs.availablePrograms,
+          helper.store.getState().programs.availablePrograms
         )
         assert.deepEqual(
           props["profile"],
-          helper.store.getState().profiles["jane"].profile,
+          helper.store.getState().profiles["jane"].profile
         )
       })
     })

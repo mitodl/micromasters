@@ -20,14 +20,14 @@ export default class LearnerPageAboutMeDialog extends ProfileFormFields {
     saveProfile: SaveProfileFunc,
     clearProfileEdit: () => void,
     setLearnerPageAboutMeDialogVisibility: () => void,
-    validator: Validator,
+    validator: Validator
   }
 
   closeAboutMeDialog = (): void => {
     const {
       setLearnerPageAboutMeDialogVisibility,
       clearProfileEdit,
-      profile: { username },
+      profile: { username }
     } = this.props
     setLearnerPageAboutMeDialogVisibility(false)
     clearProfileEdit(username)
@@ -43,7 +43,7 @@ export default class LearnerPageAboutMeDialog extends ProfileFormFields {
   render() {
     const {
       ui: { learnerPageAboutMeDialogVisibility },
-      profilePatchStatus,
+      profilePatchStatus
     } = this.props
     const inFlight = profilePatchStatus === FETCH_PROCESSING
 
@@ -51,7 +51,7 @@ export default class LearnerPageAboutMeDialog extends ProfileFormFields {
       <Dialog
         classes={{
           paper: "dialog about-me-dialog",
-          root:  "about-me-dialog-wrapper",
+          root:  "about-me-dialog-wrapper"
         }}
         open={learnerPageAboutMeDialogVisibility}
         onClose={this.closeAboutMeDialog}
@@ -59,14 +59,14 @@ export default class LearnerPageAboutMeDialog extends ProfileFormFields {
         <DialogTitle className="dialog-title">About Me</DialogTitle>
         <DialogContent>
           {this.boundTextField(["about_me"], "Introduce yourself", {
-            multiLine: true,
+            multiLine: true
           })}
         </DialogContent>
         <DialogActions>
           {dialogActions(
             this.closeAboutMeDialog,
             this.saveAboutMeInfo,
-            inFlight,
+            inFlight
           )}
         </DialogActions>
       </Dialog>

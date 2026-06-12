@@ -7,7 +7,7 @@ describe("location", () => {
     it("should return a valid country name for a code", () => {
       [
         ["US", "United States"],
-        [null, ""],
+        [null, ""]
       ].forEach(([countryCode, country]) => {
         assert.equal(codeToCountryName(countryCode), country)
       })

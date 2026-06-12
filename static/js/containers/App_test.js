@@ -11,22 +11,22 @@ import Navbar from "../components/Navbar"
 import {
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
-  CLEAR_DASHBOARD,
+  CLEAR_DASHBOARD
 } from "../actions/dashboard"
 import {
   REQUEST_FETCH_COUPONS,
   RECEIVE_FETCH_COUPONS_SUCCESS,
-  CLEAR_COUPONS,
+  CLEAR_COUPONS
 } from "../actions/coupons"
 import {
   REQUEST_GET_USER_PROFILE,
   RECEIVE_GET_USER_PROFILE_SUCCESS,
-  CLEAR_PROFILE,
+  CLEAR_PROFILE
 } from "../actions/profile"
 import {
   CLEAR_ENROLLMENTS,
   REQUEST_GET_PROGRAM_ENROLLMENTS,
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE
 } from "../actions/programs"
 import * as enrollmentActions from "../actions/programs"
 import {
@@ -34,7 +34,7 @@ import {
   SET_PROFILE_STEP,
   setNavDrawerOpen,
   SET_NAV_DRAWER_OPEN,
-  SET_TOAST_MESSAGE,
+  SET_TOAST_MESSAGE
 } from "../actions/ui"
 import * as uiActions from "../actions/ui"
 import { USER_PROFILE_RESPONSE } from "../test_constants"
@@ -45,7 +45,7 @@ import { actions } from "../lib/redux_rest"
 
 const REDIRECT_ACTIONS = SUCCESS_ACTIONS.concat([
   SET_PROFILE_STEP,
-  SET_TOAST_MESSAGE,
+  SET_TOAST_MESSAGE
 ])
 
 describe("App", function() {
@@ -67,7 +67,7 @@ describe("App", function() {
         [CLEAR_PROFILE, CLEAR_UI, CLEAR_ENROLLMENTS],
         () => {
           ReactDOM.unmountComponentAtNode(div)
-        },
+        }
       )
     })
   })
@@ -78,7 +78,7 @@ describe("App", function() {
     it("redirects to /profile/personal if profile is not complete", () => {
       const response = {
         ...USER_PROFILE_RESPONSE,
-        first_name: undefined,
+        first_name: undefined
       }
       helper.profileGetStub
         .withArgs(SETTINGS.user.username)
@@ -93,7 +93,7 @@ describe("App", function() {
     it("redirects to /profile/professional if profile is not filled out", () => {
       const response = {
         ...USER_PROFILE_RESPONSE,
-        filled_out: false,
+        filled_out: false
       }
       helper.profileGetStub
         .withArgs(SETTINGS.user.username)
@@ -142,7 +142,7 @@ describe("App", function() {
         RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
         CLEAR_DASHBOARD,
         RECEIVE_DASHBOARD_SUCCESS,
-        RECEIVE_GET_USER_PROFILE_SUCCESS,
+        RECEIVE_GET_USER_PROFILE_SUCCESS
       ]
       return renderComponent("/dashboard", types).then(([wrapper]) => {
         const text = wrapper.find(".page-content").text()
@@ -155,7 +155,7 @@ describe("App", function() {
         const props = wrapper.find(Navbar).props()
         const stub = helper.sandbox.stub(
           uiActions,
-          "setEnrollProgramDialogVisibility",
+          "setEnrollProgramDialogVisibility"
         )
         stub.returns({ type: "fake" })
         props.setEnrollProgramDialogVisibility("value")
@@ -178,7 +178,7 @@ describe("App", function() {
         const props = wrapper.find(Navbar).props()
         const stub = helper.sandbox.stub(
           enrollmentActions,
-          "setCurrentProgramEnrollment",
+          "setCurrentProgramEnrollment"
         )
         stub.returns({ type: "fake" })
         props.setCurrentProgramEnrollment("value")
@@ -191,7 +191,7 @@ describe("App", function() {
     for (const [title, url] of [
       ["Dashboard", "/dashboard"],
       ["My Profile", `/learner/${SETTINGS.user.username}`],
-      ["Settings", "/settings"],
+      ["Settings", "/settings"]
     ]) {
       it(`closes the drawer and changes the URL when ${title} is clicked`, () => {
         helper.store.dispatch(setNavDrawerOpen(true))

@@ -11,7 +11,7 @@ import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
 import {
   makeAvailablePrograms,
   makeDashboard,
-  makeCourse,
+  makeCourse
 } from "../factories/dashboard"
 import IntegrationTestHelper from "../util/integration_test_helper"
 import { REQUEST_DASHBOARD, CLEAR_DASHBOARD } from "../actions/dashboard"
@@ -26,20 +26,20 @@ import {
   SET_ENROLL_PROGRAM_DIALOG_VISIBILITY,
   SET_ENROLL_SELECTED_PROGRAM,
   SET_ENROLL_PROGRAM_DIALOG_ERROR,
-  showDialog,
+  showDialog
 } from "../actions/ui"
 import {
   INITIATE_SEND_EMAIL,
   START_EMAIL_EDIT,
   SEND_EMAIL_SUCCESS,
   CLEAR_EMAIL_EDIT,
-  UPDATE_EMAIL_VALIDATION,
+  UPDATE_EMAIL_VALIDATION
 } from "../actions/email"
 import { CLEAR_PROFILE } from "../actions/profile"
 import {
   CLEAR_ENROLLMENTS,
   REQUEST_ADD_PROGRAM_ENROLLMENT,
-  RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
+  RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS
 } from "../actions/programs"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import { DASHBOARD_RESPONSE, ERROR_RESPONSE } from "../test_constants"
@@ -47,13 +47,13 @@ import { modifyTextField } from "../util/test_utils"
 import {
   DASHBOARD_SUCCESS_ACTIONS,
   DASHBOARD_ERROR_ACTIONS,
-  DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS,
+  DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
 } from "./test_util"
 import { actions } from "../lib/redux_rest"
 import EmailCompositionDialog from "../components/email/EmailCompositionDialog"
 import { makeRunEnrolled } from "../components/dashboard/courses/test_util"
 import Grades, {
-  gradeDetailPopupKey,
+  gradeDetailPopupKey
 } from "../components/dashboard/courses/Grades"
 import { COURSE_GRADE } from "./DashboardPage"
 import * as api from "../lib/api"
@@ -80,16 +80,16 @@ describe("DashboardPage", function() {
       ([, div]) => {
         assert.notOk(
           div.querySelector(".loader"),
-          "Found spinner but no fetch in progress",
+          "Found spinner but no fetch in progress"
         )
         helper.store.dispatch({
           type:    REQUEST_DASHBOARD,
           payload: false,
-          meta:    SETTINGS.user.username,
+          meta:    SETTINGS.user.username
         })
 
         assert(div.querySelector(".loader"), "Unable to find spinner")
-      },
+      }
     )
   })
 
@@ -100,7 +100,7 @@ describe("DashboardPage", function() {
         assert.lengthOf(wrapper.find(".course-list").hostNodes(), 1)
         assert.lengthOf(wrapper.find(".progress-widget").hostNodes(), 1)
         assert.lengthOf(wrapper.find(".learners-card").hostNodes(), 1)
-      },
+      }
     )
   })
 
@@ -108,14 +108,14 @@ describe("DashboardPage", function() {
     helper.programLearnersStub.returns(
       Promise.resolve({
         learners:       [],
-        learners_count: 0,
-      }),
+        learners_count: 0
+      })
     )
 
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
       ([wrapper]) => {
         assert.lengthOf(wrapper.find(".learners-card"), 0)
-      },
+      }
     )
   })
 
@@ -124,12 +124,15 @@ describe("DashboardPage", function() {
 
     return renderComponent(
       "/dashboard",
-      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS,
+      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
     ).then(([wrapper]) => {
-      const text = wrapper.find(".no-program-card").hostNodes().text()
+      const text = wrapper
+        .find(".no-program-card")
+        .hostNodes()
+        .text()
       assert.equal(
         text,
-        "You are not currently enrolled in any programsEnroll in a MicroMasters Program",
+        "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
       )
     })
   })
@@ -143,7 +146,7 @@ describe("DashboardPage", function() {
 
     return renderComponent(
       "/dashboard",
-      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS,
+      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
     ).then(([wrapper]) => {
       const link = wrapper.find(".enroll-wizard-button")
       assert.equal(link.text(), "Enroll in a MicroMasters Program")
@@ -164,7 +167,7 @@ describe("DashboardPage", function() {
                   [
                     REQUEST_ADD_PROGRAM_ENROLLMENT,
                     RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-                    SET_ENROLL_SELECTED_PROGRAM,
+                    SET_ENROLL_SELECTED_PROGRAM
                   ],
                   () => {
                     const props = wrapper
@@ -173,7 +176,7 @@ describe("DashboardPage", function() {
                       .props()
                     props.setSelectedProgram(availablePrograms[0].id)
                     enrollBtn.click()
-                  },
+                  }
                 )
                 .then(() => {
                   assert.isTrue(addProgramEnrollmentStub.called)
@@ -186,30 +189,39 @@ describe("DashboardPage", function() {
   it("should show a <Grades /> component, and open the dialog when clicked", () => {
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
       ([wrapper]) => {
-        wrapper.find(Grades).find(".open-popup").first().simulate("click")
+        wrapper
+          .find(Grades)
+          .find(".open-popup")
+          .first()
+          .simulate("click")
         const state = helper.store.getState().ui
         const key = gradeDetailPopupKey(
           COURSE_GRADE,
-          DASHBOARD_RESPONSE.programs[0].courses[0].title,
+          DASHBOARD_RESPONSE.programs[0].courses[0].title
         )
         assert.isTrue(state.dialogVisibility[key])
-      },
+      }
     )
   })
 
   it("should close the <Grades /> dialog if you click outside", () => {
     const key = gradeDetailPopupKey(
       COURSE_GRADE,
-      DASHBOARD_RESPONSE.programs[0].courses[0].title,
+      DASHBOARD_RESPONSE.programs[0].courses[0].title
     )
 
     helper.store.dispatch(showDialog(key))
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
       ([wrapper]) => {
-        wrapper.find(Grades).find(Dialog).first().props().onClose()
+        wrapper
+          .find(Grades)
+          .find(Dialog)
+          .first()
+          .props()
+          .onClose()
         const state = helper.store.getState().ui
         assert.isFalse(state.dialogVisibility[key])
-      },
+      }
     )
   })
 
@@ -223,13 +235,13 @@ describe("DashboardPage", function() {
             CLEAR_ENROLLMENTS,
             CLEAR_DASHBOARD,
             actions.programLearners.clearType,
-            CLEAR_COUPONS,
+            CLEAR_COUPONS
           ],
           () => {
             ReactDOM.unmountComponentAtNode(div)
-          },
+          }
         )
-      },
+      }
     )
   })
 
@@ -239,12 +251,12 @@ describe("DashboardPage", function() {
     const faExpectedStateList = [
       {
         hasFA:           true,
-        expectedMessage: "This is a premium feature for verified learners.",
+        expectedMessage: "This is a premium feature for verified learners."
       },
       {
         hasFA:           false,
-        expectedMessage: "This is a premium feature for verified learners.",
-      },
+        expectedMessage: "This is a premium feature for verified learners."
+      }
     ]
     const CONTACT_LINK_SELECTOR = ".contact-link"
     const EMAIL_DIALOG_ACTIONS = [START_EMAIL_EDIT, SHOW_DIALOG]
@@ -252,7 +264,7 @@ describe("DashboardPage", function() {
     beforeEach(() => {
       // Limit the dashboard response to 1 program
       dashboardResponse = {
-        programs: [R.clone(DASHBOARD_RESPONSE.programs[0])],
+        programs: [R.clone(DASHBOARD_RESPONSE.programs[0])]
       }
     })
 
@@ -285,27 +297,27 @@ describe("DashboardPage", function() {
                 INITIATE_SEND_EMAIL,
                 SEND_EMAIL_SUCCESS,
                 CLEAR_EMAIL_EDIT,
-                HIDE_DIALOG,
+                HIDE_DIALOG
               ],
               () => {
                 document
                   .querySelector(".email-composition-dialog .save-button")
                   .click()
-              },
+              }
             ).then(state => {
               assert.isFalse(
-                state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG],
+                state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]
               )
               assert.isTrue(
                 helper.sendCourseTeamMail.calledWith(
                   "subject",
                   "body",
-                  course.id,
-                ),
+                  course.id
+                )
               )
             })
           })
-        },
+        }
       )
     })
   })
@@ -315,13 +327,13 @@ describe("DashboardPage", function() {
     const ENROLL_BUTTON_SELECTOR = ".course-list .enroll-button"
     const COURSE_ENROLL_DIALOG_ACTIONS = [
       SET_ENROLL_COURSE_DIALOG_VISIBILITY,
-      SET_ENROLL_SELECTED_COURSE_RUN,
+      SET_ENROLL_SELECTED_COURSE_RUN
     ]
 
     beforeEach(() => {
       // Limit the dashboard response to 1 program
       dashboardResponse = {
-        programs: [R.clone(DASHBOARD_RESPONSE.programs[0])],
+        programs: [R.clone(DASHBOARD_RESPONSE.programs[0])]
       }
     })
 
@@ -341,7 +353,7 @@ describe("DashboardPage", function() {
             assert.isTrue(state.ui.enrollCourseDialogVisibility)
             assert.deepEqual(state.ui.enrollSelectedCourseRun, course.runs[0])
           })
-        },
+        }
       )
     })
   })
@@ -359,7 +371,7 @@ describe("DashboardPage", function() {
       return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
         ([wrapper]) => {
           assert.lengthOf(wrapper.find(ERROR_MESSAGE_SELECTOR), 0)
-        },
+        }
       )
     })
 
@@ -369,7 +381,7 @@ describe("DashboardPage", function() {
       return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
         ([wrapper]) => {
           assert.lengthOf(wrapper.find(ERROR_MESSAGE_SELECTOR), 1)
-        },
+        }
       )
     })
 
@@ -378,7 +390,7 @@ describe("DashboardPage", function() {
       return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(
         ([wrapper]) => {
           assert.lengthOf(wrapper.find(ERROR_MESSAGE_SELECTOR), 0)
-        },
+        }
       )
     })
   })

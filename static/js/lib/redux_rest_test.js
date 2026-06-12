@@ -25,7 +25,7 @@ describe("redux REST", () => {
     const endpoints = [
       automaticEmailsEndpoint,
       courseEnrollmentsEndpoint,
-      examEnrollmentEndpoint,
+      examEnrollmentEndpoint
     ]
 
     it("should include all reducers that we expect it to", () => {

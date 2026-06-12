@@ -12,16 +12,16 @@ describe("EducationForm", () => {
     return shallow(
       <EducationForm
         ui={{
-          educationDialogVisibility: true,
+          educationDialogVisibility: true
         }}
         profile={USER_PROFILE_RESPONSE}
         {...props}
       />,
       {
         context: {
-          router: {},
-        },
-      },
+          router: {}
+        }
+      }
     )
   }
 

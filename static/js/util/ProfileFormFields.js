@@ -6,7 +6,7 @@ import {
   boundDateField,
   boundTextField,
   boundCheckbox,
-  boundTelephoneInput,
+  boundTelephoneInput
 } from "./profile_edit"
 
 export default class ProfileFormFields extends React.Component {
@@ -33,12 +33,12 @@ export default class ProfileFormFields extends React.Component {
       saveProfile:                this.props.saveProfile,
       errors:                     this.props.errors,
       validator:                  this.props.validator,
-      updateValidationVisibility: this.props.updateValidationVisibility,
+      updateValidationVisibility: this.props.updateValidationVisibility
     }
   }
 
   static contextTypes = {
-    router: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired
   }
 
   static propTypes = {
@@ -51,14 +51,14 @@ export default class ProfileFormFields extends React.Component {
     setShowEducationDeleteDialog: PropTypes.func,
     showSwitch:                   PropTypes.bool,
     validator:                    PropTypes.func,
-    updateValidationVisibility:   PropTypes.func,
+    updateValidationVisibility:   PropTypes.func
   }
 
   closeConfirmDeleteDialog = (): void => {
     const {
       setDeletionIndex,
       setShowEducationDeleteDialog,
-      setShowWorkDeleteDialog,
+      setShowWorkDeleteDialog
     } = this.props
     setShowEducationDeleteDialog(false)
     setShowWorkDeleteDialog(false)

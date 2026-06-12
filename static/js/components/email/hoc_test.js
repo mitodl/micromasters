@@ -12,7 +12,7 @@ import { SHOW_DIALOG } from "../../actions/ui"
 import {
   TEST_EMAIL_TYPE,
   TEST_EMAIL_CONFIG,
-  INITIAL_TEST_EMAIL_STATE,
+  INITIAL_TEST_EMAIL_STATE
 } from "./test_constants"
 
 describe("Email higher-order component", () => {
@@ -34,8 +34,8 @@ describe("Email higher-order component", () => {
 
   const WrappedTestContainerPage = R.compose(
     withEmailDialog({
-      [TEST_EMAIL_TYPE]: TEST_EMAIL_CONFIG,
-    }),
+      [TEST_EMAIL_TYPE]: TEST_EMAIL_CONFIG
+    })
   )(TestContainerPage)
 
   beforeEach(() => {
@@ -56,7 +56,7 @@ describe("Email higher-order component", () => {
           ui={{ dialogVisibility: { [EMAIL_COMPOSITION_DIALOG]: false } }}
           email={INITIAL_TEST_EMAIL_STATE}
         />
-      </MuiThemeProvider>,
+      </MuiThemeProvider>
     )
 
   it("should render an email dialog when the wrapped component renders", () => {
@@ -73,7 +73,7 @@ describe("Email higher-order component", () => {
       assert.isTrue(openEmailSpy.called)
       assert.equal(
         wrapper.find("EmailCompositionDialog").props().title,
-        "Test Email Dialog",
+        "Test Email Dialog"
       )
     })
   })
@@ -86,12 +86,12 @@ describe("Email higher-order component", () => {
           ui={{ dialogVisibility: { [EMAIL_COMPOSITION_DIALOG]: false } }}
           email={{ ...INITIAL_TEST_EMAIL_STATE, currentlyActive: "missing" }}
         />
-      </MuiThemeProvider>,
+      </MuiThemeProvider>
     )
     // No error should happen and there should be no text here
     assert.equal(
       wrapper.find("EmailCompositionDialog").props().title,
-      undefined,
+      undefined
     )
   })
 })

@@ -30,7 +30,7 @@ export const sendEmailFailure = createAction(SEND_EMAIL_FAILURE)
 export function sendEmail(
   emailType: string,
   sendFunction: () => Promise<EmailSendResponse>,
-  sendFunctionParams: Array<*>,
+  sendFunctionParams: Array<*>
 ): Dispatcher<?EmailSendResponse> {
   return (dispatch: Dispatch) => {
     dispatch(initiateSendEmail(emailType))
@@ -41,7 +41,7 @@ export function sendEmail(
       },
       error => {
         dispatch(sendEmailFailure({ type: emailType, error: error }))
-      },
+      }
     )
   }
 }

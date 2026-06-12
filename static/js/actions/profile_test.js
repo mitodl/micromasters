@@ -1,7 +1,7 @@
 // @flow
 import {
   updateValidationVisibility,
-  UPDATE_VALIDATION_VISIBILITY,
+  UPDATE_VALIDATION_VISIBILITY
 } from "./profile"
 import { assert } from "chai"
 
@@ -12,8 +12,8 @@ describe("generated profile action helpers", () => {
       type:    UPDATE_VALIDATION_VISIBILITY,
       payload: {
         username: "my user",
-        keySet:   ["a", "key", "set"],
-      },
+        keySet:   ["a", "key", "set"]
+      }
     })
   })
 })

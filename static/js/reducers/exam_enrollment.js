@@ -11,6 +11,6 @@ export const examEnrollmentEndpoint = {
   fetchFunc:           fetchJSONWithCSRF,
   postOptions:         (examCourseId: number) => ({
     method: POST,
-    body:   JSON.stringify({ exam_course_id: examCourseId }),
-  }),
+    body:   JSON.stringify({ exam_course_id: examCourseId })
+  })
 }

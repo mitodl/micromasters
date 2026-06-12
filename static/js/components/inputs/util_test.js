@@ -17,20 +17,20 @@ describe("input functions", () => {
         onSave,
         inFlight,
         newText,
-        newClass,
+        newClass
       )
       assert.lengthOf(actions, 2)
       const [cancelButton, saveButton] = actions
       assert.equal(
         cancelButton.props.className,
-        "secondary-button cancel-button",
+        "secondary-button cancel-button"
       )
       assert.equal(cancelButton.props.onClick, onCancel)
       assert.equal(cancelButton.props.children, "Cancel")
 
       assert.equal(
         saveButton.props.className,
-        `primary-button save-button ${newClass}`,
+        `primary-button save-button ${newClass}`
       )
       assert.equal(saveButton.props.onClick, onSave)
       assert.equal(saveButton.props.children, newText)
@@ -45,20 +45,20 @@ describe("input functions", () => {
         inFlight,
         newText,
         newClass,
-        true,
+        true
       )
       assert.lengthOf(actions, 2)
       const [cancelButton, saveButton] = actions
       assert.equal(
         cancelButton.props.className,
-        "secondary-button cancel-button",
+        "secondary-button cancel-button"
       )
       assert.equal(cancelButton.props.onClick, onCancel)
       assert.equal(cancelButton.props.children, "Cancel")
 
       assert.equal(
         saveButton.props.className,
-        `secondary-button save-button ${newClass}`,
+        `secondary-button save-button ${newClass}`
       )
       assert.equal(saveButton.props.onClick, onSave)
       assert.equal(saveButton.props.children, newText)

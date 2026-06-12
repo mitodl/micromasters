@@ -6,12 +6,12 @@ import _ from "lodash"
 import {
   requestPatchUserProfile,
   REQUEST_GET_USER_PROFILE,
-  RECEIVE_GET_USER_PROFILE_SUCCESS,
+  RECEIVE_GET_USER_PROFILE_SUCCESS
 } from "../actions/profile"
 import {
   REQUEST_GET_PROGRAM_ENROLLMENTS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-  UNENROLL_PROGRAM_DIALOG,
+  UNENROLL_PROGRAM_DIALOG
 } from "../actions/programs"
 import {
   START_PROFILE_EDIT,
@@ -20,7 +20,7 @@ import {
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
   CLEAR_PROFILE_EDIT,
   UPDATE_VALIDATION_VISIBILITY,
-  receiveGetUserProfileSuccess,
+  receiveGetUserProfileSuccess
 } from "../actions/profile"
 import { SHOW_DIALOG } from "../actions/ui"
 import IntegrationTestHelper from "../util/integration_test_helper"
@@ -36,7 +36,7 @@ describe("SettingsPage", function() {
     RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
     REQUEST_GET_USER_PROFILE,
     RECEIVE_GET_USER_PROFILE_SUCCESS,
-    START_PROFILE_EDIT,
+    START_PROFILE_EDIT
   ]
 
   beforeEach(() => {
@@ -47,8 +47,8 @@ describe("SettingsPage", function() {
 
     helper.profileGetStub.withArgs(SETTINGS.user.username).returns(
       Promise.resolve(_.cloneDeep(USER_PROFILE_RESPONSE), {
-        username: SETTINGS.user.username,
-      }),
+        username: SETTINGS.user.username
+      })
     )
   })
 
@@ -59,7 +59,7 @@ describe("SettingsPage", function() {
   const confirmSaveButtonBehavior = (
     updatedProfile,
     pageElements,
-    validationFailure = false,
+    validationFailure = false
   ) => {
     let { button } = pageElements
     const { div } = pageElements
@@ -76,7 +76,7 @@ describe("SettingsPage", function() {
         RECEIVE_PATCH_USER_PROFILE_SUCCESS,
         START_PROFILE_EDIT,
         CLEAR_PROFILE_EDIT,
-        UPDATE_VALIDATION_VISIBILITY,
+        UPDATE_VALIDATION_VISIBILITY
       )
     }
     actions.push(UPDATE_PROFILE_VALIDATION)
@@ -94,7 +94,7 @@ describe("SettingsPage", function() {
       assert.equal(question.textContent, "Who can see your profile?")
 
       const emailPrefHeading = div.getElementsByClassName(
-        "privacy-form-heading",
+        "privacy-form-heading"
       )[2]
       assert.equal(emailPrefHeading.textContent, "Email Preferences")
 
@@ -110,17 +110,17 @@ describe("SettingsPage", function() {
         const receivedProfile = {
           ...USER_PROFILE_RESPONSE,
           account_privacy: "public",
-          email_optin:     true,
+          email_optin:     true
         }
         helper.store.dispatch(
-          receiveGetUserProfileSuccess(SETTINGS.user.username, receivedProfile),
+          receiveGetUserProfileSuccess(SETTINGS.user.username, receivedProfile)
         )
 
         assert(button.innerHTML.includes("Save"))
         const updatedProfile = {
           ...receivedProfile,
           email_optin: true,
-          filled_out:  true,
+          filled_out:  true
         }
         return confirmSaveButtonBehavior(updatedProfile, { button: button })
       })
@@ -129,12 +129,12 @@ describe("SettingsPage", function() {
     // eslint-disable-next-line no-unused-vars
     for (const activity of [true, false]) {
       it(`has proper button state when when profile patch activity is ${String(
-        activity,
+        activity
       )}`, () => {
         return renderComponent("/settings", userActions).then(([wrapper]) => {
           if (activity) {
             helper.store.dispatch(
-              requestPatchUserProfile(SETTINGS.user.username),
+              requestPatchUserProfile(SETTINGS.user.username)
             )
           }
 
@@ -148,7 +148,7 @@ describe("SettingsPage", function() {
     it("when unenroll program button click", () => {
       return renderComponent("/settings", userActions).then(([, div]) => {
         const unEnrollBtn = div.getElementsByClassName(
-          "unenroll-wizard-button",
+          "unenroll-wizard-button"
         )[0]
         assert.equal(unEnrollBtn.textContent, "Leave a MicroMasters Program")
 

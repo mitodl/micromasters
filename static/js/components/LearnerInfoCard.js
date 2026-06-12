@@ -11,7 +11,7 @@ import {
   getEmployer,
   getPreferredName,
   isProfileOfLoggedinUser,
-  isNilOrBlank,
+  isNilOrBlank
 } from "../util/util"
 import { mstr } from "../lib/sanctuary"
 import type { Profile } from "../flow/profileTypes"
@@ -34,7 +34,7 @@ export default class LearnerInfoCard extends React.Component {
     profile: Profile,
     toggleShowPersonalDialog: () => void,
     toggleShowAboutMeDialog: () => void,
-    openLearnerEmailComposer: () => void,
+    openLearnerEmailComposer: () => void
   }
 
   isOwnProfilePage = (): boolean => isProfileOfLoggedinUser(this.props.profile)
@@ -52,7 +52,7 @@ export default class LearnerInfoCard extends React.Component {
 
   renderAboutMeSection = (
     profile: Profile,
-    toggleShowAboutMeDialog: Function,
+    toggleShowAboutMeDialog: Function
   ): React$Element<*> => {
     let aboutMeContent, aboutMeEditContent
 
@@ -111,8 +111,11 @@ export default class LearnerInfoCard extends React.Component {
   }
 
   render() {
-    const { profile, toggleShowPersonalDialog, toggleShowAboutMeDialog } =
-      this.props
+    const {
+      profile,
+      toggleShowPersonalDialog,
+      toggleShowAboutMeDialog
+    } = this.props
 
     let personalInfoEditContent
     if (this.isOwnProfilePage()) {

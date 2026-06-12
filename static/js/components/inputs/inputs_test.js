@@ -36,7 +36,7 @@ describe("Profile inputs", () => {
     const genderOptions = [
       { value: "m", label: "Male" },
       { value: "f", label: "Female" },
-      { value: "o", label: "Other/Prefer not to say" },
+      { value: "o", label: "Other/Prefer not to say" }
     ]
 
     const renderGenderSelectField = (props = {}) => {
@@ -46,7 +46,7 @@ describe("Profile inputs", () => {
         label:         "Gender",
         options:       genderOptions,
         updateProfile: updateProfileStub,
-        ...props,
+        ...props
       })
     }
 
@@ -58,17 +58,17 @@ describe("Profile inputs", () => {
           first_name:      "",
           date_of_birth:   "",
           gender:          undefined,
-          date_field:      "",
+          date_field:      ""
         },
         errors: {
           first_name:      "First name is required",
           date_of_birth:   "Date of birth is required",
           gender:          "Gender is required",
           date_field:      "Date field is required",
-          account_privacy: "Account privacy is required",
+          account_privacy: "Account privacy is required"
         },
         updateProfile:              change,
-        updateValidationVisibility: sandbox.stub(),
+        updateValidationVisibility: sandbox.stub()
       }
     })
 
@@ -88,8 +88,8 @@ describe("Profile inputs", () => {
           first_name:      "",
           date_of_birth:   "",
           gender:          "f",
-          date_field:      "",
-        }),
+          date_field:      ""
+        })
       )
     })
 
@@ -101,7 +101,7 @@ describe("Profile inputs", () => {
 
     it("should let you enter a new option, if the allowCreate option is passed", () => {
       selectField = renderGenderSelectField({ allowCreate: true }).find(
-        VirtualizedSelect,
+        VirtualizedSelect
       )
       modifyWrapperSelectField(selectField, "genderqueer")
       assert.ok(
@@ -110,9 +110,9 @@ describe("Profile inputs", () => {
           first_name:      "",
           date_of_birth:   "",
           gender:          "genderqueer",
-          date_field:      "",
+          date_field:      ""
         }),
-        "should be called with the right thing",
+        "should be called with the right thing"
       )
     })
 
@@ -121,7 +121,7 @@ describe("Profile inputs", () => {
       const wrapperDiv = selectFieldWrapper.find("div").first()
       assert.ok(
         wrapperDiv.hasClass("select-field"),
-        "should have the right class",
+        "should have the right class"
       )
       assert.ok(wrapperDiv.hasClass("gender"), "should have the right class")
       assert.include(wrapperDiv.props().id, "gender")
@@ -129,7 +129,7 @@ describe("Profile inputs", () => {
 
     it("should enter the new option in the options list", () => {
       const selectField = renderGenderSelectField({ allowCreate: true }).find(
-        VirtualizedSelect,
+        VirtualizedSelect
       )
       modifyWrapperSelectField(selectField, "genderqueer")
       const newOption = selectField
@@ -138,7 +138,7 @@ describe("Profile inputs", () => {
       assert.deepEqual(newOption, {
         value:     "genderqueer",
         label:     "genderqueer",
-        className: "Select-create-option-placeholder",
+        className: "Select-create-option-placeholder"
       })
     })
 
@@ -146,7 +146,7 @@ describe("Profile inputs", () => {
       selectField = renderGenderSelectField({
         allowCreate:   true,
         updateProfile: change,
-        profile:       {},
+        profile:       {}
       }).find(VirtualizedSelect)
       modifyWrapperSelectField(selectField, "genderqueer")
       assert.equal(inputProps.profile.gender, "genderqueer")
@@ -156,16 +156,16 @@ describe("Profile inputs", () => {
       inputProps.profile = {}
       const props = {
         allowCreate:   true,
-        updateProfile: change,
+        updateProfile: change
       }
       selectField = renderGenderSelectField(props)
       modifyWrapperSelectField(
         selectField.find(VirtualizedSelect),
-        "genderqueer",
+        "genderqueer"
       )
       selectField.setProps({ ...inputProps, ...props })
       assert.deepEqual(selectField.state(), {
-        customOptions: [{ value: "genderqueer", label: "genderqueer" }],
+        customOptions: [{ value: "genderqueer", label: "genderqueer" }]
       })
     })
 
@@ -173,20 +173,20 @@ describe("Profile inputs", () => {
       selectField = renderGenderSelectField({
         allowCreate: true,
         profile:     {
-          gender: "agender",
-        },
+          gender: "agender"
+        }
       })
       assert.include(selectField.text(), "agender")
       const expectedCustomOption = {
         value: "agender",
-        label: "agender",
+        label: "agender"
       }
       assert.deepEqual(selectField.state(), {
-        customOptions: [expectedCustomOption],
+        customOptions: [expectedCustomOption]
       })
       assert.deepInclude(
         selectField.find(VirtualizedSelect).props().options,
-        expectedCustomOption,
+        expectedCustomOption
       )
     })
 
@@ -197,8 +197,8 @@ describe("Profile inputs", () => {
         gaEvent.calledWith({
           category: "profile-form-field",
           action:   "completed-gender",
-          label:    "jane",
-        }),
+          label:    "jane"
+        })
       )
     })
   })
@@ -211,7 +211,7 @@ describe("Profile inputs", () => {
         label:         "State",
         profile:       { ...USER_PROFILE_RESPONSE },
         errors:        {},
-        updateProfile: change,
+        updateProfile: change
       }
     })
 
@@ -255,7 +255,7 @@ describe("Profile inputs", () => {
         label:         "Country",
         profile:       { ...USER_PROFILE_RESPONSE },
         errors:        {},
-        updateProfile: change,
+        updateProfile: change
       }
     })
 
@@ -277,7 +277,7 @@ describe("Profile inputs", () => {
       const countriesToFind = ["AF", "AL", "US", "IN", "NZ"]
       const countriesInCommon = R.intersection(
         R.map(R.prop("value"), props.options),
-        countriesToFind,
+        countriesToFind
       )
       assert.equal(countriesInCommon.length, countriesToFind.length)
     })
@@ -286,7 +286,10 @@ describe("Profile inputs", () => {
       inputProps.profile.country_key = "US"
       inputProps.profile.state_key = "US-MA"
       const countryField = renderCountrySelect()
-      countryField.find(SelectField).props().onChange({ value: "AL" })
+      countryField
+        .find(SelectField)
+        .props()
+        .onChange({ value: "AL" })
       assert.equal(inputProps.profile.country_key, "AL")
       assert.equal(inputProps.profile.state_key, null)
     })

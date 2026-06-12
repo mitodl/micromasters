@@ -13,11 +13,11 @@ import { setSearchFilterVisibility } from "../actions/ui"
 import type { UIState } from "../reducers/ui"
 import {
   SEARCH_EMAIL_TYPE,
-  LEARNER_EMAIL_TYPE,
+  LEARNER_EMAIL_TYPE
 } from "../components/email/constants"
 import {
   SEARCH_RESULT_EMAIL_CONFIG,
-  LEARNER_EMAIL_CONFIG,
+  LEARNER_EMAIL_CONFIG
 } from "../components/email/lib"
 import { withEmailDialog } from "../components/email/hoc"
 import type { AllEmailsState } from "../flow/emailTypes"
@@ -30,12 +30,12 @@ class LearnerSearchPage extends React.Component {
     dispatch: Dispatch,
     email: AllEmailsState,
     ui: UIState,
-    openEmailComposer: (emailType: string, emailOpenParams: any) => void,
+    openEmailComposer: (emailType: string, emailOpenParams: any) => void
   }
 
   checkFilterVisibility = (filterName: string): boolean => {
     const {
-      ui: { searchFilterVisibility },
+      ui: { searchFilterVisibility }
     } = this.props
     const visibility = searchFilterVisibility[filterName]
     return visibility === undefined
@@ -46,7 +46,7 @@ class LearnerSearchPage extends React.Component {
   setFilterVisibility = (filterName: string, visibility: boolean): void => {
     const {
       ui: { searchFilterVisibility },
-      dispatch,
+      dispatch
     } = this.props
     const clone = _.clone(searchFilterVisibility)
     clone[filterName] = visibility
@@ -78,7 +78,7 @@ const mapStateToProps = state => {
   return {
     ui:                       state.ui,
     email:                    state.email,
-    currentProgramEnrollment: state.currentProgramEnrollment,
+    currentProgramEnrollment: state.currentProgramEnrollment
   }
 }
 
@@ -88,6 +88,6 @@ export default R.compose(
   withSearchkitManager,
   withEmailDialog({
     [SEARCH_EMAIL_TYPE]:  SEARCH_RESULT_EMAIL_CONFIG,
-    [LEARNER_EMAIL_TYPE]: LEARNER_EMAIL_CONFIG,
-  }),
+    [LEARNER_EMAIL_TYPE]: LEARNER_EMAIL_CONFIG
+  })
 )(LearnerSearchPage)

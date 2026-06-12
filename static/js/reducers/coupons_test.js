@@ -14,7 +14,7 @@ import {
   RECEIVE_FETCH_COUPONS_FAILURE,
   fetchCoupons,
   clearCoupons,
-  setRecentlyAttachedCoupon,
+  setRecentlyAttachedCoupon
 } from "../actions/coupons"
 import { INITIAL_COUPONS_STATE } from "../reducers/coupons"
 import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
@@ -38,7 +38,7 @@ describe("coupon reducers", () => {
     dispatchThen = store.createDispatchThen(state => state.coupons)
     assertReducerResultState = createAssertReducerResultState(
       store,
-      state => state.coupons,
+      state => state.coupons
     )
     getCouponsStub = sandbox.stub(api, "getCoupons")
     attachCouponStub = sandbox.stub(api, "attachCoupon")
@@ -50,7 +50,7 @@ describe("coupon reducers", () => {
 
   it("should process attaching a coupon", () => {
     return dispatchThen(requestAttachCoupon("a b"), [
-      REQUEST_ATTACH_COUPON,
+      REQUEST_ATTACH_COUPON
     ]).then(state => {
       assert.equal(state.fetchPostStatus, FETCH_PROCESSING)
     })
@@ -61,12 +61,12 @@ describe("coupon reducers", () => {
     attachCouponStub.returns(Promise.resolve())
     return dispatchThen(attachCoupon(code), [
       REQUEST_ATTACH_COUPON,
-      RECEIVE_ATTACH_COUPON_SUCCESS,
+      RECEIVE_ATTACH_COUPON_SUCCESS
     ]).then(state => {
       const expectation = {
         fetchPostStatus:        FETCH_SUCCESS,
         coupons:                [],
-        recentlyAttachedCoupon: null,
+        recentlyAttachedCoupon: null
       }
       assert.deepEqual(state, expectation)
       assert.isTrue(attachCouponStub.calledWith(code))
@@ -78,12 +78,12 @@ describe("coupon reducers", () => {
     const code = "a b"
     return dispatchThen(attachCoupon(code), [
       REQUEST_ATTACH_COUPON,
-      RECEIVE_ATTACH_COUPON_FAILURE,
+      RECEIVE_ATTACH_COUPON_FAILURE
     ]).then(state => {
       const expectation = {
         fetchPostStatus:        FETCH_FAILURE,
         coupons:                [],
-        recentlyAttachedCoupon: null,
+        recentlyAttachedCoupon: null
       }
       assert.deepEqual(state, expectation)
       assert.isTrue(attachCouponStub.calledWith(code))
@@ -95,12 +95,12 @@ describe("coupon reducers", () => {
     getCouponsStub.returns(Promise.resolve(coupons))
     return dispatchThen(fetchCoupons(), [
       REQUEST_FETCH_COUPONS,
-      RECEIVE_FETCH_COUPONS_SUCCESS,
+      RECEIVE_FETCH_COUPONS_SUCCESS
     ]).then(state => {
       assert.deepEqual(state, {
         fetchGetStatus:         FETCH_SUCCESS,
         coupons:                coupons,
-        recentlyAttachedCoupon: null,
+        recentlyAttachedCoupon: null
       })
       assert.isTrue(getCouponsStub.calledWith())
 
@@ -113,12 +113,12 @@ describe("coupon reducers", () => {
     getCouponsStub.returns(Promise.reject())
     return dispatchThen(fetchCoupons(), [
       REQUEST_FETCH_COUPONS,
-      RECEIVE_FETCH_COUPONS_FAILURE,
+      RECEIVE_FETCH_COUPONS_FAILURE
     ]).then(state => {
       assert.deepEqual(state, {
         fetchGetStatus:         FETCH_FAILURE,
         coupons:                [],
-        recentlyAttachedCoupon: null,
+        recentlyAttachedCoupon: null
       })
       assert.isTrue(getCouponsStub.calledWith())
     })
@@ -128,7 +128,7 @@ describe("coupon reducers", () => {
     assertReducerResultState(
       setRecentlyAttachedCoupon,
       coupons => coupons.recentlyAttachedCoupon,
-      null,
+      null
     )
   })
 })

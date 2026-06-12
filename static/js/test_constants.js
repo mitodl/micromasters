@@ -7,7 +7,7 @@ import Decimal from "decimal.js-light"
 import type {
   CoursePrices,
   Dashboard,
-  ProgramLearners,
+  ProgramLearners
 } from "./flow/dashboardTypes"
 import type { AvailablePrograms } from "./flow/enrollmentTypes"
 import {
@@ -24,7 +24,7 @@ import {
   STATUS_PENDING_ENROLLMENT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_CONTENT_TYPE_PROGRAM,
-  COURSEWARE_BACKEND_EDXORG,
+  COURSEWARE_BACKEND_EDXORG
 } from "./constants"
 
 export const OPENSEARCH_RESPONSE = deepFreeze({
@@ -33,7 +33,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
   _shards:   {
     total:      5,
     successful: 5,
-    failed:     0,
+    failed:     0
   },
   hits: {
     total:     66,
@@ -81,8 +81,8 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 position:           "Mechanic",
                 industry:           "Automotive",
                 end_date:           null,
-                start_date:         "2015-01-17",
-              },
+                start_date:         "2015-01-17"
+              }
             ],
             edx_level_of_education: null,
             education:              [
@@ -95,7 +95,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 school_name:               "Stirling University",
                 school_city:               "Stirling",
                 school_state_or_territory: "CA-NS",
-                school_country:            "CA",
+                school_country:            "CA"
               },
               {
                 id:                        588,
@@ -106,7 +106,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 school_name:               "Stirling University",
                 school_city:               "Stirling",
                 school_state_or_territory: "CA-NS",
-                school_country:            "CA",
+                school_country:            "CA"
               },
               {
                 id:                        587,
@@ -117,8 +117,8 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 school_name:               "Stirling High School",
                 school_city:               "Stirling",
                 school_state_or_territory: "CA-NS",
-                school_country:            "CA",
-              },
+                school_country:            "CA"
+              }
             ],
             image:                null,
             image_small:          null,
@@ -126,7 +126,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
             about_me:             null,
             romanized_first_name: null,
             romanized_last_name:  null,
-            phone_number:         null,
+            phone_number:         null
           },
           program: {
             id:          34,
@@ -134,16 +134,16 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               {
                 final_grade:  86.0,
                 semester:     "2017 - Fall",
-                course_title: "Digital Learning 100",
-              },
+                course_title: "Digital Learning 100"
+              }
             ],
             grade_average:      86,
             is_learner:         true,
             num_courses_passed: 1,
-            total_courses:      3,
-          },
+            total_courses:      3
+          }
         },
-        sort: ["Addy", "othername"],
+        sort: ["Addy", "othername"]
       },
       {
         _index:  "micromasters_334c64b09c6d47e38854ba0649bf18fc",
@@ -187,8 +187,8 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 position:           "Branch Manager",
                 industry:           "Banking",
                 end_date:           null,
-                start_date:         "2015-01-17",
-              },
+                start_date:         "2015-01-17"
+              }
             ],
             edx_level_of_education: null,
             education:              [
@@ -201,7 +201,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 school_name:               "Albacete University",
                 school_city:               "Albacete",
                 school_state_or_territory: "ES-EX",
-                school_country:            "ES",
+                school_country:            "ES"
               },
               {
                 id:                        637,
@@ -212,7 +212,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 school_name:               "Albacete University",
                 school_city:               "Albacete",
                 school_state_or_territory: "ES-EX",
-                school_country:            "ES",
+                school_country:            "ES"
               },
               {
                 id:                        636,
@@ -223,8 +223,8 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
                 school_name:               "Albacete High School",
                 school_city:               "Albacete",
                 school_state_or_territory: "ES-EX",
-                school_country:            "ES",
-              },
+                school_country:            "ES"
+              }
             ],
             image:                null,
             image_small:          null,
@@ -232,7 +232,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
             about_me:             null,
             romanized_first_name: null,
             romanized_last_name:  null,
-            phone_number:         null,
+            phone_number:         null
           },
           program: {
             id:          34,
@@ -240,25 +240,25 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               {
                 final_grade:  98.0,
                 semester:     "2017 - Fall",
-                course_title: "Digital Learning 100",
-              },
+                course_title: "Digital Learning 100"
+              }
             ],
             grade_average:      98,
             is_learner:         true,
             num_courses_passed: 1,
-            total_courses:      3,
-          },
+            total_courses:      3
+          }
         },
-        sort: ["Alonso", "Concepcion"],
+        sort: ["Alonso", "Concepcion"]
       },
       {
         // extreme worst-case empty profile
         _source: {
-          profile: {},
+          profile: {}
         },
-        _id: 999,
-      },
-    ],
+        _id: 999
+      }
+    ]
   },
   aggregations: {
     "program.courses.course_title2": {
@@ -266,7 +266,7 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
       inner:     {
         doc_count:                            100,
         "program.courses.course_title_count": {
-          value: 3,
+          value: 3
         },
         "program.courses.course_title": {
           doc_count_error_upper_bound: 0,
@@ -276,26 +276,26 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               key:                 "Digital Learning 100",
               doc_count:           65,
               top_level_doc_count: {
-                doc_count: 65,
-              },
+                doc_count: 65
+              }
             },
             {
               key:                 "Digital Learning 200",
               doc_count:           31,
               top_level_doc_count: {
-                doc_count: 31,
-              },
+                doc_count: 31
+              }
             },
             {
               key:                 "Digital Learning 300",
               doc_count:           4,
               top_level_doc_count: {
-                doc_count: 4,
-              },
-            },
-          ],
-        },
-      },
+                doc_count: 4
+              }
+            }
+          ]
+        }
+      }
     },
     country: {
       doc_count:         66,
@@ -307,26 +307,26 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
           buckets:                     [
             {
               key:       "ES",
-              doc_count: 23,
+              doc_count: 23
             },
             {
               key:       "CA",
-              doc_count: 22,
+              doc_count: 22
             },
             {
               key:       "US",
-              doc_count: 21,
-            },
-          ],
-        },
-      },
+              doc_count: 21
+            }
+          ]
+        }
+      }
     },
     company_name10: {
       doc_count: 66,
       inner:     {
         doc_count:                                 66,
         "profile.work_history.company_name_count": {
-          value: 16,
+          value: 16
         },
         "profile.work_history.company_name": {
           doc_count_error_upper_bound: 0,
@@ -338,9 +338,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 7,
                 count:     {
-                  value: 7,
-                },
-              },
+                  value: 7
+                }
+              }
             },
             {
               key:                "Chase",
@@ -348,9 +348,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 6,
                 count:     {
-                  value: 6,
-                },
-              },
+                  value: 6
+                }
+              }
             },
             {
               key:                "Goldman Sachs",
@@ -358,9 +358,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 6,
                 count:     {
-                  value: 6,
-                },
-              },
+                  value: 6
+                }
+              }
             },
             {
               key:                "Google",
@@ -368,9 +368,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 6,
                 count:     {
-                  value: 6,
-                },
-              },
+                  value: 6
+                }
+              }
             },
             {
               key:                "Volvo",
@@ -378,9 +378,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 6,
                 count:     {
-                  value: 6,
-                },
-              },
+                  value: 6
+                }
+              }
             },
             {
               key:                "Ford",
@@ -388,9 +388,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 5,
                 count:     {
-                  value: 5,
-                },
-              },
+                  value: 5
+                }
+              }
             },
             {
               key:                "TD Bank",
@@ -398,9 +398,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 5,
                 count:     {
-                  value: 5,
-                },
-              },
+                  value: 5
+                }
+              }
             },
             {
               key:                "Toyota",
@@ -408,9 +408,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 5,
                 count:     {
-                  value: 5,
-                },
-              },
+                  value: 5
+                }
+              }
             },
             {
               key:                "Apple",
@@ -418,9 +418,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 4,
                 count:     {
-                  value: 4,
-                },
-              },
+                  value: 4
+                }
+              }
             },
             {
               key:                "Microsoft",
@@ -428,9 +428,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 4,
                 count:     {
-                  value: 4,
-                },
-              },
+                  value: 4
+                }
+              }
             },
             {
               key:                "Berkshire Hathaway",
@@ -438,9 +438,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 3,
                 count:     {
-                  value: 3,
-                },
-              },
+                  value: 3
+                }
+              }
             },
             {
               key:                "Fidelity",
@@ -448,9 +448,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 3,
                 count:     {
-                  value: 3,
-                },
-              },
+                  value: 3
+                }
+              }
             },
             {
               key:                "Bank of America",
@@ -458,9 +458,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 2,
                 count:     {
-                  value: 2,
-                },
-              },
+                  value: 2
+                }
+              }
             },
             {
               key:                "Vanguard",
@@ -468,9 +468,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 2,
                 count:     {
-                  value: 2,
-                },
-              },
+                  value: 2
+                }
+              }
             },
             {
               key:                "Audi",
@@ -478,9 +478,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 1,
                 count:     {
-                  value: 1,
-                },
-              },
+                  value: 1
+                }
+              }
             },
             {
               key:                "ME",
@@ -488,13 +488,13 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               company_name_count: {
                 doc_count: 1,
                 count:     {
-                  value: 1,
-                },
-              },
-            },
-          ],
-        },
-      },
+                  value: 1
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     "final-grade": {
       doc_count: 66,
@@ -504,97 +504,97 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
           buckets: [
             {
               key:       0,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       5,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       10,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       15,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       20,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       25,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       30,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       35,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       40,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       45,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       50,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       55,
-              doc_count: 0,
+              doc_count: 0
             },
             {
               key:       60,
-              doc_count: 9,
+              doc_count: 9
             },
             {
               key:       65,
-              doc_count: 15,
+              doc_count: 15
             },
             {
               key:       70,
-              doc_count: 11,
+              doc_count: 11
             },
             {
               key:       75,
-              doc_count: 8,
+              doc_count: 8
             },
             {
               key:       80,
-              doc_count: 18,
+              doc_count: 18
             },
             {
               key:       85,
-              doc_count: 12,
+              doc_count: 12
             },
             {
               key:       90,
-              doc_count: 9,
+              doc_count: 9
             },
             {
               key:       95,
-              doc_count: 13,
+              doc_count: 13
             },
             {
               key:       100,
-              doc_count: 0,
-            },
-          ],
-        },
-      },
+              doc_count: 0
+            }
+          ]
+        }
+      }
     },
     "num-courses-passed5": {
       doc_count:            66,
       "num-courses-passed": {
-        value: 4,
-      },
+        value: 4
+      }
     },
     education_level9: {
       doc_count: 66,
@@ -610,9 +610,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               school_name_count: {
                 doc_count: 65,
                 count:     {
-                  value: 65,
-                },
-              },
+                  value: 65
+                }
+              }
             },
             {
               key:               "b",
@@ -620,9 +620,9 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               school_name_count: {
                 doc_count: 64,
                 count:     {
-                  value: 64,
-                },
-              },
+                  value: 64
+                }
+              }
             },
             {
               key:               "m",
@@ -630,23 +630,23 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               school_name_count: {
                 doc_count: 57,
                 count:     {
-                  value: 57,
-                },
-              },
-            },
-          ],
+                  value: 57
+                }
+              }
+            }
+          ]
         },
         "profile.education.degree_name_count": {
-          value: 3,
-        },
-      },
+          value: 3
+        }
+      }
     },
     "program.course_runs.semester4": {
       doc_count: 66,
       inner:     {
         doc_count:                            100,
         "program.course_runs.semester_count": {
-          value: 3,
+          value: 3
         },
         "program.course_runs.semester": {
           doc_count_error_upper_bound: 0,
@@ -656,26 +656,26 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
               key:                 "2017 - Fall",
               doc_count:           65,
               top_level_doc_count: {
-                doc_count: 65,
-              },
+                doc_count: 65
+              }
             },
             {
               key:                 "2016 - Spring",
               doc_count:           31,
               top_level_doc_count: {
-                doc_count: 31,
-              },
+                doc_count: 31
+              }
             },
             {
               key:                 "2015 - Summer",
               doc_count:           4,
               top_level_doc_count: {
-                doc_count: 4,
-              },
-            },
-          ],
-        },
-      },
+                doc_count: 4
+              }
+            }
+          ]
+        }
+      }
     },
     "grade-average6": {
       doc_count:       65,
@@ -683,95 +683,95 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
         buckets: [
           {
             key:       0,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       5,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       10,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       15,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       20,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       25,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       30,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       35,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       40,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       45,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       50,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       55,
-            doc_count: 0,
+            doc_count: 0
           },
           {
             key:       60,
-            doc_count: 3,
+            doc_count: 3
           },
           {
             key:       65,
-            doc_count: 10,
+            doc_count: 10
           },
           {
             key:       70,
-            doc_count: 6,
+            doc_count: 6
           },
           {
             key:       75,
-            doc_count: 7,
+            doc_count: 7
           },
           {
             key:       80,
-            doc_count: 19,
+            doc_count: 19
           },
           {
             key:       85,
-            doc_count: 6,
+            doc_count: 6
           },
           {
             key:       90,
-            doc_count: 6,
+            doc_count: 6
           },
           {
             key:       95,
-            doc_count: 8,
+            doc_count: 8
           },
           {
             key:       100,
-            doc_count: 0,
-          },
-        ],
-      },
+            doc_count: 0
+          }
+        ]
+      }
     },
     birth_location7: {
       doc_count:                     66,
       "profile.birth_country_count": {
-        value: 4,
+        value: 4
       },
       "profile.birth_country": {
         doc_count_error_upper_bound: 0,
@@ -779,24 +779,24 @@ export const OPENSEARCH_RESPONSE = deepFreeze({
         buckets:                     [
           {
             key:       "ES",
-            doc_count: 23,
+            doc_count: 23
           },
           {
             key:       "CA",
-            doc_count: 21,
+            doc_count: 21
           },
           {
             key:       "US",
-            doc_count: 21,
+            doc_count: 21
           },
           {
             key:       "DZ",
-            doc_count: 1,
-          },
-        ],
-      },
-    },
-  },
+            doc_count: 1
+          }
+        ]
+      }
+    }
+  }
 })
 
 export const USER_PROFILE_RESPONSE = deepFreeze({
@@ -835,7 +835,7 @@ export const USER_PROFILE_RESPONSE = deepFreeze({
       position:           "Software Developer",
       industry:           "Education",
       start_date:         "1982-02-02",
-      end_date:           "1982-03-21",
+      end_date:           "1982-03-21"
     },
     {
       id:                 2,
@@ -846,8 +846,8 @@ export const USER_PROFILE_RESPONSE = deepFreeze({
       position:           "Delivery",
       industry:           "Shipping",
       start_date:         "1999-03-28",
-      end_date:           "2013-09-04",
-    },
+      end_date:           "2013-09-04"
+    }
   ],
   education: [
     {
@@ -859,7 +859,7 @@ export const USER_PROFILE_RESPONSE = deepFreeze({
       school_city:               "Cambridge",
       school_state_or_territory: "US-MA",
       school_country:            "US",
-      online_degree:             false,
+      online_degree:             false
     },
     {
       id:                        2,
@@ -870,15 +870,15 @@ export const USER_PROFILE_RESPONSE = deepFreeze({
       school_city:               "Cambridge",
       school_state_or_territory: "US-MA",
       school_country:            "US",
-      online_degree:             false,
-    },
+      online_degree:             false
+    }
   ],
-  edx_level_of_education: null,
+  edx_level_of_education: null
 })
 
 export const USER_PROGRAM_RESPONSE = deepFreeze({
   id:            1,
-  grade_average: 83,
+  grade_average: 83
 })
 
 export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
@@ -903,7 +903,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-09-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2016",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
               position:           2,
@@ -915,7 +915,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
               certificate_url:    "www.google.com",
@@ -928,14 +928,14 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
           position_in_program:     0,
           title:                   "Gio Course - failed, no grade",
           description:             "",
           id:                      1,
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           prerequisites:           "",
@@ -944,7 +944,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           position_in_program:     1,
           title:                   "8.MechCx Advanced Introductory Classical Mechanics",
           description:             "",
-          id:                      2,
+          id:                      2
         },
         {
           prerequisites:           "",
@@ -953,7 +953,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           title:                   "EDX Demo course",
           description:             "",
           id:                      3,
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           prerequisites:           "",
@@ -962,10 +962,10 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           title:                   "Peter Course",
           description:             "",
           id:                      4,
-          proctorate_exams_grades: [],
-        },
+          proctorate_exams_grades: []
+        }
       ],
-      id: 3,
+      id: 3
     },
     {
       courses: [
@@ -986,12 +986,12 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:           "2016-08-22T11:48:27Z",
               fuzzy_start_date:            "Fall 2017",
               course_end_date:             "2016-09-09T10:20:10Z",
-              courseware_backend:          COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend:          COURSEWARE_BACKEND_EDXORG
+            }
           ],
           description:             null,
           prerequisites:           null,
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  6,
@@ -1009,12 +1009,12 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
           description:             "The demo course",
           prerequisites:           "",
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                      7,
@@ -1023,7 +1023,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           runs:                    [],
           description:             null,
           prerequisites:           null,
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  6789,
@@ -1041,12 +1041,12 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
           description:             "The demo course",
           prerequisites:           "",
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  8,
@@ -1064,12 +1064,12 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               fuzzy_start_date:        "Fall 2017",
               course_end_date:         "2016-09-09T10:20:10Z",
               course_upgrade_deadline: "2016-08-20T11:48:27Z",
-              courseware_backend:      COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend:      COURSEWARE_BACKEND_EDXORG
+            }
           ],
           description:             null,
           prerequisites:           null,
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  10,
@@ -1089,12 +1089,12 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:           "2016-08-22T11:48:27Z",
               fuzzy_start_date:            "Fall 2017",
               course_end_date:             "2016-09-09T10:20:10Z",
-              courseware_backend:          COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend:          COURSEWARE_BACKEND_EDXORG
+            }
           ],
           description:             null,
           prerequisites:           null,
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  1278,
@@ -1111,7 +1111,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2015-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2015",
               course_end_date:    "2015-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
               certificate_url:    "www.google.com",
@@ -1124,7 +1124,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2015-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2015",
               course_end_date:    "2015-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
               certificate_url:    "www.google.com",
@@ -1137,10 +1137,10 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  17,
@@ -1157,10 +1157,10 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-08-22T11:48:27Z",
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  15,
@@ -1177,10 +1177,10 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
               course_id:          "verified",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  11,
@@ -1199,12 +1199,12 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:           "2016-08-22T11:48:27Z",
               fuzzy_start_date:            "Fall 2017",
               course_end_date:             "2016-09-09T10:20:10Z",
-              courseware_backend:          COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend:          COURSEWARE_BACKEND_EDXORG
+            }
           ],
           description:             null,
           prerequisites:           null,
-          proctorate_exams_grades: [],
+          proctorate_exams_grades: []
         },
         {
           id:                  16,
@@ -1220,16 +1220,16 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:     "2018-08-22T11:48:27Z",
               course_end_date:       "2018-09-09T10:20:10Z",
               enrollment_start_date: "2016-03-04T01:00:00Z",
-              courseware_backend:    COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend:    COURSEWARE_BACKEND_EDXORG
+            }
           ],
-          proctorate_exams_grades: [],
-        },
+          proctorate_exams_grades: []
+        }
       ],
       title:                 "Master Program",
       description:           null,
       id:                    4,
-      number_courses_passed: 1,
+      number_courses_passed: 1
     },
     {
       title:                 "Missed deadline program",
@@ -1251,20 +1251,20 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               position:           0,
               course_start_date:  "2016-01-01",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
-          proctorate_exams_grades: [],
-        },
+          proctorate_exams_grades: []
+        }
       ],
-      id: 5,
+      id: 5
     },
     {
       title:                 "Empty program",
       description:           "The empty program",
       number_courses_passed: 0,
       courses:               [],
-      id:                    2,
+      id:                    2
     },
     {
       title:                 "Last program",
@@ -1287,15 +1287,15 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:  "2016-01-01",
               fuzzy_start_date:   "Fall 2017",
               course_end_date:    "2016-09-09T10:20:10Z",
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
           description:             "Course for Last program",
           prerequisites:           "",
-          proctorate_exams_grades: [],
-        },
+          proctorate_exams_grades: []
+        }
       ],
-      id: 6,
+      id: 6
     },
     {
       title:                 "Paid but not enrolled",
@@ -1320,15 +1320,15 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               current_grade:      null,
               title:              "Digital Learning 100 - January 2015",
               status:             STATUS_PAID_BUT_NOT_ENROLLED,
-              courseware_backend: COURSEWARE_BACKEND_EDXORG,
-            },
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
+            }
           ],
-          proctorate_exams_grades: [],
-        },
+          proctorate_exams_grades: []
+        }
       ],
-      id: 7,
-    },
-  ],
+      id: 7
+    }
+  ]
 })
 
 export const PROGRAMS: AvailablePrograms = deepFreeze(
@@ -1337,31 +1337,31 @@ export const PROGRAMS: AvailablePrograms = deepFreeze(
     title:           program.title,
     programpage_url: `/program${program.id}/`,
     enrolled:        true,
-    total_courses:   1,
-  })),
+    total_courses:   1
+  }))
 )
 
 export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(
   DASHBOARD_RESPONSE.programs.map(program => ({
     program_id: program.id,
-    price:      Decimal(program.id * 1000),
-  })),
+    price:      Decimal(program.id * 1000)
+  }))
 )
 
 export const PROGRAM_LEARNERS_RESPONSE: ProgramLearners = deepFreeze({
   learners: [
     {
       username:    "Jane",
-      image_small: "url",
-    },
+      image_small: "url"
+    }
   ],
-  learners_count: 50,
+  learners_count: 50
 })
 
 export const ERROR_RESPONSE = deepFreeze({
   errorStatusCode: 500,
   error_code:      "AB123",
-  user_message:    "custom error message for the user.",
+  user_message:    "custom error message for the user."
 })
 
 export const ATTACH_COUPON_RESPONSE = deepFreeze({
@@ -1372,8 +1372,8 @@ export const ATTACH_COUPON_RESPONSE = deepFreeze({
     content_type: COUPON_CONTENT_TYPE_PROGRAM,
     coupon_code:  "success-coupon",
     object_id:    3,
-    program_id:   3,
-  },
+    program_id:   3
+  }
 })
 
 export const COUPON = deepFreeze(ATTACH_COUPON_RESPONSE.coupon)
@@ -1402,9 +1402,9 @@ export const GET_AUTOMATIC_EMAILS_RESPONSE = [
     id:            1,
     query:         {
       original_query: {
-        post_filter: { ...JSON.parse(queryFilters) },
-      },
-    },
+        post_filter: { ...JSON.parse(queryFilters) }
+      }
+    }
   },
   {
     enabled:       false,
@@ -1414,8 +1414,8 @@ export const GET_AUTOMATIC_EMAILS_RESPONSE = [
     id:            2,
     query:         {
       original_query: {
-        post_filter: { ...JSON.parse(queryFilters) },
-      },
-    },
-  },
+        post_filter: { ...JSON.parse(queryFilters) }
+      }
+    }
+  }
 ]

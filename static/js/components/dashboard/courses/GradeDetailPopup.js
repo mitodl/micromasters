@@ -8,14 +8,14 @@ import moment from "moment"
 import type {
   Course,
   CourseRun,
-  ProctoredExamResult,
+  ProctoredExamResult
 } from "../../../flow/programTypes"
 import { formatGrade } from "../util"
 import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
   STATUS_CURRENTLY_ENROLLED,
-  DASHBOARD_FORMAT,
+  DASHBOARD_FORMAT
 } from "../../../constants"
 import type { GradeType } from "../../../containers/DashboardPage"
 import { COURSE_GRADE } from "../../../containers/DashboardPage"
@@ -26,7 +26,7 @@ const scaleExamGrade = percentageGrade => percentageGrade * 100
 
 const rowGrade = (
   grade: number,
-  isBestGrade: boolean,
+  isBestGrade: boolean
 ): string | React$Element<*> => {
   if (!R.isNil(grade)) {
     if (isBestGrade) {
@@ -64,7 +64,7 @@ const examStatus = (grade: ProctoredExamResult): React$Element<*> =>
 
 const renderRunRow = (
   [courseRun: CourseRun, isBestGrade: boolean],
-  idx: number,
+  idx: number
 ) => (
   <div className="course-run-row" key={idx}>
     <div className="title">{courseRun.year_season}</div>
@@ -79,7 +79,7 @@ const renderRunRow = (
 
 const renderExamRow = (
   [grade: ProctoredExamResult, isBestGrade: boolean],
-  idx: number,
+  idx: number
 ) => (
   <div className="course-run-row" key={idx}>
     <div className="title">
@@ -95,44 +95,44 @@ const renderExamRow = (
 )
 
 const labelBestEdxGrade = (
-  runs: Array<CourseRun>,
+  runs: Array<CourseRun>
 ): Array<[CourseRun, boolean]> => {
   const bestGrade = runs.reduce(
     (acc, run) =>
       run.final_grade && run.final_grade > acc ? run.final_grade : acc,
-    0,
+    0
   )
 
   return runs.map(run => [
     run,
     !R.isNil(run.final_grade) &&
       run.final_grade !== 0 &&
-      run.final_grade === bestGrade,
+      run.final_grade === bestGrade
   ])
 }
 
 const labelBestExamGrade = (
-  exams: Array<ProctoredExamResult>,
+  exams: Array<ProctoredExamResult>
 ): Array<[ProctoredExamResult, boolean]> => {
   const bestGrade = exams.reduce(
     (acc, exam) => (exam.percentage_grade > acc ? exam.percentage_grade : acc),
-    0,
+    0
   )
 
   return exams.map(exam => [
     exam,
-    exam.passed && exam.percentage_grade === bestGrade,
+    exam.passed && exam.percentage_grade === bestGrade
   ])
 }
 
 const renderRunRows = R.compose(
   R.addIndex(R.map)(renderRunRow),
-  labelBestEdxGrade,
+  labelBestEdxGrade
 )
 
 const renderExamRows = R.compose(
   R.addIndex(R.map)(renderExamRow),
-  labelBestExamGrade,
+  labelBestExamGrade
 )
 
 const dialogTitle = (course: Course, gradeType: GradeType): string =>
@@ -144,12 +144,16 @@ type GradeDetailPopupProps = {
   course: Course,
   setShowGradeDetailDialog: (b: boolean, type: GradeType, t: string) => void,
   dialogVisibility: boolean,
-  gradeType: GradeType,
+  gradeType: GradeType
 }
 
 const GradeDetailPopup = (props: GradeDetailPopupProps) => {
-  const { course, setShowGradeDetailDialog, dialogVisibility, gradeType } =
-    props
+  const {
+    course,
+    setShowGradeDetailDialog,
+    dialogVisibility,
+    gradeType
+  } = props
 
   return (
     <Dialog

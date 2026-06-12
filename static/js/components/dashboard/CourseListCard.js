@@ -14,7 +14,7 @@ import type { GradeType } from "../../containers/DashboardPage"
 import CardContent from "@material-ui/core/CardContent"
 import {
   EDX_BASE_DASHBOARD_LINK,
-  MITXONLINE_DASHBOARD_LINK,
+  MITXONLINE_DASHBOARD_LINK
 } from "../../constants"
 
 export default class CourseListCard extends React.Component {
@@ -26,7 +26,7 @@ export default class CourseListCard extends React.Component {
     addCourseEnrollment?: (courseId: string) => Promise<*>,
     openCourseContactDialog: (
       course: Course,
-      canContactCourseTeam: boolean,
+      canContactCourseTeam: boolean
     ) => void,
     setEnrollSelectedCourseRun?: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility?: (bool: boolean) => void,
@@ -36,7 +36,7 @@ export default class CourseListCard extends React.Component {
     setShowExpandedCourseStatus?: (n: number) => void,
     setShowGradeDetailDialog: (b: boolean, t: GradeType, title: string) => void,
     ui: UIState,
-    showStaffView: boolean,
+    showStaffView: boolean
   }
 
   renderGradesOutOfDateMessage(): ?React$Element<*> {
@@ -79,14 +79,14 @@ export default class CourseListCard extends React.Component {
       setShowExpandedCourseStatus,
       setShowGradeDetailDialog,
       ui,
-      showStaffView,
+      showStaffView
     } = this.props
     const now = this.props.now || moment()
     const hasElectives =
       program.number_courses_required < program.courses.length
     const sortedCourses = R.sortBy(
       R.prop("position_in_program"),
-      program.courses,
+      program.courses
     )
     const courseRows = sortedCourses.map(course => (
       <CourseRow

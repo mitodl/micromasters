@@ -16,7 +16,7 @@ import {
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
   RECEIVE_PATCH_USER_PROFILE_FAILURE,
   UPDATE_PROFILE_VALIDATION,
-  UPDATE_VALIDATION_VISIBILITY,
+  UPDATE_VALIDATION_VISIBILITY
 } from "../actions/profile"
 import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
 import { ui } from "./ui"
@@ -36,7 +36,7 @@ import { revokeShareDialog } from "./revoke_shared_records_dialog"
 export const INITIAL_PROFILES_STATE = {}
 export const profiles = (
   state: Profiles = INITIAL_PROFILES_STATE,
-  action: Action<any, null>,
+  action: Action<any, null>
 ) => {
   const patchProfile = newProfile => {
     const username = action.payload.username
@@ -45,8 +45,8 @@ export const profiles = (
       [username]: {
         ...{ profile: {} },
         ...state[username],
-        ...newProfile,
-      },
+        ...newProfile
+      }
     }
   }
 
@@ -60,17 +60,17 @@ export const profiles = (
   switch (action.type) {
   case REQUEST_GET_USER_PROFILE:
     return patchProfile({
-      getStatus: FETCH_PROCESSING,
+      getStatus: FETCH_PROCESSING
     })
   case RECEIVE_GET_USER_PROFILE_SUCCESS:
     return patchProfile({
       getStatus: FETCH_SUCCESS,
-      profile:   action.payload.profile,
+      profile:   action.payload.profile
     })
   case RECEIVE_GET_USER_PROFILE_FAILURE:
     return patchProfile({
       getStatus: FETCH_FAILURE,
-      errorInfo: action.payload.errorInfo,
+      errorInfo: action.payload.errorInfo
     })
   case CLEAR_PROFILE: {
     const clone = { ...state }
@@ -86,8 +86,8 @@ export const profiles = (
     return patchProfile({
       edit: {
         ...profile.edit,
-        profile: action.payload.profile,
-      },
+        profile: action.payload.profile
+      }
     })
   case START_PROFILE_EDIT:
     profile = getProfile()
@@ -99,26 +99,26 @@ export const profiles = (
       edit: {
         profile:    profile.profile,
         errors:     {},
-        visibility: [],
-      },
+        visibility: []
+      }
     })
   case CLEAR_PROFILE_EDIT:
     return patchProfile({
-      edit: undefined,
+      edit: undefined
     })
   case REQUEST_PATCH_USER_PROFILE:
     return patchProfile({
-      patchStatus: FETCH_PROCESSING,
+      patchStatus: FETCH_PROCESSING
     })
   case RECEIVE_PATCH_USER_PROFILE_SUCCESS:
     return patchProfile({
       patchStatus: FETCH_SUCCESS,
-      profile:     action.payload.profile,
+      profile:     action.payload.profile
     })
   case RECEIVE_PATCH_USER_PROFILE_FAILURE:
     return patchProfile({
       patchStatus: FETCH_FAILURE,
-      errorInfo:   action.payload.errorInfo,
+      errorInfo:   action.payload.errorInfo
     })
   case UPDATE_PROFILE_VALIDATION:
     profile = getProfile()
@@ -138,8 +138,8 @@ export const profiles = (
       return patchProfile({
         edit: {
           ...profile.edit,
-          errors,
-        },
+          errors
+        }
       })
     }
   case UPDATE_VALIDATION_VISIBILITY:
@@ -151,8 +151,8 @@ export const profiles = (
       return patchProfile({
         edit: {
           ...profile.edit,
-          visibility: R.append(action.payload.keySet, visibility),
-        },
+          visibility: R.append(action.payload.keySet, visibility)
+        }
       })
     }
   default:
@@ -172,5 +172,5 @@ export default combineReducers({
   revokeShareDialog,
   imageUpload,
   coupons,
-  ...reducers,
+  ...reducers
 })

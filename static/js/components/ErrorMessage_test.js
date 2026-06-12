@@ -13,16 +13,16 @@ import {
   UPDATE_PROFILE_VALIDATION,
   REQUEST_PATCH_USER_PROFILE,
   RECEIVE_PATCH_USER_PROFILE_FAILURE,
-  CLEAR_PROFILE_EDIT,
+  CLEAR_PROFILE_EDIT
 } from "../actions/profile"
 import {
   REQUEST_GET_PROGRAM_ENROLLMENTS,
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
 } from "../actions/programs"
 import {
   DASHBOARD_RESPONSE,
   ERROR_RESPONSE,
-  USER_PROFILE_RESPONSE,
+  USER_PROFILE_RESPONSE
 } from "../test_constants"
 import IntegrationTestHelper from "../util/integration_test_helper"
 import { makeStrippedHtml } from "../util/util"
@@ -30,7 +30,7 @@ import * as api from "../lib/api"
 import {
   DASHBOARD_SUCCESS_ACTIONS,
   DASHBOARD_ERROR_ACTIONS,
-  DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS,
+  DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
 } from "../containers/test_util"
 import ErrorMessage from "./ErrorMessage"
 
@@ -49,11 +49,11 @@ describe("ErrorMessage", () => {
     }
     const codeAttributes = [
       ["error_code", "500"],
-      ["errorStatusCode", 404],
+      ["errorStatusCode", 404]
     ]
     const messageAttributes = [
       ["user_message", "A message"],
-      ["detail", "Some details"],
+      ["detail", "Some details"]
     ]
 
     codeAttributes.forEach(([codeAttribute, code]) => {
@@ -62,8 +62,8 @@ describe("ErrorMessage", () => {
           const that = {
             errorInfo: {
               [codeAttribute]: code,
-              [msgAttribute]:  message,
-            },
+              [msgAttribute]:  message
+            }
           }
           const errorMessage = renderErrorMessage(that)
           assert.include(errorMessage, String(code))
@@ -95,8 +95,8 @@ describe("ErrorMessage", () => {
       helper.profileGetStub.withArgs(SETTINGS.user.username).returns(
         Promise.resolve({
           ...USER_PROFILE_RESPONSE,
-          username: SETTINGS.user.username,
-        }),
+          username: SETTINGS.user.username
+        })
       )
     })
 
@@ -113,9 +113,9 @@ describe("ErrorMessage", () => {
             confirmErrorMessage(
               div,
               `AB123 ${errorString}`,
-              "Additional info: custom error message for the user.",
+              "Additional info: custom error message for the user."
             )
-          },
+          }
         )
       })
 
@@ -127,21 +127,21 @@ describe("ErrorMessage", () => {
         return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(
           ([, div]) => {
             confirmErrorMessage(div, `AB123 ${errorString}`)
-          },
+          }
         )
       })
 
       it("the error from the backend does not need to exist at all as long as there is an http error", () => {
         helper.dashboardStub.returns(
           Promise.reject({
-            errorStatusCode: 500,
-          }),
+            errorStatusCode: 500
+          })
         )
 
         return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(
           ([, div]) => {
             confirmErrorMessage(div, `500 ${errorString}`)
-          },
+          }
         )
       })
 
@@ -152,7 +152,7 @@ describe("ErrorMessage", () => {
           ([, div]) => {
             const message = div.getElementsByClassName("alert-message")[0]
             assert.equal(message, undefined)
-          },
+          }
         )
       })
 
@@ -160,12 +160,12 @@ describe("ErrorMessage", () => {
         helper.dashboardStub.returns(Promise.resolve([]))
         return renderComponent(
           "/dashboard",
-          DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS,
+          DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
         ).then(([wrapper]) => {
           const message = wrapper.find(".page-content").text()
           assert.equal(
             message,
-            "You are not currently enrolled in any programsEnroll in a MicroMasters Program",
+            "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
           )
         })
       })
@@ -174,12 +174,12 @@ describe("ErrorMessage", () => {
         helper.programsGetStub.returns(Promise.resolve([]))
         return renderComponent(
           "/dashboard",
-          DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS,
+          DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
         ).then(([wrapper]) => {
           const message = wrapper.find(".page-content").text()
           assert.equal(
             message,
-            "You are not currently enrolled in any programsEnroll in a MicroMasters Program",
+            "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
           )
         })
       })
@@ -196,13 +196,13 @@ describe("ErrorMessage", () => {
           RECEIVE_GET_USER_PROFILE_FAILURE,
           REQUEST_GET_PROGRAM_ENROLLMENTS,
           RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-          START_PROFILE_EDIT,
+          START_PROFILE_EDIT
         ]
         return renderComponent("/profile", actions).then(([, div]) => {
           confirmErrorMessage(
             div,
             `${ERROR_RESPONSE.error_code} ${errorString}`,
-            `Additional info: ${ERROR_RESPONSE.user_message}`,
+            `Additional info: ${ERROR_RESPONSE.user_message}`
           )
         })
       })
@@ -212,7 +212,7 @@ describe("ErrorMessage", () => {
       it("should show an error for profile GET", () => {
         const fourOhFour = {
           errorStatusCode: 404,
-          detail:          "some error messsage",
+          detail:          "some error messsage"
         }
         helper.profileGetStub
           .withArgs(SETTINGS.user.username)
@@ -223,16 +223,16 @@ describe("ErrorMessage", () => {
           RECEIVE_GET_USER_PROFILE_FAILURE,
           RECEIVE_GET_USER_PROFILE_FAILURE,
           REQUEST_GET_PROGRAM_ENROLLMENTS,
-          RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+          RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
         ]
         return renderComponent(
           `/learner/${SETTINGS.user.username}`,
-          userPageActions,
+          userPageActions
         ).then(([, div]) => {
           confirmErrorMessage(
             div,
             `404 ${errorString}`,
-            `Additional info: ${fourOhFour.detail}`,
+            `Additional info: ${fourOhFour.detail}`
           )
         })
       })
@@ -245,11 +245,11 @@ describe("ErrorMessage", () => {
           REQUEST_GET_USER_PROFILE,
           REQUEST_GET_USER_PROFILE,
           RECEIVE_GET_USER_PROFILE_SUCCESS,
-          RECEIVE_GET_USER_PROFILE_SUCCESS,
+          RECEIVE_GET_USER_PROFILE_SUCCESS
         ]
         return renderComponent(
           `/learner/${SETTINGS.user.username}`,
-          learnerPageActions,
+          learnerPageActions
         ).then(([, div]) => {
           const editButton = div
             .querySelector(".card")
@@ -263,14 +263,14 @@ describe("ErrorMessage", () => {
               RECEIVE_PATCH_USER_PROFILE_FAILURE,
               CLEAR_PROFILE_EDIT,
               SET_LEARNER_PAGE_DIALOG_VISIBILITY,
-              CLEAR_PROFILE_EDIT,
+              CLEAR_PROFILE_EDIT
             ],
             () => {
               ReactTestUtils.Simulate.click(editButton)
               const dialog = document.querySelector(".personal-dialog")
               const save = dialog.querySelector(".save-button")
               ReactTestUtils.Simulate.click(save)
-            },
+            }
           ).then(() => {
             confirmErrorMessage(div, `500 ${errorString}`)
           })

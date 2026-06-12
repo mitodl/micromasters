@@ -5,5 +5,5 @@ import * as Sentry from "@sentry/browser"
 Sentry.init({
   dsn:         SETTINGS.sentry_dsn,
   release:     SETTINGS.release_version,
-  environment: SETTINGS.environment,
+  environment: SETTINGS.environment
 })

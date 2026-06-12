@@ -14,13 +14,13 @@ import {
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
   RECEIVE_DASHBOARD_FAILURE,
-  CLEAR_DASHBOARD,
+  CLEAR_DASHBOARD
 } from "../actions/dashboard"
 import * as api from "../lib/api"
 import {
   FETCH_FAILURE,
   FETCH_PROCESSING,
-  FETCH_SUCCESS,
+  FETCH_SUCCESS
 } from "../actions/index"
 import { DASHBOARD_RESPONSE } from "../test_constants"
 
@@ -51,25 +51,25 @@ describe("dashboard reducers", () => {
 
     return dispatchThen(fetchDashboard(SETTINGS.user.username), [
       REQUEST_DASHBOARD,
-      RECEIVE_DASHBOARD_SUCCESS,
+      RECEIVE_DASHBOARD_SUCCESS
     ]).then(state => {
       const dashboardState = state[SETTINGS.user.username]
       assert.deepEqual(dashboardState.programs, DASHBOARD_RESPONSE.programs)
       assert.equal(
         dashboardState.isEdxDataFresh,
-        DASHBOARD_RESPONSE.is_edx_data_fresh,
+        DASHBOARD_RESPONSE.is_edx_data_fresh
       )
       assert.equal(dashboardState.fetchStatus, FETCH_SUCCESS)
 
       return dispatchThen(clearDashboard(SETTINGS.user.username), [
-        CLEAR_DASHBOARD,
+        CLEAR_DASHBOARD
       ]).then(state => {
         const dashboardState = state[SETTINGS.user.username]
         assert.deepEqual(dashboardState, {
           programs:                  [],
           isEdxDataFresh:            true,
           invalidBackendCredentials: [],
-          noSpinner:                 false,
+          noSpinner:                 false
         })
       })
     })
@@ -79,7 +79,7 @@ describe("dashboard reducers", () => {
     dashboardStub.returns(Promise.reject())
     return dispatchThen(fetchDashboard(SETTINGS.user.username), [
       REQUEST_DASHBOARD,
-      RECEIVE_DASHBOARD_FAILURE,
+      RECEIVE_DASHBOARD_FAILURE
     ]).then(state => {
       const dashboardState = state[SETTINGS.user.username]
       assert.equal(dashboardState.fetchStatus, FETCH_FAILURE)
@@ -88,7 +88,7 @@ describe("dashboard reducers", () => {
 
   it("should update a course run's status", () => {
     store.dispatch(
-      receiveDashboardSuccess(SETTINGS.user.username, DASHBOARD_RESPONSE),
+      receiveDashboardSuccess(SETTINGS.user.username, DASHBOARD_RESPONSE)
     )
 
     const getRun = programs => programs[1].courses[0].runs[0]
@@ -97,7 +97,7 @@ describe("dashboard reducers", () => {
     assert.notEqual(run.status, "new_status")
     return dispatchThen(
       updateCourseStatus(SETTINGS.user.username, run.course_id, "new_status"),
-      [UPDATE_COURSE_STATUS],
+      [UPDATE_COURSE_STATUS]
     ).then(state => {
       const dashboardState = state[SETTINGS.user.username]
       assert.equal(getRun(dashboardState.programs).status, "new_status")
@@ -113,7 +113,7 @@ describe("dashboard reducers", () => {
       isEdxDataFresh:            DASHBOARD_RESPONSE.is_edx_data_fresh,
       invalidBackendCredentials: [],
       fetchStatus:               FETCH_SUCCESS,
-      noSpinner:                 false,
+      noSpinner:                 false
     }
 
     beforeEach(() => {
@@ -124,11 +124,11 @@ describe("dashboard reducers", () => {
     it("should let you fetch two different dashboards", () => {
       return dispatchThen(fetchDashboard(_username), [
         REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_DASHBOARD_SUCCESS
       ]).then(state => {
         assert.deepEqual(state, {
           [username]:  successExpectation,
-          [_username]: successExpectation,
+          [_username]: successExpectation
         })
       })
     })
@@ -143,10 +143,10 @@ describe("dashboard reducers", () => {
               programs:                  [],
               isEdxDataFresh:            true,
               noSpinner:                 false,
-              invalidBackendCredentials: [],
-            },
+              invalidBackendCredentials: []
+            }
           })
-        },
+        }
       )
     })
 
@@ -154,7 +154,7 @@ describe("dashboard reducers", () => {
       dashboardStub.returns(Promise.reject("err"))
       return dispatchThen(fetchDashboard(_username), [
         REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_FAILURE,
+        RECEIVE_DASHBOARD_FAILURE
       ]).then(state => {
         assert.deepEqual(state, {
           [username]:  successExpectation,
@@ -164,8 +164,8 @@ describe("dashboard reducers", () => {
             programs:                  [],
             invalidBackendCredentials: [],
             isEdxDataFresh:            true,
-            noSpinner:                 false,
-          },
+            noSpinner:                 false
+          }
         })
       })
     })
@@ -180,7 +180,7 @@ describe("dashboard reducers", () => {
 
       return dispatchThen(
         updateCourseStatus(_username, run.course_id, "new_status"),
-        [UPDATE_COURSE_STATUS],
+        [UPDATE_COURSE_STATUS]
       ).then(state => {
         assert.deepEqual(state[username], successExpectation)
         assert.deepEqual(getRun(state[_username].programs).status, "new_status")
@@ -189,7 +189,7 @@ describe("dashboard reducers", () => {
 
     it("should let you set noSpinner true", () => {
       return dispatchThen(requestDashboard("username", true), [
-        REQUEST_DASHBOARD,
+        REQUEST_DASHBOARD
       ]).then(state => {
         assert.deepEqual(state, {
           username: {
@@ -197,8 +197,8 @@ describe("dashboard reducers", () => {
             isEdxDataFresh:            true,
             programs:                  DASHBOARD_RESPONSE.programs,
             invalidBackendCredentials: [],
-            fetchStatus:               FETCH_PROCESSING,
-          },
+            fetchStatus:               FETCH_PROCESSING
+          }
         })
       })
     })

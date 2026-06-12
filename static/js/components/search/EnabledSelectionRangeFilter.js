@@ -17,7 +17,7 @@ export default class EnabledSelectionRangeFilter extends RangeFilter {
       field,
       fieldOptions,
       interval,
-      showHistogram,
+      showHistogram
     } = this.props
     return new EnabledSelectionRangeAccessor(id, {
       id,
@@ -27,7 +27,7 @@ export default class EnabledSelectionRangeFilter extends RangeFilter {
       field,
       interval,
       loadHistogram: showHistogram,
-      fieldOptions,
+      fieldOptions
     })
   }
 }

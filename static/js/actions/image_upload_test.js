@@ -13,7 +13,7 @@ import {
   receivePatchUserPhotoFailure,
   RECEIVE_PATCH_USER_PHOTO_FAILURE,
   receivePatchUserPhotoSuccess,
-  RECEIVE_PATCH_USER_PHOTO_SUCCESS,
+  RECEIVE_PATCH_USER_PHOTO_SUCCESS
 } from "./image_upload"
 import { assertCreatedActionHelper } from "./test_util"
 
@@ -26,7 +26,7 @@ describe("generated image upload action helpers", () => {
       [setPhotoError, SET_PHOTO_ERROR],
       [requestPatchUserPhoto, REQUEST_PATCH_USER_PHOTO],
       [receivePatchUserPhotoFailure, RECEIVE_PATCH_USER_PHOTO_FAILURE],
-      [receivePatchUserPhotoSuccess, RECEIVE_PATCH_USER_PHOTO_SUCCESS],
+      [receivePatchUserPhotoSuccess, RECEIVE_PATCH_USER_PHOTO_SUCCESS]
     ].forEach(assertCreatedActionHelper)
   })
 })

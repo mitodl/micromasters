@@ -8,7 +8,7 @@ import SelectField from "./SelectField"
 import type {
   Profile,
   UpdateProfileFunc,
-  ValidationErrors,
+  ValidationErrors
 } from "../../flow/profileTypes"
 import type { Validator, UIValidator } from "../../lib/validation/profile"
 import type { Option } from "../../flow/generalTypes"
@@ -17,7 +17,7 @@ import { labelSort } from "../../util/util"
 // VI is US Virgin Islands, VG is British
 const adjustVIEntries = R.compose(
   R.set(R.lensProp("VI"), "US Virgin Islands"),
-  R.set(R.lensProp("VG"), "British Virgin Islands"),
+  R.set(R.lensProp("VG"), "British Virgin Islands")
 )
 
 const countryOption = (name, code) => ({ value: code, label: name })
@@ -27,7 +27,7 @@ const makeCountryOptions = R.compose(
   R.values,
   R.mapObjIndexed(countryOption),
   adjustVIEntries,
-  R.map(R.prop("name")),
+  R.map(R.prop("name"))
 )
 
 const countryOptions = makeCountryOptions(iso3166.data)
@@ -46,12 +46,17 @@ export default class CountrySelectField extends React.Component {
     topMenu: boolean,
     updateProfile: UpdateProfileFunc,
     updateValidationVisibility: (xs: Array<string>) => void,
-    validator: Validator | UIValidator,
+    validator: Validator | UIValidator
   }
 
   onChange = (selection: Option): void => {
-    const { stateKeySet, countryKeySet, updateProfile, validator, profile } =
-      this.props
+    const {
+      stateKeySet,
+      countryKeySet,
+      updateProfile,
+      validator,
+      profile
+    } = this.props
     // clear state field when country field changes
     const clone = _.cloneDeep(profile)
     _.set(clone, stateKeySet, null)

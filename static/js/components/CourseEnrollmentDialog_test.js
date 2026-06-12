@@ -28,7 +28,7 @@ describe("CourseEnrollmentDialog", () => {
   const renderDialog = (
     courseRun = makeRun(1),
     course = makeCourse(1),
-    open = true,
+    open = true
   ) => {
     mount(
       <MuiThemeProvider theme={createMuiTheme()}>
@@ -43,12 +43,12 @@ describe("CourseEnrollmentDialog", () => {
       {
         context:           { router: { push: routerPushStub } },
         childContextTypes: {
-          router: PropTypes.object.isRequired,
-        },
-      },
+          router: PropTypes.object.isRequired
+        }
+      }
     )
     const el: HTMLElement = (document.querySelector(
-      ".course-enrollment-dialog",
+      ".course-enrollment-dialog"
     ): any)
     return el
   }
@@ -56,7 +56,7 @@ describe("CourseEnrollmentDialog", () => {
   it("can render without price", () => {
     const wrapper = renderDialog()
     const payButton = ((wrapper.querySelector(
-      ".pay-button",
+      ".pay-button"
     ): any): HTMLButtonElement)
     assert.equal(payButton.textContent, "Upgrade Unavailable")
     assert.isTrue(payButton.disabled)

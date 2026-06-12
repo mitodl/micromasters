@@ -11,26 +11,26 @@ describe("Loader", () => {
     shallow(
       <Loader {...props}>
         <h1>Test</h1>
-      </Loader>,
+      </Loader>
     )
   const dataSet = [
     {
       shouldRenderAll:  true,
       childrenExpected: true,
-      expectedMessage:  "render children",
+      expectedMessage:  "render children"
     },
     {
       shouldRenderAll:  false,
       childrenExpected: false,
-      expectedMessage:  "not render children",
-    },
+      expectedMessage:  "not render children"
+    }
   ]
 
   for (const data of dataSet) {
     it(`should ${data.expectedMessage}`, () => {
       const wrapper = renderLoader({
         loaded:          false,
-        shouldRenderAll: data.shouldRenderAll,
+        shouldRenderAll: data.shouldRenderAll
       })
       assert.equal(wrapper.find(".loader").exists(), true)
       assert.equal(wrapper.find("h1").exists(), data.childrenExpected)

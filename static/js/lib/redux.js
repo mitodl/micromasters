@@ -5,7 +5,7 @@ import R from "ramda"
 import type {
   ActionCreator,
   AsyncActionHelper,
-  AsyncActionCreator,
+  AsyncActionCreator
 } from "../flow/reduxTypes"
 
 /**
@@ -14,7 +14,7 @@ import type {
  */
 export function createActionHelper(
   dispatch: Dispatch,
-  actionCreator: Function,
+  actionCreator: Function
 ): (...args: any) => void {
   return (...args) => dispatch(actionCreator(...args))
 }
@@ -27,13 +27,13 @@ export type ActionHelpers = { [k: string]: (...args: any) => void }
 export type ActionManifest = Array<[string, ActionCreator]>
 export function createSimpleActionHelpers(
   dispatch: Dispatch,
-  actionList: ActionManifest,
+  actionList: ActionManifest
 ): ActionHelpers {
   return R.fromPairs(
     actionList.map(([name, actionCreator]) => [
       name,
-      createActionHelper(dispatch, actionCreator),
-    ]),
+      createActionHelper(dispatch, actionCreator)
+    ])
   )
 }
 
@@ -45,12 +45,12 @@ export type AsyncActionHelpers = { [k: string]: AsyncActionHelper }
 export type AsyncActionManifest = Array<[string, AsyncActionCreator<any>]>
 export function createAsyncActionHelpers(
   dispatch: Dispatch,
-  actionList: AsyncActionManifest,
+  actionList: AsyncActionManifest
 ): AsyncActionHelpers {
   return R.fromPairs(
     actionList.map(([name, actionCreator]) => [
       name,
-      createActionHelper(dispatch, actionCreator),
-    ]),
+      createActionHelper(dispatch, actionCreator)
+    ])
   )
 }

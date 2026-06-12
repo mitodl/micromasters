@@ -2,7 +2,7 @@ import React from "react"
 import {
   SearchkitComponent,
   RefinementListFilter,
-  FacetAccessor,
+  FacetAccessor
 } from "searchkit"
 
 import WithAccessor from "../search/WithAccessor"
@@ -12,12 +12,12 @@ import ModifiedMultiSelect from "./ModifiedMultiSelect"
 const WorkHistoryAccessor = WithReverseNestedAccessor(
   FacetAccessor,
   "profile.work_history.company_name",
-  "company_name_count",
+  "company_name_count"
 )
 
 const ModifiedRefinementListFilter = WithAccessor(
   RefinementListFilter,
-  WorkHistoryAccessor,
+  WorkHistoryAccessor
 )
 
 export default class WorkHistoryFilter extends SearchkitComponent {
@@ -30,7 +30,7 @@ export default class WorkHistoryFilter extends SearchkitComponent {
         operator="OR"
         fieldOptions={{
           type:    "nested",
-          options: { path: "profile.work_history" },
+          options: { path: "profile.work_history" }
         }}
         listComponent={ModifiedMultiSelect}
         size={20}

@@ -27,7 +27,7 @@ import type {
   Profile,
   SaveProfileFunc,
   ValidationErrors,
-  UpdateProfileFunc,
+  UpdateProfileFunc
 } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
 import type { AsyncActionHelper } from "../flow/reduxTypes"
@@ -43,7 +43,7 @@ import DialogContent from "@material-ui/core/DialogContent"
 class EmploymentForm extends ProfileFormFields {
   industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
     value: industry,
-    label: industry,
+    label: industry
   }))
 
   props: {
@@ -62,7 +62,7 @@ class EmploymentForm extends ProfileFormFields {
     setShowWorkDeleteDialog: (b: boolean) => void,
     deletionIndex: number,
     showSwitch: boolean,
-    validator: Validator | UIValidator,
+    validator: Validator | UIValidator
   }
 
   openNewWorkHistoryForm = (): void => {
@@ -71,11 +71,11 @@ class EmploymentForm extends ProfileFormFields {
       profile,
       setWorkDialogIndex,
       setWorkDialogVisibility,
-      validator,
+      validator
     } = this.props
     const clone = {
       ...profile,
-      work_history: [...profile.work_history, generateNewWorkHistory()],
+      work_history: [...profile.work_history, generateNewWorkHistory()]
     }
     updateProfile(clone, validator, true)
     setWorkDialogIndex(clone.work_history.length - 1)
@@ -108,7 +108,7 @@ class EmploymentForm extends ProfileFormFields {
     const {
       setWorkDialogVisibility,
       clearProfileEdit,
-      profile: { username },
+      profile: { username }
     } = this.props
     setWorkDialogVisibility(false)
     clearProfileEdit(username)
@@ -173,7 +173,7 @@ class EmploymentForm extends ProfileFormFields {
           {this.boundDateField(keySet("end_date"), "End Date", true)}
           <span
             className={`end-date-hint ${this.addSpaceForError(
-              keySet("end_date"),
+              keySet("end_date")
             )}`}
           >
             Leave blank if this is a current position
@@ -188,14 +188,14 @@ class EmploymentForm extends ProfileFormFields {
       ui,
       profile,
       // eslint-disable-next-line camelcase
-      profile: { work_history },
+      profile: { work_history }
     } = this.props
     if (ui.workHistoryEdit === true) {
       let workHistoryRows = []
       if (!_.isUndefined(work_history)) {
         const sorted = workEntriesByDate(work_history)
         workHistoryRows = sorted.map(([index, entry]) =>
-          entry.id === undefined ? undefined : this.jobRow(entry, index),
+          entry.id === undefined ? undefined : this.jobRow(entry, index)
         )
       }
       userPrivilegeCheck(profile, () => {
@@ -207,7 +207,7 @@ class EmploymentForm extends ProfileFormFields {
             >
               Add employment
             </button>
-          </Grid>,
+          </Grid>
         )
       })
       workHistoryRows.unshift(
@@ -218,7 +218,7 @@ class EmploymentForm extends ProfileFormFields {
           key="header-row"
         >
           <span className="title">Employment</span>
-        </Grid>,
+        </Grid>
       )
       return workHistoryRows
     }
@@ -256,7 +256,7 @@ class EmploymentForm extends ProfileFormFields {
             </IconButton>
           </div>
         ),
-        () => <div />,
+        () => <div />
       )
     }
     return (
@@ -292,7 +292,7 @@ class EmploymentForm extends ProfileFormFields {
 
   renderWorkRadioSwitch() {
     const {
-      ui: { workHistoryAnswer },
+      ui: { workHistoryAnswer }
     } = this.props
     const valueSelected = _.isNil(workHistoryAnswer) ? null : "false"
     return (
@@ -323,7 +323,7 @@ class EmploymentForm extends ProfileFormFields {
   handleRadioClick = (value: string): void => {
     const {
       setWorkHistoryAnswer,
-      ui: { workHistoryAnswer },
+      ui: { workHistoryAnswer }
     } = this.props
     if (value === "true") {
       if (!_.isNil(workHistoryAnswer)) {
@@ -339,7 +339,7 @@ class EmploymentForm extends ProfileFormFields {
     const {
       showSwitch,
       // eslint-disable-next-line camelcase
-      profile: { work_history },
+      profile: { work_history }
     } = this.props
     if (showSwitch && work_history.length === 0) {
       return this.renderWorkQuestionForm()
@@ -351,7 +351,7 @@ class EmploymentForm extends ProfileFormFields {
   renderCard() {
     const {
       ui: { workHistoryEdit },
-      profile,
+      profile
     } = this.props
 
     if (
@@ -381,7 +381,7 @@ class EmploymentForm extends ProfileFormFields {
     const {
       ui: { workDialogVisibility, showWorkDeleteDialog, workDialogIndex },
       profilePatchStatus,
-      profile,
+      profile
     } = this.props
 
     const inFlight = profilePatchStatus === FETCH_PROCESSING
@@ -410,7 +410,7 @@ class EmploymentForm extends ProfileFormFields {
             {dialogActions(
               this.closeWorkDialog,
               this.saveWorkHistoryEntry,
-              inFlight,
+              inFlight
             )}
           </DialogActions>
         </Dialog>

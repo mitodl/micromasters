@@ -21,7 +21,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
     className?: string,
     showCount?: boolean,
     translate: Function,
-    multiselect: boolean,
+    multiselect: boolean
   }
 
   static defaultProps: any = {
@@ -29,7 +29,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
     mod:           "sk-item-list",
     showCount:     true,
     multiselect:   true,
-    selectItems:   [],
+    selectItems:   []
   }
 
   constructor() {
@@ -84,7 +84,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
       multiselect,
       setItems,
       toggleItem,
-      translate,
+      translate
     } = this.props
     const toggleFunc = multiselect ? toggleItem : key => setItems([key])
 
@@ -95,7 +95,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
         onClick: () => toggleFunc(option.key),
         key:     option.key,
         count:   option.doc_count,
-        active:  this.isActive(option),
+        active:  this.isActive(option)
       }
       return <CheckboxItem {...props} />
     })
@@ -126,13 +126,16 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
 
     const bemBlocks = {
       container: block(mod).el,
-      option:    block(`${mod}-option`).el,
+      option:    block(`${mod}-option`).el
     }
 
     return (
       <div
         data-qa="options"
-        className={bemBlocks.container().mix(className).state({ disabled })}
+        className={bemBlocks
+          .container()
+          .mix(className)
+          .state({ disabled })}
       >
         {[this.allAction(this.allItemsSelected()), ...this.itemComponentList()]}
       </div>

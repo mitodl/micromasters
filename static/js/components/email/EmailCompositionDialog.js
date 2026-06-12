@@ -29,7 +29,7 @@ const convertHTMLToEditorState = (html: string): Object => {
   if (blocksFromHTML.contentBlocks) {
     const contentState = ContentState.createFromBlockArray(
       blocksFromHTML.contentBlocks,
-      blocksFromHTML.entityMap,
+      blocksFromHTML.entityMap
     )
     return EditorState.createWithContent(contentState)
   } else {
@@ -47,17 +47,17 @@ const editorStateFromProps = R.compose(
   S.map(convertHTMLToEditorState),
   S.filter(R.compose(R.not, R.isEmpty)),
   getm("body"),
-  R.pathOr({}, ["activeEmail", "inputs"]),
+  R.pathOr({}, ["activeEmail", "inputs"])
 )
 
 const draftWysiwygToolbar = {
   options: ["inline", "list", "link", "history", "remove", "blockType"],
   inline:  {
-    options: ["bold", "italic", "underline"],
+    options: ["bold", "italic", "underline"]
   },
   list: {
-    options: ["unordered", "ordered"],
-  },
+    options: ["unordered", "ordered"]
+  }
 }
 
 type EmailDialogProps = {
@@ -71,12 +71,12 @@ type EmailDialogProps = {
   renderRecipients?: (filters: ?Array<Filter>) => React$Element<*>,
   updateEmailBody: (e: Object) => void,
   dialogType: string,
-  supportBulkEmails: boolean,
+  supportBulkEmails: boolean
 }
 
 export default class EmailCompositionDialog extends React.Component {
   state: {
-    editorState: Object,
+    editorState: Object
   }
 
   props: EmailDialogProps
@@ -112,17 +112,17 @@ export default class EmailCompositionDialog extends React.Component {
       selection,
       `${variableName}`,
       editorState.getCurrentInlineStyle(),
-      entityKey,
+      entityKey
     )
     let newEditorState = EditorState.push(
       editorState,
       contentState,
-      "insert-characters",
+      "insert-characters"
     )
     // insert a blank space after the variable
     selection = newEditorState.getSelection().merge({
       anchorOffset: selection.get("anchorOffset") + variableName.length,
-      focusOffset:  selection.get("anchorOffset") + variableName.length,
+      focusOffset:  selection.get("anchorOffset") + variableName.length
     })
     newEditorState = EditorState.acceptSelection(newEditorState, selection)
     contentState = Modifier.insertText(
@@ -130,16 +130,16 @@ export default class EmailCompositionDialog extends React.Component {
       selection,
       " ",
       newEditorState.getCurrentInlineStyle(),
-      undefined,
+      undefined
     )
     this.onEditorStateChange(
-      EditorState.push(newEditorState, contentState, "insert-characters"),
+      EditorState.push(newEditorState, contentState, "insert-characters")
     )
   }
 
   showValidationError = (fieldName: string): ?React$Element<*> => {
     const {
-      activeEmail: { validationErrors },
+      activeEmail: { validationErrors }
     } = this.props
     const val = validationErrors[fieldName]
     if (val !== undefined) {
@@ -167,13 +167,13 @@ export default class EmailCompositionDialog extends React.Component {
     const { updateEmailFieldEdit } = this.props
     updateEmailFieldEdit("sendAutomaticEmails", {
       target: {
-        value: sendAutomaticEmails,
-      },
+        value: sendAutomaticEmails
+      }
     })
   }
 
   renderAutomaticEmailSettings = (
-    sendAutomaticEmails: boolean,
+    sendAutomaticEmails: boolean
   ): React$Element<*> => (
     <AutomaticEmailOptions
       sendAutomaticEmails={sendAutomaticEmails}
@@ -233,7 +233,7 @@ export default class EmailCompositionDialog extends React.Component {
       updateEmailFieldEdit,
       renderRecipients,
       dialogType,
-      supportBulkEmails,
+      supportBulkEmails
     } = this.props
     const { editorState } = this.state
 
@@ -241,7 +241,7 @@ export default class EmailCompositionDialog extends React.Component {
       <Dialog
         classes={{
           paper: "dialog email-composition-dialog",
-          root:  "email-composition-dialog-wrapper",
+          root:  "email-composition-dialog-wrapper"
         }}
         open={dialogVisibility}
         onClose={this.closeEmailComposeAndClear}
@@ -253,7 +253,7 @@ export default class EmailCompositionDialog extends React.Component {
           <div className="email-composition-contents">
             {supportsAutomaticEmails
               ? this.renderAutomaticEmailSettings(
-                inputs.sendAutomaticEmails || false,
+                inputs.sendAutomaticEmails || false
               )
               : null}
             {this.renderSubheading()}
@@ -281,7 +281,7 @@ export default class EmailCompositionDialog extends React.Component {
             this.closeEmailComposeAndClear,
             this.closeEmailComposerAndSend,
             fetchStatus === FETCH_PROCESSING,
-            this.okButtonLabel(dialogType),
+            this.okButtonLabel(dialogType)
           )}
         </DialogActions>
       </Dialog>

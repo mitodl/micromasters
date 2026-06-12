@@ -39,7 +39,7 @@ const createPersistentTestStore = persistence =>
 export default function configureStore(initialState: ?Object) {
   const persistence = persistState(
     storage(["currentProgramEnrollment"]),
-    "redux",
+    "redux"
   )
 
   const reducer = compose(mergePersistedState())(rootReducer)
@@ -61,7 +61,7 @@ export default function configureStore(initialState: ?Object) {
 export const configureMainTestStore = (reducer: Reducer<*, *>) => {
   const persistence = persistState(
     storage(["currentProgramEnrollment"]),
-    "redux",
+    "redux"
   )
 
   return createPersistentTestStore(persistence)(reducer)

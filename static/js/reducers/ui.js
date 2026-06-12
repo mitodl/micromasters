@@ -37,7 +37,7 @@ import {
   SET_SHOW_EXPANDED_COURSE_STATUS,
   SET_PROGRAMS_TO_UNENROLL,
   SET_UNENROLL_API_INFLIGHT_STATE,
-  SET_SELECTED_EXAM_COUPON_COURSE,
+  SET_SELECTED_EXAM_COUPON_COURSE
 } from "../actions/ui"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import { CHANNEL_CREATE_DIALOG } from "../constants"
@@ -49,14 +49,14 @@ import type { CourseRun } from "../flow/programTypes"
 export type UIDialog = {
   title?: string,
   text?: string,
-  visible?: boolean,
+  visible?: boolean
 }
 
 export type DialogVisibilityState = { [dialogName: string]: boolean }
 
 export const INITIAL_DIALOG_VISIBILITY_STATE = {
   [EMAIL_COMPOSITION_DIALOG]: false,
-  [CHANNEL_CREATE_DIALOG]:    false,
+  [CHANNEL_CREATE_DIALOG]:    false
 }
 
 export type UIState = {
@@ -98,7 +98,7 @@ export type UIState = {
   showEnrollPayLaterSuccess: ?string,
   expandedCourseStatuses: Set<number>,
   programsToUnEnroll: Array<number>,
-  programsToUnEnrollInFlight: boolean,
+  programsToUnEnrollInFlight: boolean
 }
 
 export const INITIAL_UI_STATE: UIState = {
@@ -140,12 +140,12 @@ export const INITIAL_UI_STATE: UIState = {
   showEnrollPayLaterSuccess:          null,
   expandedCourseStatuses:             new Set(),
   programsToUnEnroll:                 [],
-  programsToUnEnrollInFlight:         false,
+  programsToUnEnrollInFlight:         false
 }
 
 export const ui = (
   state: UIState = INITIAL_UI_STATE,
-  action: Action<any, null>,
+  action: Action<any, null>
 ) => {
   switch (action.type) {
   case SHOW_DIALOG:
@@ -153,158 +153,158 @@ export const ui = (
       ...state,
       dialogVisibility: {
         ...state.dialogVisibility,
-        [action.payload]: true,
-      },
+        [action.payload]: true
+      }
     }
   case HIDE_DIALOG:
     return {
       ...state,
       dialogVisibility: {
         ...state.dialogVisibility,
-        [action.payload]: false,
-      },
+        [action.payload]: false
+      }
     }
   case SET_PROGRAM:
     return {
       ...state,
-      selectedProgram: action.payload,
+      selectedProgram: action.payload
     }
   case SET_WORK_HISTORY_EDIT:
     return {
       ...state,
-      workHistoryEdit: action.payload,
+      workHistoryEdit: action.payload
     }
   case SET_WORK_DIALOG_VISIBILITY:
     return {
       ...state,
-      workDialogVisibility: action.payload,
+      workDialogVisibility: action.payload
     }
   case SET_WORK_DIALOG_INDEX:
     return {
       ...state,
-      workDialogIndex: action.payload,
+      workDialogIndex: action.payload
     }
   case SET_WORK_HISTORY_ANSWER:
     return {
       ...state,
-      workHistoryAnswer: action.payload,
+      workHistoryAnswer: action.payload
     }
   case SET_EDUCATION_DIALOG_VISIBILITY:
     return {
       ...state,
-      educationDialogVisibility: action.payload,
+      educationDialogVisibility: action.payload
     }
   case SET_EDUCATION_DIALOG_INDEX:
     return {
       ...state,
-      educationDialogIndex: action.payload,
+      educationDialogIndex: action.payload
     }
   case SET_EDUCATION_DEGREE_LEVEL:
     return {
       ...state,
-      educationDegreeLevel: action.payload,
+      educationDegreeLevel: action.payload
     }
   case SET_EDUCATION_LEVEL_ANSWERS:
     return {
       ...state,
-      educationLevelAnswers: action.payload,
+      educationLevelAnswers: action.payload
     }
   case CLEAR_UI:
     return INITIAL_UI_STATE
   case SET_LEARNER_PAGE_DIALOG_VISIBILITY: {
     return {
       ...state,
-      learnerPageDialogVisibility: action.payload,
+      learnerPageDialogVisibility: action.payload
     }
   }
   case SET_LEARNER_PAGE_ABOUT_ME_DIALOG_VISIBILITY: {
     return {
       ...state,
-      learnerPageAboutMeDialogVisibility: action.payload,
+      learnerPageAboutMeDialogVisibility: action.payload
     }
   }
   case SET_SHOW_EDUCATION_DELETE_DIALOG: {
     return {
       ...state,
-      showEducationDeleteDialog: action.payload,
+      showEducationDeleteDialog: action.payload
     }
   }
   case SET_SHOW_WORK_DELETE_DIALOG: {
     return {
       ...state,
-      showWorkDeleteDialog: action.payload,
+      showWorkDeleteDialog: action.payload
     }
   }
   case SET_DELETION_INDEX: {
     return {
       ...state,
-      deletionIndex: action.payload,
+      deletionIndex: action.payload
     }
   }
   case SET_PROFILE_STEP: {
     return {
       ...state,
-      profileStep: action.payload,
+      profileStep: action.payload
     }
   }
   case SET_SEARCH_FILTER_VISIBILITY: {
     return {
       ...state,
-      searchFilterVisibility: action.payload,
+      searchFilterVisibility: action.payload
     }
   }
   case SET_EMAIL_DIALOG_VISIBILITY: {
     return {
       ...state,
-      emailDialogVisibility: action.payload,
+      emailDialogVisibility: action.payload
     }
   }
   case SET_ENROLL_PROGRAM_DIALOG_ERROR: {
     return {
       ...state,
-      enrollProgramDialogError: action.payload,
+      enrollProgramDialogError: action.payload
     }
   }
   case SET_TOAST_MESSAGE: {
     return {
       ...state,
-      toastMessage: action.payload,
+      toastMessage: action.payload
     }
   }
   case SET_ENROLL_SELECTED_PROGRAM: {
     return {
       ...state,
-      enrollSelectedProgram: action.payload,
+      enrollSelectedProgram: action.payload
     }
   }
   case SET_ENROLL_SELECTED_COURSE_RUN: {
     return {
       ...state,
-      enrollSelectedCourseRun: action.payload,
+      enrollSelectedCourseRun: action.payload
     }
   }
   case SET_ENROLL_PROGRAM_DIALOG_VISIBILITY: {
     return {
       ...state,
-      enrollProgramDialogVisibility: action.payload,
+      enrollProgramDialogVisibility: action.payload
     }
   }
   case SET_ENROLL_COURSE_DIALOG_VISIBILITY: {
     return {
       ...state,
-      enrollCourseDialogVisibility: action.payload,
+      enrollCourseDialogVisibility: action.payload
     }
   }
   case SET_CALCULATE_PRICE_DIALOG_VISIBILITY: {
     return {
       ...state,
-      calculatePriceDialogVisibility: action.payload,
+      calculatePriceDialogVisibility: action.payload
     }
   }
   case SHOW_ENROLL_PAY_LATER_SUCCESS: {
     return {
       ...state,
-      showEnrollPayLaterSuccess: action.payload,
+      showEnrollPayLaterSuccess: action.payload
     }
   }
   case SET_CONFIRM_SKIP_DIALOG_VISIBILITY:
@@ -323,18 +323,18 @@ export const ui = (
     return {
       ...state,
       expandedCourseStatuses: new Set(state.expandedCourseStatuses).add(
-        action.payload,
-      ),
+        action.payload
+      )
     }
   case SET_PROGRAMS_TO_UNENROLL:
     return {
       ...state,
-      programsToUnEnroll: action.payload,
+      programsToUnEnroll: action.payload
     }
   case SET_UNENROLL_API_INFLIGHT_STATE:
     return {
       ...state,
-      programsToUnEnrollInFlight: action.payload,
+      programsToUnEnrollInFlight: action.payload
     }
   default:
     return state

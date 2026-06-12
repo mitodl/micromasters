@@ -7,7 +7,7 @@ import {
   RECEIVE_FETCH_COUPONS_SUCCESS,
   RECEIVE_FETCH_COUPONS_FAILURE,
   CLEAR_COUPONS,
-  SET_RECENTLY_ATTACHED_COUPON,
+  SET_RECENTLY_ATTACHED_COUPON
 } from "../actions/coupons"
 import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
 import type { Action } from "../flow/reduxTypes"
@@ -28,29 +28,29 @@ export const couponEndpoint: Endpoint = {
   extraActions:        {
     [SET_RECENTLY_ATTACHED_COUPON]: (
       state: Object,
-      action: Action<any, any>,
+      action: Action<any, any>
     ) => ({
       ...state,
-      recentlyAttachedCoupon: action.payload,
-    }),
-  },
+      recentlyAttachedCoupon: action.payload
+    })
+  }
 }
 
 export type CouponsState = {
   fetchPostStatus?: string,
   fetchGetStatus?: string,
   coupons: Coupons,
-  recentlyAttachedCoupon: ?Coupon,
+  recentlyAttachedCoupon: ?Coupon
 }
 
 export const INITIAL_COUPONS_STATE: CouponsState = {
   coupons:                [],
-  recentlyAttachedCoupon: null,
+  recentlyAttachedCoupon: null
 }
 
 export const coupons = (
   state: CouponsState = INITIAL_COUPONS_STATE,
-  action: Action<any, null>,
+  action: Action<any, null>
 ) => {
   switch (action.type) {
   case REQUEST_ATTACH_COUPON:
@@ -65,7 +65,7 @@ export const coupons = (
     return {
       ...state,
       fetchGetStatus: FETCH_SUCCESS,
-      coupons:        action.payload,
+      coupons:        action.payload
     }
   case RECEIVE_FETCH_COUPONS_FAILURE:
     return { ...state, fetchGetStatus: FETCH_FAILURE }

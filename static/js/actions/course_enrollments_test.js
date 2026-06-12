@@ -26,7 +26,7 @@ describe("show and hide enroll pay later success alert", () => {
     const waitStub = sandbox.stub(util, "wait").returns(waitPromise)
 
     return dispatchThen(showEnrollPayLaterSuccessMessage("foo/bar/baz"), [
-      SHOW_ENROLL_PAY_LATER_SUCCESS,
+      SHOW_ENROLL_PAY_LATER_SUCCESS
     ]).then(state => {
       assert.equal(state.showEnrollPayLaterSuccess, "foo/bar/baz")
 

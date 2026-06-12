@@ -9,8 +9,7 @@ import { findAndCloneCourse } from "../../../util/test_utils"
 
 describe("Course Progress", () => {
   const course = findAndCloneCourse(
-    course =>
-      course !== null && course !== undefined && course.runs.length > 0,
+    course => course !== null && course !== undefined && course.runs.length > 0
   )
   course.runs[0].current_grade = 92
 
@@ -29,7 +28,7 @@ describe("Course Progress", () => {
     const progress = renderCourseProgress()
     assert.equal(progress.find(".course-progress").length, 1)
     assert.deepEqual(progress.find(".course-progress-bar").props().style, {
-      width: "92%",
+      width: "92%"
     })
   })
 })

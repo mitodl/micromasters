@@ -12,7 +12,7 @@ export const endpoints: Array<Endpoint> = [
   automaticEmailsEndpoint,
   courseEnrollmentsEndpoint,
   examEnrollmentEndpoint,
-  programLearnersEndpoint,
+  programLearnersEndpoint
 ]
 
 const reducers: Object = {}

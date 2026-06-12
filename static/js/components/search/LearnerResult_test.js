@@ -17,7 +17,7 @@ import { getPreferredName } from "../../util/util"
 import {
   USER_PROFILE_RESPONSE,
   USER_PROGRAM_RESPONSE,
-  OPENSEARCH_RESPONSE,
+  OPENSEARCH_RESPONSE
 } from "../../test_constants"
 import { codeToCountryName } from "../../lib/location"
 
@@ -26,8 +26,8 @@ describe("LearnerResult", () => {
   const resultData = {
     _source: {
       profile: USER_PROFILE_RESPONSE,
-      program: USER_PROGRAM_RESPONSE,
-    },
+      program: USER_PROGRAM_RESPONSE
+    }
   }
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe("LearnerResult", () => {
   const renderOpenSearchResult = (result, props = {}) => {
     const manager = new SearchkitManager()
     manager.state = {
-      q: "query",
+      q: "query"
     }
     return mount(
       <MuiThemeProvider theme={createMuiTheme()}>
@@ -55,7 +55,7 @@ describe("LearnerResult", () => {
             />
           </SearchkitProvider>
         </Provider>
-      </MuiThemeProvider>,
+      </MuiThemeProvider>
     )
   }
 
@@ -87,7 +87,9 @@ describe("LearnerResult", () => {
   })
 
   it("should include the user's location for US residence", () => {
-    const result = renderLearnerResult().find(".learner-location").find("span")
+    const result = renderLearnerResult()
+      .find(".learner-location")
+      .find("span")
     assert.include(result.text(), USER_PROFILE_RESPONSE.city)
     assert.include(result.text(), USER_PROFILE_RESPONSE.country)
     assert.include(result.text(), USER_PROFILE_RESPONSE.state_or_territory)
@@ -100,10 +102,10 @@ describe("LearnerResult", () => {
       {
         _source: {
           profile: profile,
-          program: USER_PROGRAM_RESPONSE,
-        },
+          program: USER_PROGRAM_RESPONSE
+        }
       },
-      {},
+      {}
     )
     const result = searchResults.find(".learner-location").find("span")
     assert.include(result.text(), profile.city)
@@ -116,8 +118,8 @@ describe("LearnerResult", () => {
       {
         role:        "staff",
         program:     1,
-        permissions: ["can_advance_search"],
-      },
+        permissions: ["can_advance_search"]
+      }
     ]
     const result = renderLearnerResult().find(".learner-grade .percent")
     assert.include(result.text(), `${USER_PROGRAM_RESPONSE.grade_average}%`)
@@ -126,7 +128,9 @@ describe("LearnerResult", () => {
   it("should not include the user's current program grade if the searching user is not staff", () => {
     SETTINGS.roles = []
     assert.isFalse(
-      renderLearnerResult().find(".learner-grade .percent").exists(),
+      renderLearnerResult()
+        .find(".learner-grade .percent")
+        .exists()
     )
   })
 
@@ -135,25 +139,25 @@ describe("LearnerResult", () => {
       {
         role:        "staff",
         program:     1,
-        permissions: ["can_advance_search"],
-      },
+        permissions: ["can_advance_search"]
+      }
     ]
     const emptyGradeOpenSearchHit = {
       _source: {
         profile: USER_PROFILE_RESPONSE,
         program: {
           ...USER_PROGRAM_RESPONSE,
-          grade_average: null,
-        },
-      },
+          grade_average: null
+        }
+      }
     }
     let result = renderLearnerResult({ result: emptyGradeOpenSearchHit }).find(
-      ".learner-grade .percent",
+      ".learner-grade .percent"
     )
     assert.equal(result.text(), "-")
     delete emptyGradeOpenSearchHit._source.program.grade_average
     result = renderLearnerResult({ result: emptyGradeOpenSearchHit }).find(
-      ".learner-grade .percent",
+      ".learner-grade .percent"
     )
     assert.equal(result.text(), "-")
   })
@@ -161,7 +165,10 @@ describe("LearnerResult", () => {
   it("should use the small avatar", () => {
     const result = renderLearnerResult()
     assert.isTrue(
-      result.find(".learner-avatar").find(ProfileImage).props().useSmall,
+      result
+        .find(".learner-avatar")
+        .find(ProfileImage)
+        .props().useSmall
     )
   })
 
@@ -184,12 +191,12 @@ describe("LearnerResult", () => {
     const result = renderOpenSearchResult({
       _source: {
         profile: profile,
-        program: USER_PROGRAM_RESPONSE,
-      },
+        program: USER_PROGRAM_RESPONSE
+      }
     })
     assert.deepEqual(
       result.find(".display-name .highlight").map(node => node.text()),
-      ["Query"],
+      ["Query"]
     )
     assert.equal(result.find(".user-name .highlight").text(), "query")
   })

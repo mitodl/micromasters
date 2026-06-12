@@ -5,7 +5,7 @@ import sinon from "sinon"
 import {
   createActionHelper,
   createSimpleActionHelpers,
-  createAsyncActionHelpers,
+  createAsyncActionHelpers
 } from "./redux"
 
 describe("redux helpers", () => {
@@ -14,7 +14,7 @@ describe("redux helpers", () => {
   const actionCreator = arg => ({
     type:    MY_ACTION,
     payload: arg,
-    meta:    null,
+    meta:    null
   })
 
   describe("createActionHelper", () => {
@@ -38,8 +38,8 @@ describe("redux helpers", () => {
         dispatch.calledWith({
           type:    MY_ACTION,
           payload: 3,
-          meta:    null,
-        }),
+          meta:    null
+        })
       )
     })
   })
@@ -65,8 +65,8 @@ describe("redux helpers", () => {
         dispatch.calledWith({
           type:    MY_ACTION,
           payload: 3,
-          meta:    null,
-        }),
+          meta:    null
+        })
       )
     })
   })
@@ -76,7 +76,7 @@ describe("redux helpers", () => {
     const asyncActionCreator = arg => dispatch =>
       dispatch({
         type:    MY_ASYNC_ACTION,
-        payload: arg,
+        payload: arg
       })
     const actionList = [["asyncActionCreator", asyncActionCreator]]
 
@@ -105,8 +105,8 @@ describe("redux helpers", () => {
       assert(
         dispatchSpy.calledWith({
           type:    MY_ASYNC_ACTION,
-          payload: 2,
-        }),
+          payload: 2
+        })
       )
     })
   })

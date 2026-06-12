@@ -11,7 +11,7 @@ import LearnerInfoCard from "./LearnerInfoCard"
 import {
   educationValidation,
   employmentValidation,
-  personalValidation,
+  personalValidation
 } from "../lib/validation/profile"
 import StaffLearnerInfoCard from "./StaffLearnerInfoCard"
 import type { Profile, SaveProfileFunc } from "../flow/profileTypes"
@@ -31,14 +31,14 @@ export default class Learner extends React.Component {
     startProfileEdit: () => void,
     setLearnerPageAboutMeDialogVisibility: () => void,
     openLearnerEmailComposer: () => void,
-    setShowGradeDetailDialog: (b: boolean, t: string) => void,
+    setShowGradeDetailDialog: (b: boolean, t: string) => void
   }
 
   toggleShowPersonalDialog = (): void => {
     const {
       setLearnerPageDialogVisibility,
       ui: { learnerPageDialogVisibility },
-      startProfileEdit,
+      startProfileEdit
     } = this.props
     setLearnerPageDialogVisibility(!learnerPageDialogVisibility)
     startProfileEdit()
@@ -48,7 +48,7 @@ export default class Learner extends React.Component {
     const {
       setLearnerPageAboutMeDialogVisibility,
       ui: { learnerPageAboutMeDialogVisibility },
-      startProfileEdit,
+      startProfileEdit
     } = this.props
     setLearnerPageAboutMeDialogVisibility(!learnerPageAboutMeDialogVisibility)
     startProfileEdit()

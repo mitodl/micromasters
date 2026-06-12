@@ -11,13 +11,13 @@ import {
   getm,
   parseJSON,
   filterE,
-  reduceM,
+  reduceM
 } from "./sanctuary"
 const { Just, Nothing } = S
 import {
   assertMaybeEquality,
   assertIsNothing,
-  assertIsJust,
+  assertIsJust
 } from "./test_utils"
 
 const assertIsLeft = (e, val) => {
@@ -128,7 +128,7 @@ describe("sanctuary util functions", () => {
 
     it("returns Right(Object) if handed good JSON", () => {
       const testObj = {
-        foo: ["bar", "baz"],
+        foo: ["bar", "baz"]
       }
       assertIsRight(parseJSON(JSON.stringify(testObj)), testObj)
     })
@@ -140,18 +140,18 @@ describe("sanctuary util functions", () => {
     it("returns a Left if passed one, regardless of predicate", () => {
       assertIsLeft(
         filterE(x => x === 2, left),
-        2,
+        2
       )
       assertIsLeft(
         filterE(x => x !== 2, left),
-        2,
+        2
       )
     })
 
     it("returns a Left if predicate(right.value) === false", () => {
       assertIsLeft(
         filterE(x => x === 2, right),
-        4,
+        4
       )
       assertIsLeft(filterE(R.isNil, right), 4)
     })
@@ -159,11 +159,11 @@ describe("sanctuary util functions", () => {
     it("returns a Right if predicate(right.value) === true", () => {
       assertIsRight(
         filterE(x => x === 4, right),
-        4,
+        4
       )
       assertIsRight(
         filterE(x => x % 2 === 0, right),
-        4,
+        4
       )
     })
   })
@@ -172,14 +172,14 @@ describe("sanctuary util functions", () => {
     it("returns fn(val) where maybe is Just(val)", () => {
       assert.equal(
         reduceM("default", str => `${str} value`, S.Just("maybe")),
-        "maybe value",
+        "maybe value"
       )
     })
 
     it("returns fn(default) where maybe is Nothing", () => {
       assert.equal(
         reduceM("default", str => `${str} value`, S.Nothing),
-        "default value",
+        "default value"
       )
     })
   })

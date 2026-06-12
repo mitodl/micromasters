@@ -12,7 +12,7 @@ import {
   Pagination,
   ResetFilters,
   SortingSelector,
-  MultiMatchQuery,
+  MultiMatchQuery
 } from "searchkit"
 import Grid from "@material-ui/core/Grid"
 import Card from "@material-ui/core/Card"
@@ -62,7 +62,7 @@ export const makeTranslations: () => Object = () => {
 const SEMESTER_SEASON_NUMBER_VALUE = {
   Spring: "1",
   Summer: "2",
-  Fall:   "3",
+  Fall:   "3"
 }
 
 // Produces a descending date-ordered list from bucket values like '2016 - Fall'
@@ -74,9 +74,9 @@ const sortSemesterBuckets = R.compose(
       yearSeasonArr =>
         `${yearSeasonArr[0]}${SEMESTER_SEASON_NUMBER_VALUE[yearSeasonArr[1]]}`,
       R.split(/[^\w]+/),
-      R.prop("key"),
-    ),
-  ),
+      R.prop("key")
+    )
+  )
 )
 
 export const sortOptions: Array<SearchSortItem> = [
@@ -85,45 +85,45 @@ export const sortOptions: Array<SearchSortItem> = [
     key:    "name_a_z",
     fields: [
       { field: "profile.last_name", options: { order: "asc" } },
-      { field: "profile.first_name", options: { order: "asc" } },
-    ],
+      { field: "profile.first_name", options: { order: "asc" } }
+    ]
   },
   {
     label:  "Last Name Z-A",
     key:    "name_z_a",
     fields: [
       { field: "profile.last_name", options: { order: "desc" } },
-      { field: "profile.first_name", options: { order: "desc" } },
-    ],
+      { field: "profile.first_name", options: { order: "desc" } }
+    ]
   },
   {
     label: "Grade High-to-low",
     field: "program.grade_average",
     order: "desc",
-    key:   "grade-high-low",
+    key:   "grade-high-low"
   },
   {
     label: "Grade Low-to-High",
     field: "program.grade_average",
     order: "asc",
-    key:   "grade-low-high",
+    key:   "grade-low-high"
   },
   {
     label:  "Country A-Z",
     key:    "loc-a-z",
     fields: [
       { field: "profile.country", options: { order: "asc" } },
-      { field: "profile.city", options: { order: "asc" } },
-    ],
+      { field: "profile.city", options: { order: "asc" } }
+    ]
   },
   {
     label:  "Country Z-A",
     key:    "loc-z-a",
     fields: [
       { field: "profile.country", options: { order: "desc" } },
-      { field: "profile.city", options: { order: "desc" } },
-    ],
-  },
+      { field: "profile.city", options: { order: "desc" } }
+    ]
+  }
 ]
 
 export default class LearnerSearch extends SearchkitComponent {
@@ -133,12 +133,12 @@ export default class LearnerSearch extends SearchkitComponent {
     openSearchResultEmailComposer: (searchkit: Object) => void,
     openLearnerEmailComposer: (profile: Profile) => void,
     children: React$Element<*>[],
-    currentProgramEnrollment: AvailableProgram,
+    currentProgramEnrollment: AvailableProgram
   }
 
   dropdownOptions: Option[] = [
     { value: "name", label: "Sort: name" },
-    { value: "dob", label: "Sort: dob" },
+    { value: "dob", label: "Sort: dob" }
   ]
 
   translations: Object = makeTranslations()
@@ -147,7 +147,7 @@ export default class LearnerSearch extends SearchkitComponent {
     super(props)
     this.WrappedLearnerResult = wrapWithProps(
       { openLearnerEmailComposer: this.props.openLearnerEmailComposer },
-      LearnerResult,
+      LearnerResult
     )
   }
 
@@ -157,11 +157,13 @@ export default class LearnerSearch extends SearchkitComponent {
   }
 
   renderSearchHeader = (): React$Element<*> | null => {
-    const { openSearchResultEmailComposer, currentProgramEnrollment } =
-      this.props
+    const {
+      openSearchResultEmailComposer,
+      currentProgramEnrollment
+    } = this.props
     const canEmailLearners = canMessageLearnersProgram(
       currentProgramEnrollment,
-      SETTINGS.roles,
+      SETTINGS.roles
     )
 
     if (_.isNull(this.getResults())) {
@@ -176,7 +178,7 @@ export default class LearnerSearch extends SearchkitComponent {
               id="email-selected"
               className="mdl-button minor-action"
               onClick={R.partial(openSearchResultEmailComposer, [
-                this.searchkit,
+                this.searchkit
               ])}
             >
               Email Selected
@@ -194,11 +196,11 @@ export default class LearnerSearch extends SearchkitComponent {
               "profile.preferred_name.folded",
               "profile.username.folded",
               "profile.full_name.folded",
-              "email.folded",
+              "email.folded"
             ]}
             queryOptions={{
               analyzer: "folding",
-              type:     "phrase_prefix",
+              type:     "phrase_prefix"
             }}
           />
           <Pagination
@@ -223,7 +225,7 @@ export default class LearnerSearch extends SearchkitComponent {
   isFilterSelected = (filterName: string) => {
     const nestedList = findObjByName(
       R.pathOr([], ["bool", "must"], this.getQuery().query.post_filter),
-      "nested",
+      "nested"
     )
 
     for (const obj of nestedList) {
@@ -262,7 +264,7 @@ export default class LearnerSearch extends SearchkitComponent {
             field="program.courses.course_title"
             fieldOptions={{
               type:    "nested",
-              options: { path: "program.courses" },
+              options: { path: "program.courses" }
             }}
             title=""
             id="courses"
@@ -274,7 +276,7 @@ export default class LearnerSearch extends SearchkitComponent {
               field="program.courses.final_grade"
               fieldOptions={{
                 type:    "nested",
-                options: { path: "program.courses" },
+                options: { path: "program.courses" }
               }}
               id="final-grade"
               min={0}
@@ -295,7 +297,7 @@ export default class LearnerSearch extends SearchkitComponent {
             title=""
             fieldOptions={{
               type:    "nested",
-              options: { path: "program.course_runs" },
+              options: { path: "program.course_runs" }
             }}
             field="program.course_runs.semester"
             operator="OR"

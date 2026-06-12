@@ -18,7 +18,7 @@ describe("CountryRefinementOption", () => {
     label:   "AF",
     active:  false,
     onClick: onClick,
-    count:   42,
+    count:   42
   }
 
   const renderFullCountryOption = props =>
@@ -45,7 +45,7 @@ describe("CountryRefinementOption", () => {
     const componentTree = renderFullCountryOption(props)
     const clickableDiv = ReactTestUtils.findAllInRenderedTree(
       componentTree,
-      () => true,
+      () => true
     )[1]
     ReactTestUtils.Simulate.click(clickableDiv)
     assert(onClick.called, "onClick handler wasn't called")

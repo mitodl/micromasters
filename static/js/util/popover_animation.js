@@ -13,8 +13,8 @@ function getStyles(props, context, state) {
       transition: 0,
       position:   "fixed",
       zIndex:     muiTheme.zIndex.popover,
-      maxHeight:  "100%",
-    },
+      maxHeight:  "100%"
+    }
   }
 }
 
@@ -28,20 +28,20 @@ export default class PopoverNullAnimation extends Component {
      */
     style:        PropTypes.object,
     targetOrigin: PropTypes.string.isRequired,
-    zDepth:       PropTypes.number,
+    zDepth:       PropTypes.number
   }
 
   static defaultProps = {
     style:  {},
-    zDepth: 1,
+    zDepth: 1
   }
 
   static contextTypes = {
-    muiTheme: PropTypes.object.isRequired,
+    muiTheme: PropTypes.object.isRequired
   }
 
   state = {
-    open: false,
+    open: false
   }
 
   componentDidMount() {
@@ -50,7 +50,7 @@ export default class PopoverNullAnimation extends Component {
 
   getDerivedStateFromProps(nextProps: any) {
     this.setState({
-      open: nextProps.open,
+      open: nextProps.open
     })
   }
 

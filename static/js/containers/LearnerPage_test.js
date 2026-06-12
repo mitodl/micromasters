@@ -20,11 +20,11 @@ import {
   CLEAR_PROFILE_EDIT,
   requestPatchUserProfile,
   startProfileEdit,
-  updateProfile,
+  updateProfile
 } from "../actions/profile"
 import {
   REQUEST_GET_PROGRAM_ENROLLMENTS,
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
 } from "../actions/programs"
 import {
   setShowWorkDeleteDialog,
@@ -39,7 +39,7 @@ import {
   SET_DELETION_INDEX,
   SET_SHOW_WORK_DELETE_DIALOG,
   SET_SHOW_EDUCATION_DELETE_DIALOG,
-  showDialog,
+  showDialog
 } from "../actions/ui"
 
 import { USER_PROFILE_RESPONSE, DASHBOARD_RESPONSE } from "../test_constants"
@@ -48,7 +48,7 @@ import {
   generateNewEducation,
   generateNewWorkHistory,
   getPreferredName,
-  wait,
+  wait
 } from "../util/util"
 import IntegrationTestHelper from "../util/integration_test_helper"
 import * as api from "../lib/api"
@@ -58,16 +58,16 @@ import {
   modifyTextField,
   activeDeleteDialog,
   modifySelectField,
-  clearSelectField,
+  clearSelectField
 } from "../util/test_utils"
 import StaffLearnerInfoCard from "../components/StaffLearnerInfoCard"
 import {
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
-  RECEIVE_DASHBOARD_FAILURE,
+  RECEIVE_DASHBOARD_FAILURE
 } from "../actions/dashboard"
 import Grades, {
-  gradeDetailPopupKey,
+  gradeDetailPopupKey
 } from "../components/dashboard/courses/Grades"
 import { COURSE_GRADE } from "./DashboardPage"
 
@@ -81,7 +81,7 @@ describe("LearnerPage", function() {
     REQUEST_GET_USER_PROFILE,
     RECEIVE_GET_USER_PROFILE_SUCCESS,
     REQUEST_GET_USER_PROFILE,
-    RECEIVE_GET_USER_PROFILE_SUCCESS,
+    RECEIVE_GET_USER_PROFILE_SUCCESS
   ]
 
   const confirmResumeOrder = (
@@ -89,17 +89,17 @@ describe("LearnerPage", function() {
     profileProperty,
     sortFunc,
     editActions,
-    dialogIndexProperty,
+    dialogIndexProperty
   ) => {
     let state = helper.store.getState()
     const sorted = sortFunc(
-      state.profiles[SETTINGS.user.username].profile[profileProperty],
+      state.profiles[SETTINGS.user.username].profile[profileProperty]
     )
 
     // sorted entries should not equal unsorted entries
     assert.notDeepEqual(
       state.profiles[SETTINGS.user.username].profile[profileProperty],
-      sorted.map(([, entry]) => entry),
+      sorted.map(([, entry]) => entry)
     )
 
     return listenForActions(editActions, () => {
@@ -147,9 +147,9 @@ describe("LearnerPage", function() {
           assert.equal(
             1,
             wrapper.find(".micromasters-nav").find("a[href='/dashboard']")
-              .length,
+              .length
           )
-        },
+        }
       )
     })
 
@@ -158,10 +158,10 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, userActions).then(
         ([, div]) => {
           const logout = [...div.getElementsByTagName("a")].find(
-            link => link.textContent === "Logout",
+            link => link.textContent === "Logout"
           )
           assert.ok(logout)
-        },
+        }
       )
     })
 
@@ -176,19 +176,19 @@ describe("LearnerPage", function() {
         SET_LEARNER_PAGE_DIALOG_VISIBILITY,
         START_PROFILE_EDIT,
         UPDATE_PROFILE,
-        UPDATE_PROFILE_VALIDATION,
+        UPDATE_PROFILE_VALIDATION
       ]
 
       const userProfileActions = scrollActions.concat([
         UPDATE_PROFILE,
-        UPDATE_PROFILE_VALIDATION,
+        UPDATE_PROFILE_VALIDATION
       ])
 
       const clearValidation = (
         actions,
         getInput,
         validationExpectation,
-        removeErrorValue,
+        removeErrorValue
       ) => {
         const username = SETTINGS.user.username
         return renderComponent(`/learner/${username}`, userActions).then(
@@ -210,7 +210,7 @@ describe("LearnerPage", function() {
               const state = helper.store.getState()
               assert.deepEqual(
                 state.profiles.jane.edit.errors,
-                validationExpectation,
+                validationExpectation
               )
 
               // run the 'remove error' function if it's a function
@@ -223,7 +223,7 @@ describe("LearnerPage", function() {
               const state = helper.store.getState()
               assert.deepEqual(state.profiles.jane.edit.errors, {})
             })
-          },
+          }
         )
       }
 
@@ -246,7 +246,7 @@ describe("LearnerPage", function() {
                 assert(helper.scrollIntoViewStub.called, "Not called yet")
               })
             })
-          },
+          }
         )
       }
 
@@ -259,11 +259,11 @@ describe("LearnerPage", function() {
             userProfileActions.concat([
               UPDATE_PROFILE_VALIDATION,
               UPDATE_VALIDATION_VISIBILITY,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
             preferredName,
             { preferred_name: "Nickname / Preferred name is required" },
-            USER_PROFILE_RESPONSE.preferred_name,
+            USER_PROFILE_RESPONSE.preferred_name
           )
         })
 
@@ -272,9 +272,9 @@ describe("LearnerPage", function() {
             scrollActions.concat([
               UPDATE_PROFILE_VALIDATION,
               UPDATE_VALIDATION_VISIBILITY,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
-            preferredName,
+            preferredName
           )
         })
       })
@@ -286,11 +286,11 @@ describe("LearnerPage", function() {
           return clearValidation(
             userProfileActions.concat([
               UPDATE_PROFILE_VALIDATION,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
             dobMonth,
             { date_of_birth: "Please enter a valid date of birth" },
-            String(moment(USER_PROFILE_RESPONSE.date_of_birth).month()),
+            String(moment(USER_PROFILE_RESPONSE.date_of_birth).month())
           )
         })
 
@@ -298,9 +298,9 @@ describe("LearnerPage", function() {
           return scrollIntoView(
             scrollActions.concat([
               UPDATE_PROFILE_VALIDATION,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
-            dobMonth,
+            dobMonth
           )
         })
       })
@@ -308,14 +308,14 @@ describe("LearnerPage", function() {
       describe("select field", () => {
         const languageField = dialog => {
           const select = dialog.querySelector(
-            ".select-field.preferred-language",
+            ".select-field.preferred-language"
           )
           clearSelectField(select)
         }
 
         const removeError = dialog => {
           const select = dialog.querySelector(
-            ".select-field.preferred-language",
+            ".select-field.preferred-language"
           )
           modifySelectField(select, USER_PROFILE_RESPONSE.preferred_language)
         }
@@ -324,11 +324,11 @@ describe("LearnerPage", function() {
           return clearValidation(
             userProfileActions.concat([
               UPDATE_PROFILE_VALIDATION,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
             languageField,
             { preferred_language: "Preferred language is required" },
-            removeError,
+            removeError
           )
         })
 
@@ -336,10 +336,10 @@ describe("LearnerPage", function() {
           return scrollIntoView(
             scrollActions.concat([
               UPDATE_PROFILE_VALIDATION,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
             languageField,
-            true,
+            true
           )
         })
       })
@@ -354,7 +354,7 @@ describe("LearnerPage", function() {
             const profile = _.cloneDeep(USER_PROFILE_RESPONSE)
             profile.gender = undefined
             helper.store.dispatch(
-              updateProfile(SETTINGS.user.username, profile),
+              updateProfile(SETTINGS.user.username, profile)
             )
           }
 
@@ -366,11 +366,11 @@ describe("LearnerPage", function() {
             userProfileActions.concat([
               START_PROFILE_EDIT,
               UPDATE_VALIDATION_VISIBILITY,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
             createValidationError,
             { gender: "Gender is required" },
-            removeErrorValue,
+            removeErrorValue
           )
         })
 
@@ -379,9 +379,9 @@ describe("LearnerPage", function() {
             scrollActions.concat([
               UPDATE_PROFILE_VALIDATION,
               UPDATE_VALIDATION_VISIBILITY,
-              UPDATE_VALIDATION_VISIBILITY,
+              UPDATE_VALIDATION_VISIBILITY
             ]),
-            genderField,
+            genderField
           )
         })
       })
@@ -406,7 +406,7 @@ describe("LearnerPage", function() {
           school_city:               "Cambridge",
           school_state_or_territory: "US-MA",
           school_country:            "US",
-          online_degree:             false,
+          online_degree:             false
         })
         helper.profileGetStub
           .withArgs(SETTINGS.user.username)
@@ -419,7 +419,7 @@ describe("LearnerPage", function() {
           ([, div]) => {
             const title = div.getElementsByClassName("profile-card-header")[0]
             assert.equal(title.textContent, "Education")
-          },
+          }
         )
       })
 
@@ -438,11 +438,11 @@ describe("LearnerPage", function() {
               [
                 SET_EDUCATION_DIALOG_INDEX,
                 SET_EDUCATION_DIALOG_VISIBILITY,
-                SET_EDUCATION_DEGREE_LEVEL,
+                SET_EDUCATION_DEGREE_LEVEL
               ],
-              "educationDialogIndex",
+              "educationDialogIndex"
             )
-          },
+          }
         )
       })
 
@@ -458,17 +458,18 @@ describe("LearnerPage", function() {
                 SET_SHOW_EDUCATION_DELETE_DIALOG,
                 SET_SHOW_EDUCATION_DELETE_DIALOG,
                 SET_SHOW_WORK_DELETE_DIALOG,
-                SET_DELETION_INDEX,
+                SET_DELETION_INDEX
               ],
               () => {
                 ReactTestUtils.Simulate.click(button)
                 const dialog = activeDeleteDialog()
-                const cancelButton =
-                  dialog.getElementsByClassName("cancel-button")[0]
+                const cancelButton = dialog.getElementsByClassName(
+                  "cancel-button"
+                )[0]
                 ReactTestUtils.Simulate.click(cancelButton)
-              },
+              }
             )
-          },
+          }
         )
       })
 
@@ -478,7 +479,7 @@ describe("LearnerPage", function() {
           ([, div]) => {
             const expectedProfile = _.cloneDeep(userProfile)
             const sortedEducationEntries = educationEntriesByDate(
-              expectedProfile.education,
+              expectedProfile.education
             )
             const indexOfFirstEntry = sortedEducationEntries[0][0]
             expectedProfile.education.splice(indexOfFirstEntry, 1)
@@ -502,17 +503,18 @@ describe("LearnerPage", function() {
                 REQUEST_PATCH_USER_PROFILE,
                 RECEIVE_PATCH_USER_PROFILE_SUCCESS,
                 UPDATE_VALIDATION_VISIBILITY,
-                CLEAR_PROFILE_EDIT,
+                CLEAR_PROFILE_EDIT
               ],
               () => {
                 ReactTestUtils.Simulate.click(firstEducationDeleteButton)
                 const dialog = activeDeleteDialog()
-                const confirmButton =
-                  dialog.getElementsByClassName("delete-button")[0]
+                const confirmButton = dialog.getElementsByClassName(
+                  "delete-button"
+                )[0]
                 ReactTestUtils.Simulate.click(confirmButton)
-              },
+              }
             )
-          },
+          }
         )
       })
 
@@ -524,7 +526,7 @@ describe("LearnerPage", function() {
           helper.store.dispatch(setShowEducationDeleteDialog(true))
           const dialogActionsSpy = helper.sandbox.spy(
             inputUtil,
-            "dialogActions",
+            "dialogActions"
           )
           return renderComponent(`/learner/${username}`, userActions).then(
             () => {
@@ -536,10 +538,10 @@ describe("LearnerPage", function() {
                   sinon.match.any,
                   sinon.match.any,
                   activity,
-                  "Delete",
-                ),
+                  "Delete"
+                )
               )
-            },
+            }
           )
         })
       }
@@ -557,18 +559,18 @@ describe("LearnerPage", function() {
               [
                 SET_EDUCATION_DIALOG_INDEX,
                 SET_EDUCATION_DIALOG_VISIBILITY,
-                SET_EDUCATION_DEGREE_LEVEL,
+                SET_EDUCATION_DEGREE_LEVEL
               ],
               () => {
                 ReactTestUtils.Simulate.click(editButton)
 
                 assert.equal(
                   document.querySelector(".dialog-title h2").innerHTML,
-                  "Edit Doctorate",
+                  "Edit Doctorate"
                 )
-              },
+              }
             )
-          },
+          }
         )
       })
 
@@ -585,12 +587,12 @@ describe("LearnerPage", function() {
               graduation_date_edit: {
                 year:  "1999",
                 month: "12",
-                day:   undefined,
+                day:   undefined
               },
               school_name:               "A School",
               school_country:            "AF",
               school_state_or_territory: "AF-BAL",
-              school_city:               "FoobarVille",
+              school_city:               "FoobarVille"
             }
             expectedProfile.education.push(entry)
 
@@ -609,7 +611,7 @@ describe("LearnerPage", function() {
               UPDATE_PROFILE_VALIDATION,
               REQUEST_PATCH_USER_PROFILE,
               RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-              CLEAR_PROFILE_EDIT,
+              CLEAR_PROFILE_EDIT
             ]
             for (let i = 0; i < 8; i++) {
               expectedActions.push(UPDATE_PROFILE)
@@ -626,7 +628,7 @@ describe("LearnerPage", function() {
 
               assert.equal(
                 document.querySelector("h2").innerHTML,
-                "Add a High school",
+                "Add a High school"
               )
 
               const dialog = document.querySelector(".education-dialog")
@@ -636,7 +638,7 @@ describe("LearnerPage", function() {
               const modifyEducationSelect = (label, value) => {
                 modifySelectField(
                   dialog.querySelector(`.select-field${label}`),
-                  value,
+                  value
                 )
               }
 
@@ -655,7 +657,7 @@ describe("LearnerPage", function() {
               const save = dialog.querySelector(".save-button")
               ReactTestUtils.Simulate.click(save)
             })
-          },
+          }
         )
       })
 
@@ -664,7 +666,7 @@ describe("LearnerPage", function() {
           const username = SETTINGS.user.username
           const dialogActionsSpy = helper.sandbox.spy(
             inputUtil,
-            "dialogActions",
+            "dialogActions"
           )
           return renderComponent(`/learner/${username}`, userActions).then(
             () => {
@@ -675,10 +677,10 @@ describe("LearnerPage", function() {
                 dialogActionsSpy.calledWith(
                   sinon.match.any,
                   sinon.match.any,
-                  activity,
-                ),
+                  activity
+                )
               )
-            },
+            }
           )
         })
       }
@@ -702,7 +704,7 @@ describe("LearnerPage", function() {
               .hostNodes()
               .text()
             assert.equal(headerText, "Employment")
-          },
+          }
         )
       })
 
@@ -720,9 +722,9 @@ describe("LearnerPage", function() {
               "work_history",
               workEntriesByDate,
               [SET_WORK_DIALOG_INDEX, SET_WORK_DIALOG_VISIBILITY],
-              "workDialogIndex",
+              "workDialogIndex"
             )
-          },
+          }
         )
       })
 
@@ -738,17 +740,18 @@ describe("LearnerPage", function() {
                 SET_SHOW_WORK_DELETE_DIALOG,
                 SET_SHOW_WORK_DELETE_DIALOG,
                 SET_SHOW_EDUCATION_DELETE_DIALOG,
-                SET_DELETION_INDEX,
+                SET_DELETION_INDEX
               ],
               () => {
                 ReactTestUtils.Simulate.click(button)
                 const dialog = activeDeleteDialog()
-                const cancelButton =
-                  dialog.getElementsByClassName("cancel-button")[0]
+                const cancelButton = dialog.getElementsByClassName(
+                  "cancel-button"
+                )[0]
                 ReactTestUtils.Simulate.click(cancelButton)
-              },
+              }
             )
-          },
+          }
         )
       })
 
@@ -770,7 +773,7 @@ describe("LearnerPage", function() {
               .textContent.split(",")[0]
 
             const indexToDelete = USER_PROFILE_RESPONSE.work_history.findIndex(
-              entry => entry.company_name === employerName,
+              entry => entry.company_name === employerName
             )
 
             updatedProfile.work_history.splice(indexToDelete, 1)
@@ -792,16 +795,16 @@ describe("LearnerPage", function() {
                 SET_DELETION_INDEX,
                 REQUEST_PATCH_USER_PROFILE,
                 RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-                CLEAR_PROFILE_EDIT,
+                CLEAR_PROFILE_EDIT
               ],
               () => {
                 ReactTestUtils.Simulate.click(deleteButton)
                 const dialog = activeDeleteDialog()
                 const button = dialog.getElementsByClassName("delete-button")[0]
                 ReactTestUtils.Simulate.click(button)
-              },
+              }
             )
-          },
+          }
         )
       })
 
@@ -813,7 +816,7 @@ describe("LearnerPage", function() {
           helper.store.dispatch(setShowWorkDeleteDialog(true))
           const dialogActionsSpy = helper.sandbox.spy(
             inputUtil,
-            "dialogActions",
+            "dialogActions"
           )
           return renderComponent(`/learner/${username}`, userActions).then(
             () => {
@@ -825,10 +828,10 @@ describe("LearnerPage", function() {
                   sinon.match.any,
                   sinon.match.any,
                   activity,
-                  "Delete",
-                ),
+                  "Delete"
+                )
               )
-            },
+            }
           )
         })
       }
@@ -849,11 +852,11 @@ describe("LearnerPage", function() {
 
                 assert.equal(
                   document.querySelector("h2").innerHTML,
-                  "Edit Employment",
+                  "Edit Employment"
                 )
-              },
+              }
             )
-          },
+          }
         )
       })
 
@@ -876,17 +879,17 @@ describe("LearnerPage", function() {
               start_date_edit: {
                 year:  "2001",
                 month: "12",
-                day:   undefined,
+                day:   undefined
               },
               end_date:      "2002-01-01",
               end_date_edit: {
                 year:  "2002",
                 month: "01",
-                day:   undefined,
+                day:   undefined
               },
               city:               "FoobarVille",
               country:            "AF",
-              state_or_territory: "AF-BAL",
+              state_or_territory: "AF-BAL"
             }
             updatedProfile.work_history.push(entry)
 
@@ -902,7 +905,7 @@ describe("LearnerPage", function() {
               SET_WORK_DIALOG_VISIBILITY,
               UPDATE_PROFILE_VALIDATION,
               REQUEST_PATCH_USER_PROFILE,
-              RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+              RECEIVE_PATCH_USER_PROFILE_SUCCESS
             ]
             for (let i = 0; i < 10; i++) {
               expectedActions.push(UPDATE_PROFILE)
@@ -917,7 +920,7 @@ describe("LearnerPage", function() {
 
               assert.equal(
                 document.querySelector("h2").innerHTML,
-                "Add Employment",
+                "Add Employment"
               )
               const dialog = document.querySelector(".employment-dialog")
               const grid = dialog.querySelector(".profile-tab-grid")
@@ -926,7 +929,7 @@ describe("LearnerPage", function() {
               const modifyWorkSelect = (label, value) => {
                 modifySelectField(
                   dialog.querySelector(`.select-field${label}`),
-                  value,
+                  value
                 )
               }
 
@@ -953,7 +956,7 @@ describe("LearnerPage", function() {
               const button = dialog.querySelector(".save-button")
               ReactTestUtils.Simulate.click(button)
             })
-          },
+          }
         )
       })
 
@@ -962,7 +965,7 @@ describe("LearnerPage", function() {
           const username = SETTINGS.user.username
           const dialogActionsSpy = helper.sandbox.spy(
             inputUtil,
-            "dialogActions",
+            "dialogActions"
           )
           return renderComponent(`/learner/${username}`, userActions).then(
             () => {
@@ -973,10 +976,10 @@ describe("LearnerPage", function() {
                 dialogActionsSpy.calledWith(
                   sinon.match.any,
                   sinon.match.any,
-                  activity,
-                ),
+                  activity
+                )
               )
-            },
+            }
           )
         })
       }
@@ -987,10 +990,10 @@ describe("LearnerPage", function() {
         const username = SETTINGS.user.username
         return renderComponent(`/learner/${username}`, userActions).then(
           ([, div]) => {
-            const name =
-              div.getElementsByClassName("profile-title")[0].textContent
+            const name = div.getElementsByClassName("profile-title")[0]
+              .textContent
             assert.deepEqual(name, getPreferredName(USER_PROFILE_RESPONSE))
-          },
+          }
         )
       })
 
@@ -999,7 +1002,7 @@ describe("LearnerPage", function() {
         return renderComponent(`/learner/${username}`, userActions).then(
           ([, div]) => {
             assert.isNull(div.querySelector(".profile-email"))
-          },
+          }
         )
       })
 
@@ -1007,15 +1010,15 @@ describe("LearnerPage", function() {
         helper.profileGetStub.withArgs(SETTINGS.user.username).returns(
           Promise.resolve({
             ...USER_PROFILE_RESPONSE,
-            email: null,
-          }),
+            email: null
+          })
         )
 
         const username = SETTINGS.user.username
         return renderComponent(`/learner/${username}`, userActions).then(
           ([, div]) => {
             assert.isNull(div.querySelector(".profile-email"))
-          },
+          }
         )
       })
 
@@ -1024,7 +1027,7 @@ describe("LearnerPage", function() {
         const newFirstName = "New name"
         const expectedProfile = {
           ...USER_PROFILE_RESPONSE,
-          first_name: newFirstName,
+          first_name: newFirstName
         }
         patchUserProfileStub
           .withArgs(username, expectedProfile)
@@ -1034,14 +1037,14 @@ describe("LearnerPage", function() {
           // eslint-disable-next-line comma-spacing
           ([,]) => {
             const personalButton = document.querySelector(
-              ".edit-personal-info-button",
+              ".edit-personal-info-button"
             )
 
             return listenForActions(
               [SET_LEARNER_PAGE_DIALOG_VISIBILITY, START_PROFILE_EDIT],
               () => {
                 ReactTestUtils.Simulate.click(personalButton)
-              },
+              }
             ).then(() => {
               const dialog = document.querySelector(".personal-dialog")
               const inputs = dialog.getElementsByTagName("input")
@@ -1050,33 +1053,33 @@ describe("LearnerPage", function() {
                 [
                   UPDATE_PROFILE,
                   UPDATE_PROFILE_VALIDATION,
-                  UPDATE_VALIDATION_VISIBILITY,
+                  UPDATE_VALIDATION_VISIBILITY
                 ],
                 () => {
                   modifyTextField(inputs[0], newFirstName)
-                },
+                }
               ).then(() => {
                 return listenForActions(
                   [
                     REQUEST_PATCH_USER_PROFILE,
                     RECEIVE_PATCH_USER_PROFILE_SUCCESS,
                     UPDATE_VALIDATION_VISIBILITY,
-                    UPDATE_PROFILE_VALIDATION,
+                    UPDATE_PROFILE_VALIDATION
                   ],
                   () => {
                     ReactTestUtils.Simulate.click(
-                      dialog.querySelector(".save-button"),
+                      dialog.querySelector(".save-button")
                     )
-                  },
+                  }
                 ).then(state => {
                   assert.deepEqual(
                     state.profiles[username].profile,
-                    expectedProfile,
+                    expectedProfile
                   )
                 })
               })
             })
-          },
+          }
         )
       })
 
@@ -1085,7 +1088,7 @@ describe("LearnerPage", function() {
         const aboutMe = "🐱"
         const expectedProfile = {
           ...USER_PROFILE_RESPONSE,
-          about_me: aboutMe,
+          about_me: aboutMe
         }
         patchUserProfileStub
           .withArgs(username, expectedProfile)
@@ -1099,7 +1102,7 @@ describe("LearnerPage", function() {
               [SET_LEARNER_PAGE_ABOUT_ME_DIALOG_VISIBILITY, START_PROFILE_EDIT],
               () => {
                 ReactTestUtils.Simulate.click(aboutMEBtn)
-              },
+              }
             ).then(() => {
               const dialog = document.querySelector(".about-me-dialog")
               const textarea = dialog.querySelector("textarea:not([readonly])")
@@ -1108,33 +1111,33 @@ describe("LearnerPage", function() {
                 [
                   UPDATE_PROFILE,
                   UPDATE_PROFILE_VALIDATION,
-                  UPDATE_VALIDATION_VISIBILITY,
+                  UPDATE_VALIDATION_VISIBILITY
                 ],
                 () => {
                   modifyTextArea(textarea, aboutMe)
-                },
+                }
               ).then(() => {
                 return listenForActions(
                   [
                     REQUEST_PATCH_USER_PROFILE,
                     RECEIVE_PATCH_USER_PROFILE_SUCCESS,
                     UPDATE_VALIDATION_VISIBILITY,
-                    UPDATE_PROFILE_VALIDATION,
+                    UPDATE_PROFILE_VALIDATION
                   ],
                   () => {
                     ReactTestUtils.Simulate.click(
-                      dialog.querySelector(".save-button"),
+                      dialog.querySelector(".save-button")
                     )
-                  },
+                  }
                 ).then(state => {
                   assert.deepEqual(
                     state.profiles[username].profile,
-                    expectedProfile,
+                    expectedProfile
                   )
                 })
               })
             })
-          },
+          }
         )
       })
 
@@ -1143,7 +1146,7 @@ describe("LearnerPage", function() {
           const username = SETTINGS.user.username
           const dialogActionsSpy = helper.sandbox.spy(
             inputUtil,
-            "dialogActions",
+            "dialogActions"
           )
           return renderComponent(`/learner/${username}`, userActions).then(
             () => {
@@ -1154,10 +1157,10 @@ describe("LearnerPage", function() {
                 dialogActionsSpy.calledWith(
                   sinon.match.any,
                   sinon.match.any,
-                  activity,
-                ),
+                  activity
+                )
               )
-            },
+            }
           )
         })
       }
@@ -1175,16 +1178,16 @@ describe("LearnerPage", function() {
             count,
             3 +
               USER_PROFILE_RESPONSE.work_history.length * 2 +
-              USER_PROFILE_RESPONSE.education.length * 2,
+              USER_PROFILE_RESPONSE.education.length * 2
           )
-        },
+        }
       )
     })
 
     it("should not show any edit, delete icons for other user pages", () => {
       const otherProfile = {
         ...USER_PROFILE_RESPONSE,
-        username: "other",
+        username: "other"
       }
       helper.profileGetStub
         .withArgs("other")
@@ -1195,7 +1198,7 @@ describe("LearnerPage", function() {
         REQUEST_GET_USER_PROFILE,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
         REQUEST_GET_USER_PROFILE,
-        RECEIVE_GET_USER_PROFILE_SUCCESS,
+        RECEIVE_GET_USER_PROFILE_SUCCESS
       ]
       return renderComponent(`/learner/other`, actions).then(([, div]) => {
         const count = div
@@ -1210,27 +1213,27 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, userActions).then(
         ([wrapper]) => {
           assert.equal(wrapper.find(StaffLearnerInfoCard).length, 0)
-        },
+        }
       )
     })
 
     it("should show the staff learner info card, if the user has a staff role", () => {
       const smallDashboard = {
         programs:       DASHBOARD_RESPONSE.programs.slice(0, 1),
-        isEdxDataFresh: true,
+        isEdxDataFresh: true
       }
       helper.dashboardStub.returns(Promise.resolve(smallDashboard))
       const username = SETTINGS.user.username
       SETTINGS.roles.push({ role: "staff", permissions: [] })
       const actions = userActions.concat([
         REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_DASHBOARD_SUCCESS
       ])
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
           wrapper.update()
           assert.equal(wrapper.find(StaffLearnerInfoCard).length, 1)
-        },
+        }
       )
     })
 
@@ -1239,19 +1242,22 @@ describe("LearnerPage", function() {
       SETTINGS.roles.push({ role: "staff", permissions: [] })
       const actions = userActions.concat([
         REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_DASHBOARD_SUCCESS
       ])
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
           wrapper.update()
-          wrapper.find(".open-popup").at(0).simulate("click")
+          wrapper
+            .find(".open-popup")
+            .at(0)
+            .simulate("click")
           const state = helper.store.getState().ui
           const key = gradeDetailPopupKey(
             COURSE_GRADE,
-            DASHBOARD_RESPONSE.programs[0].courses[0].title,
+            DASHBOARD_RESPONSE.programs[0].courses[0].title
           )
           assert.isTrue(state.dialogVisibility[key])
-        },
+        }
       )
     })
 
@@ -1260,20 +1266,26 @@ describe("LearnerPage", function() {
       SETTINGS.roles.push({ role: "staff", permissions: [] })
       const key = gradeDetailPopupKey(
         COURSE_GRADE,
-        DASHBOARD_RESPONSE.programs[0].courses[0].title,
+        DASHBOARD_RESPONSE.programs[0].courses[0].title
       )
       helper.store.dispatch(showDialog(key))
       const actions = userActions.concat([
         REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_DASHBOARD_SUCCESS
       ])
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
           wrapper.update()
-          wrapper.find(Grades).at(0).find(Dialog).at(0).props().onClose()
+          wrapper
+            .find(Grades)
+            .at(0)
+            .find(Dialog)
+            .at(0)
+            .props()
+            .onClose()
           const state = helper.store.getState().ui
           assert.isFalse(state.dialogVisibility[key])
-        },
+        }
       )
     })
 
@@ -1283,12 +1295,12 @@ describe("LearnerPage", function() {
       SETTINGS.roles.push({ role: "staff", permissions: [] })
       const actions = userActions.concat([
         REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_FAILURE,
+        RECEIVE_DASHBOARD_FAILURE
       ])
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
           assert.equal(wrapper.find(StaffLearnerInfoCard).length, 0)
-        },
+        }
       )
     })
   })
@@ -1296,7 +1308,7 @@ describe("LearnerPage", function() {
   describe("Unauthenticated user page", () => {
     const anonymousUserActions = [
       REQUEST_GET_USER_PROFILE,
-      RECEIVE_GET_USER_PROFILE_SUCCESS,
+      RECEIVE_GET_USER_PROFILE_SUCCESS
     ]
     beforeEach(() => {
       helper = new IntegrationTestHelper()
@@ -1318,9 +1330,9 @@ describe("LearnerPage", function() {
         ([wrapper]) => {
           assert.equal(
             1,
-            wrapper.find(".micromasters-nav").find("a[href='/']").length,
+            wrapper.find(".micromasters-nav").find("a[href='/']").length
           )
-        },
+        }
       )
     })
 
@@ -1329,7 +1341,7 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, anonymousUserActions).then(
         ([, div]) => {
           assert.equal(0, div.getElementsByClassName("mdl-button--icon").length)
-        },
+        }
       )
     })
   })

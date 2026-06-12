@@ -11,7 +11,7 @@ import {
   RECEIVE_DASHBOARD_SUCCESS,
   RECEIVE_DASHBOARD_FAILURE,
   CLEAR_DASHBOARD,
-  UPDATE_COURSE_STATUS,
+  UPDATE_COURSE_STATUS
 } from "./dashboard"
 import { assertWithUsernameActionHelper } from "./test_util"
 
@@ -21,7 +21,7 @@ describe("dashboard actions", () => {
       [requestDashboard, REQUEST_DASHBOARD],
       [receiveDashboardSuccess, RECEIVE_DASHBOARD_SUCCESS],
       [receiveDashboardFailure, RECEIVE_DASHBOARD_FAILURE],
-      [clearDashboard, CLEAR_DASHBOARD],
+      [clearDashboard, CLEAR_DASHBOARD]
     ].forEach(assertWithUsernameActionHelper)
   })
 
@@ -31,8 +31,8 @@ describe("dashboard actions", () => {
       type:    UPDATE_COURSE_STATUS,
       payload: {
         courseId: "course_id",
-        status:   "status",
-      },
+        status:   "status"
+      }
     })
   })
 })

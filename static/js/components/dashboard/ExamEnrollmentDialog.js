@@ -12,14 +12,14 @@ import type { Course } from "../../flow/programTypes"
 
 export default class ExamEnrollmentDialog extends React.Component {
   static contextTypes = {
-    router: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired
   }
 
   props: {
     open: boolean,
     course: ?Course,
     setVisibility: (v: boolean) => void,
-    addExamEnrollment: (examCourseId: string) => Promise<*>,
+    addExamEnrollment: (examCourseId: string) => Promise<*>
   }
 
   render() {
@@ -45,7 +45,7 @@ export default class ExamEnrollmentDialog extends React.Component {
       <Dialog
         classes={{
           paper: "dialog exam-enrollment-dialog",
-          root:  "exam-enrollment-dialog-wrapper",
+          root:  "exam-enrollment-dialog-wrapper"
         }}
         open={open}
         onClose={() => setVisibility(false)}
@@ -61,7 +61,7 @@ export default class ExamEnrollmentDialog extends React.Component {
         <DialogActions>
           {[
             singleBtnDialogActions(() => setVisibility(false), "cancel"),
-            examRegisterButton,
+            examRegisterButton
           ]}
         </DialogActions>
       </Dialog>

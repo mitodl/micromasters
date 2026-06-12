@@ -16,11 +16,11 @@ describe("FacultyTile", () => {
           rendition: {
             width:  "50",
             height: "50",
-            file:   "frank.jpg",
-          },
+            file:   "frank.jpg"
+          }
         }}
         {...props}
-      />,
+      />
     )
   }
 

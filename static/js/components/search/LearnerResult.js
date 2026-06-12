@@ -11,7 +11,7 @@ import { SearchkitComponent } from "searchkit"
 import type { SearchResult } from "../../flow/searchTypes"
 
 type LearnerResultProps = {
-  result: { _source: SearchResult },
+  result: { _source: SearchResult }
 }
 
 export default class LearnerResult extends SearchkitComponent {
@@ -23,8 +23,8 @@ export default class LearnerResult extends SearchkitComponent {
   render() {
     const {
       result: {
-        _source: { profile, program },
-      },
+        _source: { profile, program }
+      }
     } = this.props
 
     const showGrade =

@@ -3,28 +3,28 @@ import R from "ramda"
 
 const hasStaffRole = R.propSatisfies(
   R.contains(R.__, ["staff", "instructor"]),
-  "role",
+  "role"
 )
 
 export const hasAnyStaffRole = R.any(hasStaffRole)
 
 const sameProgram = R.curry((program, role) =>
-  R.equals(program.id, R.prop("program", role)),
+  R.equals(program.id, R.prop("program", role))
 )
 
 export const hasStaffForProgram = R.curry((program, roles) =>
-  R.any(R.both(sameProgram(program), hasStaffRole), roles),
+  R.any(R.both(sameProgram(program), hasStaffRole), roles)
 )
 
 export const hasRolePerm = R.curry((perm, role) =>
-  R.propSatisfies(R.contains(perm), "permissions", role),
+  R.propSatisfies(R.contains(perm), "permissions", role)
 )
 
 export const hasPermForProgram = R.curry((perm, program, roles) =>
-  R.any(R.both(sameProgram(program), hasRolePerm(perm)), roles),
+  R.any(R.both(sameProgram(program), hasRolePerm(perm)), roles)
 )
 
 export const canAdvanceSearchProgram = hasPermForProgram("can_advance_search")
 export const canMessageLearnersProgram = hasPermForProgram(
-  "can_message_learners",
+  "can_message_learners"
 )

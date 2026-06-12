@@ -39,7 +39,7 @@ const renderApp = Component => {
         routes={routes}
       />
     </AppContainer>,
-    rootEl,
+    rootEl
   )
 }
 

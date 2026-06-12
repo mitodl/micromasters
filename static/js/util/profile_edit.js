@@ -50,8 +50,8 @@ export function boundTextField(
   label: string,
   {
     multiLine = false,
-    maxLength = 0,
-  }: { multiLine: boolean, maxLength: number } = {},
+    maxLength = 0
+  }: { multiLine: boolean, maxLength: number } = {}
 ): React$Element<*> {
   const {
     profile,
@@ -59,7 +59,7 @@ export function boundTextField(
     updateProfile,
     validator,
     updateValidationVisibility,
-    updateProfileValidation,
+    updateProfileValidation
   } = this.props
 
   const onChange = e => {
@@ -93,7 +93,7 @@ export function boundTextField(
       name={label}
       multiline={multiLine}
       classes={{
-        root: `input-text ${validationErrorSelector(errors, keySet)}`,
+        root: `input-text ${validationErrorSelector(errors, keySet)}`
       }}
       label={label}
       value={getValue()}
@@ -114,7 +114,7 @@ export function boundDateField(
   keySet: string[],
   label: string,
   omitDay: boolean,
-  allowFutureYear: boolean = false,
+  allowFutureYear: boolean = false
 ): React$Element<*> {
   // eslint-disable-line max-len
   const {
@@ -123,7 +123,7 @@ export function boundDateField(
     updateProfile,
     validator,
     updateValidationVisibility,
-    updateProfileValidation,
+    updateProfileValidation
   } = this.props
 
   const onBlur = () => {
@@ -149,14 +149,14 @@ export function boundDateField(
 
 export function boundCheckbox(
   keySet: string[],
-  label: string | React$Element<*>,
+  label: string | React$Element<*>
 ): React$Element<*> {
   const {
     profile,
     errors,
     updateProfile,
     validator,
-    updateValidationVisibility,
+    updateValidationVisibility
   } = this.props
 
   const onChange = e => {
@@ -168,7 +168,7 @@ export function boundCheckbox(
   }
 
   const style = {
-    backgroundColor: "#a31f34",
+    backgroundColor: "#a31f34"
   }
 
   return (
@@ -196,7 +196,7 @@ const onTelChange = R.curry(
       _.set(clone, keySet, newPhoneNumber)
       updateProfile(clone, validator)
     }
-  },
+  }
 )
 
 export function boundTelephoneInput(keySet: string[]): React$Element<*> {
@@ -206,7 +206,7 @@ export function boundTelephoneInput(keySet: string[]): React$Element<*> {
     updateProfile,
     validator,
     updateProfileValidation,
-    updateValidationVisibility,
+    updateValidationVisibility
   } = this.props
 
   const onBlur = () => {
@@ -239,12 +239,12 @@ export function boundTelephoneInput(keySet: string[]): React$Element<*> {
  */
 export function saveProfileStep(
   validator: Validator | UIValidator,
-  isLastStep: boolean = false,
+  isLastStep: boolean = false
 ): Promise<Profile> {
   const { saveProfile, profile, ui } = this.props
   const clone = {
     ...profile,
-    filled_out: profile.filled_out || isLastStep,
+    filled_out: profile.filled_out || isLastStep
   }
 
   if (isLastStep && !profile.filled_out) {

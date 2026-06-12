@@ -9,7 +9,7 @@ export default class CropperWrapper extends React.Component {
   props: {
     updatePhotoEdit: (b: Blob) => void,
     photo: Object,
-    uploaderBodyHeight: () => number,
+    uploaderBodyHeight: () => number
   }
 
   cropperHelper = () => {
@@ -25,7 +25,7 @@ export default class CropperWrapper extends React.Component {
         // eslint-disable-next-line no-invalid-this
         canvas = this.cropper.getCroppedCanvas({
           width:  512,
-          height: 512,
+          height: 512
         })
       }
       canvas.toBlob(blob => updatePhotoEdit(blob), "image/jpeg")

@@ -32,18 +32,18 @@ const emptyMessage = automaticEmails =>
 const notEmpty = R.compose(R.not, R.isEmpty)
 
 type AutomaticEmailsType = RestState<Array<AutomaticEmail>> & {
-  emailsInFlight: Set<number>,
+  emailsInFlight: Set<number>
 }
 
 class AutomaticEmailPage extends React.Component {
   props: {
     automaticEmails: AutomaticEmailsType,
     dispatch: Dispatch,
-    openEmailComposer: (e: string) => (e: AutomaticEmail) => void,
+    openEmailComposer: (e: string) => (e: AutomaticEmail) => void
   }
 
   static contextTypes = {
-    router: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired
   }
 
   componentDidMount() {
@@ -68,20 +68,20 @@ class AutomaticEmailPage extends React.Component {
     const { automaticEmails } = this.props
     return S.maybeToEither(
       emptyMessage(automaticEmails),
-      S.filter(notEmpty, getm("data", automaticEmails)),
+      S.filter(notEmpty, getm("data", automaticEmails))
     )
   }
 
   toggleEmailActive = email => {
     const {
       dispatch,
-      automaticEmails: { emailsInFlight },
+      automaticEmails: { emailsInFlight }
     } = this.props
 
     if (!emailsInFlight.has(email.id)) {
       const updatedEmail = R.evolve(
         { enabled: R.not, query: R.always(undefined) },
-        email,
+        email
       )
       dispatch(toggleEmailPatchInFlight(email.id))
       dispatch(actions.automaticEmails.patch(updatedEmail)).then(() => {
@@ -93,7 +93,7 @@ class AutomaticEmailPage extends React.Component {
   render() {
     const {
       automaticEmails: { emailsInFlight },
-      openEmailComposer,
+      openEmailComposer
     } = this.props
 
     return (
@@ -114,12 +114,12 @@ class AutomaticEmailPage extends React.Component {
 const mapStateToProps = state => ({
   automaticEmails: state.automaticEmails,
   email:           state.email,
-  ui:              state.ui,
+  ui:              state.ui
 })
 
 export default R.compose(
   connect(mapStateToProps),
   withEmailDialog({
-    [AUTOMATIC_EMAIL_ADMIN_TYPE]: AUTOMATIC_EMAIL_ADMIN_CONFIG,
-  }),
+    [AUTOMATIC_EMAIL_ADMIN_TYPE]: AUTOMATIC_EMAIL_ADMIN_CONFIG
+  })
 )(AutomaticEmailPage)

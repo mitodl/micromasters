@@ -8,7 +8,7 @@ describe("SelectField", () => {
       'Create option ""',
       'Create option "test"',
       'Create option "My new option"',
-      'Create option "..asdf anything at all!!!! "',
+      'Create option "..asdf anything at all!!!! "'
     ].forEach(string => {
       it(`should match ${string}`, () => {
         assert.match(string, CREATE_OPTION_REGEX)
@@ -19,7 +19,7 @@ describe("SelectField", () => {
         it(`should not match ${string}`, () => {
           assert.notMatch(string, CREATE_OPTION_REGEX)
         })
-      },
+      }
     )
   })
 })

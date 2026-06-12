@@ -31,7 +31,7 @@ import {
   setShowExpandedCourseStatus,
   setProgramsToUnEnroll,
   setUnEnrollApiInFlightState,
-  SHOW_ENROLL_PAY_LATER_SUCCESS,
+  SHOW_ENROLL_PAY_LATER_SUCCESS
 } from "../actions/ui"
 import { INITIAL_UI_STATE } from "../reducers/ui"
 import rootReducer from "../reducers"
@@ -55,7 +55,7 @@ describe("ui reducers", () => {
     dispatchThen = store.createDispatchThen(state => state.ui)
     assertReducerResultState = createAssertReducerResultState(
       store,
-      state => state.ui,
+      state => state.ui
     )
   })
 
@@ -73,7 +73,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setWorkDialogVisibility,
         ui => ui.workDialogVisibility,
-        false,
+        false
       )
     })
 
@@ -81,12 +81,12 @@ describe("ui reducers", () => {
       assert.equal(store.getState().ui.workHistoryEdit, true)
 
       return dispatchThen(setWorkHistoryEdit(true), [
-        SET_WORK_HISTORY_EDIT,
+        SET_WORK_HISTORY_EDIT
       ]).then(state => {
         assert.equal(state.workHistoryEdit, true)
 
         return dispatchThen(setWorkHistoryEdit(false), [
-          SET_WORK_HISTORY_EDIT,
+          SET_WORK_HISTORY_EDIT
         ]).then(state => {
           assert.equal(state.workHistoryEdit, false)
         })
@@ -97,7 +97,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setWorkDialogIndex,
         ui => ui.workDialogIndex,
-        null,
+        null
       )
     })
 
@@ -105,7 +105,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setWorkHistoryAnswer,
         ui => ui.workHistoryAnswer,
-        null,
+        null
       )
     })
   })
@@ -115,7 +115,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEducationDialogVisibility,
         ui => ui.educationDialogVisibility,
-        false,
+        false
       )
     })
 
@@ -123,7 +123,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEducationDegreeLevel,
         ui => ui.educationDegreeLevel,
-        "",
+        ""
       )
     })
 
@@ -131,7 +131,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEducationDialogIndex,
         ui => ui.educationDialogIndex,
-        -1,
+        -1
       )
     })
 
@@ -139,7 +139,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEducationLevelAnswers,
         ui => ui.educationLevelAnswers,
-        {},
+        {}
       )
     })
   })
@@ -149,7 +149,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setLearnerPageDialogVisibility,
         ui => ui.learnerPageDialogVisibility,
-        false,
+        false
       )
     })
   })
@@ -159,7 +159,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setShowEducationDeleteDialog,
         ui => ui.showEducationDeleteDialog,
-        false,
+        false
       )
     })
 
@@ -167,7 +167,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setShowWorkDeleteDialog,
         ui => ui.showWorkDeleteDialog,
-        false,
+        false
       )
     })
 
@@ -187,7 +187,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setSearchFilterVisibility,
         ui => ui.searchFilterVisibility,
-        {},
+        {}
       )
     })
   })
@@ -197,7 +197,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEmailDialogVisibility,
         ui => ui.emailDialogVisibility,
-        false,
+        false
       )
     })
   })
@@ -211,7 +211,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEnrollProgramDialogError,
         ui => ui.enrollProgramDialogError,
-        null,
+        null
       )
     })
 
@@ -219,7 +219,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEnrollProgramDialogVisibility,
         ui => ui.enrollProgramDialogVisibility,
-        false,
+        false
       )
     })
 
@@ -227,7 +227,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEnrollSelectedProgram,
         ui => ui.enrollSelectedProgram,
-        null,
+        null
       )
     })
   })
@@ -237,7 +237,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEnrollCourseDialogVisibility,
         ui => ui.enrollCourseDialogVisibility,
-        false,
+        false
       )
     })
 
@@ -245,7 +245,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setEnrollSelectedCourseRun,
         ui => ui.enrollSelectedCourseRun,
-        null,
+        null
       )
     })
   })
@@ -255,7 +255,7 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setConfirmSkipDialogVisibility,
         ui => ui.skipDialogVisibility,
-        false,
+        false
       )
     })
   })
@@ -265,25 +265,21 @@ describe("ui reducers", () => {
       assertReducerResultState(
         setDocsInstructionsVisibility,
         ui => ui.docsInstructionsVisibility,
-        false,
+        false
       )
     })
   })
 
   describe("nav drawer", () => {
     it("should let you set the nav drawer visibility", () => {
-      assertReducerResultState(
-        setNavDrawerOpen,
-        ui => ui.navDrawerOpen,
-        false,
-      )
+      assertReducerResultState(setNavDrawerOpen, ui => ui.navDrawerOpen, false)
     })
   })
 
   describe("show enroll pay later success alert", () => {
     it("should let you set the pay later success alert", () => {
       return dispatchThen(showEnrollPayLaterSuccess("foo/bar/baz"), [
-        SHOW_ENROLL_PAY_LATER_SUCCESS,
+        SHOW_ENROLL_PAY_LATER_SUCCESS
       ]).then(state => {
         assert.equal(state.showEnrollPayLaterSuccess, "foo/bar/baz")
       })
@@ -291,7 +287,7 @@ describe("ui reducers", () => {
 
     it("should let you reset the pay later success alert", () => {
       return dispatchThen(showEnrollPayLaterSuccess(null), [
-        SHOW_ENROLL_PAY_LATER_SUCCESS,
+        SHOW_ENROLL_PAY_LATER_SUCCESS
       ]).then(state => {
         assert.deepEqual(state.showEnrollPayLaterSuccess, null)
       })

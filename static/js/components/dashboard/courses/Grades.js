@@ -10,7 +10,7 @@ import { classify } from "../../../util/util"
 import {
   getLargestExamGrade,
   getLargestCourseGrade,
-  passedCourse,
+  passedCourse
 } from "../../../lib/grades"
 import { hasPearsonExam } from "./util"
 import GradeDetailPopup from "./GradeDetailPopup"
@@ -21,7 +21,7 @@ import { EXAM_GRADE, COURSE_GRADE } from "../../../containers/DashboardPage"
 
 export const gradeDetailPopupKey = (
   gradeType: GradeType,
-  courseTitle: string,
+  courseTitle: string
 ) => `${GRADE_DETAIL_DIALOG}${gradeType}${courseTitle}`
 
 const renderGrade = R.curry((caption, grade) => (
@@ -40,15 +40,15 @@ const renderExamGrade = R.ifElse(
   R.compose(
     reduceM("--", renderGrade("Exam Grade")),
     S.map(formatGrade),
-    getLargestExamGrade,
+    getLargestExamGrade
   ),
-  R.always(null),
+  R.always(null)
 )
 
 const renderCourseGrade = R.compose(
   reduceM("--", renderGrade("Course Grade")),
   S.map(formatGrade),
-  getLargestCourseGrade,
+  getLargestCourseGrade
 )
 
 const renderFinalGrade = R.ifElse(
@@ -57,9 +57,9 @@ const renderFinalGrade = R.ifElse(
     reduceM("--", renderGrade("Final Grade")),
     S.map(formatGrade),
     S.filter(R.complement(R.equals(""))),
-    getm("overall_grade"),
+    getm("overall_grade")
   ),
-  R.always(null),
+  R.always(null)
 )
 
 const renderPassed = (course: Course) => {
@@ -80,7 +80,7 @@ const renderPassed = (course: Course) => {
 type CourseGradeProps = {
   course: Course,
   setShowGradeDetailDialog: (b: boolean, g: GradeType, t: string) => void,
-  dialogVisibility: DialogVisibilityState,
+  dialogVisibility: DialogVisibilityState
 }
 
 const Grades = (props: CourseGradeProps) => {

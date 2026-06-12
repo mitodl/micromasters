@@ -15,13 +15,13 @@ import { FETCH_SUCCESS, FETCH_FAILURE } from "../actions"
 import {
   fetchUserProfile,
   clearProfile,
-  startProfileEdit,
+  startProfileEdit
 } from "../actions/profile"
 import {
   addProgramEnrollment,
   clearEnrollments,
   fetchProgramEnrollments,
-  setCurrentProgramEnrollment,
+  setCurrentProgramEnrollment
 } from "../actions/programs"
 import {
   setEnrollProgramDialogError,
@@ -29,13 +29,13 @@ import {
   setToastMessage,
   setEnrollSelectedProgram,
   setNavDrawerOpen,
-  clearUI,
+  clearUI
 } from "../actions/ui"
 import { validateProfileComplete } from "../lib/validation/profile"
 import { currentOrFirstIncompleteStep } from "../util/util"
 import type {
   AvailableProgram,
-  AvailableProgramsState,
+  AvailableProgramsState
 } from "../flow/enrollmentTypes"
 import type { ProfileGetResult } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
@@ -54,11 +54,11 @@ class App extends React.Component {
     history: Object,
     ui: UIState,
     signupDialog: Object,
-    shareDialog: Object,
+    shareDialog: Object
   }
 
   static contextTypes = {
-    router: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired
   }
 
   updateRequirements() {
@@ -75,7 +75,7 @@ class App extends React.Component {
   componentDidUpdate(prevProps) {
     const {
       location: { pathname },
-      userProfile: { profile },
+      userProfile: { profile }
     } = this.props
 
     this.updateRequirements()
@@ -103,7 +103,7 @@ class App extends React.Component {
     const {
       userProfile,
       dispatch,
-      location: { pathname },
+      location: { pathname }
     } = this.props
     if (userProfile.getStatus === undefined) {
       dispatch(fetchUserProfile(username)).then(() => {
@@ -120,7 +120,7 @@ class App extends React.Component {
       userProfile,
       userProfile: { profile },
       location: { pathname },
-      ui: { profileStep },
+      ui: { profileStep }
     } = this.props
     const [complete, step] = validateProfileComplete(profile)
     const idealStep = currentOrFirstIncompleteStep(profileStep, step)
@@ -139,8 +139,8 @@ class App extends React.Component {
       setToastMessage({
         message:
           "We need to know a little bit more about you. Please complete your profile.",
-        icon: TOAST_FAILURE,
-      }),
+        icon: TOAST_FAILURE
+      })
     )
   }
 
@@ -188,7 +188,7 @@ class App extends React.Component {
 
   renderToast() {
     const {
-      ui: { toastMessage },
+      ui: { toastMessage }
     } = this.props
     if (!toastMessage) {
       return null
@@ -197,7 +197,7 @@ class App extends React.Component {
     const {
       icon: iconName,
       title: titleText,
-      message: messageText,
+      message: messageText
     } = toastMessage
 
     let icon
@@ -235,10 +235,10 @@ class App extends React.Component {
         enrollProgramDialogError,
         enrollProgramDialogVisibility,
         enrollSelectedProgram,
-        navDrawerOpen,
+        navDrawerOpen
       },
       location: { pathname },
-      userProfile: { profile },
+      userProfile: { profile }
     } = this.props
     let { children } = this.props
     let empty = false
@@ -284,7 +284,7 @@ class App extends React.Component {
 const mapStateToProps = state => {
   const user = SETTINGS.user
   let profile = {
-    profile: {},
+    profile: {}
   }
   if (user && state.profiles[user.username] !== undefined) {
     profile = state.profiles[user.username]
@@ -296,7 +296,7 @@ const mapStateToProps = state => {
     programs:                 state.programs,
     courseEnrollments:        state.courseEnrollments,
     signupDialog:             state.signupDialog,
-    shareDialog:              state.shareDialog,
+    shareDialog:              state.shareDialog
   }
 }
 

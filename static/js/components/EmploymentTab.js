@@ -8,7 +8,7 @@ import {
   combineValidators,
   personalValidation,
   educationValidation,
-  employmentValidation,
+  employmentValidation
 } from "../lib/validation/profile"
 import type { Profile, SaveProfileFunc } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
@@ -22,7 +22,7 @@ class EmploymentTab extends React.Component {
     profilePatchStatus: ?string,
     ui: UIState,
     addProgramEnrollment: (p: number) => void,
-    dispatch: Function,
+    dispatch: Function
   }
 
   componentDidMount() {
@@ -49,7 +49,7 @@ class EmploymentTab extends React.Component {
             validator={combineValidators(
               personalValidation,
               educationValidation,
-              employmentValidation,
+              employmentValidation
             )}
           />
         </div>

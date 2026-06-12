@@ -10,7 +10,7 @@ describe("CustomPaginationDisplay", () => {
   const toggleItemStub = sinon.stub()
   const props = {
     disabled:   false,
-    toggleItem: toggleItemStub,
+    toggleItem: toggleItemStub
   }
 
   afterEach(() => {
@@ -36,8 +36,8 @@ describe("CustomPaginationDisplay", () => {
       target:         {
         getAttribute: (): string => {
           return "previous"
-        },
-      },
+        }
+      }
     }
 
     previousOption.at(0).simulate("click", event, toggleItemStub)
@@ -52,8 +52,8 @@ describe("CustomPaginationDisplay", () => {
       target:         {
         getAttribute: (): string => {
           return "next"
-        },
-      },
+        }
+      }
     }
 
     nextOption.at(0).simulate("click", event, toggleItemStub)

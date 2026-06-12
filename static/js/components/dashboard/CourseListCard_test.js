@@ -14,7 +14,7 @@ import CourseListCard from "./CourseListCard"
 import CourseRow from "./CourseRow"
 import {
   DASHBOARD_RESPONSE,
-  COURSE_PRICES_RESPONSE,
+  COURSE_PRICES_RESPONSE
 } from "../../test_constants"
 import { INITIAL_EMAIL_STATE } from "../../reducers/email"
 import { INITIAL_UI_STATE } from "../../reducers/ui"
@@ -23,7 +23,7 @@ import IntegrationTestHelper from "../../util/integration_test_helper"
 import { Provider } from "react-redux"
 import {
   receiveGetProgramEnrollmentsSuccess,
-  setCurrentProgramEnrollment,
+  setCurrentProgramEnrollment
 } from "../../actions/programs"
 
 describe("CourseListCard", () => {
@@ -33,8 +33,8 @@ describe("CourseListCard", () => {
     program = _.cloneDeep(DASHBOARD_RESPONSE.programs[1])
     coursePrice = _.cloneDeep(
       (COURSE_PRICES_RESPONSE.find(
-        coursePrice => coursePrice.program_id === program.id,
-      ): any),
+        coursePrice => coursePrice.program_id === program.id
+      ): any)
     )
 
     assert.isAbove(program.courses.length, 0)
@@ -50,7 +50,7 @@ describe("CourseListCard", () => {
 
   const renderCourseListCard = (props = {}) => {
     helper.store.dispatch(
-      receiveGetProgramEnrollmentsSuccess(DASHBOARD_RESPONSE.programs),
+      receiveGetProgramEnrollmentsSuccess(DASHBOARD_RESPONSE.programs)
     )
     helper.store.dispatch(setCurrentProgramEnrollment(program))
 
@@ -83,9 +83,9 @@ describe("CourseListCard", () => {
       {
         context:           { router: { push: routerPushStub } },
         childContextTypes: {
-          router: PropTypes.object.isRequired,
-        },
-      },
+          router: PropTypes.object.isRequired
+        }
+      }
     )
   }
 
@@ -94,7 +94,7 @@ describe("CourseListCard", () => {
     const prices = calculatePrices([program], [coursePrice], [])
     const wrapper = renderCourseListCard({
       now:    now,
-      prices: prices,
+      prices: prices
     })
     assert.equal(wrapper.find(CourseRow).length, program.courses.length)
     const courses = _.sortBy(program.courses, "position_in_program")
@@ -108,9 +108,7 @@ describe("CourseListCard", () => {
 
   it("fills in now if it's missing in the props", () => {
     const wrapper = renderCourseListCard()
-    const nows = wrapper
-      .find(CourseRow)
-      .map(courseRow => courseRow.props().now)
+    const nows = wrapper.find(CourseRow).map(courseRow => courseRow.props().now)
     assert.isAbove(nows.length, 0)
     for (const now of nows) {
       // Each now must be exactly the same object

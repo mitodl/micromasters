@@ -10,8 +10,8 @@ export const updateCourseStatus = withUsername(
   UPDATE_COURSE_STATUS,
   (_, courseId, status) => ({
     courseId,
-    status,
-  }),
+    status
+  })
 )
 
 // dashboard list actions
@@ -30,7 +30,7 @@ export const clearDashboard = withUsername(CLEAR_DASHBOARD)
 // eslint-disable-next-line require-jsdoc
 export function fetchDashboard(
   username: string,
-  noSpinner: boolean = false,
+  noSpinner: boolean = false
 ): Dispatcher<void> {
   return (dispatch: Dispatch) => {
     dispatch(requestDashboard(username, noSpinner))
@@ -41,7 +41,7 @@ export function fetchDashboard(
       error => {
         dispatch(receiveDashboardFailure(username, error))
         // the exception is assumed handled and will not be propagated
-      },
+      }
     )
   }
 }

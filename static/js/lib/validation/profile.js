@@ -9,7 +9,7 @@ import type {
   Profile,
   ValidationErrors,
   EducationEntry,
-  WorkHistoryEntry,
+  WorkHistoryEntry
 } from "../../flow/profileTypes"
 import type { UIState } from "../../reducers/ui"
 import type { EmailInputs } from "../../flow/emailTypes"
@@ -20,7 +20,7 @@ import {
   EMPLOYMENT_STEP,
   CP1252_REGEX,
   INVALID_NAME_CHARS_REGEX,
-  RECIPIENT_VARIABLE_NAMES,
+  RECIPIENT_VARIABLE_NAMES
 } from "../../constants"
 import { shouldRenderRomanizedFields } from "../../util/profile_edit"
 
@@ -33,7 +33,7 @@ const filledOutFields = R.compose(R.keys, R.reject(isNilOrEmptyString))
 const findErrors = (
   input: Object,
   requiredKeys: string[],
-  messages: ErrorMessages,
+  messages: ErrorMessages
 ) => R.pick(R.difference(requiredKeys, filledOutFields(input)), messages)
 
 export const checkProp = R.curry((key, message, predicates, profile) => {
@@ -46,12 +46,12 @@ export const checkProp = R.curry((key, message, predicates, profile) => {
 export const checkIsNotNilOrEmpty = checkProp(
   R.__,
   R.__,
-  R.complement(isNilOrEmptyString),
+  R.complement(isNilOrEmptyString)
 )
 
 export const mergeValidations = R.compose(
   R.converge(R.compose(R.mergeAll, Array.of)),
-  Array.of,
+  Array.of
 )
 
 export const checkMaxLength = R.curry((key, label, maxLength, profile) =>
@@ -60,10 +60,10 @@ export const checkMaxLength = R.curry((key, label, maxLength, profile) =>
     `${label} must be no more than ${maxLength} characters`,
     [
       R.complement(isNilOrEmptyString),
-      R.pipe(R.toString, R.prop("length"), R.lte(R.__, maxLength)),
+      R.pipe(R.toString, R.prop("length"), R.lte(R.__, maxLength))
     ],
-    profile,
-  ),
+    profile
+  )
 )
 
 export type Validator = (a: Profile) => ValidationErrors
@@ -104,7 +104,7 @@ const personalMessages: ErrorMessages = {
   birth_country:      "Country is required",
   nationality:        "Nationality is required",
   date_of_birth:      "Please enter a valid date of birth",
-  phone_number:       "A phone number is required",
+  phone_number:       "A phone number is required"
 }
 
 export const checkLatin = R.curry((key, label, profile) =>
@@ -112,8 +112,8 @@ export const checkLatin = R.curry((key, label, profile) =>
     key,
     `${label} must be in Latin characters`,
     [R.complement(isNilOrEmptyString), R.test(CP1252_REGEX)],
-    profile,
-  ),
+    profile
+  )
 )
 
 export const checkInvalidNameChars = R.curry((key, label, profile) =>
@@ -121,8 +121,8 @@ export const checkInvalidNameChars = R.curry((key, label, profile) =>
     key,
     `${label} must not contain comma, double quote, or greater than characters`,
     R.complement(R.test(INVALID_NAME_CHARS_REGEX)),
-    profile,
-  ),
+    profile
+  )
 )
 
 export const checkDateOfBirth: Validator = checkProp(
@@ -130,8 +130,8 @@ export const checkDateOfBirth: Validator = checkProp(
   personalMessages.date_of_birth,
   [
     R.complement(isNilOrEmptyString),
-    dob => moment(dob).isBefore(moment(), "day"),
-  ],
+    dob => moment(dob).isBefore(moment(), "day")
+  ]
 )
 
 export const checkRomanizedNames: Validator = R.ifElse(
@@ -142,17 +142,14 @@ export const checkRomanizedNames: Validator = R.ifElse(
     checkMaxLength("romanized_first_name", "Latin given name", 30),
     checkIsNotNilOrEmpty(
       "romanized_first_name",
-      "Latin given name is required",
+      "Latin given name is required"
     ),
     checkLatin("romanized_last_name", "Latin family name"),
     checkInvalidNameChars("romanized_last_name", "Latin family name"),
     checkMaxLength("romanized_last_name", "Latin family name", 50),
-    checkIsNotNilOrEmpty(
-      "romanized_last_name",
-      "Latin family name is required",
-    ),
+    checkIsNotNilOrEmpty("romanized_last_name", "Latin family name is required")
   ),
-  R.always({}),
+  R.always({})
 )
 
 export const checkPostalCode: Validator = profile => {
@@ -184,13 +181,13 @@ export const checkPhoneNumber: Validator = checkProp(
   "Please enter a valid phone number",
   [
     R.complement(isNilOrEmptyString),
-    phoneNumber => new PhoneNumber(phoneNumber).isValid(),
-  ],
+    phoneNumber => new PhoneNumber(phoneNumber).isValid()
+  ]
 )
 
 const checkPersonalMessages = R.compose(
   R.map(R.apply(checkIsNotNilOrEmpty)),
-  R.toPairs,
+  R.toPairs
 )(personalMessages)
 
 // precedence is bottom-to-top
@@ -213,7 +210,7 @@ export const personalValidation: Validator = mergeValidations(
   // phone number
   checkPhoneNumber,
   // field is required errors first
-  ...checkPersonalMessages,
+  ...checkPersonalMessages
 )
 
 /*
@@ -232,13 +229,13 @@ const nestedValidator = R.curry(
       return {}
     }
     return { [key]: errors }
-  },
+  }
 )
 
 const mergeListOfArgs = R.compose(R.mergeAll, Array)
 
 const extraErrorCheck = R.curry((key, msg, predicate, entry, errors) =>
-  predicate(entry) ? R.merge(errors, { [key]: msg }) : errors,
+  predicate(entry) ? R.merge(errors, { [key]: msg }) : errors
 )
 
 /*
@@ -252,22 +249,22 @@ const educationMessages: ErrorMessages = {
   school_name:               "School name is required",
   school_city:               "City is required",
   school_state_or_territory: "State is required",
-  school_country:            "Country is required",
+  school_country:            "Country is required"
 }
 
 const isHighSchool: (e: EducationEntry) => boolean = R.compose(
   R.equals(HIGH_SCHOOL),
-  R.prop("degree_name"),
+  R.prop("degree_name")
 )
 
 const excludeFieldOfStudy: (k: string[]) => string[] = R.filter(
-  R.compose(R.not, R.equals("field_of_study")),
+  R.compose(R.not, R.equals("field_of_study"))
 )
 
 const educationKeys: (e: EducationEntry) => string[] = R.ifElse(
   isHighSchool,
   R.compose(excludeFieldOfStudy, R.keys),
-  R.keys,
+  R.keys
 )
 
 const schoolLocationIsValid = extraErrorCheck(
@@ -276,19 +273,20 @@ const schoolLocationIsValid = extraErrorCheck(
   entry =>
     isNilOrEmptyString(entry.school_city) ||
     isNilOrEmptyString(entry.school_state_or_territory) ||
-    isNilOrEmptyString(entry.school_country),
+    isNilOrEmptyString(entry.school_country)
 )
 
 const additionalSchoolValidation = R.converge(mergeListOfArgs, [
-  schoolLocationIsValid,
+  schoolLocationIsValid
 ])
 
-const educationErrors: (xs: EducationEntry[]) => ValidationErrors[] = R.map(
-  entry =>
-    additionalSchoolValidation(
-      entry,
-      findErrors(entry, educationKeys(entry), educationMessages),
-    ),
+const educationErrors: (
+  xs: EducationEntry[]
+) => ValidationErrors[] = R.map(entry =>
+  additionalSchoolValidation(
+    entry,
+    findErrors(entry, educationKeys(entry), educationMessages)
+  )
 )
 
 export const educationValidation = nestedValidator("education", educationErrors)
@@ -303,7 +301,7 @@ const workMessages: ErrorMessages = {
   start_date:         "Please enter a valid start date",
   city:               "City is required",
   country:            "Country is required",
-  state_or_territory: "State or Territory is required",
+  state_or_territory: "State or Territory is required"
 }
 
 // functions to perform extra checks
@@ -317,13 +315,13 @@ const endDateNotBeforeStart = extraErrorCheck(
   "End date cannot be before start date",
   entry =>
     !isNilOrEmptyString(entry.end_date) &&
-    moment(entry.end_date).isBefore(entry.start_date, "month"),
+    moment(entry.end_date).isBefore(entry.start_date, "month")
 )
 
 const endDateNotInFuture = extraErrorCheck(
   "end_date",
   "End date cannot be in the future",
-  entry => moment(entry.end_date).isAfter(moment(), "month"),
+  entry => moment(entry.end_date).isAfter(moment(), "month")
 )
 
 const workLocationIsValid = extraErrorCheck(
@@ -332,7 +330,7 @@ const workLocationIsValid = extraErrorCheck(
   entry =>
     isNilOrEmptyString(entry.city) ||
     isNilOrEmptyString(entry.state_or_territory) ||
-    isNilOrEmptyString(entry.country),
+    isNilOrEmptyString(entry.country)
 )
 
 const dateIsValid = extraErrorCheck(
@@ -345,34 +343,35 @@ const dateIsValid = extraErrorCheck(
         isNilOrEmptyString(entry.end_date_edit.year) &&
         isNilOrEmptyString(entry.end_date_edit.month))
     return isNilOrEmptyString(entry.end_date) && !editIsEmpty
-  },
+  }
 )
 
 const additionalWorkValidation = R.converge(mergeListOfArgs, [
   endDateNotBeforeStart,
   endDateNotInFuture,
   dateIsValid,
-  workLocationIsValid,
+  workLocationIsValid
 ])
 
-const workHistoryErrors: (xs: WorkHistoryEntry[]) => ValidationErrors[] = R.map(
-  entry =>
-    additionalWorkValidation(
-      entry,
-      findErrors(entry, R.keys(workMessages), workMessages),
-    ),
+const workHistoryErrors: (
+  xs: WorkHistoryEntry[]
+) => ValidationErrors[] = R.map(entry =>
+  additionalWorkValidation(
+    entry,
+    findErrors(entry, R.keys(workMessages), workMessages)
+  )
 )
 
 export const employmentValidation = nestedValidator(
   "work_history",
-  workHistoryErrors,
+  workHistoryErrors
 )
 
 /*
  * Privacy Validation
  */
 const privacyMessages: ErrorMessages = {
-  account_privacy: "Privacy level is required",
+  account_privacy: "Privacy level is required"
 }
 
 export const privacyValidation = (profile: Profile): ValidationErrors =>
@@ -384,13 +383,13 @@ export const privacyValidation = (profile: Profile): ValidationErrors =>
  */
 const emailMessages: ErrorMessages = {
   subject: "Please fill in a subject",
-  body:    "Please fill in a body",
+  body:    "Please fill in a body"
 }
 
 const emailLinksValid = R.ifElse(
   R.test(/<a.*>.*<\/a>/),
   R.compose(R.not, R.test(/<a\s.*href=("|')(?!http|https|mailto:)/)),
-  R.T,
+  R.T
 )
 
 export const emailValidation = (emailInputs: EmailInputs): ValidationErrors => {

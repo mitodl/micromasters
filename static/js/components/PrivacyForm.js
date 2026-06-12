@@ -15,7 +15,7 @@ import { radioButtons } from "../util/profile_edit"
 import type {
   Profile,
   ValidationErrors,
-  UpdateProfileFunc,
+  UpdateProfileFunc
 } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
 import type { Validator } from "../lib/validation/profile"
@@ -28,7 +28,7 @@ class PrivacyForm extends ProfileFormFields {
     updateProfile: UpdateProfileFunc,
     errors: ValidationErrors,
     updateValidationVisibility: (xs: Array<string>) => void,
-    validator: Validator,
+    validator: Validator
   }
 
   privacyOptions: Array<Option> = [
@@ -36,37 +36,41 @@ class PrivacyForm extends ProfileFormFields {
       value:  "public",
       label:  "Public to the world",
       helper: `Your MicroMasters profile will be
-      visible to all website visitors.`,
+      visible to all website visitors.`
     },
     {
       value:  "public_to_mm",
       label:  "Public to other MicroMasters students",
       helper: `Your profile will be
-      visible to other MicroMasters learners, and to MIT faculty and staff.`,
+      visible to other MicroMasters learners, and to MIT faculty and staff.`
     },
     {
       value:  "private",
       label:  "Private",
       helper: `Your MicroMasters profile will only
-      be visible to MIT faculty and staff.`,
-    },
+      be visible to MIT faculty and staff.`
+    }
   ]
 
   emailOptions: Array<Option> = [
     {
       value: "true",
-      label: "Faculty, staff, and other learners can send me emails",
+      label: "Faculty, staff, and other learners can send me emails"
     },
-    { value: "false", label: "I don't want to receive any emails" },
+    { value: "false", label: "I don't want to receive any emails" }
   ]
 
   radioGroupField(
     keySet: string[],
     label: string,
-    options: Option[],
+    options: Option[]
   ): React$Element<*> {
-    const { profile, updateProfile, validator, updateValidationVisibility } =
-      this.props
+    const {
+      profile,
+      updateProfile,
+      validator,
+      updateValidationVisibility
+    } = this.props
     const onChange = e => {
       const clone = _.cloneDeep(profile)
       let value = e.target.value
@@ -110,7 +114,7 @@ class PrivacyForm extends ProfileFormFields {
                 {this.radioGroupField(
                   ["account_privacy"],
                   "",
-                  this.privacyOptions,
+                  this.privacyOptions
                 )}
               </div>
             </CardContent>

@@ -31,7 +31,7 @@ const renderEmailRow = R.curry(
     emailsInFlight,
     openEmailComposer,
     automaticEmail,
-    idx,
+    idx
   ) => (
     <div className="email-row" key={idx}>
       <div>{automaticEmail.email_subject}</div>
@@ -47,31 +47,35 @@ const renderEmailRow = R.curry(
         <a onClick={() => openEmailComposer(automaticEmail)}>Edit</a>
       </div>
     </div>
-  ),
+  )
 )
 
 const renderEmailRows = (
   toggleEmailActive,
   emailsInFlight,
-  openEmailComposer,
+  openEmailComposer
 ) =>
   R.compose(
     wrapEmailRows,
     R.addIndex(R.map)(
-      renderEmailRow(toggleEmailActive, emailsInFlight, openEmailComposer),
-    ),
+      renderEmailRow(toggleEmailActive, emailsInFlight, openEmailComposer)
+    )
   )
 
 type CampaignCardProps = {
   getEmails: () => Either<React$Element<string>, Array<AutomaticEmail>>,
   emailsInFlight: Set<number>,
   toggleEmailActive: (e: AutomaticEmail) => void,
-  openEmailComposer: (e: AutomaticEmail) => void,
+  openEmailComposer: (e: AutomaticEmail) => void
 }
 
 const EmailCampaignsCard = (props: CampaignCardProps) => {
-  const { getEmails, toggleEmailActive, emailsInFlight, openEmailComposer } =
-    props
+  const {
+    getEmails,
+    toggleEmailActive,
+    emailsInFlight,
+    openEmailComposer
+  } = props
 
   return (
     <Card shadow={1} className="card email-campaigns-card">
@@ -80,7 +84,7 @@ const EmailCampaignsCard = (props: CampaignCardProps) => {
         {S.either(
           renderEmptyMessage,
           renderEmailRows(toggleEmailActive, emailsInFlight, openEmailComposer),
-          getEmails(),
+          getEmails()
         )}
       </CardContent>
     </Card>

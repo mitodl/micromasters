@@ -1,7 +1,7 @@
 import { RefinementListFilter } from "searchkit"
 import {
   NestedAggregatingFacetAccessor,
-  REVERSE_NESTED_AGG_KEY,
+  REVERSE_NESTED_AGG_KEY
 } from "./NestedAggregatingMenuFilter"
 
 export default class CustomRefinementListFilter extends RefinementListFilter {
@@ -12,7 +12,7 @@ export default class CustomRefinementListFilter extends RefinementListFilter {
   defineAccessor() {
     return new NestedAggregatingFacetAccessor(
       this.props.field,
-      this.getAccessorOptions(),
+      this.getAccessorOptions()
     )
   }
 
@@ -29,7 +29,7 @@ export default class CustomRefinementListFilter extends RefinementListFilter {
       ...item,
       doc_count: item[REVERSE_NESTED_AGG_KEY]
         ? item[REVERSE_NESTED_AGG_KEY].doc_count
-        : item.doc_count,
+        : item.doc_count
     }))
   }
 }

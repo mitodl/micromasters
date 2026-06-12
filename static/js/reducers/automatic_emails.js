@@ -18,26 +18,26 @@ export const automaticEmailsEndpoint: Endpoint = {
   fetchFunc:           fetchJSONWithCSRF,
   patchOptions:        emailRecord => ({
     method: PATCH,
-    body:   JSON.stringify(emailRecord),
+    body:   JSON.stringify(emailRecord)
   }),
   patchSuccessHandler: (payload, oldData) =>
     R.update(
       R.findIndex(R.propEq("id", payload.id), oldData),
       payload,
-      oldData,
+      oldData
     ),
   initialState: { ...INITIAL_STATE, emailsInFlight: new Set() },
   extraActions: {
     [TOGGLE_EMAIL_PATCH_IN_FLIGHT]: (
       state: Object,
-      action: Action<number, void>,
+      action: Action<number, void>
     ) => {
       const emails = new Set(state.emailsInFlight)
       const { payload: id } = action
       return {
         ...state,
-        emailsInFlight: emails.delete(id) ? emails : emails.add(id),
+        emailsInFlight: emails.delete(id) ? emails : emails.add(id)
       }
-    },
-  },
+    }
+  }
 }

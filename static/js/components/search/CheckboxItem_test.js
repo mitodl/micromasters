@@ -17,7 +17,7 @@ describe("CheckboxItem", () => {
       onClick: sinon.stub(),
       label:   "2016 - Summer",
       active:  false,
-      count:   42,
+      count:   42
     }
   })
 

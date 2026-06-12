@@ -8,7 +8,7 @@ import {
   hasPassingExamGrade,
   hasFailingExamGrade,
   hasPassedCourseRun,
-  passedCourse,
+  passedCourse
 } from "./grades"
 import {
   STATUS_PASSED,
@@ -19,7 +19,7 @@ import {
   STATUS_WILL_ATTEND,
   STATUS_PENDING_ENROLLMENT,
   STATUS_MISSED_DEADLINE,
-  STATUS_PAID_BUT_NOT_ENROLLED,
+  STATUS_PAID_BUT_NOT_ENROLLED
 } from "../constants"
 
 import { assertIsNothing, assertIsJust } from "./test_utils"
@@ -61,7 +61,7 @@ describe("Grades library", () => {
 
     beforeEach(() => {
       course = {
-        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult),
+        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult)
       }
     })
     it("should return true if the user has any passed exam grades", () => {
@@ -82,7 +82,7 @@ describe("Grades library", () => {
 
     beforeEach(() => {
       course = {
-        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult),
+        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult)
       }
     })
     it("should return true if the user has any failing exam grades", () => {
@@ -123,7 +123,7 @@ describe("Grades library", () => {
         STATUS_WILL_ATTEND,
         STATUS_PENDING_ENROLLMENT,
         STATUS_MISSED_DEADLINE,
-        STATUS_PAID_BUT_NOT_ENROLLED,
+        STATUS_PAID_BUT_NOT_ENROLLED
       ].forEach(status => {
         course.runs.forEach(run => {
           run.status = status

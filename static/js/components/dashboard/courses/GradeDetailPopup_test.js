@@ -9,7 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import GradeDetailPopup from "./GradeDetailPopup"
 import {
   makeCourse,
-  makeProctoredExamResult,
+  makeProctoredExamResult
 } from "../../../factories/dashboard"
 import { makeRunPassed, makeRunFailed, makeRunEnrolled } from "./test_util"
 import { EXAM_GRADE, COURSE_GRADE } from "../../../containers/DashboardPage"
@@ -37,14 +37,14 @@ describe("GradeDetailPopup", () => {
         setShowGradeDetailDialog={setShowGradeDetailDialogStub}
         dialogVisibility={false}
         {...props}
-      />,
+      />
     )
 
   it("shows info for an audited course", () => {
     renderDetailPopup()
       .find(".course-run-row")
       .forEach((node, idx) =>
-        assert.equal(node.text(), `${course.runs[idx].year_season}Audited`),
+        assert.equal(node.text(), `${course.runs[idx].year_season}Audited`)
       )
   })
 
@@ -52,8 +52,11 @@ describe("GradeDetailPopup", () => {
     makeRunEnrolled(course.runs[0])
     const wrapper = renderDetailPopup()
     assert.equal(
-      wrapper.find(".course-run-row").first().text(),
-      `${course.runs[0].year_season}In Progress`,
+      wrapper
+        .find(".course-run-row")
+        .first()
+        .text(),
+      `${course.runs[0].year_season}In Progress`
     )
   })
 
@@ -61,24 +64,33 @@ describe("GradeDetailPopup", () => {
     makeRunPassed(course.runs[0])
     const wrapper = renderDetailPopup()
     assert.equal(
-      wrapper.find(".course-run-row").first().text(),
-      `${course.runs[0].year_season}Passed`,
+      wrapper
+        .find(".course-run-row")
+        .first()
+        .text(),
+      `${course.runs[0].year_season}Passed`
     )
   })
 
   it("shows a grade, if there is one", () => {
     course.runs[0].final_grade = 93
     assert.include(
-      renderDetailPopup().find(".course-run-row").first().text(),
-      "93",
+      renderDetailPopup()
+        .find(".course-run-row")
+        .first()
+        .text(),
+      "93"
     )
   })
 
   it("shows info for a failed course", () => {
     makeRunFailed(course.runs[1])
     assert.equal(
-      renderDetailPopup().find(".course-run-row").at(1).text(),
-      `${course.runs[1].year_season}Not passed`,
+      renderDetailPopup()
+        .find(".course-run-row")
+        .at(1)
+        .text(),
+      `${course.runs[1].year_season}Not passed`
     )
   })
 
@@ -86,15 +98,27 @@ describe("GradeDetailPopup", () => {
     course.runs[0].final_grade = 22
     course.runs[1].final_grade = 82
     const wrapper = renderDetailPopup()
-    assert.equal(wrapper.find(".course-run-row").at(0).find(Icon).length, 0)
-    assert.equal(wrapper.find(".course-run-row").at(1).find(Icon).length, 1)
+    assert.equal(
+      wrapper
+        .find(".course-run-row")
+        .at(0)
+        .find(Icon).length,
+      0
+    )
+    assert.equal(
+      wrapper
+        .find(".course-run-row")
+        .at(1)
+        .find(Icon).length,
+      1
+    )
   })
 
   it("includes helpful information", () => {
     const wrapper = renderDetailPopup()
     assert.equal(
       wrapper.find(".explanation").text(),
-      "Only your best passing grade counts toward your final grade",
+      "Only your best passing grade counts toward your final grade"
     )
   })
 
@@ -111,8 +135,11 @@ describe("GradeDetailPopup", () => {
   it("should display exam grades, if passed the right grade type", () => {
     const wrapper = renderDetailPopup({ gradeType: EXAM_GRADE })
     assert.include(
-      wrapper.find(".course-run-row").first().text(),
-      formatGrade(course.proctorate_exams_grades[0].percentage_grade * 100),
+      wrapper
+        .find(".course-run-row")
+        .first()
+        .text(),
+      formatGrade(course.proctorate_exams_grades[0].percentage_grade * 100)
     )
   })
 
@@ -120,8 +147,11 @@ describe("GradeDetailPopup", () => {
     course.proctorate_exams_grades[0].percentage_grade = 0
     const wrapper = renderDetailPopup({ gradeType: EXAM_GRADE })
     assert.include(
-      wrapper.find(".course-run-row").first().text(),
-      formatGrade(course.proctorate_exams_grades[0].percentage_grade * 100),
+      wrapper
+        .find(".course-run-row")
+        .first()
+        .text(),
+      formatGrade(course.proctorate_exams_grades[0].percentage_grade * 100)
     )
   })
 
@@ -131,7 +161,19 @@ describe("GradeDetailPopup", () => {
     course.proctorate_exams_grades[1].percentage_grade = 0.8
     course.proctorate_exams_grades[1].passed = true
     const wrapper = renderDetailPopup({ gradeType: EXAM_GRADE })
-    assert.equal(wrapper.find(".course-run-row").at(0).find(Icon).length, 0)
-    assert.equal(wrapper.find(".course-run-row").at(1).find(Icon).length, 1)
+    assert.equal(
+      wrapper
+        .find(".course-run-row")
+        .at(0)
+        .find(Icon).length,
+      0
+    )
+    assert.equal(
+      wrapper
+        .find(".course-run-row")
+        .at(1)
+        .find(Icon).length,
+      1
+    )
   })
 })

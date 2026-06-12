@@ -3,7 +3,7 @@ import { assert } from "chai"
 import {
   currencyForCountry,
   excludedCurrencyCodes,
-  currencyOptions,
+  currencyOptions
 } from "./currency"
 
 describe("currency", () => {
@@ -11,7 +11,7 @@ describe("currency", () => {
     it("shouldnt include any options in the excluded list", () => {
       excludedCurrencyCodes.forEach(code => {
         assert.isUndefined(
-          currencyOptions.find(option => option.value === code),
+          currencyOptions.find(option => option.value === code)
         )
       })
     })
@@ -26,7 +26,7 @@ describe("currency", () => {
         ["FR", "EUR"],
         ["GB", "GBP"],
         ["IN", "INR"],
-        [null, ""],
+        [null, ""]
       ].forEach(([country, currency]) => {
         assert.equal(currencyForCountry(country), currency)
       })

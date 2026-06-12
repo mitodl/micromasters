@@ -29,8 +29,8 @@ describe("PersonalTab", () => {
       </MuiThemeProvider>,
       {
         context:           { router: {} },
-        childContextTypes: { router: PropTypes.object },
-      },
+        childContextTypes: { router: PropTypes.object }
+      }
     )
   }
 
@@ -50,7 +50,7 @@ describe("PersonalTab", () => {
       .props().options
     assert.equal(programOptions.length, PROGRAMS.length)
     const sortedEnrollments = R.sortBy(R.compose(R.toLower, R.prop("title")))(
-      PROGRAMS,
+      PROGRAMS
     )
     programOptions.forEach((menuItem, i) => {
       const program = sortedEnrollments[i]
@@ -62,7 +62,10 @@ describe("PersonalTab", () => {
   it("should have the current program enrollment selected", () => {
     const selectedProgram = PROGRAMS[0]
     const wrapper = renderPersonalTab(selectedProgram)
-    const props = wrapper.find(".program-select").find("Select").props()
+    const props = wrapper
+      .find(".program-select")
+      .find("Select")
+      .props()
     assert.equal(props.value, selectedProgram.id)
   })
 })

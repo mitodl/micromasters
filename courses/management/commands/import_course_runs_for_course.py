@@ -68,21 +68,9 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Updating course runs for {course_id}: {course.title}")
         )
 
-<<<<<<< Updated upstream
         course_runs_created = sync_mit_learn_courseruns_for_course(course, raw_course)
         self.stdout.write(
-            self.style.SUCCESS(
-                f"{course_runs_created} course runs created")
-||||||| Stash base
-        course_runs_created = sync_mit_learn_courseruns_for_course(course, enrollment_url, raw_courseruns=raw_course["runs"])
-        self.stdout.write(self.style.SUCCESS(f"{course_runs_created} course runs created"))
-=======
-        course_runs_created = sync_mit_learn_courseruns_for_course(
-            course, enrollment_url, raw_courseruns=raw_course["runs"]
-        )
-        self.stdout.write(
             self.style.SUCCESS(f"{course_runs_created} course runs created")
->>>>>>> Stashed changes
         )
 
         return None

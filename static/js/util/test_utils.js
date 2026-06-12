@@ -26,11 +26,11 @@ import LearnerSearchPage from "../containers/LearnerSearchPage"
 import AutomaticEmailPage from "../containers/AutomaticEmailPage"
 
 export function findCourse(
-  courseSelector: (course: ?Course, program: ?Program) => boolean,
+  courseSelector: (course: ?Course, program: ?Program) => boolean
 ): Course {
   const [, course] = findCourseRun(
     DASHBOARD_RESPONSE.programs,
-    (courseRun, _course, program) => courseSelector(_course, program),
+    (courseRun, _course, program) => courseSelector(_course, program)
   )
   if (course !== null && course !== undefined) {
     return course
@@ -40,17 +40,17 @@ export function findCourse(
 
 export const alterFirstRun = (
   course: Course,
-  overrideObject: Object,
+  overrideObject: Object
 ): CourseRun => {
   course.runs[0] = {
     ...course.runs[0],
-    ...overrideObject,
+    ...overrideObject
   }
   return course.runs[0]
 }
 
 export function findAndCloneCourse(
-  courseSelector: (course: ?Course, program: ?Program) => boolean,
+  courseSelector: (course: ?Course, program: ?Program) => boolean
 ): Course {
   return _.cloneDeep(findCourse(courseSelector))
 }
@@ -58,7 +58,7 @@ export function findAndCloneCourse(
 export function generateCourseFromExisting(
   courseToClone: Course,
   desiredRuns: number,
-  runToCopy: ?CourseRun,
+  runToCopy: ?CourseRun
 ) {
   const course = _.cloneDeep(courseToClone)
   const currentRunCount = course.runs.length
@@ -77,7 +77,7 @@ export function generateCourseFromExisting(
       Object.assign(newCourseRun, {
         position:  positionMax,
         id:        idMax,
-        course_id: `${newCourseRun.course_id}-new-${i}`,
+        course_id: `${newCourseRun.course_id}-new-${i}`
       })
       course.runs.push(newCourseRun)
     }
@@ -86,34 +86,34 @@ export function generateCourseFromExisting(
   }
   Object.assign(course, {
     id:                  1,
-    position_in_program: 0,
+    position_in_program: 0
   })
   return course
 }
 
 export const modifyTextArea = (
   field: HTMLTextAreaElement,
-  text: string,
+  text: string
 ): void => {
   field.value = text
   ReactTestUtils.Simulate.change(field)
   ReactTestUtils.Simulate.keyDown(field, {
     key:     "Enter",
     keyCode: 13,
-    which:   13,
+    which:   13
   })
 }
 
 export const modifyTextField = (
   field: HTMLInputElement,
-  text: string,
+  text: string
 ): void => {
   field.value = text
   ReactTestUtils.Simulate.change(field)
   ReactTestUtils.Simulate.keyDown(field, {
     key:     "Enter",
     keyCode: 13,
-    which:   13,
+    which:   13
   })
 }
 
@@ -127,7 +127,7 @@ export const modifySelectField = (field: HTMLElement, text: string): void => {
 
 export const modifyWrapperSelectField = (
   wrapper: Object,
-  text: string,
+  text: string
 ): void => {
   const input = wrapper.find("input")
   input.simulate("focus")
@@ -159,7 +159,7 @@ export const activeDialog = (dialogClassName: string): HTMLDivElement => {
   const dialog = findActiveDialog(dialogClassName)
   assert.isDefined(
     dialog,
-    `dialog element w/ className '${dialogClassName}' should be active`,
+    `dialog element w/ className '${dialogClassName}' should be active`
   )
   return dialog
 }
@@ -194,7 +194,7 @@ export const localStorageMock = (init: any = {}) => {
     getItem:    getItem,
     setItem:    setItem,
     removeItem: removeItem,
-    reset:      reset,
+    reset:      reset
   }
 }
 
@@ -205,12 +205,12 @@ export const getEl = (div: any, selector: string): HTMLElement => {
 
 export function createAssertReducerResultState<State>(
   store: Store,
-  getReducerState: (x: any) => State,
+  getReducerState: (x: any) => State
 ) {
   return (
     action: () => Action<*, *>,
     stateLookup: (state: State) => any,
-    defaultValue: any,
+    defaultValue: any
   ): void => {
     const getState = () => stateLookup(getReducerState(store.getState()))
 
@@ -227,7 +227,7 @@ export function createAssertReducerResultState<State>(
       {},
       [3, 4, 5],
       [],
-      "",
+      ""
     ]) {
       store.dispatch(action(value))
       assert.deepEqual(value, getState())

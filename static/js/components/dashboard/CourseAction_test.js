@@ -16,12 +16,12 @@ import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_ENROLL,
-  COURSE_ACTION_REENROLL,
+  COURSE_ACTION_REENROLL
 } from "../../constants"
 import {
   findCourse,
   alterFirstRun,
-  findAndCloneCourse,
+  findAndCloneCourse
 } from "../../util/test_utils"
 import { makeCourse } from "../../factories/dashboard"
 
@@ -68,7 +68,7 @@ describe("CourseAction", () => {
         checkout={checkoutStub}
         {...props}
       />,
-      { context: { router: { push: routerPushStub } } },
+      { context: { router: { push: routerPushStub } } }
     )
   }
 
@@ -93,10 +93,34 @@ describe("CourseAction", () => {
     for (const data of [
       ["", "", true],
       ["foo/bar/baz", "", true],
-      ["foo/bar/baz", moment().add(10, "days").toISOString(), true],
-      ["", moment().add(10, "days").toISOString(), true],
-      ["", moment().subtract(10, "days").toISOString(), true],
-      ["foo/bar/baz", moment().subtract(10, "days").toISOString(), false],
+      [
+        "foo/bar/baz",
+        moment()
+          .add(10, "days")
+          .toISOString(),
+        true
+      ],
+      [
+        "",
+        moment()
+          .add(10, "days")
+          .toISOString(),
+        true
+      ],
+      [
+        "",
+        moment()
+          .subtract(10, "days")
+          .toISOString(),
+        true
+      ],
+      [
+        "foo/bar/baz",
+        moment()
+          .subtract(10, "days")
+          .toISOString(),
+        false
+      ]
     ]) {
       it(`should ${data[2] ? "disable" : "enable"} Re-Enroll button`, () => {
         const run = course.runs[0]
@@ -106,7 +130,7 @@ describe("CourseAction", () => {
 
         const wrapper = renderCourseAction({
           actionType: COURSE_ACTION_REENROLL,
-          courseRun:  run,
+          courseRun:  run
         })
         assert.equal(wrapper.find(SpinnerButton).props().disabled, data[2])
       })
@@ -118,7 +142,7 @@ describe("CourseAction", () => {
       const wrapper = renderCourseAction({ actionType: COURSE_ACTION_PAY })
       assert.equal(
         wrapper.find(".pay-button").props().children,
-        "Upgrade Unavailable",
+        "Upgrade Unavailable"
       )
       assert.equal(wrapper.find(".pay-button").props().disabled, true)
     })
@@ -128,12 +152,12 @@ describe("CourseAction", () => {
     const course = findCourse(
       course =>
         course.runs.length > 0 &&
-        course.runs[0].status === STATUS_PENDING_ENROLLMENT,
+        course.runs[0].status === STATUS_PENDING_ENROLLMENT
     )
     const firstRun = course.runs[0]
     const wrapper = renderCourseAction({
       courseRun:  firstRun,
-      actionType: COURSE_ACTION_ENROLL,
+      actionType: COURSE_ACTION_ENROLL
     })
     const buttonProps = wrapper.find("SpinnerButton").props()
     assert.isTrue(buttonProps.spinning)
@@ -145,19 +169,19 @@ describe("CourseAction", () => {
     beforeEach(() => {
       course = findAndCloneCourse(
         course =>
-          course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED,
+          course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
       )
     })
 
     it("allow user to click Enroll Now even without a calculated course price", () => {
       const firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
+        enrollment_start_date: now.toISOString()
       })
       firstRun.status = STATUS_OFFERED
 
       const wrapper = renderCourseAction({
         courseRun:  firstRun,
-        actionType: COURSE_ACTION_ENROLL,
+        actionType: COURSE_ACTION_ENROLL
       })
       const button = wrapper.find(SpinnerButton)
       assert.isFalse(button.props().disabled)
@@ -167,16 +191,15 @@ describe("CourseAction", () => {
     it("indicates that a user must calculate the course price to upgrade to paid", () => {
       const course = findAndCloneCourse(
         course =>
-          course.runs.length > 0 &&
-          course.runs[0].status === STATUS_CAN_UPGRADE,
+          course.runs.length > 0 && course.runs[0].status === STATUS_CAN_UPGRADE
       )
       const firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
+        enrollment_start_date: now.toISOString()
       })
 
       const wrapper = renderCourseAction({
         courseRun:  firstRun,
-        actionType: COURSE_ACTION_CALCULATE_PRICE,
+        actionType: COURSE_ACTION_CALCULATE_PRICE
       })
 
       const button = wrapper.find(".pay-button")
@@ -187,16 +210,15 @@ describe("CourseAction", () => {
     it("indicates that a user can't pay for course while FA is pending", () => {
       const course = findAndCloneCourse(
         course =>
-          course.runs.length > 0 &&
-          course.runs[0].status === STATUS_CAN_UPGRADE,
+          course.runs.length > 0 && course.runs[0].status === STATUS_CAN_UPGRADE
       )
       const firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
+        enrollment_start_date: now.toISOString()
       })
 
       const wrapper = renderCourseAction({
         courseRun:  firstRun,
-        actionType: COURSE_ACTION_PAY,
+        actionType: COURSE_ACTION_PAY
       })
 
       const button = wrapper.find(".pay-button")

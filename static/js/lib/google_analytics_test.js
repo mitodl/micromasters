@@ -23,9 +23,9 @@ describe("Google Analytics", () => {
           category: "category",
           action:   "action",
           label:    "label",
-          value:    1,
+          value:    1
         }),
-        "should be called with the right values",
+        "should be called with the right values"
       )
     })
 
@@ -35,9 +35,9 @@ describe("Google Analytics", () => {
         event.calledWith({
           category: "category",
           action:   "action",
-          label:    "label",
+          label:    "label"
         }),
-        "there should not be a value for 'value'",
+        "there should not be a value for 'value'"
       )
     })
   })
@@ -50,8 +50,8 @@ describe("Google Analytics", () => {
         event.calledWith({
           category: "profile-form-field",
           action:   "completed-some-keys-wow",
-          label:    "jane",
-        }),
+          label:    "jane"
+        })
       )
     })
   })

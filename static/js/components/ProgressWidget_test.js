@@ -24,13 +24,13 @@ export const program = {
           id:                3,
           course_start_date: "2016-08-22T11:48:27Z",
           fuzzy_start_date:  "Fall 2017",
-          course_end_date:   "2016-09-09T10:20:10Z",
-        },
+          course_end_date:   "2016-09-09T10:20:10Z"
+        }
       ],
       position_in_program: 0,
       title:               "Gio Course - failed, no grade",
       description:         "",
-      id:                  1,
+      id:                  1
     },
     {
       prerequisites: "",
@@ -43,7 +43,7 @@ export const program = {
           id:                2,
           course_start_date: "2016-08-22T11:48:27Z",
           fuzzy_start_date:  "Fall 2016",
-          course_end_date:   "2016-09-09T10:20:10Z",
+          course_end_date:   "2016-09-09T10:20:10Z"
         },
         {
           position:          2,
@@ -53,13 +53,13 @@ export const program = {
           id:                4,
           course_start_date: "2016-08-22T11:48:27Z",
           fuzzy_start_date:  "Fall 2017",
-          course_end_date:   "2017-09-09T10:20:10Z",
-        },
+          course_end_date:   "2017-09-09T10:20:10Z"
+        }
       ],
       position_in_program: 1,
       title:               "8.MechCx Advanced Introductory Classical Mechanics",
       description:         "",
-      id:                  2,
+      id:                  2
     },
     {
       prerequisites: "",
@@ -72,13 +72,13 @@ export const program = {
           id:                1,
           course_start_date: "2016-09-22T11:48:27Z",
           fuzzy_start_date:  "Fall 2016",
-          course_end_date:   "2016-09-09T10:20:10Z",
-        },
+          course_end_date:   "2016-09-09T10:20:10Z"
+        }
       ],
       position_in_program: 2,
       title:               "EDX Demo course",
       description:         "",
-      id:                  3,
+      id:                  3
     },
     {
       prerequisites:       "",
@@ -86,7 +86,7 @@ export const program = {
       position_in_program: 2,
       title:               "EDX Demo course",
       description:         "",
-      id:                  4,
+      id:                  4
     },
     {
       prerequisites: "",
@@ -99,7 +99,7 @@ export const program = {
           id:                5,
           course_start_date: "2016-08-22T11:48:27Z",
           fuzzy_start_date:  "Fall 2016",
-          course_end_date:   "2016-09-09T10:20:10Z",
+          course_end_date:   "2016-09-09T10:20:10Z"
         },
         {
           position:          2,
@@ -109,26 +109,35 @@ export const program = {
           id:                6,
           course_start_date: "2016-08-22T11:48:27Z",
           fuzzy_start_date:  "Fall 2017",
-          course_end_date:   "2017-09-09T10:20:10Z",
-        },
+          course_end_date:   "2017-09-09T10:20:10Z"
+        }
       ],
       position_in_program: 1,
       title:               "8.MechCx Advanced Introductory Classical Mechanics",
       description:         "",
-      id:                  5,
-    },
+      id:                  5
+    }
   ],
-  id: 3,
+  id: 3
 }
 
 describe("ProgressWidget", () => {
   it("progress widget display", () => {
     const wrapper = shallow(<ProgressWidget program={program} />)
 
-    assert.equal(wrapper.find(".progress-title").children().text(), "Progress")
     assert.equal(
-      wrapper.find(".text-course-complete").children().text(),
-      "Courses complete",
+      wrapper
+        .find(".progress-title")
+        .children()
+        .text(),
+      "Progress"
+    )
+    assert.equal(
+      wrapper
+        .find(".text-course-complete")
+        .children()
+        .text(),
+      "Courses complete"
     )
     assert.equal(wrapper.find(".circular-progress-widget-txt").text(), "3/5")
 
@@ -137,7 +146,7 @@ describe("ProgressWidget", () => {
       shallow(<ProgressWidget program={program} />)
         .find(".circular-progress-widget-txt")
         .text(),
-      "3/3",
+      "3/3"
     )
   })
   it("should display program certificate when a certificate link exists", () => {
@@ -147,7 +156,7 @@ describe("ProgressWidget", () => {
 
     assert.equal(
       wrapper.find(".text-course-complete").text(),
-      "Congratulations!",
+      "Congratulations!"
     )
   })
   it("should display program letter link when a letter link exists", () => {
@@ -155,8 +164,11 @@ describe("ProgressWidget", () => {
     const wrapper = shallow(<ProgressWidget program={program} />)
 
     assert.equal(
-      wrapper.find(".mm-minor-action").children().text(),
-      "View Program Letter",
+      wrapper
+        .find(".mm-minor-action")
+        .children()
+        .text(),
+      "View Program Letter"
     )
   })
   it("should display program records link when link exists", () => {

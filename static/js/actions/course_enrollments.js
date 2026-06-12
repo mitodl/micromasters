@@ -7,7 +7,7 @@ import type { Dispatcher } from "../flow/reduxTypes"
 import { showEnrollPayLaterSuccess } from "./ui"
 
 export const showEnrollPayLaterSuccessMessage = (
-  courseId: string,
+  courseId: string
 ): Dispatcher<*> => {
   return (dispatch: Dispatch) => {
     dispatch(showEnrollPayLaterSuccess(courseId))

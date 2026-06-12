@@ -12,21 +12,21 @@ import { Provider } from "react-redux"
 
 import {
   getEnrollmentShareHash,
-  revokeEnrollmentShareHash,
+  revokeEnrollmentShareHash
 } from "../actions/programs"
 
 import CourseListWithPopover from "../components/CourseListWithPopover"
 import FacultyCarousel from "../components/FacultyCarousel"
 import {
   setShareDialogVisibility,
-  setRecordShareLink,
+  setRecordShareLink
 } from "../actions/share_grades_dialog"
 import { setRevokeShareDialogVisibility } from "../actions/revoke_shared_records_dialog"
 import { setSendDialogVisibility } from "../actions/send_grades_dialog"
 import {
   shareGradesDialogStore,
   sendGradesDialogStore,
-  revokeShareGradesDialogStore,
+  revokeShareGradesDialogStore
 } from "../store/configureStore"
 import CopyLinkDialog from "../containers/CopyLinkDialog"
 import RevokeShareDialog from "../containers/RevokeShareDialog"
@@ -53,7 +53,7 @@ if (courseListEl && !_.isEmpty(courseList)) {
         electiveSets={electivesSetList}
       />
     </MuiThemeProvider>,
-    courseListEl,
+    courseListEl
   )
 }
 
@@ -96,7 +96,7 @@ if (shareOptionsDiv) {
           <CopyLinkDialog />
         </Provider>
       </MuiThemeProvider>,
-      shareDialog,
+      shareDialog
     )
   }
 
@@ -125,7 +125,7 @@ if (shareOptionsDiv) {
           <RevokeShareDialog onAllowRevoke={revokeButtonOnClick} />
         </Provider>
       </MuiThemeProvider>,
-      revokeDialog,
+      revokeDialog
     )
   }
 
@@ -159,7 +159,7 @@ if (shareOptionsDiv) {
           <SendGradesDialog />
         </Provider>
       </MuiThemeProvider>,
-      sendDialog,
+      sendDialog
     )
   }
 
@@ -203,7 +203,8 @@ document.addEventListener("DOMContentLoaded", function() {
   $(".mailchimp").ajaxChimp({
     callback: mailchimpCallback,
     // Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
-    url:      "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78",
+    url:
+      "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
   })
 
   $("#mce-MMERGE4").hide()
@@ -251,7 +252,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // optional:
     description: description,
-    emailBody:   description + CURRENT_PAGE_URL,
+    emailBody:   description + CURRENT_PAGE_URL
   })
   const tweetUrl = `https://twitter.com/intent/tweet?text=${twitterDescription}%20${CURRENT_PAGE_URL}`
   document.querySelector(".rrssb-buttons .rrssb-twitter a").href = tweetUrl
@@ -265,7 +266,9 @@ document.addEventListener("DOMContentLoaded", function() {
     .find(".accordion-toggle")
     .click(function() {
       // Expand or collapse this panel
-      $(this).next().slideToggle("fast")
+      $(this)
+        .next()
+        .slideToggle("fast")
       // Rotate the icon
       $(this)
         .find(".material-icons")
@@ -284,6 +287,8 @@ document.addEventListener("DOMContentLoaded", function() {
   $('a[href^="https://"], a[href^="http://"] ').attr("target", "_blank")
 
   if (window.location.hash !== "") {
-    $(`a[href="${window.location.hash}"]`).parent().trigger("click")
+    $(`a[href="${window.location.hash}"]`)
+      .parent()
+      .trigger("click")
   }
 })

@@ -8,7 +8,7 @@ export default class CheckboxItem extends React.Component {
     label: string,
     active: boolean,
     onClick: Function,
-    count: number,
+    count: number
   }
 
   render() {

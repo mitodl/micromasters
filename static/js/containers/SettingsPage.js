@@ -9,7 +9,7 @@ import { startProfileEdit } from "../actions/profile"
 import { FETCH_PROCESSING } from "../actions/index"
 import {
   profileFormContainer,
-  mapStateToProfileProps,
+  mapStateToProfileProps
 } from "./ProfileFormContainer"
 import LeaveProgramWizard from "../components/LeaveProgramWizard"
 import PrivacyForm from "../components/PrivacyForm"
@@ -58,5 +58,5 @@ class SettingsPage extends React.Component<*, ProfileContainerProps, *> {
 }
 export default R.compose(
   connect(mapStateToProfileProps),
-  profileFormContainer,
+  profileFormContainer
 )(SettingsPage)

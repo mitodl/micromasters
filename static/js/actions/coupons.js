@@ -11,12 +11,12 @@ export const requestAttachCoupon = createAction(REQUEST_ATTACH_COUPON)
 
 export const RECEIVE_ATTACH_COUPON_SUCCESS = "RECEIVE_ATTACH_COUPON_SUCCESS"
 export const receiveAttachCouponSuccess = createAction(
-  RECEIVE_ATTACH_COUPON_SUCCESS,
+  RECEIVE_ATTACH_COUPON_SUCCESS
 )
 
 export const RECEIVE_ATTACH_COUPON_FAILURE = "RECEIVE_ATTACH_COUPON_FAILURE"
 export const receiveAttachCouponFailure = createAction(
-  RECEIVE_ATTACH_COUPON_FAILURE,
+  RECEIVE_ATTACH_COUPON_FAILURE
 )
 
 export const attachCoupon = (code: string): Dispatcher<*> => {
@@ -30,7 +30,7 @@ export const attachCoupon = (code: string): Dispatcher<*> => {
       response => {
         dispatch(receiveAttachCouponFailure(response))
         return Promise.reject(new Error("Unable to attach coupon"))
-      },
+      }
     )
   }
 }
@@ -40,12 +40,12 @@ export const requestFetchCoupons = createAction(REQUEST_FETCH_COUPONS)
 
 export const RECEIVE_FETCH_COUPONS_SUCCESS = "RECEIVE_FETCH_COUPONS_SUCCESS"
 export const receiveFetchCouponsSuccess = createAction(
-  RECEIVE_FETCH_COUPONS_SUCCESS,
+  RECEIVE_FETCH_COUPONS_SUCCESS
 )
 
 export const RECEIVE_FETCH_COUPONS_FAILURE = "RECEIVE_FETCH_COUPONS_FAILURE"
 export const receiveFetchCouponsFailure = createAction(
-  RECEIVE_FETCH_COUPONS_FAILURE,
+  RECEIVE_FETCH_COUPONS_FAILURE
 )
 
 export const fetchCoupons = (): Dispatcher<*> => {
@@ -59,7 +59,7 @@ export const fetchCoupons = (): Dispatcher<*> => {
       () => {
         dispatch(receiveFetchCouponsFailure())
         return Promise.reject()
-      },
+      }
     )
   }
 }
@@ -69,5 +69,5 @@ export const clearCoupons = createAction(CLEAR_COUPONS)
 
 export const SET_RECENTLY_ATTACHED_COUPON = "SET_RECENTLY_ATTACHED_COUPON"
 export const setRecentlyAttachedCoupon = createAction(
-  SET_RECENTLY_ATTACHED_COUPON,
+  SET_RECENTLY_ATTACHED_COUPON
 )

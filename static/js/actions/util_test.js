@@ -17,7 +17,7 @@ describe("action creator utils", () => {
       assert.deepEqual(action, {
         type:    TYPE,
         payload: { my: "payload" },
-        meta:    "username",
+        meta:    "username"
       })
     })
   })

@@ -9,20 +9,20 @@ import {
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_PRICE,
-  COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE,
+  COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE
 } from "../constants"
 import type {
   Coupons,
   Coupon,
   CouponObject,
-  CouponPrices,
+  CouponPrices
 } from "../flow/couponTypes"
 import type { CoursePrice, CoursePrices } from "../flow/dashboardTypes"
 import type { Program } from "../flow/programTypes"
 
 const isTypeCoupon = R.curry(
   (type: string, coupon: Coupon, obj: CouponObject) =>
-    coupon && coupon.content_type === type && coupon.object_id === obj.id,
+    coupon && coupon.content_type === type && coupon.object_id === obj.id
 )
 
 const isProgramCoupon = isTypeCoupon(COUPON_CONTENT_TYPE_PROGRAM)
@@ -30,7 +30,7 @@ const isCourseCoupon = isTypeCoupon(COUPON_CONTENT_TYPE_COURSE)
 
 // For objects that have a program id, make a lookup for it
 type HasProgramId = {
-  program_id: number,
+  program_id: number
 }
 function makeProgramIdLookup<T: HasProgramId>(arr: Array<T>): Map<number, T> {
   return new Map(arr.map((value: T) => [value.program_id, value]))
@@ -40,7 +40,7 @@ function makeProgramIdLookup<T: HasProgramId>(arr: Array<T>): Map<number, T> {
 export const calculatePrices = (
   programs: Array<Program>,
   prices: CoursePrices,
-  coupons: Coupons,
+  coupons: Coupons
 ): CouponPrices => {
   const couponLookup: Map<number, Coupon> = makeProgramIdLookup(coupons)
   const priceLookup: Map<number, CoursePrice> = makeProgramIdLookup(prices)
@@ -62,16 +62,16 @@ export const calculatePrices = (
     const coupon = couponLookup.get(program.id)
     const priceExclCoupon = {
       price:  originalPrice,
-      coupon: null,
+      coupon: null
     }
     const priceInclCoupon = coupon
       ? {
         price: calculateDiscount(
           originalPrice,
           coupon.amount_type,
-          coupon.amount,
+          coupon.amount
         ),
-        coupon: coupon,
+        coupon: coupon
       }
       : priceExclCoupon
 
@@ -100,14 +100,14 @@ export const calculatePrices = (
     pricesInclCouponByRun,
     pricesInclCouponByCourse,
     pricesInclCouponByProgram,
-    pricesExclCouponByProgram,
+    pricesExclCouponByProgram
   }
 }
 
 export const _calculateDiscount = (
   price: Decimal,
   amountType: string,
-  amount: Decimal,
+  amount: Decimal
 ): Decimal => {
   let newPrice = price
   switch (amountType) {
@@ -139,7 +139,10 @@ export function _makeAmountMessage(coupon: Coupon): string {
   case COUPON_AMOUNT_TYPE_FIXED_PRICE:
     return `$${coupon.amount}`
   case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
-    return `${coupon.amount.times(100).toDecimalPlaces(0).toString()}%`
+    return `${coupon.amount
+      .times(100)
+      .toDecimalPlaces(0)
+      .toString()}%`
   default:
     return ""
   }
@@ -167,21 +170,21 @@ export const _couponMessageText = (coupon: Coupon) => {
   if (isDiscount) {
     if (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
       return `You will get ${makeAmountMessage(
-        coupon,
+        coupon
       )} off the cost for each course in this program`
     } else if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
       return `You will get ${makeAmountMessage(
-        coupon,
+        coupon
       )} off the cost for this course`
     }
   } else {
     if (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
       return `All courses are set to the discounted price of ${makeAmountMessage(
-        coupon,
+        coupon
       )}`
     } else if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
       return `This course is set to the discounted price of ${makeAmountMessage(
-        coupon,
+        coupon
       )}`
     }
   }

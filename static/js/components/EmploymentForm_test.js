@@ -12,16 +12,16 @@ describe("EmploymentForm", () => {
     return shallow(
       <EmploymentForm
         ui={{
-          workDialogVisibility: true,
+          workDialogVisibility: true
         }}
         profile={USER_PROFILE_RESPONSE}
         {...props}
       />,
       {
         context: {
-          router: {},
-        },
-      },
+          router: {}
+        }
+      }
     )
   }
 

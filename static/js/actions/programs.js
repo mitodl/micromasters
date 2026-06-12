@@ -10,7 +10,7 @@ import {
   setToastMessage,
   setEnrollProgramDialogVisibility,
   setUnEnrollApiInFlightState,
-  setProgramsToUnEnroll,
+  setProgramsToUnEnroll
 } from "../actions/ui"
 import type { Dispatcher } from "../flow/reduxTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
@@ -18,24 +18,24 @@ import * as api from "../lib/api"
 
 export const SET_CURRENT_PROGRAM_ENROLLMENT = "SET_CURRENT_PROGRAM_ENROLLMENT"
 export const setCurrentProgramEnrollment = createAction(
-  SET_CURRENT_PROGRAM_ENROLLMENT,
+  SET_CURRENT_PROGRAM_ENROLLMENT
 )
 
 export const REQUEST_GET_PROGRAM_ENROLLMENTS = "REQUEST_GET_PROGRAM_ENROLLMENTS"
 export const requestGetProgramEnrollments = createAction(
-  REQUEST_GET_PROGRAM_ENROLLMENTS,
+  REQUEST_GET_PROGRAM_ENROLLMENTS
 )
 
 export const RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS =
   "RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS"
 export const receiveGetProgramEnrollmentsSuccess = createAction(
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
 )
 
 export const RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE =
   "RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE"
 export const receiveGetProgramEnrollmentsFailure = createAction(
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE
 )
 
 // eslint-disable-next-line require-jsdoc
@@ -49,30 +49,30 @@ export function fetchProgramEnrollments(): Dispatcher<void> {
       error => {
         dispatch(receiveGetProgramEnrollmentsFailure(error))
         // the exception is assumed handled and will not be propagated
-      },
+      }
     )
   }
 }
 
 export const REQUEST_ADD_PROGRAM_ENROLLMENT = "REQUEST_ADD_PROGRAM_ENROLLMENT"
 export const requestAddProgramEnrollment = createAction(
-  REQUEST_ADD_PROGRAM_ENROLLMENT,
+  REQUEST_ADD_PROGRAM_ENROLLMENT
 )
 
 export const RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS =
   "RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS"
 export const receiveAddProgramEnrollmentSuccess = createAction(
-  RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
+  RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS
 )
 
 export const RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE =
   "RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE"
 export const receiveAddProgramEnrollmentFailure = createAction(
-  RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
+  RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE
 )
 
 export const addProgramEnrollment = (
-  programId: number,
+  programId: number
 ): Dispatcher<?AvailableProgram> => {
   return (dispatch: Dispatch) => {
     dispatch(requestAddProgramEnrollment(programId))
@@ -82,8 +82,8 @@ export const addProgramEnrollment = (
         dispatch(
           setToastMessage({
             message: `You are now enrolled in the ${enrollment.title} MicroMasters`,
-            icon:    TOAST_SUCCESS,
-          }),
+            icon:    TOAST_SUCCESS
+          })
         )
         dispatch(setEnrollProgramDialogVisibility(false))
         dispatch(fetchDashboard(SETTINGS.user.username))
@@ -93,11 +93,11 @@ export const addProgramEnrollment = (
         dispatch(
           setToastMessage({
             message: "There was an error during enrollment",
-            icon:    TOAST_FAILURE,
-          }),
+            icon:    TOAST_FAILURE
+          })
         )
         return Promise.reject(error)
-      },
+      }
     )
   }
 }
@@ -107,7 +107,7 @@ export const CLEAR_ENROLLMENTS = "CLEAR_ENROLLMENTS"
 export const clearEnrollments = createAction(CLEAR_ENROLLMENTS)
 
 export const unEnrollProgramEnrollments = (
-  programIds: Array<number>,
+  programIds: Array<number>
 ): Dispatcher<?AvailableProgram> => {
   return async (dispatch: Dispatch) => {
     await dispatch(setUnEnrollApiInFlightState(true))
@@ -121,19 +121,19 @@ export const unEnrollProgramEnrollments = (
           dispatch(
             setToastMessage({
               message: `You left the ${programTitles.join(", ")} program(s).`,
-              icon:    TOAST_SUCCESS,
-            }),
+              icon:    TOAST_SUCCESS
+            })
           )
         },
         () => {
           dispatch(
             setToastMessage({
               message: "There was an error during unenrollment",
-              icon:    TOAST_FAILURE,
-            }),
+              icon:    TOAST_FAILURE
+            })
           )
           return Promise.reject()
-        },
+        }
       )
       .finally(() => {
         dispatch(hideDialog(UNENROLL_PROGRAM_DIALOG))
@@ -152,7 +152,7 @@ export const getEnrollmentShareHash = (enrollmentId: number): Promise<void> => {
 }
 
 export const revokeEnrollmentShareHash = (
-  enrollmentId: number,
+  enrollmentId: number
 ): Promise<void> => {
   return api
     .revokeEnrollmentShareHash(enrollmentId)

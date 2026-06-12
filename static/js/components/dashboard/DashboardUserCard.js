@@ -13,7 +13,7 @@ import CardContent from "@material-ui/core/CardContent"
 export default class DashboardUserCard extends React.Component {
   props: {
     profile: Profile,
-    program: Program,
+    program: Program
   }
 
   render() {

@@ -13,7 +13,7 @@ const _createSettings = () => ({
     email:          "jane@example.com",
     first_name:     "Jane",
     last_name:      "Doe",
-    preferred_name: "JD",
+    preferred_name: "JD"
   },
   edx_base_url:        "/edx/",
   mitxonline_base_url: "/mitxonline/",
@@ -25,11 +25,11 @@ const _createSettings = () => ({
   FEATURES:            {
     PROGRAM_LEARNERS:      true,
     PROGRAM_RECORD_LINK:   true,
-    ENABLE_PROGRAM_LETTER: true,
+    ENABLE_PROGRAM_LETTER: true
   },
   get username() {
     throw new Error("username was removed")
-  },
+  }
 })
 
 global.SETTINGS = _createSettings()

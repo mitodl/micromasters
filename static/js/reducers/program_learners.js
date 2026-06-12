@@ -6,7 +6,7 @@ import { getProgramLearners } from "../lib/api"
 
 export const INITIAL_PROGRAM_LEARNERS_STATE = {
   ...INITIAL_STATE,
-  data: [],
+  data: []
 }
 
 export const programLearnersEndpoint: Endpoint = {
@@ -16,5 +16,5 @@ export const programLearnersEndpoint: Endpoint = {
   verbs:                [GET],
   getFunc:              getProgramLearners,
   initialState:         {},
-  usernameInitialState: INITIAL_PROGRAM_LEARNERS_STATE,
+  usernameInitialState: INITIAL_PROGRAM_LEARNERS_STATE
 }

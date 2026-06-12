@@ -6,7 +6,7 @@ import type { Event, EventTarget } from "../../flow/eventType"
 export default class CustomPaginationDisplay extends React.Component {
   props: {
     disabled: boolean,
-    toggleItem: Function,
+    toggleItem: Function
   }
 
   onClick(toggleItem: Function, evt: Event): void {

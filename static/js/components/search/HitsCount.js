@@ -3,7 +3,7 @@ import React from "react"
 
 export default class HitsCount extends React.Component {
   props: {
-    hitsCount: number,
+    hitsCount: number
   }
 
   render() {

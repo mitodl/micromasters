@@ -19,7 +19,7 @@ describe("EmailCampaignsCard", () => {
       getEmails:         sandbox.stub(),
       emailsInFlight:    new Set(),
       toggleEmailActive: sandbox.stub(),
-      openEmailComposer: sandbox.stub(),
+      openEmailComposer: sandbox.stub()
     }
 
     emailCardProps.getEmails.returns(S.Right(GET_AUTOMATIC_EMAILS_RESPONSE))
@@ -55,21 +55,28 @@ describe("EmailCampaignsCard", () => {
 
   it("should render a switch, and call toggleEmailActive on click", () => {
     const card = renderCard()
-    card.find(Switch).first().props().onChange()
+    card
+      .find(Switch)
+      .first()
+      .props()
+      .onChange()
     assert(
       emailCardProps.toggleEmailActive.calledWith(
-        GET_AUTOMATIC_EMAILS_RESPONSE[0],
-      ),
+        GET_AUTOMATIC_EMAILS_RESPONSE[0]
+      )
     )
   })
 
   it('should render an "edit" button, and call openEmailComposer with the AutomaticEmail on click', () => {
     const card = renderCard()
-    card.find("a").first().simulate("click")
+    card
+      .find("a")
+      .first()
+      .simulate("click")
     assert(
       emailCardProps.openEmailComposer.calledWith(
-        GET_AUTOMATIC_EMAILS_RESPONSE[0],
-      ),
+        GET_AUTOMATIC_EMAILS_RESPONSE[0]
+      )
     )
   })
 

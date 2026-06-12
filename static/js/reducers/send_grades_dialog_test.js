@@ -3,7 +3,7 @@ import sinon from "sinon"
 import {
   SEND_GRADES_EMAIL_SUCCESS,
   SEND_GRADES_EMAIL_FAILURE,
-  sendGradeEmail,
+  sendGradeEmail
 } from "../actions/send_grades_dialog"
 import rootReducer from "./index"
 import configureTestStore from "redux-asserts"
@@ -28,7 +28,7 @@ describe("email reducers for the sendGradeEmail action", function() {
     sendGradeEmailStub.returns(Promise.resolve())
 
     return dispatchThen(sendGradeEmail(sendEmailArguments), [
-      SEND_GRADES_EMAIL_SUCCESS,
+      SEND_GRADES_EMAIL_SUCCESS
     ]).then(state => {
       assert.equal(state.sentSuccess, true)
       assert.equal(sendGradeEmailStub.callCount, 1)
@@ -39,7 +39,7 @@ describe("email reducers for the sendGradeEmail action", function() {
   it("should go through expected state changes when the send function fails", () => {
     sendGradeEmailStub.returns(Promise.reject())
     return dispatchThen(sendGradeEmail(sendEmailArguments), [
-      SEND_GRADES_EMAIL_FAILURE,
+      SEND_GRADES_EMAIL_FAILURE
     ]).then(state => {
       assert.equal(state.sentSuccess, false)
     })

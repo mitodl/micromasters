@@ -44,7 +44,7 @@ window.zEmbed ||
     o.close()
   })(
     "https://static.zdassets.com/ekr/snippet.js?key=0c7cfbbc-76c9-4083-869f-b76d03922056",
-    "mitx-micromasters.zendesk.com",
+    "mitx-micromasters.zendesk.com"
   )
 /* ]]>*/
 /* eslint-enable no-sequences */

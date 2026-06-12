@@ -9,5 +9,5 @@ import iso3166 from "@mitodl/iso-3166-2"
 export const codeToCountryName = R.compose(
   R.pathOr("", ["name"]),
   iso3166.country,
-  R.defaultTo(""),
+  R.defaultTo("")
 )

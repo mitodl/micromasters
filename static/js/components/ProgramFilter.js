@@ -3,7 +3,7 @@ import {
   StatefulAccessor,
   TermQuery,
   SearchkitComponent,
-  State,
+  State
 } from "searchkit"
 import _ from "lodash"
 import R from "ramda"
@@ -37,7 +37,7 @@ class ProgramFilterAccessor extends StatefulAccessor {
 
 export default class ProgramFilter extends SearchkitComponent {
   props: {
-    currentProgramEnrollment: AvailableProgram,
+    currentProgramEnrollment: AvailableProgram
   }
 
   _accessor = new ProgramFilterAccessor()
@@ -53,7 +53,7 @@ export default class ProgramFilter extends SearchkitComponent {
     if (this._accessor.state.getValue() !== currentProgramEnrollment.id) {
       this.searchkit.resetState()
       this._accessor.state = this._accessor.state.setValue(
-        currentProgramEnrollment.id,
+        currentProgramEnrollment.id
       )
 
       this.searchkit.search()
@@ -68,7 +68,7 @@ export default class ProgramFilter extends SearchkitComponent {
     // handle it in componentDidUpdate
     if (!R.isNil(currentProgramEnrollment)) {
       this._accessor.state = this._accessor.state.setValue(
-        currentProgramEnrollment.id,
+        currentProgramEnrollment.id
       )
       // no explicit search here since searchkit will do an initial load and then
       // we will handle this in componentDidUpdate
@@ -78,7 +78,7 @@ export default class ProgramFilter extends SearchkitComponent {
   componentDidUpdate(prevProps: Object): void {
     const switchingPrograms = !_.isEqual(
       prevProps.currentProgramEnrollment,
-      this.props.currentProgramEnrollment,
+      this.props.currentProgramEnrollment
     )
     if (switchingPrograms) {
       this.refreshSearchkit()

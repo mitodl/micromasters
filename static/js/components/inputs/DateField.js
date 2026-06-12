@@ -13,7 +13,7 @@ import {
   validateMonth,
   validateDay,
   validateYear,
-  validateNearFutureYear,
+  validateNearFutureYear
 } from "../../lib/validation/date"
 
 export default class DateField extends React.Component {
@@ -26,7 +26,7 @@ export default class DateField extends React.Component {
     omitDay: boolean,
     onBlur: () => void,
     updateHandler: Function,
-    validator: Function,
+    validator: Function
   }
 
   render() {
@@ -39,7 +39,7 @@ export default class DateField extends React.Component {
       label,
       omitDay,
       allowFutureYear,
-      onBlur,
+      onBlur
     } = this.props
 
     // make a copy of keySet with a slightly different key for temporary storage of the textfields being edited
@@ -70,7 +70,7 @@ export default class DateField extends React.Component {
           return {
             month: pad(date.month() + 1, 2),
             year:  date.year(),
-            day:   pad(date.date(), 2),
+            day:   pad(date.date(), 2)
           }
         }
       }
@@ -92,7 +92,7 @@ export default class DateField extends React.Component {
         ...edit,
         year:  year !== undefined ? year : edit.year,
         month: month !== undefined ? month : edit.month,
-        day:   day !== undefined ? day : edit.day,
+        day:   day !== undefined ? day : edit.day
       }
 
       const firstIfNumEqual = R.curry((x, y) => (Number(x) === y ? x : y))
@@ -104,7 +104,7 @@ export default class DateField extends React.Component {
 
       const validatedMonth = validateMonth(newEdit.month)
       newEdit.month = mstr(
-        S.map(firstIfNumEqual(newEdit.month), validatedMonth),
+        S.map(firstIfNumEqual(newEdit.month), validatedMonth)
       )
 
       let validatedYear
@@ -126,7 +126,7 @@ export default class DateField extends React.Component {
       const stringifyDates = R.compose(
         R.join("-"),
         R.map(mstr),
-        R.adjust(S.map(padYear), 0),
+        R.adjust(S.map(padYear), 0)
       )
 
       const dateString = S.maybe("", stringifyDates, allJust(dateList))
@@ -135,7 +135,7 @@ export default class DateField extends React.Component {
 
       const validatedDate = R.compose(
         S.filter(date => date.isValid),
-        S.filter(date => date.isAfter(moment("1800", "YYYY"))),
+        S.filter(date => date.isAfter(moment("1800", "YYYY")))
       )(rawDate)
 
       if (validatedDate.isNothing) {
@@ -158,7 +158,7 @@ export default class DateField extends React.Component {
           helperText="Day"
           classes={{ root: "date-field" }}
           style={{
-            maxWidth: "3em",
+            maxWidth: "3em"
           }}
           error={error}
           value={edit.day !== undefined ? edit.day : ""}
@@ -174,7 +174,7 @@ export default class DateField extends React.Component {
           helperText="Month"
           classes={{ root: "date-field" }}
           style={{
-            maxWidth: "3em",
+            maxWidth: "3em"
           }}
           error={error}
           value={edit.month !== undefined ? edit.month : ""}
@@ -188,7 +188,7 @@ export default class DateField extends React.Component {
           helperText="Year"
           classes={{ root: "date-field" }}
           style={{
-            maxWidth: "4em",
+            maxWidth: "4em"
           }}
           error={error}
           value={edit.year !== undefined ? edit.year : ""}

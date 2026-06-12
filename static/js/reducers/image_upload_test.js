@@ -15,7 +15,7 @@ import {
   REQUEST_PATCH_USER_PHOTO,
   RECEIVE_PATCH_USER_PHOTO_FAILURE,
   RECEIVE_PATCH_USER_PHOTO_SUCCESS,
-  updateUserPhoto,
+  updateUserPhoto
 } from "../actions/image_upload"
 import { INITIAL_IMAGE_UPLOAD_STATE } from "./image_upload"
 import { FETCH_FAILURE, FETCH_PROCESSING, FETCH_SUCCESS } from "../actions"
@@ -51,9 +51,9 @@ describe("image upload reducer", () => {
           edit:        null,
           error:       "an error",
           photo:       null,
-          patchStatus: null,
+          patchStatus: null
         })
-      },
+      }
     )
   })
 
@@ -64,9 +64,9 @@ describe("image upload reducer", () => {
           edit:        null,
           error:       null,
           photo:       "a photo",
-          patchStatus: null,
+          patchStatus: null
         })
-      },
+      }
     )
   })
 
@@ -78,9 +78,9 @@ describe("image upload reducer", () => {
           edit:        null,
           error:       null,
           photo:       "a photo",
-          patchStatus: null,
+          patchStatus: null
         })
-      },
+      }
     )
   })
 
@@ -95,9 +95,9 @@ describe("image upload reducer", () => {
           edit:        second,
           error:       null,
           photo:       first,
-          patchStatus: null,
+          patchStatus: null
         })
-      },
+      }
     )
   })
 
@@ -108,7 +108,7 @@ describe("image upload reducer", () => {
         edit:        null,
         error:       null,
         photo:       null,
-        patchStatus: null,
+        patchStatus: null
       })
     })
   })
@@ -124,13 +124,13 @@ describe("image upload reducer", () => {
         .returns(Promise.resolve("success"))
       return dispatchThen(updateUserPhoto(user, photo, filename), [
         REQUEST_PATCH_USER_PHOTO,
-        RECEIVE_PATCH_USER_PHOTO_SUCCESS,
+        RECEIVE_PATCH_USER_PHOTO_SUCCESS
       ]).then(state => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,
           photo:       null,
-          patchStatus: FETCH_SUCCESS,
+          patchStatus: FETCH_SUCCESS
         })
       })
     })
@@ -140,13 +140,13 @@ describe("image upload reducer", () => {
 
       return dispatchThen(updateUserPhoto(user, photo, filename), [
         REQUEST_PATCH_USER_PHOTO,
-        RECEIVE_PATCH_USER_PHOTO_FAILURE,
+        RECEIVE_PATCH_USER_PHOTO_FAILURE
       ]).then(state => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,
           photo:       null,
-          patchStatus: FETCH_FAILURE,
+          patchStatus: FETCH_FAILURE
         })
       })
     })
@@ -155,13 +155,13 @@ describe("image upload reducer", () => {
       const photo = new Blob()
       store.dispatch(startPhotoEdit(photo))
       return dispatchThen(requestPatchUserPhoto(), [
-        REQUEST_PATCH_USER_PHOTO,
+        REQUEST_PATCH_USER_PHOTO
       ]).then(state => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,
           photo:       photo,
-          patchStatus: FETCH_PROCESSING,
+          patchStatus: FETCH_PROCESSING
         })
       })
     })
@@ -174,7 +174,7 @@ describe("image upload reducer", () => {
         edit:        null,
         error:       null,
         photo:       photo,
-        patchStatus: FETCH_PROCESSING,
+        patchStatus: FETCH_PROCESSING
       }
       let state = store.getState().imageUpload
       assert.deepEqual(state, expectation)

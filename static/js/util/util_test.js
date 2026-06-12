@@ -37,7 +37,7 @@ import {
   mapObj,
   wait,
   findObjByName,
-  programBackendName,
+  programBackendName
 } from "../util/util"
 import {
   EDUCATION_LEVELS,
@@ -51,7 +51,7 @@ import {
   EDUCATION_STEP,
   COURSEWARE_BACKEND_MITXONLINE,
   COURSEWARE_BACKEND_NAMES,
-  COURSEWARE_BACKEND_EDXORG,
+  COURSEWARE_BACKEND_EDXORG
 } from "../constants"
 import { USER_PROFILE_RESPONSE, DASHBOARD_RESPONSE } from "../test_constants"
 import { assertMaybeEquality, assertIsNothing } from "../lib/test_utils"
@@ -69,9 +69,9 @@ describe("utility functions", () => {
         makeStrippedHtml(
           <div>
             <strong>text</strong>
-          </div>,
+          </div>
         ),
-        "text",
+        "text"
       )
     })
   })
@@ -86,7 +86,7 @@ describe("utility functions", () => {
         end_date:           null,
         city:               "",
         country:            null,
-        state_or_territory: null,
+        state_or_territory: null
       })
     })
   })
@@ -102,7 +102,7 @@ describe("utility functions", () => {
         school_name:               null,
         school_city:               null,
         school_state_or_territory: null,
-        school_country:            null,
+        school_country:            null
       })
     })
   })
@@ -116,7 +116,7 @@ describe("utility functions", () => {
     it("uses a default profile image if not available, removing duplicate slashes", () => {
       assert.equal(
         "/static/images/avatar_default.png",
-        makeProfileImageUrl({}, false),
+        makeProfileImageUrl({}, false)
       )
     })
 
@@ -128,10 +128,10 @@ describe("utility functions", () => {
         makeProfileImageUrl(
           {
             image_medium: url,
-            image_small:  smallUrl,
+            image_small:  smallUrl
           },
-          true,
-        ),
+          true
+        )
       )
     })
   })
@@ -143,7 +143,7 @@ describe("utility functions", () => {
         username:       "jane_username",
         preferred_name: "jane preferred",
         first_name:     "jane",
-        last_name:      "doe",
+        last_name:      "doe"
       }
     })
 
@@ -177,8 +177,8 @@ describe("utility functions", () => {
           romanized_first_name: "romanized_jane",
           romanized_last_name:  "romanized_doe",
           first_name:           "jane",
-          last_name:            "doe",
-        }),
+          last_name:            "doe"
+        })
       )
     })
 
@@ -187,8 +187,8 @@ describe("utility functions", () => {
         "jane doe",
         getRomanizedName({
           first_name: "jane",
-          last_name:  "doe",
-        }),
+          last_name:  "doe"
+        })
       )
     })
   })
@@ -198,7 +198,7 @@ describe("utility functions", () => {
       const nonUS = {
         country:            "AF",
         state_or_territory: "AF-KAB",
-        city:               "Kabul",
+        city:               "Kabul"
       }
       assert.equal(getLocation(nonUS), "Kabul, Afghanistan")
     })
@@ -207,7 +207,7 @@ describe("utility functions", () => {
       const us = {
         country:            "US",
         state_or_territory: "US-ME",
-        city:               "Portland",
+        city:               "Portland"
       }
       assert.equal(getLocation(us), "Portland, ME, US")
       // assert hide state
@@ -218,7 +218,7 @@ describe("utility functions", () => {
       const us = {
         country:            null,
         state_or_territory: "US-ME",
-        city:               "Portland",
+        city:               "Portland"
       }
       assert.equal(getLocation(us, false), "Portland, ")
     })
@@ -227,7 +227,7 @@ describe("utility functions", () => {
       const us = {
         country:            "US",
         state_or_territory: "US-ME",
-        city:               null,
+        city:               null
       }
       assert.equal(getLocation(us, false), "US")
     })
@@ -236,7 +236,7 @@ describe("utility functions", () => {
       const us = {
         country:            null,
         state_or_territory: "US-ME",
-        city:               null,
+        city:               null
       }
       assert.equal(getLocation(us, false), "")
     })
@@ -253,7 +253,7 @@ describe("utility functions", () => {
       const clone = R.clone(USER_PROFILE_RESPONSE)
       clone.work_history.push({
         company_name: "Foobarcorp",
-        end_date:     null,
+        end_date:     null
       })
       assertMaybeEquality(Just("Foobarcorp"), getEmployer(clone))
     })
@@ -261,7 +261,7 @@ describe("utility functions", () => {
     it("should return the most recent job if the user is not currently employed", () => {
       assertMaybeEquality(
         Just("Planet Express"),
-        getEmployer(USER_PROFILE_RESPONSE),
+        getEmployer(USER_PROFILE_RESPONSE)
       )
     })
   })
@@ -297,7 +297,7 @@ describe("utility functions", () => {
         if (!foundCircle || !foundCircleText || !foundText) {
           assert(
             false,
-            `Unable to find one of circle: ${foundCircle} circleText: ${foundCircleText} text: ${foundText}`,
+            `Unable to find one of circle: ${foundCircle} circleText: ${foundCircleText} text: ${foundText}`
           )
         }
       })
@@ -367,7 +367,7 @@ describe("utility functions", () => {
       const unprivilegedCallback = () => "emacs"
       assert.equal(
         userPrivilegeCheck(profile, privilegedCallback, unprivilegedCallback),
-        "emacs",
+        "emacs"
       )
     })
 
@@ -377,7 +377,7 @@ describe("utility functions", () => {
       const unprivilegedString = "emacs"
       assert.equal(
         userPrivilegeCheck(profile, privilegedCallback, unprivilegedString),
-        "emacs",
+        "emacs"
       )
     })
 
@@ -388,7 +388,7 @@ describe("utility functions", () => {
       const unprivilegedCallback = () => "emacs"
       assert.equal(
         userPrivilegeCheck(profile, privilegedCallback, unprivilegedCallback),
-        "emacs",
+        "emacs"
       )
     })
   })
@@ -408,7 +408,7 @@ describe("utility functions", () => {
         const clone = {
           ...USER_PROFILE_RESPONSE,
           edx_level_of_education: outerValue,
-          education:              [],
+          education:              []
         }
         assert.deepEqual(copy, calculateDegreeInclusions(clone))
       })
@@ -423,7 +423,7 @@ describe("utility functions", () => {
       const clone = {
         ...USER_PROFILE_RESPONSE,
         edx_level_of_education: null,
-        education:              [],
+        education:              []
       }
       assert.deepEqual(defaults, calculateDegreeInclusions(clone))
     })
@@ -434,19 +434,19 @@ describe("utility functions", () => {
         edx_level_of_education: HIGH_SCHOOL,
         education:              [
           {
-            degree_name: HIGH_SCHOOL,
+            degree_name: HIGH_SCHOOL
           },
           {
-            degree_name: DOCTORATE,
-          },
-        ],
+            degree_name: DOCTORATE
+          }
+        ]
       }
       assert.deepEqual(calculateDegreeInclusions(clone), {
         [HIGH_SCHOOL]: true,
         [DOCTORATE]:   true,
         [BACHELORS]:   false,
         [MASTERS]:     false,
-        [ASSOCIATE]:   false,
+        [ASSOCIATE]:   false
       })
     })
   })
@@ -461,7 +461,7 @@ describe("utility functions", () => {
       assert.deepEqual(results, [
         "testFunctionA arg",
         "testFunctionA arg",
-        "testFunctionB arg",
+        "testFunctionB arg"
       ])
     })
   })
@@ -527,80 +527,80 @@ describe("utility functions", () => {
     it("iterates and finds the course run, course, and program", () => {
       const run = {
         id:        3,
-        course_id: "xyz",
+        course_id: "xyz"
       }
       const course = {
         runs: [run],
-        id:   2,
+        id:   2
       }
       const program = {
         courses: [course],
-        id:      1,
+        id:      1
       }
 
       assert.deepEqual(
         findCourseRun([program], _run => run.course_id === _run.course_id),
-        [run, course, program],
+        [run, course, program]
       )
     })
 
     it("skips runs when there is an exception", () => {
       const run = {
         id:        3,
-        course_id: "xyz",
+        course_id: "xyz"
       }
       const course = {
         runs: [run],
-        id:   2,
+        id:   2
       }
       const program = {
         courses: [course],
-        id:      1,
+        id:      1
       }
 
       assert.deepEqual(
         findCourseRun([program], () => {
           throw new Error()
         }),
-        [null, null, null],
+        [null, null, null]
       )
     })
 
     it("finds courses with no course runs", () => {
       const course = {
         runs: [],
-        id:   2,
+        id:   2
       }
       const program = {
         courses: [course],
-        id:      1,
+        id:      1
       }
 
       assert.deepEqual(
         findCourseRun([program], (_run, _course) => _course.runs.length === 0),
-        [null, course, program],
+        [null, course, program]
       )
     })
 
     it("finds a program with no courses", () => {
       const program = {
         courses: [],
-        id:      1,
+        id:      1
       }
 
       assert.deepEqual(
         findCourseRun(
           [program],
-          (_run, _course, _program) => _program.courses.length === 0,
+          (_run, _course, _program) => _program.courses.length === 0
         ),
-        [null, null, program],
+        [null, null, program]
       )
     })
 
     it("returns an empty object for each if selector never matches", () => {
       assert.deepEqual(
         findCourseRun(DASHBOARD_RESPONSE.programs, () => false),
-        [null, null, null],
+        [null, null, null]
       )
     })
   })
@@ -625,16 +625,16 @@ describe("utility functions", () => {
       const input = [
         {
           value: "1",
-          label: "One",
+          label: "One"
         },
         {
           value: "2",
-          label: "two",
+          label: "two"
         },
         {
           value: "3",
-          label: "Three",
-        },
+          label: "Three"
+        }
       ]
 
       const expected = [input[0], input[2], input[1]]
@@ -649,7 +649,7 @@ describe("utility functions", () => {
         username:       "jane_username",
         first_name:     "jane",
         last_name:      "doe",
-        preferred_name: "test",
+        preferred_name: "test"
       }
     })
 
@@ -687,7 +687,12 @@ describe("utility functions", () => {
       const phrase = "CÖ"
       const result = highlight(name, phrase)
       assert.equal(shallow(result).text(), name)
-      assert.equal(shallow(result).find(".highlight").text(), "Cô")
+      assert.equal(
+        shallow(result)
+          .find(".highlight")
+          .text(),
+        "Cô"
+      )
     })
 
     it("doesn't highlight if phrase doesn't match", () => {
@@ -702,7 +707,12 @@ describe("utility functions", () => {
       const catdogfish = "🐱🐶🐟"
       const result = highlight(catdogfish, dog)
       assert.equal(catdogfish, shallow(result).text())
-      assert.equal(dog, shallow(result).find(".highlight").text())
+      assert.equal(
+        dog,
+        shallow(result)
+          .find(".highlight")
+          .text()
+      )
     })
 
     it("handles multiple matches", () => {
@@ -711,7 +721,7 @@ describe("utility functions", () => {
       const result = highlight(text, phrase)
       assert.equal(
         shallow(result).html(),
-        '<span><span class="highlight">match</span>1 <span class="highlight">match</span>2</span>',
+        '<span><span class="highlight">match</span>1 <span class="highlight">match</span>2</span>'
       )
     })
   })
@@ -721,7 +731,7 @@ describe("utility functions", () => {
       const components = [
         <div key={"1"}>div1</div>,
         <div key={"2"}>div2</div>,
-        <div key={"3"}>div3</div>,
+        <div key={"3"}>div3</div>
       ]
       const separatedComponents = renderSeparatedComponents(components, " | ")
       assert.equal(separatedComponents[0].props.children, "div1")
@@ -856,7 +866,7 @@ describe("utility functions", () => {
       program.has_mitxonline_courses = true
       assert.deepEqual(
         programBackendName(program),
-        COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_MITXONLINE],
+        COURSEWARE_BACKEND_NAMES[COURSEWARE_BACKEND_MITXONLINE]
       )
     })
   })
@@ -893,13 +903,13 @@ describe("utility functions", () => {
         must: [
           {
             foo1: "baz",
-            foo2: "gaz1",
+            foo2: "gaz1"
           },
           {
-            foo2: "gaz",
-          },
-        ],
-      },
+            foo2: "gaz"
+          }
+        ]
+      }
     }
 
     it("it search top level object", () => {

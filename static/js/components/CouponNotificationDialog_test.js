@@ -12,7 +12,7 @@ import {
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_PRICE,
-  COUPON_TYPE_STANDARD,
+  COUPON_TYPE_STANDARD
 } from "../constants"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import CouponNotificationDialog from "./CouponNotificationDialog"
@@ -28,7 +28,7 @@ const COUPON_FIXED_DISCOUNT: Coupon = {
   amount_type:  COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   amount:       new Decimal("123.45"),
   program_id:   1,
-  object_id:    1,
+  object_id:    1
 }
 
 const COUPON_PERCENT: Coupon = {
@@ -38,7 +38,7 @@ const COUPON_PERCENT: Coupon = {
   amount_type:  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   amount:       new Decimal("0.5543"),
   program_id:   1,
-  object_id:    1,
+  object_id:    1
 }
 
 const COUPON_FIXED_PRICE: Coupon = {
@@ -48,7 +48,7 @@ const COUPON_FIXED_PRICE: Coupon = {
   amount_type:  COUPON_AMOUNT_TYPE_FIXED_PRICE,
   amount:       new Decimal("150"),
   program_id:   1,
-  object_id:    1,
+  object_id:    1
 }
 
 const COUPON_COURSE: Coupon = {
@@ -58,7 +58,7 @@ const COUPON_COURSE: Coupon = {
   amount_type:  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   amount:       new Decimal("1"),
   program_id:   1,
-  object_id:    2,
+  object_id:    2
 }
 
 const COURSE: Course = {
@@ -79,7 +79,7 @@ const COURSE: Course = {
   is_elective:                 false,
   certificate_url:             "",
   overall_grade:               "",
-  is_passed:                   false,
+  is_passed:                   false
 }
 
 const PROGRAM: AvailableProgram = {
@@ -88,7 +88,7 @@ const PROGRAM: AvailableProgram = {
   enrolled:                       true,
   programpage_url:                null,
   total_courses:                  0,
-  enrollable_courseware_backends: ["edxorg"],
+  enrollable_courseware_backends: ["edxorg"]
 }
 
 describe("CouponNotificationDialog", () => {
@@ -106,7 +106,7 @@ describe("CouponNotificationDialog", () => {
     couponProgram: ?AvailableProgram = null,
     couponCourse: ?Course = null,
     open = true,
-    setDialogVisibility = () => {},
+    setDialogVisibility = () => {}
   ): HTMLElement => {
     mount(
       <MuiThemeProvider theme={createMuiTheme()}>
@@ -117,7 +117,7 @@ describe("CouponNotificationDialog", () => {
           open={open}
           setDialogVisibility={setDialogVisibility}
         />
-      </MuiThemeProvider>,
+      </MuiThemeProvider>
     )
     return getEl(document, ".coupon-notification-dialog")
   }
@@ -127,12 +127,12 @@ describe("CouponNotificationDialog", () => {
     const titleEl = getEl(div, ".dialog-title")
     assert.equal(
       titleEl.textContent,
-      "Coupon applied: $123.45 off each course!",
+      "Coupon applied: $123.45 off each course!"
     )
     const messageEl = getEl(div, "p:first-child")
     assert.equal(
       messageEl.textContent,
-      "This coupon gives a discount of $123.45 off the price of each course in the Awesomesauce MicroMasters program.",
+      "This coupon gives a discount of $123.45 off the price of each course in the Awesomesauce MicroMasters program."
     )
   })
 
@@ -143,7 +143,7 @@ describe("CouponNotificationDialog", () => {
     const messageEl = getEl(div, "p:first-child")
     assert.equal(
       messageEl.textContent,
-      "This coupon gives a discount of 55% off the price of each course in the Awesomesauce MicroMasters program.",
+      "This coupon gives a discount of 55% off the price of each course in the Awesomesauce MicroMasters program."
     )
   })
 
@@ -154,7 +154,7 @@ describe("CouponNotificationDialog", () => {
     const messageEl = getEl(div, "p:first-child")
     assert.equal(
       messageEl.textContent,
-      "This coupon gives a discount of 55% off the price of each course in program ID 1.",
+      "This coupon gives a discount of 55% off the price of each course in program ID 1."
     )
   })
 
@@ -165,7 +165,7 @@ describe("CouponNotificationDialog", () => {
     const messageEl = getEl(div, "p:first-child")
     assert.equal(
       messageEl.textContent,
-      "This coupon gives a discount of 100% off the price of Horse.",
+      "This coupon gives a discount of 100% off the price of Horse."
     )
   })
 
@@ -176,7 +176,7 @@ describe("CouponNotificationDialog", () => {
     const messageEl = getEl(div, "p:first-child")
     assert.equal(
       messageEl.textContent,
-      "This coupon gives a discount of 100% off the price of course ID 2.",
+      "This coupon gives a discount of 100% off the price of course ID 2."
     )
   })
 
@@ -185,13 +185,13 @@ describe("CouponNotificationDialog", () => {
     const titleEl = getEl(div, ".dialog-title")
     assert.equal(
       titleEl.textContent,
-      "Coupon applied: course price set to $150",
+      "Coupon applied: course price set to $150"
     )
     const messageEl = getEl(div, "p:first-child")
     assert.equal(
       messageEl.textContent,
       "This coupon sets the price of each course in the " +
-        "Awesomesauce MicroMasters program at the fixed price of $150.",
+        "Awesomesauce MicroMasters program at the fixed price of $150."
     )
   })
 
