@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.250.1
+---------------
+
+- Updating program page for Finance (#5521)
+- Update dependency django to v5.2.15 [SECURITY] (#5520)
+
 Version 0.250.0 (Released June 04, 2026)
 ---------------
 
