@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS base
+FROM python:3.11-slim@sha256:ae52c5bef62a6bdd42cd1e8dffef86b9cd284bde9427da79839de7a4b983e7ca AS base
 
 LABEL maintainer="ODL DevOps <mitx-devops@mit.edu>"
 
@@ -25,7 +25,7 @@ ENV \
   UV_PROJECT_ENVIRONMENT="/opt/venv"
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:latest@sha256:ff07b86af50d4d9391d9daf4ff89ce427bc544f9aae87057e69a1cc0aa369946 /uv /uvx /usr/local/bin/
 
 COPY pyproject.toml uv.lock /src/
 
@@ -37,7 +37,7 @@ USER mitodl
 WORKDIR /src
 RUN uv sync --frozen --no-install-project --no-dev
 
-FROM node:14.18.2 AS node_builder
+FROM node:14.18.2@sha256:e5c6aac226819f88d6431a56f502972d323d052b1b6108094ba7e6b07154a542 AS node_builder
 COPY . /src
 WORKDIR /src
 RUN yarn install --immutable
