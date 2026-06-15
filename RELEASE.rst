@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.250.1
+Version 0.250.1 (Released June 15, 2026)
 ---------------
 
 - Updating program page for Finance (#5521)
