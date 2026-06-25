@@ -14,8 +14,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 # ─── Dependency install ───────────────────────────────────────────────────────
 FROM base AS deps
 
-COPY pyproject.toml uv.lock /src/
-RUN chown mitodl:mitodl /src/pyproject.toml /src/uv.lock
+COPY --chown=mitodl:mitodl pyproject.toml uv.lock /src/
 
 USER mitodl
 WORKDIR /src
