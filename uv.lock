@@ -1254,7 +1254,6 @@ dependencies = [
     { name = "sqlparse" },
     { name = "tornado" },
     { name = "urllib3" },
-    { name = "uwsgi" },
     { name = "wagtail" },
     { name = "willow", extra = ["heif"] },
 ]
@@ -1330,7 +1329,6 @@ requires-dist = [
     { name = "sqlparse", specifier = ">=0.5" },
     { name = "tornado", specifier = ">=6.0" },
     { name = "urllib3", specifier = "==1.26.5" },
-    { name = "uwsgi" },
     { name = "wagtail", specifier = ">=7.0,<8.0" },
     { name = "willow", extras = ["heif"], specifier = ">=1.8" },
 ]
@@ -2264,12 +2262,6 @@ wheels = [
 socks = [
     { name = "pysocks" },
 ]
-
-[[package]]
-name = "uwsgi"
-version = "2.0.31"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9f/49/2f57640e889ba509fd1fae10cccec1b58972a07c2724486efba94c5ea448/uwsgi-2.0.31.tar.gz", hash = "sha256:e8f8b350ccc106ff93a65247b9136f529c14bf96b936ac5b264c6ff9d0c76257", size = 822796, upload-time = "2025-10-11T19:17:28.794Z" }
 
 [[package]]
 name = "vine"
