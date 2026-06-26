@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.251.0
+---------------
+
+- Add second enroll button (#5525)
+- Update dependency tornado to v6.5.6 [SECURITY] (#5523)
+
 Version 0.250.1 (Released June 15, 2026)
 ---------------
 
