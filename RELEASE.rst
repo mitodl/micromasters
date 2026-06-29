@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.251.0
+Version 0.251.0 (Released June 29, 2026)
 ---------------
 
 - Add second enroll button (#5525)
