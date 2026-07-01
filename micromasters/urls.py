@@ -21,6 +21,7 @@ if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
     ]
 
 urlpatterns += [
+    path("", include("micromasters.urls_healthcheck")),
     path('', include('backends.urls')),
     re_path(r'^admin/', admin.site.urls),
     path('', include('courses.urls')),
