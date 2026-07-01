@@ -1,7 +1,7 @@
 """Healthcheck urls"""
 
 from django.conf import settings
-from django.urls import include, path, re_path
+from django.urls import include, path
 from health_check.views import HealthCheckView
 from redis.asyncio import Redis as RedisClient
 
@@ -21,32 +21,32 @@ urlpatterns = [
         "health/",
         include(
             [
-                re_path(
-                    r"startup\/?",
+                path(
+                    "startup/",
                     HealthCheckView.as_view(
                         checks=[
                             *BASE_CHECKS,
                         ]
                     ),
                 ),
-                re_path(
-                    r"liveness\/?",
+                path(
+                    "liveness/",
                     HealthCheckView.as_view(
                         checks=[
                             "health_check.Database",
                         ]
                     ),
                 ),
-                re_path(
-                    r"readiness\/?",
+                path(
+                    "readiness/",
                     HealthCheckView.as_view(
                         checks=[
                             *BASE_CHECKS,
                         ]
                     ),
                 ),
-                re_path(
-                    r"full\/?",
+                path(
+                    "full/",
                     HealthCheckView.as_view(
                         checks=[
                             *BASE_CHECKS,
