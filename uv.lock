@@ -641,6 +641,27 @@ wheels = [
 ]
 
 [[package]]
+name = "django-health-check"
+version = "4.4.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "dnspython" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/61/9b/1b48973dfeb13fe5bce8669a328a06d31b71e2b9ee28099b5a499ee4d5f3/django_health_check-4.4.3.tar.gz", hash = "sha256:a99fe9f13da26cf055d81e90f237ef3ad40a31f365b280812a590707854b8d2b", size = 21800, upload-time = "2026-06-23T09:42:09.157Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0e/42/0497bb62bb6df5af67ea211a79f8ba158a3b4896b222f747833f5dd0e407/django_health_check-4.4.3-py3-none-any.whl", hash = "sha256:dfbb27e4c63e8e419a4852f0d9c1c49d6de342e1b00438144905761c2a1386a7", size = 26916, upload-time = "2026-06-23T09:42:07.72Z" },
+]
+
+[package.optional-dependencies]
+celery = [
+    { name = "celery" },
+]
+redis = [
+    { name = "redis" },
+]
+
+[[package]]
 name = "django-hijack"
 version = "3.7.6"
 source = { registry = "https://pypi.org/simple" }
@@ -720,18 +741,6 @@ dependencies = [
     { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/14/e7/08f5ea7c5490569a8e51bbe1b2568fb5deb31d070ec753628f1425e91c55/django-role-permissions-2.2.1.tar.gz", hash = "sha256:c00fc15f67e63cbf5514b95caeb369d6094fe94d75b14c3afc1bb4963babd1fc", size = 39983, upload-time = "2018-12-02T12:37:40.528Z" }
-
-[[package]]
-name = "django-server-status"
-version = "0.7.3"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ee/46/e6ee9a6c25f25a196d60e184e01add80642318cfa18ec1304d254ac5adac/django-server-status-0.7.3.tar.gz", hash = "sha256:9126e20d78c88f62ffe382c1a5c73f1206ba8dca07a8039e81e3f35f1f75941a", size = 21266, upload-time = "2020-09-18T19:08:53.198Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/aa/36/ee1b756346ea0a7327191a7b5042de2557c798f2700b81e2bcc29b38e278/django_server_status-0.7.3-py3-none-any.whl", hash = "sha256:2a018c731504a3c82d45717bca011c4f6b1d547f5384c9b0a04b439e9e5c3552", size = 22593, upload-time = "2020-09-18T19:08:51.849Z" },
-]
 
 [[package]]
 name = "django-storages"
@@ -815,6 +824,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/8a/95/5376fe618646fde6899b3cdc85fd959716bb67542e273a76a80d9f326f27/djangorestframework-3.16.1.tar.gz", hash = "sha256:166809528b1aced0a17dc66c24492af18049f2c9420dbd0be29422029cfc3ff7", size = 1089735, upload-time = "2025-08-06T17:50:53.251Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b0/ce/bf8b9d3f415be4ac5588545b5fcdbbb841977db1c1d923f7568eeabe1689/djangorestframework-3.16.1-py3-none-any.whl", hash = "sha256:33a59f47fb9c85ede792cbf88bde71893bcda0667bc573f784649521f1102cec", size = 1080442, upload-time = "2025-08-06T17:50:50.667Z" },
+]
+
+[[package]]
+name = "dnspython"
+version = "2.8.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/8b/57666417c0f90f08bcafa776861060426765fdb422eb10212086fb811d26/dnspython-2.8.0.tar.gz", hash = "sha256:181d3c6996452cb1189c4046c61599b84a5a86e099562ffde77d26984ff26d0f", size = 368251, upload-time = "2025-09-07T18:58:00.022Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ba/5a/18ad964b0086c6e62e2e7500f7edc89e3faa45033c71c1893d34eed2b2de/dnspython-2.8.0-py3-none-any.whl", hash = "sha256:01d9bbc4a2d76bf0db7c1f729812ded6d912bd318d3b1cf81d30c0f845dbf3af", size = 331094, upload-time = "2025-09-07T18:57:58.071Z" },
 ]
 
 [[package]]
@@ -1213,12 +1231,12 @@ dependencies = [
     { name = "django" },
     { name = "django-cors-headers" },
     { name = "django-filter" },
+    { name = "django-health-check", extra = ["celery", "redis"] },
     { name = "django-hijack" },
     { name = "django-ipware" },
     { name = "django-redis" },
     { name = "django-robots" },
     { name = "django-role-permissions" },
-    { name = "django-server-status" },
     { name = "django-storages" },
     { name = "django-taggit" },
     { name = "django-webpack-loader" },
@@ -1289,12 +1307,12 @@ requires-dist = [
     { name = "django", specifier = ">=5.2,<5.3" },
     { name = "django-cors-headers", specifier = ">=4.0" },
     { name = "django-filter", specifier = ">=23.0" },
+    { name = "django-health-check", extras = ["celery", "redis"], specifier = ">=4.0.0" },
     { name = "django-hijack", specifier = ">=3.3,<4.0" },
     { name = "django-ipware", specifier = ">=5.0" },
     { name = "django-redis", specifier = "==5.2.0" },
     { name = "django-robots", specifier = ">=5.0" },
     { name = "django-role-permissions", specifier = "==2.2.1" },
-    { name = "django-server-status", specifier = "==0.7.3" },
     { name = "django-storages", specifier = ">=1.13" },
     { name = "django-taggit", specifier = ">=5.0" },
     { name = "django-webpack-loader", specifier = "==1.7.0" },
