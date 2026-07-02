@@ -1,7 +1,4 @@
-# Core requirements
-git
-curl
-libjpeg-dev
-zlib1g-dev
-net-tools
-build-essential
+# App-specific apt extras for micromasters.
+# All required packages (git, curl, libjpeg-dev, zlib1g-dev, net-tools,
+# build-essential, libpq-dev, postgresql-client) are in
+# mitodl/ol-python-base:3.11. No extras needed.
