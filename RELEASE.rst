@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.251.1
+---------------
+
+- Configure bumpver for Concourse release pipeline (#5509)
+- feat: adopt mitodl/ol-python-base:3.11, granian (#5524)
+- Replace dead django-server-status config with django-health-check (#5527)
+
 Version 0.251.0 (Released June 29, 2026)
 ---------------
 
