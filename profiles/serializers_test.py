@@ -367,13 +367,15 @@ class ProfileFilledOutTests(ProfileImageCleanupMixin, MockedESTestCase):
 
     def test_filled_out_false(self):
         """
-        filled_out cannot be set to false
+        filled_out cannot be set to false - a stale false value is ignored rather
+        than rejecting the whole request, since the frontend always PATCHes the
+        entire profile and may echo back a stale value on unrelated edits
         """
         self.data['filled_out'] = False
         self.data['image'] = self.profile.image
-        with self.assertRaises(ValidationError) as ex:
-            ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
-        assert ex.exception.args[0] == {'non_field_errors': ['filled_out cannot be set to false']}
+        serializer = ProfileFilledOutSerializer(data=self.data)
+        serializer.is_valid(raise_exception=True)
+        assert serializer.validated_data['filled_out'] is True
 
     def test_required_fields(self):
         """

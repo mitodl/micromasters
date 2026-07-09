@@ -275,10 +275,13 @@ class ProfileFilledOutSerializer(ProfileSerializer):
 
     def validate(self, attrs):
         """
-        Assert that filled_out can't be turned off and that agreed_to_terms_of_service is true
+        filled_out can't be turned off once set. The frontend always PATCHes the
+        full profile object, so a stale `filled_out: false` is often echoed back
+        on unrelated edits (e.g. adding an education entry) - ignore it instead of
+        rejecting the whole request and blocking those edits.
         """
         if 'filled_out' in attrs and not attrs['filled_out']:
-            raise ValidationError("filled_out cannot be set to false")
+            attrs['filled_out'] = True
 
         if 'agreed_to_terms_of_service' in attrs and not attrs['agreed_to_terms_of_service']:
             raise ValidationError("agreed_to_terms_of_service cannot be set to false")
