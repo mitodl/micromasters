@@ -11,7 +11,11 @@ import ProfileImage, { PROFILE_IMAGE_DIALOG } from "./ProfileImage"
 import IntegrationTestHelper from "../util/integration_test_helper"
 import { showDialog } from "../actions/ui"
 import * as api from "../lib/api"
-import { startPhotoEdit, requestPatchUserPhoto } from "../actions/image_upload"
+import {
+  startPhotoEdit,
+  updatePhotoEdit,
+  requestPatchUserPhoto
+} from "../actions/image_upload"
 
 describe("ProfileImage", () => {
   let helper, sandbox, updateProfileImageStub, div
@@ -122,11 +126,12 @@ describe("ProfileImage", () => {
     })
 
     describe("save button", () => {
-      it("should show the save button when there's an image", () => {
+      it("should show the save button once the image has been cropped", () => {
         renderProfileImage({
           editable: true
         })
         helper.store.dispatch(startPhotoEdit({ name: "a name" }))
+        helper.store.dispatch(updatePhotoEdit(new Blob()))
         helper.store.dispatch(showDialog(PROFILE_IMAGE_DIALOG))
         const dialog = document.querySelector(".photo-upload-dialog")
         const saveButton = dialog.querySelector(".save-button")
@@ -148,6 +153,21 @@ describe("ProfileImage", () => {
         ReactTestUtils.Simulate.click(saveButton)
         assert.isFalse(updateProfileImageStub.called)
         assert.isNull(dialog.querySelector(".MuiCircularProgress-root"))
+      })
+
+      it("should disable the save button if an image is picked but not yet cropped", () => {
+        // regression test: clicking Save before the cropper produces a blob
+        // used to send an undefined image and throw a FormData TypeError
+        renderProfileImage({
+          editable: true
+        })
+        helper.store.dispatch(startPhotoEdit({ name: "a name" }))
+        helper.store.dispatch(showDialog(PROFILE_IMAGE_DIALOG))
+        const dialog = document.querySelector(".photo-upload-dialog")
+        const saveButton = dialog.querySelector(".save-button")
+        assert.isTrue(saveButton.disabled)
+        ReactTestUtils.Simulate.click(saveButton)
+        assert.isFalse(updateProfileImageStub.called)
       })
 
       it("should show a spinner while uploading the image", () => {

@@ -81,12 +81,15 @@ const ProfileImageUploader = ({
   startPhotoEdit,
   clearPhotoEdit,
   updatePhotoEdit,
-  imageUpload: { photo, error, patchStatus },
+  imageUpload: { photo, edit, error, patchStatus },
   updateUserPhoto,
   setPhotoError
 }: ImageUploadProps) => {
   const inFlight = patchStatus === FETCH_PROCESSING
-  const disabled = patchStatus === FETCH_PROCESSING || !photo
+  // `edit` is only populated once the cropper has produced a cropped blob
+  // (see CropperWrapper's cropend/ready handlers). Without this check, clicking
+  // Save before that finishes sends an undefined image to the server.
+  const disabled = patchStatus === FETCH_PROCESSING || !photo || !edit
 
   return (
     <Dialog

@@ -28,7 +28,13 @@ export default class CropperWrapper extends React.Component {
           height: 512
         })
       }
-      canvas.toBlob(blob => updatePhotoEdit(blob), "image/jpeg")
+      canvas.toBlob(blob => {
+        // toBlob can invoke the callback with null if the canvas has no
+        // pixel data (e.g. a broken/zero-size source image)
+        if (blob) {
+          updatePhotoEdit(blob)
+        }
+      }, "image/jpeg")
     }
   }
 
