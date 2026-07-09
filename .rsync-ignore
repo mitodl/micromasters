@@ -1,8 +1,0 @@
-node_modules
-.git
-.tox
-.rsync-ignore
-Makefile
-README.rst
-.DS_Store
-.idea/

@@ -1,2 +1,0 @@
-instrumentation:
-  excludes: ['**/*_test.js']

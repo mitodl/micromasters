@@ -1,9 +1,0 @@
-{% load wagtailimages_tags %}
-
-{% image self.image original as temp_photo%}
-
-<div style="display: block; text-align:{{self.align}}">
-    <a href="{{ self.link }}" target="_blank">
-        <img src={{ temp_photo.url }} width={{ self.width }}px height={{ self.height }}px />
-    </a>
-</div>
