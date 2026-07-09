@@ -49,18 +49,18 @@
     {% endspaceless %}
   </head>
   <body class="{% block bodyclass %}{% endblock %}">
-    <div class="mitlearn-transition-banner" role="banner">
-      <p>
-        All MITx MicroMasters programs are now offered exclusively on
-        <a href="https://learn.mit.edu" target="_blank" rel="noopener noreferrer">MIT Learn</a>.
-      </p>
-    </div>
     {% if APIKEYS.GOOGLE_TAG_MANAGER %}
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ APIKEYS.GOOGLE_TAG_MANAGER }}"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
     {% endif %}
+    <div class="mitlearn-transition-banner" role="region" aria-label="Announcement">
+      <p>
+        All MITx MicroMasters programs are now offered exclusively on
+        <a href="https://learn.mit.edu" target="_blank" rel="noopener noreferrer">MIT Learn<span class="sr-only"> (opens in a new window)</span></a>.
+      </p>
+    </div>
     {% block content %}
     {% endblock %}
     <script type="text/javascript">
