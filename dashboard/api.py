@@ -708,7 +708,14 @@ def refresh_user_data(user_id, provider):
 
     try:
         utils.refresh_user_token(user_social)
-    except:
+    except InvalidCredentialStored:
+        # Expected when a student has revoked or expired their OAuth grant with the
+        # courseware provider; logging as an exception floods Sentry with millions
+        # of events for a condition we can't act on beyond marking the refresh as failed.
+        save_cache_update_failure(user_id)
+        log.warning("Unable to refresh token for student %s: invalid credentials", user.username)
+        return
+    except:  # pylint: disable=bare-except
         save_cache_update_failure(user_id)
         log.exception("Unable to refresh token for student %s", user.username)
         return

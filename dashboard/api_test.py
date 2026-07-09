@@ -2386,6 +2386,33 @@ def test_refresh_failed_oauth_update(db, mocker):
     assert save_failure_mock.called is True
 
 
+def test_refresh_invalid_credential_stored_not_logged_as_exception(db, mocker, caplog):
+    """
+    If the oauth token refresh fails because the student revoked/expired their
+    credentials, we should log a warning (not a full exception) so this expected,
+    non-actionable condition doesn't flood Sentry, but should still record the failure
+    """
+    user = _make_fake_real_user()
+    user_social = user.social_auth.first()
+    refresh_user_token_mock = mocker.patch(
+        'dashboard.api.utils.refresh_user_token', autospec=True,
+        side_effect=InvalidCredentialStored('error', 400),
+    )
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True)
+    update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+    save_failure_mock = mocker.patch('dashboard.api.save_cache_update_failure')
+
+    api.refresh_user_data(user.id, BACKEND_EDX_ORG)
+
+    refresh_user_token_mock.assert_called_once_with(user_social)
+    assert edx_api_init.called is False
+    assert update_cache_mock.called is False
+    assert save_failure_mock.called is True
+    warning_records = [record for record in caplog.records if record.levelname == "WARNING"]
+    assert any("invalid credentials" in record.message for record in warning_records)
+    assert all(record.exc_info is None for record in caplog.records if record.levelname != "WARNING")
+
+
 def test_refresh_failed_edx_client(db, mocker):
     """If we fail to create the edx client, we should skip the edx refresh"""
     user = _make_fake_real_user()
