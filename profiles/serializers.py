@@ -275,10 +275,9 @@ class ProfileFilledOutSerializer(ProfileSerializer):
 
     def validate(self, attrs):
         """
-        filled_out can't be turned off once set. The frontend always PATCHes the
-        full profile object, so a stale `filled_out: false` is often echoed back
-        on unrelated edits (e.g. adding an education entry) - ignore it instead of
-        rejecting the whole request and blocking those edits.
+        Ignore stale `filled_out: false` values on full-profile PATCH requests,
+        reject `agreed_to_terms_of_service: false`, and require `postal_code`
+        when `country` is `US` or `CA`.
         """
         if 'filled_out' in attrs and not attrs['filled_out']:
             attrs['filled_out'] = True
