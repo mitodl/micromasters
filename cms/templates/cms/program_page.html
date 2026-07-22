@@ -168,20 +168,6 @@
             </div>
           </section>
         {% endif %}
-        <div class="powered-by">
-          <p>
-            Courses delivered on
-          </p>
-            {% if page.program.has_mitxonline_courses %}
-                <img
-                  class="mitx_logo"
-                  src="{% static 'images/mitxonline_logo.png' %}"
-                  alt="MITx"
-                />
-            {% else %}
-                <img src="{% static 'images/edx_logo.svg' %}" alt="edX" />
-            {% endif %}
-        </div>
       </div>
       {% endblock %}
 

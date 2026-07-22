@@ -134,11 +134,6 @@
     }
   }
 
-  .info-box, .powered-by {
-    margin: 0 0 23px 15px;
-
-  }
-
   .info-box h3.core {
     color: $mm-brand-bg-dark;
     font-size: 15px;
@@ -175,6 +170,7 @@
   }
 
   .info-box {
+    margin: 0 0 23px 15px;
     padding: 30px;
     background-color: $bg-med-gray;
 
@@ -239,26 +235,6 @@
         font-size: 15px;
         margin: 0 0 12px 0;
       }
-    }
-  }
-
-  .powered-by {
-    padding: 20px;
-
-    p {
-      display: inline-block;
-      font-size: 16px;
-      font-weight: 400;
-      color: $font-gray-form !important;
-    }
-
-    > *:not(:last-child) {
-      margin-right: 7px;
-    }
-
-    img {
-      height: 30px;
-      margin-bottom: 9px;
     }
   }
 
