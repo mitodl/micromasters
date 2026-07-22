@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.251.1
+Version 0.251.1 (Released July 22, 2026)
 ---------------
 
 - Configure bumpver for Concourse release pipeline (#5509)
