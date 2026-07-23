@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.251.2
+---------------
+
+- style: hide delivered on block (#5540)
+- Update dependency pillow to v12.3.0 [SECURITY] (#5538)
+- Update dependency django to v5.2.16 [SECURITY] (#5537)
+- Update dependency wagtail to v7.4.2 [SECURITY] (#5532)
+
 Version 0.251.1 (Released July 22, 2026)
 ---------------
 
