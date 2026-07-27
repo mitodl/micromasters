@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.251.2
+Version 0.251.2 (Released July 27, 2026)
 ---------------
 
 - style: hide delivered on block (#5540)
