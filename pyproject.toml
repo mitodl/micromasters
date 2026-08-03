@@ -58,6 +58,7 @@ dependencies = [
 
 [tool.uv]
 package = false
+exclude-newer = "7d"
 
 [dependency-groups]
 dev = [
