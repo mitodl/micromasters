@@ -7,6 +7,9 @@ on:
     branches: [release]
   workflow_dispatch: # manual trigger
 
+permissions:
+  contents: read
+
 jobs:
   # runs if CI workflow was successful OR if this was manually triggered
   on-success:
