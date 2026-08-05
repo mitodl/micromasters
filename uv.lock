@@ -10,53 +10,6 @@ resolution-markers = [
 exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for backwards compatibility when using relative exclude-newer values.
 exclude-newer-span = "P7D"
 
-[options.exclude-newer-package]
-mitol-django-google-sheets = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-uai-content-customization = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-canvas-integration = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-concourse = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-olposthog = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-oauth-toolkit-extensions = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-social-auth = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-payment-gateway = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-ai-static-translations = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-google-sheets-refunds = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-chat-xblock = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-events-handler = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-feedback = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-logging = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-rapid-response-reports = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-observability = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-authentication = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-lti-utilities = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-checkout-external = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-geoip = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-git-auto-export = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-chat = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-hubspot-api = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-openedx-companion-auth = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-course-sync = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-digitalcredentials = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-common = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-sentry = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-rapid-response-xblock = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-mail = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-google-sheets-deferrals = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-course-translations = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-course-outline-api = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-transcoding = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-edx-username-changer = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-auto-select-language = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-apigateway = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-course-structure-api = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-drf-lint = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-django-aqueduct = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-otel-monitoring = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-edx-sysadmin = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-ol-openedx-course-export = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-openedx = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-mitol-django-scim = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
-
 [[package]]
 name = "amqp"
 version = "5.3.1"
