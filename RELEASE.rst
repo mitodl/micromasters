@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.252.0
+---------------
+
+- Link SDS program to Learn (#5544)
+- Harden GH Actions and dependency supply-chain security (#5542)
+
 Version 0.251.2 (Released July 27, 2026)
 ---------------
 
