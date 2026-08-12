@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.252.0
+Version 0.252.0 (Released August 12, 2026)
 ---------------
 
 - Link SDS program to Learn (#5544)
