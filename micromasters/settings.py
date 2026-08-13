@@ -445,8 +445,8 @@ LOGGING = {
 CORS_ORIGIN_WHITELIST = get_list_of_str("MICROMASTERS_CORS_ORIGIN_WHITELIST", [])
 CORS_ALLOW_CREDENTIALS = True
 
-# Finance program specific message for course status Enrollment by Eligibility
-ENROLLMENT_BY_ELIGIBILITY_COURSES = get_list_of_str('ENROLLMENT_BY_ELIGIBILITY_COURSES', [ "FIN.CFx" ])
+# Message for course status Enrollment by Eligibility, usually for Comprehensive Final Exam courses
+ENROLLMENT_BY_ELIGIBILITY_COURSES = get_list_of_str('ENROLLMENT_BY_ELIGIBILITY_COURSES',  ["FIN.CFx", "CTL.CFx"])
 
 ADWORDS_CONVERSION_ID = get_string("ADWORDS_CONVERSION_ID", "")
 GA_TRACKING_ID = get_string("GA_TRACKING_ID", "")
