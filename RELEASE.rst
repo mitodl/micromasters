@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.253.0 (Released August 18, 2026)
+---------------
+
+- Supply Chain Comprehensive Exam message on program page Enrollment by Eligibility (#5546)
+
 Version 0.252.0 (Released August 12, 2026)
 ---------------
 
