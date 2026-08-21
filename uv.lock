@@ -1343,7 +1343,7 @@ requires-dist = [
     { name = "redis", specifier = ">=4.0" },
     { name = "requests", specifier = ">=2.20.0" },
     { name = "robohash", specifier = "==2.0.0" },
-    { name = "sentry-sdk", specifier = "==1.1.0" },
+    { name = "sentry-sdk", specifier = "==1.9.0" },
     { name = "setuptools", specifier = ">=67.6.1,<80" },
     { name = "six", specifier = ">=1.11.0" },
     { name = "social-auth-app-django", specifier = ">=5.0,<6.0" },
@@ -2014,15 +2014,15 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "1.1.0"
+version = "1.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/1d/feef85ad03aa92b09ab3d104fa0c9bcf96fb4b646c64a95bf21bc8dbfb74/sentry-sdk-1.1.0.tar.gz", hash = "sha256:c1227d38dca315ba35182373f129c3e2722e8ed999e52584e6aca7d287870739", size = 100168, upload-time = "2021-05-06T17:24:12.514Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/24/dc6b31bcdf6fcabe92982078e56396225f561285584eaf3159af5477f6c9/sentry-sdk-1.9.0.tar.gz", hash = "sha256:f185c53496d79b280fe5d9d21e6572aee1ab802d3354eb12314d216cfbaa8d30", size = 121481, upload-time = "2022-07-28T11:28:03.789Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1c/4a/a54b254f67d8f4052338d54ebe90126f200693440a93ef76d254d581e3ec/sentry_sdk-1.1.0-py2.py3-none-any.whl", hash = "sha256:c7d380a21281e15be3d9f67a3c4fbb4f800c481d88ff8d8931f39486dd7b4ada", size = 131936, upload-time = "2021-05-06T17:24:12.294Z" },
+    { url = "https://files.pythonhosted.org/packages/34/ee/92a218cc1563eda06bc50117e1b5d004b46d1a7784c387c9bf91685e1311/sentry_sdk-1.9.0-py2.py3-none-any.whl", hash = "sha256:60b13757d6344a94bf0ccb3c0a006c4de77daab09871b30fbbd05d5ec24e54fb", size = 156601, upload-time = "2022-07-28T11:28:03.777Z" },
 ]
 
 [[package]]
