@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.254.0
+---------------
+
+- Update dependency django to v5.2.17 [SECURITY] (#5551)
+- Regenerate uv.lock, downgrade sentry-sdk to resolve urllib3 conflict (#5550)
+- Update link to SDS on Learn (#5548)
+- Update dependency sentry-sdk to v1.45.1 [SECURITY] (#5494)
+
 Version 0.253.0 (Released August 18, 2026)
 ---------------
 
