@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.254.0
+Version 0.254.0 (Released August 24, 2026)
 ---------------
 
 - Update dependency django to v5.2.17 [SECURITY] (#5551)
