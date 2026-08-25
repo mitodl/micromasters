@@ -1,0 +1,114 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+ci:
+  skip:
+    - prettier-django
+    # Because these are local hooks it seems like they won't easily run in pre-commit CI
+    - eslint
+    - scss-lint
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+        exclude: ".hbs$"
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: debug-statements
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+        types_or:
+          [javascript, jsx, ts, tsx, json, scss, sass, css, yaml, markdown]
+        args:
+          - --no-config
+          - --no-semi
+      - id: prettier
+        alias: prettier-django
+        name: prettier-django
+        types: [html]
+        additional_dependencies:
+          - prettier
+          - prettier-plugin-django-alpine
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.7.0-1
+    hooks:
+      - id: shfmt
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.32.0
+    hooks:
+      - id: yamllint
+        args: [--format, parsable, -d, relaxed]
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args:
+          - --baseline
+          - .secrets.baseline
+          - --exclude-files
+          - .yarn/
+          - --exclude-files
+          - cassettes/
+          - --exclude-files
+          - test_json/
+          - --exclude-files
+          - ".*_test.py"
+          - --exclude-files
+          - "test_.*.py"
+          - --exclude-files
+          - poetry.lock
+          - --exclude-files
+          - yarn.lock
+          - --exclude-files
+          - ".*/generated/"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.0.287"
+    hooks:
+      - id: ruff
+        args: [--extend-ignore=D1, --fix]
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        description: "Lint JS/TS files and apply automatic fixes"
+        entry: npx eslint --fix
+        language: node
+        types_or: [javascript, jsx, ts, tsx]
+        args: []
+        exclude: "(node_modules/|.yarn/)"
+        require_serial: false
+      - id: scss-lint
+        name: scss-lint
+        description: "Lint SCSS files"
+        entry: npx stylelint --allow-empty-input --fix $@
+        language: node
+        types: [scss]
+        args: []
+        exclude: node_modules/
+        require_serial: false
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.5
+    hooks:
+      - id: shellcheck
+        args: ["--severity=warning"]
+  - repo: local
+    hooks:
+      - id: drf-serializer-orm-check
+        name: DRF Serializer ORM Check
+        description: "Detects Django ORM queries inside DRF serializer methods (N+1 risk)"
+        entry: drf-lint
+        args: [--baseline, drf_lint_baseline.json]
+        language: python
+        files: 'serializers\.py$'
+        additional_dependencies:
+          - mitol-drf-lint

@@ -79,6 +79,7 @@ dev = [
     "testfixtures",
     "isort",
     "semantic-version",
+    "mitol-drf-lint==2026.4.2",
 ]
 
 [tool.bumpversion]
