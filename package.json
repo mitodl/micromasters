@@ -76,7 +76,7 @@
     "minimist": "^1.2.8",
     "mocha": "8.3.0",
     "moment": "^2.18.1",
-    "moment-timezone": "^0.5.13",
+    "moment-timezone": "^0.5.35",
     "nyc": "^15.0.0",
     "object.entries": "^1.0.4",
     "postcss-loader": "^2.0.5",
