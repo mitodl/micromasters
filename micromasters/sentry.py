@@ -34,26 +34,37 @@ def scrub_pg_detail(text):
 
 
 def scrub_pg_details(event):
-    """Apply scrub_pg_detail everywhere an error string lands on the event.
+    """Truncate Postgres DETAIL lines everywhere in a Sentry event.
 
-    Covers exception values, the logentry message/formatted pair, and the legacy
-    top-level message, so the scrub holds whether the event arrived as an
-    uncaught exception or via logger.exception.
+    The row echo reaches Sentry through more fields than the exception value:
+    LoggingIntegration puts the log message in a breadcrumb
+    (integrations/logging.py:311), logger.error("...: %s", exc) puts it in
+    logentry.params (:274), and captured stack-frame locals carry it in
+    frame vars because include_local_variables defaults to True
+    (consts.py:1028, utils.py:616).  Walking the whole event covers those
+    without enumerating them, and does not go stale when the SDK adds another.
+
+    Safe to walk naively because client._prepare_event serializes the event
+    before calling before_send (client.py:650 vs :658), so every leaf here is
+    already a JSON primitive -- no live exception objects to coerce.
     """
-    for entry in (event.get("exception") or {}).get("values") or []:
-        value = entry.get("value")
-        if isinstance(value, str):
-            entry["value"] = scrub_pg_detail(value)
-    logentry = event.get("logentry")
-    if isinstance(logentry, dict):
-        for key in ("formatted", "message"):
-            value = logentry.get(key)
-            if isinstance(value, str):
-                logentry[key] = scrub_pg_detail(value)
-    top_message = event.get("message")
-    if isinstance(top_message, str):
-        event["message"] = scrub_pg_detail(top_message)
-    return event
+    return _scrub_node(event)
+
+
+def _scrub_node(node):
+    """Recurse through the serialized event, rewriting strings in place."""
+    if isinstance(node, str):
+        return scrub_pg_detail(node)
+    if isinstance(node, dict):
+        for key, value in node.items():
+            node[key] = _scrub_node(value)
+        return node
+    if isinstance(node, list):
+        node[:] = [_scrub_node(item) for item in node]
+        return node
+    if isinstance(node, tuple):
+        return tuple(_scrub_node(item) for item in node)
+    return node
 
 
 def init_sentry(*, dsn, environment, version, log_level):

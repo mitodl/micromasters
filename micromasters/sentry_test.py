@@ -50,3 +50,72 @@ def test_scrubs_exception_values_logentry_and_message():
     }
     scrub_pg_details(event)
     assert "learner@example.invalid" not in repr(event)
+
+
+def test_scrubs_breadcrumb_messages():
+    """LoggingIntegration records the log message as a breadcrumb."""
+    event = {
+        "breadcrumbs": {
+            "values": [
+                {
+                    "type": "log",
+                    "category": "django_scim.views",
+                    "message": PG_INTEGRITY_ERROR,
+                }
+            ]
+        }
+    }
+    scrub_pg_details(event)
+    assert "learner@example.invalid" not in repr(event)
+
+
+def test_scrubs_logentry_params():
+    """logger.error("...: %s", exc) puts the exception in logentry.params."""
+    event = {
+        "logentry": {
+            "message": "Unable to complete SCIM call: %s",
+            "formatted": "Unable to complete SCIM call: " + PG_INTEGRITY_ERROR,
+            "params": [PG_INTEGRITY_ERROR],
+        }
+    }
+    scrub_pg_details(event)
+    assert "learner@example.invalid" not in repr(event)
+
+
+def test_scrubs_captured_frame_locals():
+    """include_local_variables defaults to True, so frame vars carry it too."""
+    event = {
+        "exception": {
+            "values": [
+                {
+                    "value": "boom",
+                    "stacktrace": {
+                        "frames": [
+                            {
+                                "function": "save",
+                                "vars": {"exc": PG_INTEGRITY_ERROR, "retries": 3},
+                            }
+                        ]
+                    },
+                }
+            ]
+        }
+    }
+    scrub_pg_details(event)
+    assert "learner@example.invalid" not in repr(event)
+    frame = event["exception"]["values"][0]["stacktrace"]["frames"][0]
+    assert frame["vars"]["retries"] == 3
+
+
+def test_walk_preserves_non_string_leaves():
+    """The walk must not coerce timestamps, ints or None into strings."""
+    event = {
+        "timestamp": 1757345533.179,
+        "level": "error",
+        "extra": {"count": 42, "missing": None, "flag": True},
+        "message": PG_INTEGRITY_ERROR,
+    }
+    scrub_pg_details(event)
+    assert event["timestamp"] == 1757345533.179
+    assert event["extra"] == {"count": 42, "missing": None, "flag": True}
+    assert "learner@example.invalid" not in event["message"]
