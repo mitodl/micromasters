@@ -1,0 +1,32 @@
+.mitlearn-transition-banner {
+  background-color: $mm-brand-bg;
+  padding: 10px 20px;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: white;
+    font-size: 15px;
+    line-height: 1.4em;
+  }
+
+  a {
+    color: white;
+    text-decoration: underline;
+    font-weight: 600;
+
+    &:hover,
+    &:focus {
+      color: darken(white, 15%);
+      text-decoration: none;
+    }
+  }
+
+  @include breakpoint(phone) {
+    padding: 10px 12px;
+
+    p {
+      font-size: 13px;
+    }
+  }
+}
