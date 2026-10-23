@@ -8798,18 +8798,25 @@ __metadata:
   linkType: hard
 
 "moment-timezone@npm:^0.5.13":
-  version: 0.5.23
-  resolution: "moment-timezone@npm:0.5.23"
+  version: 0.5.48
+  resolution: "moment-timezone@npm:0.5.48"
   dependencies:
-    moment: ">= 2.9.0"
-  checksum: 161dd446bf40100116ad4661eea8db92cf779676fb3911b3ed7c26a918ec2b13919cf6aa27ed09f4047c0d3653eb76bea87139209ebe62bb5b8d224a529d328b
+    moment: ^2.29.4
+  checksum: 8a350b30205cc06aa9c029643316f4c0d538e76a3f7a92d74a3214d602377db2a1f8b7719debd4eb3e1fa1bac3de1912c1b94182af4e12810513670b578c84ab
   languageName: node
   linkType: hard
 
-"moment@npm:>= 2.9.0, moment@npm:^2.15.2, moment@npm:^2.18.1":
+"moment@npm:^2.15.2, moment@npm:^2.18.1":
   version: 2.24.0
   resolution: "moment@npm:2.24.0"
   checksum: 9cd93a251a2b33cb1b532eade0e496a2a7547faa6cfe37a283ee7bf69e202cd7c8ab0673d66883b5b29aed051353176dc0e6684f04073a75b0a155c500be1580
+  languageName: node
+  linkType: hard
+
+"moment@npm:^2.29.4":
+  version: 2.31.0
+  resolution: "moment@npm:2.31.0"
+  checksum: e29cff3850438c66228cc43373ea8b6c480c7c3cfaf17ef9327653811d194734e7e2c1108b5cf2527ab0b2ba8907cbcb4f5dc3e764c044d5766eb7c4582759eb
   languageName: node
   linkType: hard
 
