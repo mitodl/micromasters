@@ -7,7 +7,7 @@ dependencies = [
     "pillow>=10.0",
     "boto3==1.42.78",
     "celery==5.6.3",
-    "certifi>=2021.10.8",
+    "certifi>=2026.10.19",
     "dj-database-url==0.3.0",
     "django-cors-headers>=4.0",
     "django-hijack>=3.3,<4.0",
@@ -57,9 +57,13 @@ dependencies = [
 ]
 
 [tool.uv]
+constraint-dependencies = ["certifi>=2026.10.19"]  # eMudhra CA compromise: never resolve a certifi that trusts the compromised CAs
 package = false
 exclude-newer = "7d"
 required-version = ">=0.9.17"
+
+[tool.uv.exclude-newer-package]
+certifi = "0d"  # eMudhra CA compromise fix (2026.10.19), remove after 2026-10-27
 
 [dependency-groups]
 dev = [
