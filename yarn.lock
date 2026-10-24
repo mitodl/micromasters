@@ -8453,7 +8453,7 @@ __metadata:
     sass-lint: ^1.10.2
     sass-loader: 10
     searchkit: 2.4.4
-    serialize-javascript: ^3.1.0
+    serialize-javascript: ^7.0.0
     sinon: ^2.3.1
     slick-carousel: ^1.6.0
     striptags: 3.2.0
@@ -11832,12 +11832,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serialize-javascript@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "serialize-javascript@npm:3.1.0"
-  dependencies:
-    randombytes: ^2.1.0
-  checksum: 0fc0131a78168d6237cfe1b21564f20a3b9b72e8ceebb21935baacf026631ed636912c20c7e9fa721a8f27a247e6f9849e705f27032d19863333c2cfab16d1c9
+"serialize-javascript@npm:^7.0.0":
+  version: 7.1.4
+  resolution: "serialize-javascript@npm:7.1.4"
+  checksum: 101618ab38189f825e87928008a62e1e639dde21f2aa818a9b0fe5f82ef465b7a40162dd6ccadb9b0c505c22a51839cb705daf9c7db930f13b3b1435ca03a1e8
   languageName: node
   linkType: hard
 
