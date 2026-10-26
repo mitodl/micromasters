@@ -86,7 +86,7 @@ dev = [
 ]
 
 [tool.bumpversion]
-current_version = "0.254.0"
+current_version = "2026.10.26.1"
 commit = false
 tag = false
 parse = "(?P<release>(?:[1-9][0-9]{3})\\.(?:1[0-2]|[1-9])\\.(?:3[0-1]|[12][0-9]|[1-9]))\\.(?P<build>\\d+)"
