@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+.. note::
+
+   This file is no longer updated. Releases after 0.254.0 use calendar versions
+   and are cut by the Concourse release workflow. Their release notes are in
+   `CHANGELOG.md <CHANGELOG.md>`_.
+
 Version 0.254.0 (Released August 24, 2026)
 ---------------
 
