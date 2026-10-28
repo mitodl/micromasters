@@ -8087,10 +8087,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.0.0, lodash@npm:^4.15.0, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.12, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.17.5, lodash@npm:^4.3.0, lodash@npm:^4.6.1, lodash@npm:~4.17.10":
+"lodash@npm:^4.0.0, lodash@npm:^4.15.0, lodash@npm:^4.17.10, lodash@npm:^4.17.11, lodash@npm:^4.17.12, lodash@npm:^4.17.13, lodash@npm:^4.17.14, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.17.5, lodash@npm:^4.3.0, lodash@npm:~4.17.10":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
+"lodash@npm:^4.17.15":
+  version: 4.18.1
+  resolution: "lodash@npm:4.18.1"
+  checksum: bb5f5b49aad29614e709af02b64c56b0f8b78c6a81434a3c1ae527d2f0f78ca08f9d9fb22aa825a053876c9d2166e9c01f31c356014b5e2bdc0556c057433102
   languageName: node
   linkType: hard
 
@@ -8441,7 +8448,7 @@ __metadata:
     react-virtualized-select: ^3.0.1
     redux: ^4.0.4
     redux-actions: ^2.0.1
-    redux-asserts: ^0.0.11
+    redux-asserts: ^0.0.12
     redux-hammock: ^0.3.3
     redux-localstorage: ^1.0.0-rc5
     redux-localstorage-filter: ^0.1.1
@@ -10961,15 +10968,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-asserts@npm:^0.0.11":
-  version: 0.0.11
-  resolution: "redux-asserts@npm:0.0.11"
+"redux-asserts@npm:^0.0.12":
+  version: 0.0.12
+  resolution: "redux-asserts@npm:0.0.12"
   dependencies:
-    lodash: ^4.6.1
+    lodash: ^4.17.15
     prop-types: ^15.7.2
     redux: ^4.0.4
     redux-thunk: ^2.0.1
-  checksum: f3253e76b95931aa1e5dc20ef8ff118e2b245e2d6dfccee04fa60d3e876e7aab68001979b6f77d73136dd099703c5d3d43c85dfcf870726539e6fc7e60300e9f
+  checksum: d5dc9f8234b5a62099cb2f12a9017fe33aaa72617ab9ee5694dbb0222cceea01eeddda6839d0d868ef048265ae34a5753c541753de2c7b5000084b303f9b822d
   languageName: node
   linkType: hard
 
