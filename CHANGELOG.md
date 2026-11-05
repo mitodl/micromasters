@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2026.11.5.1] - 2026-11-05
+
+### Changes
+
+- **Remove temporary certifi exclude-newer exemption** (#5577) by 34372316+arslanashraf7@users.noreply.github.com
+- **Fix python-tests: validate VERSION as CalVer, not semver** (#5578) by 34372316+arslanashraf7@users.noreply.github.com
+- **docs: point RELEASE.rst at CHANGELOG.md** (#5576) by feoh@feoh.org
+
 ## [2026.10.26.1] - 2026-10-26
 
 ### Changes
