@@ -33,7 +33,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.24.1",
     "blueimp-canvas-to-blob": "^3.6.0",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^4.0.0",
     "casual": "^1.5.17",
     "chai": "^4.0.2",
     "chai-as-promised": "^7.0.0",
