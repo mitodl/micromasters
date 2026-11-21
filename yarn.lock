@@ -4485,7 +4485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enzyme-adapter-react-16@npm:^1.15.2":
+"enzyme-adapter-react-16@npm:1.15.2":
   version: 1.15.2
   resolution: "enzyme-adapter-react-16@npm:1.15.2"
   dependencies:
@@ -4532,7 +4532,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enzyme@npm:^3.10.0":
+"enzyme@npm:3.10.0":
   version: 3.10.0
   resolution: "enzyme@npm:3.10.0"
   dependencies:
@@ -8380,8 +8380,8 @@ __metadata:
     diacritics: ^1.3.0
     draft-js: ^0.10.1
     draft-js-export-html: ^1.4.1
-    enzyme: ^3.10.0
-    enzyme-adapter-react-16: ^1.15.2
+    enzyme: 3.10.0
+    enzyme-adapter-react-16: 1.15.2
     eslint: 7
     eslint-config-defaults: 9.0.0
     eslint-config-google: ^0.9.1
