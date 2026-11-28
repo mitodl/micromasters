@@ -149,8 +149,8 @@
     "repl": "node --require ./scripts/repl.js"
   },
   "devDependencies": {
-    "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.15.2"
+    "enzyme": "3.10.0",
+    "enzyme-adapter-react-16": "1.15.2"
   },
   "resolutions": {
     "merge": "^2.1.1"
